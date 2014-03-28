@@ -1,0 +1,51 @@
+RewriteEngine On
+RewriteBase /
+
+# ----------- REMOVE UNWANTED ELEMENTS FROM URI -----------
+#
+	# Replace spaces " " and plus "+" symbols with underscore "_"
+	RewriteCond %{REQUEST_URI} !^/(share_data|share_data/.*?)($|/)
+	RewriteRule (.*)\ (.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
+	RewriteRule (.*)\+(.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
+	# Replace double quotes «"» with single quotes «'»
+	RewriteRule (.*)\"(.*) http://%{SERVER_NAME}/$1'$2 [R=303,L]
+	# Replace all double-slashes "//" with single slash "/"
+	RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
+	RewriteRule . http://%{SERVER_NAME}/%1/%2 [R=303,L]
+	
+# ----------- URI CONVERSION -----------
+#
+	# Convert GET keys "(?|&)x=" in slash "/"
+	RewriteRule ^([^/\.]+)/?$ /index.php?p=$1 [QSA]
+	RewriteRule ^([^/\.]+)/([^/]+)/?$ /index.php?p=$1&s=$2 [QSA]
+	RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/?$ /index.php?p=$1&s=$2&ss=$3 [QSA]
+
+# ----------- ERROR PAGES -----------
+#
+	ErrorDocument 401 index.php?error=401
+	ErrorDocument 404 index.php?error=404
+	ErrorDocument 405 index.php?error=405
+
+# ----------- SECURITY -----------
+#
+	# proc/self/environ? no!
+	RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+
+	# Block any script that trying to set mosConfig value via URL
+	RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
+
+	# Block any script base64_encode crap
+	RewriteCond %{QUERY_STRING} base64_encode.*(.*) [OR]
+
+	# Block any script that contains tag <script>
+	RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+
+	# Block any script that trying to set a PHP global variable via URL
+	RewriteCond %{QUERY_STRING} GLOBALS(=|[|\%[0-9A-Z]{0,2}) [OR]
+
+	# Block any script that trying to edit a _REQUEST variable via URL
+	RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
+
+	# Send all blocked requests to 403 error page
+	RewriteRule ^(.*)$ index.php [F,L]
+

@@ -1,0 +1,39 @@
+html {
+	background-color: #2d2d2d;
+	background-image: radial-gradient(ellipse farthest-corner at left bottom , #2a2a2a, #2d2d2d);
+	background-image: -moz-radial-gradient(left bottom, ellipse farthest-corner, #2a2a2a, #2d2d2d);
+	background-image: -webkit-radial-gradient(left bottom, ellipse farthest-corner, #2a2a2a, #2d2d2d);
+	background-image: -o-radial-gradient(left bottom, ellipse farthest-corner, #2a2a2a, #2d2d2d);
+	background-repeat: repeat;
+}
+body {
+	background-color: transparent;
+}
+body, * {
+	font-family: 'Alegreya Sans SC', sans-serif !important;
+}
+
+body > div.container, header > div.container {
+	padding: 0;
+}
+header, footer {
+	background: #fff;
+}
+#nav {
+    margin: 0;
+    padding: 0;
+    top: 80px;
+	display: table;
+}
+#nav li > a {
+	font-size: 0.8em;
+    padding: 5px 10px;
+	color: #333;
+}
+#nav li > a:hover {
+	color: #000;
+}
+
+#logo {
+	padding-bottom: 10px;
+}
