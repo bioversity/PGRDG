@@ -19,11 +19,12 @@ html.map {
 	background-image: -o-radial-gradient(left bottom, ellipse farthest-corner, #2a2a2a, #2d2d2d);
 	background-repeat: repeat;
 }
-body {
-	background-color: transparent;
-}
 body, * {
 	font-family: 'Alegreya Sans SC', sans-serif !important;
+}
+body {
+	background-color: transparent;
+	text-align: left;
 }
 
 body > div.container, header > div.container {
@@ -51,6 +52,9 @@ header, footer {
     top: 80px;
 	display: table;
 }
+#nav.map {
+    top: 45px;
+}
 #nav li > a {
 	font-size: 0.8em;
     padding: 5px 10px;
@@ -69,6 +73,9 @@ header, footer {
 	margin-top: 15px;
 	padding-right: 15px;
 }
+#logo.map p {
+	height: 65px;
+}
 
 #pgrdg_map {
 	position: fixed;
@@ -81,9 +88,9 @@ header, footer {
 	z-index: 1;
 }
 #map_toolbox {
-	background-color: rgba(50, 50, 50, 0.8);
+	background-color: rgba(0, 0, 0, 0.8);
 	position: fixed;
-	top: 111px;
+	top: 76px;
 	right: -50px;
 	bottom: 0px;
 	width: 50px;
@@ -103,4 +110,20 @@ header, footer {
 .olControlMousePosition {
 	top: 10px;
 	right: 10px !important;
+}
+.olControlNavToolbar div {
+	display: block;
+	width: 28px;
+	height: 28px;
+	top: 300px;
+	left: 6px;
+	position: relative;
+}
+.olControlNavToolbar .olControlNavigationItemActive {
+	background-image: url("img/panning-hand-on.png");
+	background-repeat: no-repeat;
+}
+.olControlNavToolbar .olControlNavigationItemInactive {
+	background-image: url("img/panning-hand-off.png");
+	background-repeat: no-repeat;
 }

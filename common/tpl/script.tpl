@@ -6,4 +6,5 @@
 	<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 	<script src="common/js/main.map.js"></script>
 <?php } ?>
+<script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
 <script src="common/js/main.js"></script>
