@@ -1,3 +1,3 @@
 $(document).ready(function() {
-	//alert("ok");
+	$("#map_toolbox").animate({"right": "0"}, 300);
 });

@@ -3,7 +3,9 @@
 		<div class="top">
 			<div id="logo">
 				<a href="/">
-					<img alt="Bioversity" src="common/media/img/bioversity-logo.png">
+					<object data="common/media/svg/bioversity-logo.svg" type="image/svg+xml">
+						<img alt="Bioversity logo" src="common/media/img/bioversity-logo.png" />
+					</object>
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>
@@ -15,6 +17,8 @@
 				<li><a href="/Map">Map</a></li>
 				<li><a href="/Data">Data</a></li>
 				<li><a href="/Charts">Charts</a></li>
+				<li class="divider"></li>
+				<li><a href="/Login"><span class="fa fa-login"></span>&nbsp;&nbsp;Login</a></li>
 			</ul>
 		</nav>
 	</div>

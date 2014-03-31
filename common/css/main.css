@@ -1,3 +1,16 @@
+@font-face {
+	font-family: 'Alegreya Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Alegreya Sans'), local('AlegreyaSans-Regular'), url(../media/fonts/KYNzioYhDai7mTMnx_gDgtUFqmyT-Ih543PWa_C0ig4.woff) format('woff');
+}
+@font-face {
+	font-family: 'Alegreya Sans';
+	font-style: normal;
+	font-weight: 500;
+	src: local('Alegreya Sans Medium'), local('AlegreyaSans-Medium'), url(../media/fonts/11EDm-lum6tskJMBbdy9aeu_tG0Yx7qqITjSOZkMZIk.woff) format('woff');
+}
+
 html.map {
 	background-color: #2d2d2d;
 	background-image: radial-gradient(ellipse farthest-corner at left bottom , #2a2a2a, #2d2d2d);
@@ -24,7 +37,7 @@ header {
 	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 }
 header.map {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.8);
 	background-image: none !important;
 	position: relative;
 	z-index: 2;
@@ -50,6 +63,12 @@ header, footer {
 #logo {
 	padding-bottom: 10px;
 }
+#logo img, #logo object {
+	border-right: 2px solid #E6E6E6;
+	float: left;
+	margin-top: 15px;
+	padding-right: 15px;
+}
 
 #pgrdg_map {
 	position: fixed;
@@ -61,6 +80,27 @@ header, footer {
 	left: 0;
 	z-index: 1;
 }
+#map_toolbox {
+	background-color: rgba(50, 50, 50, 0.8);
+	position: fixed;
+	top: 111px;
+	right: -50px;
+	bottom: 0px;
+	width: 50px;
+	z-index: 100;
+	color: #fff;
+}
+#map_toolbox > ul {
+	margin: 5px;
+}
+#map_toolbox > ul li {
+	text-align: center;
+	display: block;
+}
 .olControlPanZoomBar {
 	top: 120px !important;
+}
+.olControlMousePosition {
+	top: 10px;
+	right: 10px !important;
 }
