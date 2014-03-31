@@ -9,7 +9,7 @@
 <link rel="stylesheet" type="text/css" media="all"  href="http://www.bioversityinternational.org/typo3temp/scriptmerger/uncompressed/head-85e06e6b2fc91baf25dacb3fc99382f7.merged.css" />
 <link rel="stylesheet" type="text/css" media="print"  href="http://www.bioversityinternational.org/typo3temp/scriptmerger/uncompressed/head-8663609a8406c57d4d0dc4e8230c232f.merged.css" />
 <link href="common/css/bootstrap/bootstrap.min.css" rel="stylesheet">
-	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href="common/css/font-awesome/font-awesome.css" rel="stylesheet">
 <link href="common/css/main.css" rel="stylesheet">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

@@ -1,4 +1,4 @@
-<header class="main">
+<header class="main <?php print (strtolower($page) == "map") ? "map" : ""; ?>">
 	<div class="container">
 		<div class="top">
 			<div id="logo">
@@ -11,10 +11,10 @@
 		
 		<nav role="navigation" id="nav" class="navbar right">
 			<ul class="lvl1 nav navbar-nav navbar-right">
-				<li><a href="#">Filter</a></li>
-				<li><a href="#">Map</a></li>
-				<li><a href="#">Data</a></li>
-				<li><a href="#">Charts</a></li>
+				<li><a href="/Filter">Filter</a></li>
+				<li><a href="/Map">Map</a></li>
+				<li><a href="/Data">Data</a></li>
+				<li><a href="/Charts">Charts</a></li>
 			</ul>
 		</nav>
 	</div>

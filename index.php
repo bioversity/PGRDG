@@ -1,8 +1,18 @@
 <?php
-
+if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
+	$page = $_GET["p"];
+	if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {
+		$sub_page = $_GET["s"];
+		if (isset($_GET["ss"]) && trim($_GET["ss"]) !== "") {
+			$sub_subpage = $_GET["ss"];
+		}
+	}
+} else {
+	$page = "";
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>

@@ -1,4 +1,4 @@
-html {
+html.map {
 	background-color: #2d2d2d;
 	background-image: radial-gradient(ellipse farthest-corner at left bottom , #2a2a2a, #2d2d2d);
 	background-image: -moz-radial-gradient(left bottom, ellipse farthest-corner, #2a2a2a, #2d2d2d);
@@ -15,6 +15,19 @@ body, * {
 
 body > div.container, header > div.container {
 	padding: 0;
+}
+header {
+	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	background-image: -moz-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	background-image: webkit-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	background-image: -o-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+}
+header.map {
+	background-color: rgba(255, 255, 255, 0.5);
+	background-image: none !important;
+	position: relative;
+	z-index: 2;
 }
 header, footer {
 	background: #fff;
@@ -36,4 +49,18 @@ header, footer {
 
 #logo {
 	padding-bottom: 10px;
+}
+
+#pgrdg_map {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+}
+.olControlPanZoomBar {
+	top: 120px !important;
 }
