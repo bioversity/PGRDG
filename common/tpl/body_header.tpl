@@ -13,14 +13,14 @@
 		
 		<nav role="navigation" id="nav" class="navbar right<?php print (strtolower($page) == "map") ? " map" : ""; ?>">
 			<ul class="lvl1 nav navbar-nav navbar-right">
-				<li><a href="/Filter">Filter</a></li>
-				<li><a href="/Map">Map</a></li>
-				<li><a href="/Data">Data</a></li>
-				<li><a href="/Charts">Charts</a></li>
+				<li><a href="javascript: void(0);" onclick="$.left_panel('filter');"><span class="fa fa-search"></span>&nbsp;Filter</a></li>
+				<li><a href="/Map"><span class="fa fa-map-marker"></span>&nbsp;Map</a></li>
+				<li><a href="/Data"><span class="fa fa-code-fork"></span>&nbsp;Data</a></li>
+				<li><a href="/Charts"><span class="fa fa-bar-chart-o"></span>&nbsp;Charts</a></li>
 				<li class="divider-vertical"></li>
 				<li><a href="javascript: void(0);" data-toggle="modal" data-target="#myModal"><span class="fa fa-sign-in"></span>&nbsp;Sign in</a></li>
 			</ul>
 		</nav>
 	</div>
 </header>
-<?php require_once("common/tpl/login.tpl"); ?>
+<?php require_once("common/tpl/login_modal.tpl"); ?>

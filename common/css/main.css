@@ -1,3 +1,6 @@
+input::-moz-focus-inner, * {
+	outline: 0 !important;
+}
 body {
 	background-color: transparent;
 	text-align: left;
@@ -14,7 +17,7 @@ header {
 	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 }
 header.map {
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: rgba(255, 255, 255, 0.9);
 	background-image: none !important;
 	position: relative;
 	z-index: 2;
@@ -31,8 +34,11 @@ header, footer {
 #nav.map {
     top: 45px;
 }
+#nav .fa {
+	color: #666;
+}
 #nav li > a {
-	font-size: 0.8em;
+	font-size: 0.9em;
     padding: 5px 10px;
 	color: #333;
 }
@@ -53,6 +59,40 @@ header, footer {
 	height: 65px;
 }
 
+
+#left_panel {
+	position: fixed;
+	top: 110px;
+	left: -221px;
+	width: 221px;
+	height: 100%;
+	background-color: transparent;
+	background-image: linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
+	background-image: -moz-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
+	background-image: webkit-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
+	background-image: -o-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
+	background-image: -ms-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
+	z-index: 3;
+	border-radius: 0px;
+}
+#left_panel.map {
+	top: 75px;
+}
+#left_panel.visible {
+	left: 0;
+}
+#left_panel > div.panel-body:first-child {
+	padding: 5px 0;
+	margin: 7px 15px;
+	border-bottom: #eee 1px solid;
+}
+#left_panel > div.panel-body:first-child a {
+	color: #aaa;
+}
+#left_panel > div.panel-body:first-child a:hover, #left_panel > div.panel-body:first-child a:focus, #left_panel > div.panel-body:first-child a:active {
+	text-decoration: none;
+}
+
 #pgrdg_map {
 	position: fixed;
 	width: 100%;
@@ -63,25 +103,53 @@ header, footer {
 	left: 0;
 	z-index: 1;
 }
-#map_toolbox {
-	background-color: rgba(0, 0, 0, 0.8);
+#map_toolbox, #map_sub_toolbox {
+	background-color: rgba(0, 0, 0, 0.9);
 	position: fixed;
 	top: 76px;
 	right: -50px;
 	bottom: 0px;
 	width: 50px;
 	z-index: 100;
-	color: #fff;
 }
-#map_toolbox > ul {
+#map_toolbox > ul, #map_sub_toolbox > ul {
 	margin: 5px;
 }
-#map_toolbox > ul li {
+#map_toolbox > ul li, #map_sub_toolbox > ul li {
 	text-align: center;
 	display: block;
 }
+#map_toolbox a, #map_sub_toolbox a {
+	color: #ccc;
+}
+#map_toolbox a:hover, #map_sub_toolbox a:hover {
+	color: #fff;
+}
+#map_sub_toolbox {
+	right: 50px;
+	bottom: auto;
+	display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Adjustements */
+.navbar .divider-vertical {
+	height: 29px;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #ffffff;
+}
 .olControlPanZoomBar {
-	top: 120px !important;
+	top: 80px !important;
+	left: 10px;
 }
 .olControlMousePosition {
 	top: 10px;
