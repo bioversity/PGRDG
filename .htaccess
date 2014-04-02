@@ -28,7 +28,11 @@ RewriteBase /
 	# Explicitly exclude binary files from compression just in case
 	SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|pdf|swf|ico|zip|ttf|eot|svg)$ no-gzip
 </IfModule>
-
+<FilesMatch "\.(js)$">
+	<IfModule mod_headers.c>
+		Header set Access-Control-Allow-Origin "*"
+	</IfModule>
+</FilesMatch>
 
 # ----------- REMOVE UNWANTED ELEMENTS FROM URI -----------
 #
@@ -43,7 +47,9 @@ RewriteBase /
 	RewriteRule . http://%{SERVER_NAME}/%1/%2 [R=303,L]
 # ----------- URI CONVERSION -----------
 #
-	RewriteRule ^API/$ pgrdg/API/index.php?=$1 [L] 
+	#RewriteRule ^API/(.*)/? pgrdg/API/index.php?$1 [L]
+	RewriteCond %{QUERY_STRING} id=1
+	RewriteRule ^API$ /pgrdg/API/index.php? [L,R=301]
 
 	# Convert GET keys "(?|&)x=" in slash "/"
 	RewriteCond %{REQUEST_URI} !^/(API|API/.*?)($|/)

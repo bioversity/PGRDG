@@ -11,11 +11,15 @@ $.left_panel = function(subject) {
 		$(".olControlPanZoomBar").animate({"left": "225px"}, 300);
 	}
 };
-$.sub_toolbox = function(action) {
-	$("#map_sub_toolbox").fadeIn(300);
-	console.log(action);
+$.shortcuts = function() {
+	$(document).bind("keydown", "alt+s", function() {
+		$.sub_toolbox("find_location");
+		return false;
+	}).bind("keydown", "alt+l", function() {
+		$.sub_toolbox("change_map");
+		return false;
+	});
 };
-
 
 $(document).ready(function() {
 	$("#loginform").jCryption();
@@ -27,4 +31,5 @@ $(document).ready(function() {
 	$("#btn-login").click(function() {
 		
 	});
+	$.shortcuts();
 });

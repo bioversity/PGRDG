@@ -1,5 +1,5 @@
 input::-moz-focus-inner, * {
-	outline: 0 !important;
+	//outline: 0 !important;
 }
 body {
 	background-color: transparent;
@@ -103,7 +103,7 @@ header, footer {
 	left: 0;
 	z-index: 1;
 }
-#map_toolbox, #map_sub_toolbox {
+#map_toolbox {
 	background-color: rgba(0, 0, 0, 0.9);
 	position: fixed;
 	top: 76px;
@@ -126,11 +126,49 @@ header, footer {
 	color: #fff;
 }
 #map_sub_toolbox {
+}
+#map_sub_toolbox > div {
+	position: fixed;
 	right: 50px;
 	bottom: auto;
+	min-width: 50px;
+	width: auto;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.9);
+	padding: 7px;
 	display: none;
 }
-
+#map_sub_toolbox > div.level0 {
+	margin-top: 0px;
+}
+#map_sub_toolbox > div.level1 {
+	margin-top: 40px;
+}
+#map_sub_toolbox > div.level2 {
+	margin-top: 80px;
+}
+#map_sub_toolbox > div.level3 {
+	margin-top: 120px;
+}
+#map_sub_toolbox div > ul {
+	margin: 0 0 0 20px;
+	padding: 0 10px;
+}
+#map_sub_toolbox div > ul.list-unstyled {
+	margin: 0;
+}
+#map_sub_toolbox span.fa {
+	color: #dedede;
+}
+#map_sub_toolbox span.fa-circle-o {
+	color: #666;
+}
+#map_sub_toolbox a.btn {
+	padding: 0;
+}
+#map_sub_toolbox a.btn:focus {
+	border: #ff0000 1px solid;
+}
 
 
 
