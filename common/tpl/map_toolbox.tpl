@@ -9,12 +9,12 @@
 		<input type="search" class="form-control input-sm" size="30" placeholder="Enter the location name here" />
 	</div>
 	<div id="change_map" class="level1">
-		<span id="selected_map" style="display: none;">Google Physical</span>
+		<span id="selected_map" style="display: none;">Google Satellite</span>
 		<ul class="list-unstyled">
-			<li><a class="btn change_map_btn" href="javascript: void(0);" onclick="$.change_map_layer('Google Physical', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Physical</a></li>
-			<li><a class="btn change_map_btn" href="javascript: void(0);" onclick="$.change_map_layer('Google Streets', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Street</a></li>
-			<li><a class="btn change_map_btn" href="javascript: void(0);" onclick="$.change_map_layer('Google Hybrid', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Hybrid</a></li>
-			<li><a class="btn change_map_btn" href="javascript: void(0);" onclick="$.change_map_layer('Google Satellite', $(this));"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;Satellite</a></li>
+			<li><a class="btn change_map_btn  Google_Physical" href="javascript: void(0);" onclick="$.change_map_layer('Google Physical', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Physical</a></li>
+			<li><a class="btn change_map_btn Google_Streets" href="javascript: void(0);" onclick="$.change_map_layer('Google Streets', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Street</a></li>
+			<li><a class="btn change_map_btn Google_Hybrid" href="javascript: void(0);" onclick="$.change_map_layer('Google Hybrid', $(this));"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;Hybrid</a></li>
+			<li><a class="btn change_map_btn Google_Satellite" href="javascript: void(0);" onclick="$.change_map_layer('Google Satellite', $(this));"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;Satellite</a></li>
 		</ul>
 	</div>
 </div>

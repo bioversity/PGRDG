@@ -1,0 +1,55 @@
+{"menu":
+	{"top": {
+			"_comment": "You can see all available icons name here: http://fortawesome.github.io/Font-Awesome/icons/",
+			"Filter": {
+				"content": {
+					"icon": "fa-search",
+					"text": "Filter"
+				},
+				"attributes": {
+					"onclick": "$.left_panel('filter');",
+					"href": "javascript: void(0);"
+				}
+			},
+			"Map": {
+				"content": {
+					"icon": "fa-map-marker",
+					"text": "Map"
+				},
+				"attributes": {
+					"href": "/Map"
+				}
+			},
+			"Data": {
+				"content": {
+					"icon": "fa-code-fork",
+					"text": "Data"
+				},
+				"attributes": {
+					"href": "/Data"
+				}
+			},
+			"Charts": {
+				"content": {
+					"icon": "fa-bar-chart-o",
+					"text": "Charts"
+				},
+				"attributes": {
+					"href": "/Charts"
+				}
+			},
+			"divider": true,
+			"Sign in": {
+				"content": {
+					"icon": "fa-sign-in",
+					"text": "Sign in"
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"data-toggle": "modal",
+					"data-target": "#myModal"
+				}
+			}
+		}
+	}
+}

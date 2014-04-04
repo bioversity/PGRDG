@@ -12,14 +12,27 @@
 		</div>
 		
 		<nav role="navigation" id="nav" class="navbar right<?php print (strtolower($page) == "map") ? " map" : ""; ?>">
-			<ul class="lvl1 nav navbar-nav navbar-right">
-				<li><a href="javascript: void(0);" onclick="$.left_panel('filter');"><span class="fa fa-search"></span>&nbsp;Filter</a></li>
-				<li><a href="/Map"><span class="fa fa-map-marker"></span>&nbsp;Map</a></li>
-				<li><a href="/Data"><span class="fa fa-code-fork"></span>&nbsp;Data</a></li>
-				<li><a href="/Charts"><span class="fa fa-bar-chart-o"></span>&nbsp;Charts</a></li>
-				<li class="divider-vertical"></li>
-				<li><a href="javascript: void(0);" data-toggle="modal" data-target="#myModal"><span class="fa fa-sign-in"></span>&nbsp;Sign in</a></li>
-			</ul>
+			<?php
+			// Parse the menu defined by json object in "common/include/conf/menu.json"
+			$site_conf = json_decode(file_get_contents("common/include/conf/menu.json"));
+			$menu_list = '<ul class="lvl1 nav navbar-nav navbar-right">';
+			foreach($site_conf->menu->top as $obj => $menu_top) {
+				if(!is_object($obj) && $obj == "divider") {
+					$menu_list .= '<li class="divider"></li>' . "\n";
+				} else {
+					if($obj !== "_comment") {
+						$menu_list .= '<li><a ';
+						$attributes = array();
+						foreach($menu_top->attributes as $attr_key => $attr_val) {
+							$attributes[] = $attr_key . '="' . $attr_val . '"';
+						}
+						$menu_list .= implode(" ", $attributes) . '><span class="fa ' . $menu_top->content->icon . '"></span>&nbsp;' . $menu_top->content->text . '</a></li>' . "\n";
+					}
+				}
+			}
+			$menu_list .= "</ul>";
+			print $menu_list;
+			?>
 		</nav>
 	</div>
 </header>
