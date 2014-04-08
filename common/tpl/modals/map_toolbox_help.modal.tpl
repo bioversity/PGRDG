@@ -6,9 +6,12 @@
 				<h4 class="modal-title text-primary" id="myModalLabel"><span class="fa fa-question"></span>&nbsp;&nbsp;Map Toolbox help</h4>
 			</div>
 			<div class="modal-body">
-				<h5 class="text-primary">List of all available shortcuts</h5>
+				<h5 class="text-warning">List of all available shortcuts</h5>
 				<div class="table-responsive">
 					<table class="table">
+						<tr>
+							<th><tt>F1</tt> <small style="font-weight: normal;">or</small> <tt>ALT+I</tt></th><td>Show this help</td>
+						</tr>
 						<tr>
 							<th><tt>ALT+F</tt></th><td>Search a location inside a map</td>
 						</tr>

@@ -6,7 +6,7 @@
 			"Google Physical": {
 				"_comment": "Here you are defining the <a> tag in the map toolbox menu",
 				"content": {
-					"icon": "",
+					"icon": "fa-circle-o",
 					"text": "Physical"
 				},
 				"attributes": {

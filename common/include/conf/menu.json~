@@ -11,7 +11,7 @@
 				"attributes": {
 					"onclick": "$.left_panel('filter');",
 					"href": "javascript: void(0);",
-					"title": "Toggle left panel"
+					"title": "Open/close left panel"
 				}
 			},
 			"Map": {
@@ -51,6 +51,7 @@
 					"href": "javascript: void(0);",
 					"data-toggle": "modal",
 					"data-target": "#login"
+					"id": "login_menu_btn"
 				}
 			}
 		},

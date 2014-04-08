@@ -197,8 +197,8 @@ header, footer {
 	border-left: 1px solid #eee;
 	border-right: 1px solid #ffffff;
 }
-.olControlPanZoomBar {
-	top: 80px !important;
+.olControlPanZoomBar, .olControlZoom {
+	top: 90px !important;
 	left: 10px;
 }
 .olControlMousePosition {

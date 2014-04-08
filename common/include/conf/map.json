@@ -16,15 +16,15 @@
 					"title": "Set Google physical layer"
 				}
 			},
-			"Google Street": {
+			"Google Streets": {
 				"content": {
 					"icon": "fa-circle-o",
 					"text": "Street"
 				},
 				"attributes": {
-					"class": "btn change_map_btn Google_Street",
+					"class": "btn change_map_btn Google_Streets",
 					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('Google Street', $(this));",
+					"onclick": "$.change_map_layer('Google Streets', $(this));",
 					"title": "Set Google street layer"
 				}
 			},
