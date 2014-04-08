@@ -9,27 +9,35 @@ layers = {
 	gphy: new OpenLayers.Layer.Google("Google Physical", {
 		type: google.maps.MapTypeId.TERRAIN,
 		sphericalMercator: true,
-		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)
+		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+		buffer: 0
 		// used to be {type: G_PHYSICAL_MAP}
 	}),
 	gmap: new OpenLayers.Layer.Google("Google Streets", {
 		numZoomLevels: 20,
 		sphericalMercator: true,
-		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)
+		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+		buffer: 1
 	}),
 	ghyb: new OpenLayers.Layer.Google("Google Hybrid", {
 		type: google.maps.MapTypeId.HYBRID,
 		numZoomLevels: 20,
 		sphericalMercator: true,
-		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)
+		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+		buffer: 2
 	}),
 	gsat: new OpenLayers.Layer.Google("Google Satellite", {
 		type: google.maps.MapTypeId.SATELLITE,
 		numZoomLevels: 22,
 		sphericalMercator: true,
-		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)
+		'maxExtent': new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+		buffer: 3
 	})
-};
+},
+lonLat = new OpenLayers.LonLat(lon, lat).transform(
+	new OpenLayers.Projection("EPSG:4326"),
+	new OpenLayers.Projection("EPSG:3857")
+);
 
 $.init_map = function() {
 	var selected_map = $("#selected_map").text();
@@ -49,37 +57,49 @@ $.init_map = function() {
 		minResolution: "auto",
 		maxResolution: "auto"
 	});
-	
 	var layers_arr = [];
 	$.each(layers, function(lk, lv) {
+		//registerEvents(lk);
 		layers_arr.push(lv);
-		//registerEvents(lv);
 	});
-	
+	var control = new OpenLayers.Control();
+	OpenLayers.Util.extend(control, {
+		draw: function () {
+			// this Handler.Box will intercept the shift-mousedown
+			// before Control.MouseDefault gets to see it
+			this.box = new OpenLayers.Handler.Box(
+				control,
+				{"done": this.notice},
+				{keyMask: OpenLayers.Handler.MOD_SHIFT | OpenLayers.Handler.MOD_ALT}
+			);
+			this.box.activate();
+		},
+		notice: function (bounds) {
+			alert(bounds);
+		}
+	});
+	map.addControl(control);
 	map.addLayers(layers_arr);
-	//$.change_map_layer(selected_map);
+
+	//$.change_map_layer(selected_map, $("a." + selected_map.replace(" ", " ")));
 	
-	var lonLat = new OpenLayers.LonLat(lon, lat).transform(
-		new OpenLayers.Projection("EPSG:4326"),
-		new OpenLayers.Projection("EPSG:3857")
-	);
 	map.setCenter(lonLat, zoom);
 };
 function registerEvents(layer) {
 	layer.logEvent = function(event) {
-		eventsLog.innerHTML += "<br>(" + getTimeStamp() + ") " + this.name + ": " + event;
+		console.log("(" + getTimeStamp() + ") " + this.name + ": " + event);
 	};
 	
 	layer.events.register("loadstart", layer, function() {
-		this.logEvent("Load Start");
+		console.log("Load Start");
 	});
 	
 	layer.events.register("tileloaded", layer, function() {
-		this.logEvent("Tile loaded. " + this.numLoadingTiles + " left.");
+		console.log("Tile loaded. " + this.numLoadingTiles + " left.");
 	});
 	
 	layer.events.register("loadend", layer, function() {
-		this.logEvent("Load End. Grid:" + this.grid.length + "x" + this.grid[0].length);
+		console.log("Load End. Grid:" + this.grid.length + "x" + this.grid[0].length);
 	});
 	
 	map.addLayer(layer);
@@ -87,21 +107,26 @@ function registerEvents(layer) {
 
 $.change_map_layer = function(selected_map, item) {
 	$("#selected_map").text(selected_map);
-	console.log("loading");
+	//console.log("loading");
 	$.each($("#change_map ul li span"), function(i, l) {
 		$(this).removeClass("fa-check-circle").addClass("fa-circle-o");
 	});
-	item.find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+	//item.find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+	$("a." + selected_map.replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
 	$("#map_toolbox span.fa-tasks").removeClass("fa-tasks").addClass("fa-spinner fa-spin").parent("a").addClass("disabled");
 	$("#change_map").delay(1000).fadeOut(450);
 	
 	var layer = map.getLayersByName(selected_map)[0],
 	lastIndex = map.getNumLayers() -1;
 	
+	map.events.register("loadstart", layer, function(event) {
+		console.log("Load Start");
+		//this.redraw();
+	});
 	map.setLayerIndex(layer, lastIndex);
 	layer.redraw(true);
 	
-	console.log("finished loading");
+	//console.log("finished loading");
 	$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-tasks").parent("a").removeClass("disabled");
 };
 $.sub_toolbox = function(action) {
@@ -116,7 +141,7 @@ $.sub_toolbox = function(action) {
 					}
 					break;
 				case "change_map":
-					$(".change_map_btn." + $("#selected_map").text().replace(" ", "_")).parent().addClass("selected").focus();
+					$(".change_map_btn." + $("#selected_map").text().replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
 					break;
 			}
 		});

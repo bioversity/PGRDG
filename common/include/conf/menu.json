@@ -1,6 +1,7 @@
-{"menu":
-	{"top": {
-			"_comment": "You can see all available icons name here: http://fortawesome.github.io/Font-Awesome/icons/",
+{
+	"menu": {
+		"top": {
+			"_comment": "You can see all available icons here: http://fortawesome.github.io/Font-Awesome/icons/",
 			"Filter": {
 				"_comment": "Here you are defining the <a> tag",
 				"content": {
@@ -10,7 +11,7 @@
 				"attributes": {
 					"onclick": "$.left_panel('filter');",
 					"href": "javascript: void(0);",
-					"title": "Toggle left panel"
+					"title": "Open/close left panel"
 				}
 			},
 			"Map": {
@@ -49,7 +50,46 @@
 				"attributes": {
 					"href": "javascript: void(0);",
 					"data-toggle": "modal",
-					"data-target": "#myModal"
+					"data-target": "#login"
+				}
+			}
+		},
+		"map_toolbox": {
+			"Help": {
+				"content": {
+					"icon": "fa-question",
+					"text": ""
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Help",
+					"data-toggle": "modal",
+					"data-target": "#map_toolbox_help"
+				}
+			},
+			"Find_location": {
+				"content": {
+					"icon": "fa-search",
+					"text": ""
+				},
+				"attributes": {
+					"onclick": "$.sub_toolbox('find_location');",
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Find a location"
+				}
+			},
+			"Change_map": {
+				"content": {
+					"icon": "fa-tasks",
+					"text": ""
+				},
+				"attributes": {
+					"onclick": "$.sub_toolbox('change_map');",
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Change map type"
 				}
 			}
 		}

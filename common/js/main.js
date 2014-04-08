@@ -62,6 +62,12 @@ $.shortcuts = function() {
 			});
 		}
 		return false;
+	}).bind("keydown", "alt+0", function() {
+		map.setCenter(lonLat, zoom);
+		return false;
+	}).bind("keydown", "alt+i F1", function() {
+		$("#map_toolbox_help").modal("show");
+		return false;
 	});
 };
 
@@ -69,7 +75,7 @@ $(document).ready(function() {
 	$("#loginform").jCryption();
 	$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 	$("nav a[title]").tooltip({placement: "bottom", container: "body"});
-	$("#map_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
+	$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
 		$(this).tooltip("hide");
 	});
 	

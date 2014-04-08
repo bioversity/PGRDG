@@ -1,0 +1,57 @@
+{
+	"map": {
+		"default_map_layer": "Google Satellite",
+		"layers": {
+			"_comment": "",
+			"Google Physical": {
+				"_comment": "Here you are defining the <a> tag in the map toolbox menu",
+				"content": {
+					"icon": "",
+					"text": "Physical"
+				},
+				"attributes": {
+					"class": "btn change_map_btn Google_Physical",
+					"href": "javascript: void(0);",
+					"onclick": "$.change_map_layer('Google Physical', $(this));",
+					"title": "Set Google physical layer"
+				}
+			},
+			"Google Street": {
+				"content": {
+					"icon": "fa-circle-o",
+					"text": "Street"
+				},
+				"attributes": {
+					"class": "btn change_map_btn Google_Street",
+					"href": "javascript: void(0);",
+					"onclick": "$.change_map_layer('Google Street', $(this));",
+					"title": "Set Google street layer"
+				}
+			},
+			"Google Hybrid": {
+				"content": {
+					"icon": "fa-circle-o",
+					"text": "Hybrid"
+				},
+				"attributes": {
+					"class": "btn change_map_btn Google_Hybrid",
+					"href": "javascript: void(0);",
+					"onclick": "$.change_map_layer('Google Hybrid', $(this));",
+					"title": "Set Google hybrid layer"
+				}
+			},
+			"Google Satellite": {
+				"content": {
+					"icon": "fa-circle-o",
+					"text": "Satellite"
+				},
+				"attributes": {
+					"class": "btn change_map_btn Google_Satellite",
+					"href": "javascript: void(0);",
+					"onclick": "$.change_map_layer('Google Satellite', $(this));",
+					"title": "Set Google satellite layer"
+				}
+			}
+		}
+	}
+}

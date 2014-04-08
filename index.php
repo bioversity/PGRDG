@@ -1,4 +1,9 @@
 <?php
+//header("Content-type: text/plain");
+require_once("common/include/classes/parse_json_config.class.php");
+$site_config = new parse_json_config();
+$map_config = new parse_json_config("common/include/conf/map.json");
+
 if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 	$page = $_GET["p"];
 	if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {
