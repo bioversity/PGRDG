@@ -1,3 +1,8 @@
+$.ucfirst = function(str) {
+	str += "";
+	var f = str.charAt(0).toUpperCase();
+	return f + str.substr(1);
+};
 function makeid() {
 	var text = "",
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -34,89 +39,81 @@ $.left_panel = function(subject) {
 		$(".olControlZoom").animate({"left": "230px"}, 300);
 	}
 };
+
 $.shortcuts = function() {
 	// You can see all available characters key here:
 	// http://htmlpreview.github.io/?https://github.com/jeresig/jquery.hotkeys/master/test-static-05.html
-	$(window).bind("keydown", "alt+f", function() {
-		$.sub_toolbox("find_location");
+	$(window).bind("keydown", "alt+0", function(e) {
+		e.preventDefault();
+		map.zoomTo(0);
+		$("#selected_zone").text("World").fadeIn(300);
 		return false;
-	}).bind("keydown", "alt+l", function() {
-		$.sub_toolbox("change_map");
-		if($("#change_map").css("display") != "none") {
-			var li = $("#change_map li");
-			var liSelected;
-			$(window).bind("keydown", "down", function() {
-				$.each(li, function(item, value) {
-					$(this).removeClass("selected");
-				});
-				if(liSelected){
-					liSelected.removeClass("selected");
-					next = liSelected.next();
-					if(next.length > 0){
-						liSelected = next.addClass("selected").focus();
-					} else {
-						liSelected = li.eq(0).addClass("selected").focus();
-					}
-				} else {
-					liSelected = li.eq(0).addClass("selected").focus();
-				}
-			});
-			$(window).bind("keydown", "up", function() {
-				$.each(li, function(item, value) {
-					$(this).removeClass("selected");
-				});
-				if(liSelected){
-					liSelected.removeClass("selected");
-					next = liSelected.prev();
-					if(next.length > 0){
-						liSelected = next.addClass("selected").focus();
-					} else {
-						liSelected = li.last().addClass("selected").focus();
-					}
-				} else {
-					liSelected = li.last().addClass("selected").focus();
-				}
-			});
-			$(window).bind("keydown", "return space insert", function() {
-				var item = liSelected.find("a"),
-				selected_map = $.trim(item.attr("class").replace("btn change_map_btn ", "").replace("_", " "));
-				$.change_map_layer(selected_map, item);
-			});
-		}
+	}).bind("keydown", "alt+1", function(e) {
+		e.preventDefault();
+		$.set_center("Africa");
 		return false;
-	}).bind("keydown", "alt+0", function() {
-		map.setCenter([0, 0], 1); // Entire world
+	}).bind("keydown", "alt+2", function(e) {
+		e.preventDefault();
+		$.set_center("Antarctica");
 		return false;
-	}).bind("keydown", "alt+1", function() {
-		map.setCenter([18, 13], 4); // Africa
+	}).bind("keydown", "alt+3", function(e) {
+		e.preventDefault();
+		$.set_center("Asia");
 		return false;
-	}).bind("keydown", "alt+2", function() {
-		map.setCenter([-135,  -82], 0); //Antarctica
+	}).bind("keydown", "alt+4", function(e) {
+		e.preventDefault();
+		$.set_center("Europe");
 		return false;
-	}).bind("keydown", "alt+3", function() {
-		map.setCenter(lonLat, zoom);
+	}).bind("keydown", "alt+5", function(e) {
+		e.preventDefault();
+		$.set_center("North America");
 		return false;
-	}).bind("keydown", "alt+4", function() {
-		map.setCenter(lonLat, zoom);
+	}).bind("keydown", "alt+6", function(e) {
+		e.preventDefault();
+		$.set_center("Oceania");
 		return false;
-	}).bind("keydown", "alt+5", function() {
-		map.setCenter(lonLat, zoom);
+	}).bind("keydown", "alt+7", function(e) {
+		e.preventDefault();
+		$.set_center("South America");
 		return false;
-	}).bind("keydown", "alt+6", function() {
-		map.setCenter(lonLat, zoom);
+	}).bind("keydown", "alt+8", function(e) {
 		return false;
-	}).bind("keydown", "alt+7", function() {
-		map.setCenter(lonLat, zoom);
+	}).bind("keydown", "alt+9", function(e) {
 		return false;
-	}).bind("keydown", "alt+i F1", function() {
+	}).bind("keydown", "alt+i F1", function(e) {
+		e.preventDefault();
 		$("#map_toolbox_help").modal("show");
 		return false;
-	}).bind("keydown", "alt++", function() {
+	}).bind("keydown", "alt+f", function(e) {
+		e.preventDefault();
+		// Fix for ALT+6 confusion
+		if(e.keyCode == 70){
+			$.sub_toolbox("find_location");
+			return false;
+		} else {
+			return false;
+		}
+	}).bind("keydown", "alt+l", function(e) {
+		e.preventDefault();
+		$.sub_toolbox("change_map");
+		return false;
+	}).bind("keydown", "alt++", function(e) {
+		e.preventDefault();
+		$("#selected_zone").text("Zoom in").fadeIn(300);
 		$.increase_zoom();
 		return false;
-	}).bind("keydown", "alt+-", function() {
+	}).bind("keydown", "alt+-", function(e) {
+		e.preventDefault();
+		$("#selected_zone").text("Zoom out").fadeIn(300);
 		$.decrease_zoom();
 		return false;
+	}).bind("keydown", "esc", function(e) {
+		e.preventDefault();
+		$.sub_toolbox("close");
+		return false;
+	}).bind("keyup", "alt", function(e) {
+		e.preventDefault();
+		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
 	});
 };
 
@@ -132,7 +129,7 @@ $(document).ready(function() {
 		
 	});
 	$.shortcuts();
-	$("#login").on("shown.bs.modal", function(e) {
+	$("#login").on("shown.bs.modal", function() {
 		$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
 			$.cryptAjax({
 				url: "API/index.php",

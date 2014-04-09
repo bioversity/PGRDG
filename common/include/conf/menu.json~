@@ -51,24 +51,10 @@
 					"href": "javascript: void(0);",
 					"data-toggle": "modal",
 					"data-target": "#login"
-					"id": "login_menu_btn"
 				}
 			}
 		},
 		"map_toolbox": {
-			"Help": {
-				"content": {
-					"icon": "fa-question",
-					"text": ""
-				},
-				"attributes": {
-					"href": "javascript: void(0);",
-					"class": "btn",
-					"title": "Help",
-					"data-toggle": "modal",
-					"data-target": "#map_toolbox_help"
-				}
-			},
 			"Find_location": {
 				"content": {
 					"icon": "fa-search",
@@ -91,6 +77,32 @@
 					"href": "javascript: void(0);",
 					"class": "btn",
 					"title": "Change map type"
+				}
+			},
+			"Lock_view": {
+				"content": {
+					"icon": "fa-lock",
+					"text": ""
+				},
+				"attributes": {
+					"onclick": "$.toggle_lock_view();",
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Lock/unlock this view"
+				}
+			},
+			"divider": true,
+			"Help": {
+				"content": {
+					"icon": "fa-question",
+					"text": ""
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Help",
+					"data-toggle": "modal",
+					"data-target": "#map_toolbox_help"
 				}
 			}
 		}

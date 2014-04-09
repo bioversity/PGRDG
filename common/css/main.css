@@ -103,6 +103,22 @@ header, footer {
 	left: 0;
 	z-index: 1;
 }
+#selected_zone {
+	color: rgba(255, 255, 255, 0.8);
+	font-family: "HelveticaNeueW01-45Ligh";
+	font-size: 3.5em;
+	bottom: 5px;
+	left: 50%;
+	margin-left: -40%;
+	position: absolute;
+	text-align: center;
+	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
+	width: 80%;
+	z-index: 2;
+}
+.olForeignContainer {
+	background-color: #000 !important;
+}
 #map_toolbox {
 	background-color: rgba(0, 0, 0, 0.9);
 	position: fixed;
@@ -118,6 +134,10 @@ header, footer {
 #map_toolbox > ul li, #map_sub_toolbox > ul li {
 	text-align: center;
 	display: block;
+}
+#map_toolbox > ul li.divider {
+	background-color: #2d2d2d;
+	height: 1px;
 }
 #map_toolbox a, #map_sub_toolbox a {
 	color: #ccc;
