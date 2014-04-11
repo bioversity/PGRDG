@@ -39,9 +39,9 @@
 				},
 				"attributes": {
 					"href": "/Charts"
-				}
+				},
+				"divider": "divider-vertical"
 			},
-			"divider": true,
 			"Sign in": {
 				"content": {
 					"icon": "fa-sign-in",
@@ -77,7 +77,8 @@
 					"href": "javascript: void(0);",
 					"class": "btn",
 					"title": "Change map type"
-				}
+				},
+				"divider": "divider"
 			},
 			"Lock_view": {
 				"content": {
@@ -89,9 +90,9 @@
 					"href": "javascript: void(0);",
 					"class": "btn",
 					"title": "Lock/unlock this view"
-				}
+				},
+				"divider": "divider"
 			},
-			"divider": true,
 			"Help": {
 				"content": {
 					"icon": "fa-question",

@@ -176,6 +176,7 @@ $.set_center = function(location) {
 $.change_map_layer = function(selected_map, item) {
 	var layer = map.getLayersByName(selected_map)[0],
 	lastIndex = map.getNumLayers() -1;
+	//console.log(layer);
 	
 	map.setLayerIndex(layer, lastIndex);
 	layer.redraw(true);
@@ -185,7 +186,7 @@ $.change_map_layer = function(selected_map, item) {
 		$(this).find("span.fa").removeClass("fa-check-circle").addClass("fa-circle-o");
 	});
 	$("a." + selected_map.replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
-	$("#change_map").delay(1000).fadeOut(450);
+	$("#change_map").fadeOut(450);
 	
 	var layer = map.getLayersByName(selected_map)[0],
 	lastIndex = map.getNumLayers() -1;
@@ -211,6 +212,49 @@ $.sub_toolbox = function(action) {
 					}
 					break;
 				case "change_map":
+					if($("#change_map").css("display") != "none") {
+						var li = $("#change_map li");
+						var liSelected;
+						
+						$(window).bind("keydown", "down", function(e) {
+							e.preventDefault();
+							$.each(li, function(item, value) {
+								$(this).removeClass("selected");
+							});
+							if(liSelected){
+								liSelected.removeClass("selected");
+								next = liSelected.next();
+								if(next.length > 0){
+									liSelected = next.addClass("selected").focus();
+								} else {
+									liSelected = li.eq(0).addClass("selected").focus();
+								}
+							} else {
+								liSelected = li.eq(0).addClass("selected").focus();
+							}
+						}).bind("keydown", "up", function(e) {
+							e.preventDefault();
+							$.each(li, function(item, value) {
+								$(this).removeClass("selected");
+							});
+							if(liSelected){
+								liSelected.removeClass("selected");
+								next = liSelected.prev();
+								if(next.length > 0){
+									liSelected = next.addClass("selected").focus();
+								} else {
+									liSelected = li.last().addClass("selected").focus();
+								}
+							} else {
+								liSelected = li.last().addClass("selected").focus();
+							}
+						}).bind("keydown", "return space insert", function(e) {
+							e.preventDefault();
+							var item = liSelected.find("a"),
+							selected_map = $.trim(item.attr("class").replace("btn change_map_btn ", "").replace("_", " "));
+							$.change_map_layer(selected_map, item);
+						});
+					}
 					//$(".change_map_btn." + $("#selected_map").text().replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
 					break;
 			}
@@ -222,50 +266,6 @@ $.sub_toolbox = function(action) {
 			$("#" + action).fadeOut(300, function() {
 				switch(action) {
 					case "change_map":
-						$.each($("#" + action + " li"), function(item, value) {
-							$(this).removeClass("selected");
-						});
-						if($("#change_map").css("display") != "none") {
-							var li = $("#change_map li");
-							var liSelected;
-							$(window).bind("keydown", "down", function() {
-								$.each(li, function(item, value) {
-									$(this).removeClass("selected");
-								});
-								if(liSelected){
-									liSelected.removeClass("selected");
-									next = liSelected.next();
-									if(next.length > 0){
-										liSelected = next.addClass("selected").focus();
-									} else {
-										liSelected = li.eq(0).addClass("selected").focus();
-									}
-								} else {
-									liSelected = li.eq(0).addClass("selected").focus();
-								}
-							});
-							$(window).bind("keydown", "up", function() {
-								$.each(li, function(item, value) {
-									$(this).removeClass("selected");
-								});
-								if(liSelected){
-									liSelected.removeClass("selected");
-									next = liSelected.prev();
-									if(next.length > 0){
-										liSelected = next.addClass("selected").focus();
-									} else {
-										liSelected = li.last().addClass("selected").focus();
-									}
-								} else {
-									liSelected = li.last().addClass("selected").focus();
-								}
-							});
-							$(window).bind("keydown", "return space insert", function() {
-								var item = liSelected.find("a"),
-								selected_map = $.trim(item.attr("class").replace("btn change_map_btn ", "").replace("_", " "));
-								$.change_map_layer(selected_map, item);
-							});
-						}
 						break;
 				}
 			});
@@ -317,20 +317,4 @@ $.search_location = function(input) {
 };
 $(document).ready(function() {
 	$.init_map();
-	$("#find_location input").bind("keydown", "return", function() {
-		$.sub_toolbox("find_location");
-		$.search_location($(this).val());
-	}).bind("keydown", "alt+f", function(e) {
-		// Fix for ALT+F confusion
-		if(e.keyCode == 70){
-			$.sub_toolbox("find_location");
-			return false;
-		} else {
-			return false;
-		}
-	}).bind("keydown", "esc", function(e) {
-		e.preventDefault();
-		$.sub_toolbox("close");
-		return false;
-	});
 });

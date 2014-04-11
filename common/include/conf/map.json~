@@ -1,21 +1,8 @@
 {
 	"map": {
-		"default_map_layer": "Google Hybrid",
+		"default_map_layer": "Google Physical",
 		"layers": {
 			"_comment": "",
-			"ESRI": {
-				"_comment": "Here you are defining the <a> tag in the map toolbox menu",
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "ESRI"
-				},
-				"attributes": {
-					"class": "btn change_map_btn ESRI",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('ESRI', $(this));",
-					"title": "Set ESRI layer"
-				}
-			},
 			"Google Physical": {
 				"_comment": "Here you are defining the <a> tag in the map toolbox menu",
 				"content": {

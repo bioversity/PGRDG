@@ -43,7 +43,7 @@ $.left_panel = function(subject) {
 $.shortcuts = function() {
 	// You can see all available characters key here:
 	// http://htmlpreview.github.io/?https://github.com/jeresig/jquery.hotkeys/master/test-static-05.html
-	$(window).bind("keydown", "alt+0", function(e) {
+	$("body, #find_location input").bind("keydown", "alt+0", function(e) {
 		e.preventDefault();
 		map.zoomTo(0);
 		$("#selected_zone").text("World").fadeIn(300);
@@ -114,6 +114,11 @@ $.shortcuts = function() {
 	}).bind("keyup", "alt", function(e) {
 		e.preventDefault();
 		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+	});
+	
+	$("#find_location input").bind("keydown", "return", function() {
+		$.sub_toolbox("find_location");
+		$.search_location($(this).val());
 	});
 };
 
