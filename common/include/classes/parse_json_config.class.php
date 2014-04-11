@@ -25,7 +25,16 @@ class parse_json_config {
 	} 
 
 	public function menu($menu_position, $ul_class = "") {
-		$menu_list = '<ul' . (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '') . '>' . "\n";
+		$menu_list = '<ul';
+		if(!is_array($ul_class)) { 
+			$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
+		} else {
+			foreach($ul_class as $k => $v) {
+				$menu_list .= " " . $k . '="' . $v . '"';
+			}
+		}
+		$menu_list .=  ">\n";
+		
 		foreach($this->walk($this->json_conf, $menu_position) as $obj => $map_toolbox) {
 			if($obj !== "_comment") {
 				$divider = "";

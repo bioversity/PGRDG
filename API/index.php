@@ -25,6 +25,10 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 		foreach($_GET["params"] as $key=>$value) {
 			$fields_string .= $key . "=" . $value . "&";
 		}
+		if($_GET["debug"] == "true") {
+			print $_GET["address"] . "?" . $fields_string . "\n\n";
+		}
+		
 		print file_get_contents($_GET["address"] . "?" . $fields_string);
 	}
 } else {

@@ -91,6 +91,34 @@ $.init_map = function() {
 		//restrictedExtent: new OpenLayers.Bounds(-180, -90, 180, 90)
         });
 };
+$.get_click_info = function() {
+	var clicked_coords = $.parseJSON($("#clicked_coords").text());
+	//console.log(clicked_coords);
+	
+	$.ajax({
+		url: "API/",
+		type: "get",
+		format: "json",
+		crossDomain: true,
+		data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/reverse", params: {format: "json", lat: clicked_coords.lat, lon: clicked_coords.lon, zoom: 18, addressdetails: 1}},
+		error: function(data) {
+			alert("An error occurred while communicating with the OpenLS service. Please try again.");
+		},
+		success: function(data) {
+			datap = $.parseJSON(data);
+			map.addPopup(new OpenLayers.Popup(
+				"chicken", 
+				new OpenLayers.LonLat(clicked_coords.lon, clicked_coords.lat).transform(
+					new OpenLayers.Projection("EPSG:4326"),
+					new OpenLayers.Projection("EPSG:3857")
+				),
+				new OpenLayers.Size(200,200),
+				datap.display_name,
+				true
+			));
+		}
+	});
+};
 $.map_event = function(event) {
 	//console.log("Event: " + event.type);
 	//console.log(map.getZoom());
@@ -280,7 +308,7 @@ $.search_location = function(input) {
 			type: "get",
 			format: "json",
 			crossDomain: true,
-			data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/search.php", params: {q: encodeURIComponent(input), format: "json", addressdetails: 1, bounded: 1, limit: 1}},
+			data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/search.php", params: {q: encodeURIComponent(input), format: "json", addressdetails: 1, bounded: 1, limit: 10, polygon_geojson: 1}},
 			error: function(data) {
 				alert("An error occurred while communicating with the OpenLS service. Please try again.");
 				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
@@ -288,6 +316,7 @@ $.search_location = function(input) {
 			success: function(data) {
 				datap = $.parseJSON(data);
 				$("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600);
+				$("#information_zone").html(datap[0].address.city + ", " + ((datap[0].address.county != undefined) ? "(" + datap[0].address.county + ") " : "") + datap[0].address.state + " - " + datap[0].address.country);
 				var lonLat = new OpenLayers.LonLat(datap[0].lon, datap[0].lat).transform(
 					new OpenLayers.Projection("EPSG:4326"),
 					new OpenLayers.Projection("EPSG:3857")
@@ -307,8 +336,10 @@ $.search_location = function(input) {
 						new OpenLayers.Projection("EPSG:900913")
 					), map.zoomToExtent(new OpenLayers.Bounds(minLng, minLat, maxLng, maxLat).transform("EPSG:4326", "EPSG:900913"))
 				);
-				$.add_marker(datap[0].lon, datap[0].lat);
-
+				$.each(datap, function(k, v) {
+					console.log(k);
+					$.add_marker(datap[k].lon, datap[k].lat);
+				});
 				
 				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
 			}
@@ -317,4 +348,29 @@ $.search_location = function(input) {
 };
 $(document).ready(function() {
 	$.init_map();
+	var $contextMenu = $("#contextMenu");
+  
+	$("body").on("contextmenu", "#pgrdg_map", function(e) {
+		if($("#clicked_coords").length == 0) {
+			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');
+		}
+		var clicked_coords = map.getLonLatFromPixel(new OpenLayers.Pixel(e.clientX, e.clientY)),
+		center = new OpenLayers.LonLat(clicked_coords.lon, clicked_coords.lat);
+		center.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+		var clicked_coords = {"lon": center.lon, "lat": center.lat};
+		$("#clicked_coords").text('{"lon": ' + clicked_coords.lon + ',"lat": ' + clicked_coords.lat + '}');
+		
+		$contextMenu.css({
+			display: "block",
+			left: e.pageX,
+			top: e.pageY
+		});
+		return false;
+	});
+	$contextMenu.on("click", "a", function() {
+		$contextMenu.hide();
+	});
+	$("#pgrdg_map > *").click(function(e) {
+		$contextMenu.hide();
+	});
 });

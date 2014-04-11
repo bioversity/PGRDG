@@ -122,8 +122,33 @@ header.map #logo {
 	width: 80%;
 	z-index: 2;
 }
+#information_zone {
+	color: rgba(255, 255, 255, 0.8);
+	font-family: "HelveticaNeueW01-45Ligh";
+	text-shadow: 0 0 3px #333;
+	font-size: 0.9em;
+	bottom: 30px;
+	left: 7.5px;
+	position: absolute;
+	text-align: left;
+	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
+	width: 18%;
+	z-index: 2;
+	
+}
+#information_zone td {
+	padding-left: 10px;
+}
+#information_zone p, #information_zone td, #information_zone th, #information_zone li {
+	color: rgba(255, 255, 255, 0.8);
+}
 .olForeignContainer {
 	background-color: #000 !important;
+}
+#contextMenu {
+	position: absolute;
+	display: none;
+	z-index: 3;
 }
 #map_toolbox {
 	background-color: rgba(0, 0, 0, 0.9);
@@ -251,4 +276,7 @@ header.map #logo {
 .olControlNavToolbar .olControlNavigationItemInactive {
 	background-image: url("img/panning-hand-off.png");
 	background-repeat: no-repeat;
+}
+.gmnoprint, .gm-style-cc {
+	display: none;
 }

@@ -50,7 +50,7 @@ div.olLayerDiv {
 .olControlScaleLine {
    display: block;
    position: absolute;
-   right: 60px;
+   right: 50px;
    bottom: 15px;
    font-size: xx-small;
 }

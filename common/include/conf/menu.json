@@ -106,6 +106,21 @@
 					"data-target": "#map_toolbox_help"
 				}
 			}
+		},
+		"map_contextmenu": {
+			"Get_point": {
+				"content": {
+					"icon": "fa-crosshairs",
+					"text": "Get informations of this point"
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Help",
+					"onclick": "$.get_click_info();"
+				},
+				"divider": "divider"
+			}
 		}
 	}
 }

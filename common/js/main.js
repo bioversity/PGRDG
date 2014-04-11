@@ -41,8 +41,12 @@ $.left_panel = function(subject) {
 };
 
 $.shortcuts = function() {
-	// You can see all available characters key here:
-	// http://htmlpreview.github.io/?https://github.com/jeresig/jquery.hotkeys/master/test-static-05.html
+	/*
+	You can see all available characters key here:
+	http://htmlpreview.github.io/?https://github.com/jeresig/jquery.hotkeys/master/test-static-05.html
+	*/
+	
+	// Shortcuts ever available
 	$("body, #find_location input").bind("keydown", "alt+0", function(e) {
 		e.preventDefault();
 		map.zoomTo(0);
@@ -111,8 +115,13 @@ $.shortcuts = function() {
 		e.preventDefault();
 		$.sub_toolbox("close");
 		return false;
+	}).bind("keydown", "alt", function(e) {
+		e.preventDefault();
+		$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr></table>');
+		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
 	}).bind("keyup", "alt", function(e) {
 		e.preventDefault();
+		$("#information_zone").html("");
 		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
 	});
 	
