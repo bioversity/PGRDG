@@ -4,7 +4,7 @@ lon = 12,
 zoom = 4,
 fromProjection = new OpenLayers.Projection("EPSG:4326"),
 toProjection = new OpenLayers.Projection("EPSG:900913"),
-map,
+map, view;//,
 // Layers loaded on the map
 layers = {
 	/*
@@ -40,7 +40,6 @@ lonLat = new OpenLayers.LonLat(lon, lat).transform(
 	new OpenLayers.Projection("EPSG:4326"),
 	new OpenLayers.Projection("EPSG:3857")
 );
-
 $.init_map = function() {
 	var selected_map = $("#selected_map").text();
 	map = new OpenLayers.Map ("pgrdg_map", {
@@ -95,27 +94,21 @@ $.get_click_info = function() {
 	var clicked_coords = $.parseJSON($("#clicked_coords").text());
 	//console.log(clicked_coords);
 	
-	$.ajax({
-		url: "API/",
-		type: "get",
-		format: "json",
-		crossDomain: true,
-		data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/reverse", params: {format: "json", lat: clicked_coords.lat, lon: clicked_coords.lon, zoom: 18, addressdetails: 1}},
+	$.find_location({
+		lon: clicked_coords.lon,
+		lat: clicked_coords.lat,
+		addressdetails: 1,
 		error: function(data) {
 			alert("An error occurred while communicating with the OpenLS service. Please try again.");
 		},
 		success: function(data) {
 			datap = $.parseJSON(data);
-			map.addPopup(new OpenLayers.Popup(
-				"chicken", 
-				new OpenLayers.LonLat(clicked_coords.lon, clicked_coords.lat).transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:3857")
-				),
-				new OpenLayers.Size(200,200),
-				datap.display_name,
-				true
-			));
+			$.add_popup({
+				lon: clicked_coords.lon,
+				lat: clicked_coords.lat,
+				title: "Location info",
+				html: datap.display_name
+			});
 		}
 	});
 };
@@ -154,19 +147,56 @@ $.add_marker = function(lon, lat, new_layer) {
 		layers.mrk.addMarker(new OpenLayers.Marker($.set_lonlat(lon, lat), icon));
 	}
 };
+$.add_popup = function(options, callback) {
+	var options = $.extend({
+		div: "Popup",
+		lon: 0,
+		lat: 0,
+		size: {
+			width: 200,
+			height: 200
+		},
+		title: "Selected location",
+		html: "Sample text",
+		callback: function() {}	
+	}, options);
+	
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
+	var location = new OpenLayers.Geometry.Point(options.lon, options.lat).transform("EPSG:4326", "EPSG:3857");
+	/*
+	var popup = new OpenLayers.Popup.Popover(
+		options.div,
+		location.getBounds().getCenterLonLat(),
+		options.html,
+		options.title,
+		options.callback
+	);
+	*/
+	map.addPopup(new OpenLayers.Popup.FramedCloud(
+		options.div, 
+		location.getBounds().getCenterLonLat(),
+		null,
+		options.html,
+		//new OpenLayers.Size(options.size.w, options.size.h),
+		null,
+		true,
+		callback
+	));
+}
 $.set_center = function(location) {
 	var loc_data = {};
-	$("#selected_zone").text(location).fadeIn(300);
 	switch(location) {
 		case "World":
 			loc_data.lon = 12;
 			loc_data.lat = 50;
-			loc_data.zoom = 0;
+			loc_data.zoom = 2;
 			break;
 		case "Africa":
 			loc_data.lon = 16;
 			loc_data.lat = -1;
-			loc_data.zoom = 4;
+			loc_data.zoom = 3.5;
 			break;
 		case "Antarctica":
 			loc_data.lon = -50;
@@ -198,8 +228,32 @@ $.set_center = function(location) {
 			loc_data.lat = -23;
 			loc_data.zoom = 4;
 			break;
+		case "Your position":
+			navigator.geolocation.getCurrentPosition(function(position) {
+				// Success
+				$.find_location({
+					lon: position.coords.longitude,
+					lat: position.coords.latitude,
+					addressdetails: 0,
+					success: function(data) {
+						datap = $.parseJSON(data);
+						$.add_marker(position.coords.longitude, position.coords.latitude);
+						map.setCenter($.set_lonlat(position.coords.longitude, position.coords.latitude), 13);
+						$("#selected_zone").text(datap.display_name).fadeIn(300);
+					}
+				});
+				return false;
+			}, function(position) {
+				// Fail
+				$("#selected_zone").html("<i>Unable to find position</i>").fadeIn(300);
+				return false;
+			});
+			break;
 	}
-	map.setCenter($.set_lonlat(loc_data.lon, loc_data.lat), loc_data.zoom);
+	if(location != "Your position") {
+		map.setCenter($.set_lonlat(loc_data.lon, loc_data.lat), loc_data.zoom);
+		$("#selected_zone").text(location).fadeIn(300);
+	}
 }
 $.change_map_layer = function(selected_map, item) {
 	var layer = map.getLayersByName(selected_map)[0],
@@ -300,6 +354,23 @@ $.sub_toolbox = function(action) {
 		}
 	}
 };
+// Search location from given coordinates
+$.find_location = function(options) {
+	$.ajax({
+		url: "API/",
+		type: "get",
+		format: "json",
+		crossDomain: true,
+		data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/reverse", params: {format: "json", lat: options.lat, lon: options.lon, zoom: 18, addressdetails: ((options.addressdetails == 1) ? 1 : 0)}},
+		error: function(data) {
+			options.error(data);
+		},
+		success: function(data) {
+			options.success(data);
+		}
+	});
+}
+// Search location from given string
 $.search_location = function(input) {
 	if(input.length > 0) {
 		$("#map_toolbox span.fa-search").removeClass("fa-search").addClass("fa-spinner fa-spin").parent("a").addClass("disabled");
@@ -325,11 +396,6 @@ $.search_location = function(input) {
 				maxLat = datap[0].boundingbox[1],
 				minLng = datap[0].boundingbox[2],
 				maxLng = datap[0].boundingbox[3];
-				/*
-				if(datap[0].type == "city" || datap[0].type == "administrative" || datap[0].class == "building") {
-					$.change_map_layer("Google Streets", $("#change_map a.Google_Streets"));
-				}
-				*/
 				map.setCenter(
 					new OpenLayers.LonLat(datap[0].lon, datap[0].lat).transform(
 						new OpenLayers.Projection("EPSG:4326"),
@@ -349,7 +415,6 @@ $.search_location = function(input) {
 $(document).ready(function() {
 	$.init_map();
 	var $contextMenu = $("#contextMenu");
-  
 	$("body").on("contextmenu", "#pgrdg_map", function(e) {
 		if($("#clicked_coords").length == 0) {
 			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');

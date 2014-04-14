@@ -253,30 +253,50 @@ header.map #logo {
 	border-left: 1px solid #eee;
 	border-right: 1px solid #ffffff;
 }
-.olControlPanZoomBar, .olControlZoom {
-	top: 90px !important;
-	left: 10px;
+/* OpenLayers 2 */
+	.olControlPanZoomBar, .olControlZoom {
+		top: 90px !important;
+		left: 10px;
+	}
+	.olControlMousePosition {
+		top: 10px;
+		right: 10px !important;
+	}
+	.olControlNavToolbar div {
+		display: block;
+		width: 28px;
+		height: 28px;
+		top: 300px;
+		left: 6px;
+		position: relative;
+	}
+	.olControlNavToolbar .olControlNavigationItemActive {
+		background-image: url("img/panning-hand-on.png");
+		background-repeat: no-repeat;
+	}
+	.olControlNavToolbar .olControlNavigationItemInactive {
+		background-image: url("img/panning-hand-off.png");
+		background-repeat: no-repeat;
+	}
+	.gmnoprint.gm-style-cc {
+		margin-right: 50px;
+	}
+	.olControlScaleLine {
+		margin-bottom: 5px;
+	}
+	.olControlScaleLine div {
+		border-color: #333;
+		height: 15px;
+		color: #000;
+	}
+	.olPopup img {
+		max-width: auto;
+	}
+
+/* OpenLayers 3 */
+.ol-full-screen {
+	
 }
-.olControlMousePosition {
-	top: 10px;
-	right: 10px !important;
-}
-.olControlNavToolbar div {
-	display: block;
-	width: 28px;
-	height: 28px;
-	top: 300px;
-	left: 6px;
-	position: relative;
-}
-.olControlNavToolbar .olControlNavigationItemActive {
-	background-image: url("img/panning-hand-on.png");
-	background-repeat: no-repeat;
-}
-.olControlNavToolbar .olControlNavigationItemInactive {
-	background-image: url("img/panning-hand-off.png");
-	background-repeat: no-repeat;
-}
-.gmnoprint, .gm-style-cc {
+.ol-logo {
 	display: none;
 }

@@ -1,6 +1,6 @@
 {
 	"map": {
-		"default_map_layer": "Google Hybrid",
+		"default_map_layer": "Google Satellite",
 		"layers": {
 			"_comment": "",
 			"Google Physical": {

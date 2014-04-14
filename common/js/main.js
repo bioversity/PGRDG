@@ -3,7 +3,7 @@ $.ucfirst = function(str) {
 	var f = str.charAt(0).toUpperCase();
 	return f + str.substr(1);
 };
-function makeid() {
+$.makeid = function() {
 	var text = "",
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	
@@ -12,7 +12,7 @@ function makeid() {
 	}
 	return text;
 }
-var password = makeid(),
+var password = $.makeid(),
 auth = false;
 $.cryptAjax = function(url, options) {
 	if(!auth) {
@@ -49,7 +49,7 @@ $.shortcuts = function() {
 	// Shortcuts ever available
 	$("body, #find_location input").bind("keydown", "alt+0", function(e) {
 		e.preventDefault();
-		map.zoomTo(0);
+		$.set_center("World");
 		$("#selected_zone").text("World").fadeIn(300);
 		return false;
 	}).bind("keydown", "alt+1", function(e) {
@@ -83,10 +83,20 @@ $.shortcuts = function() {
 	}).bind("keydown", "alt+8", function(e) {
 		return false;
 	}).bind("keydown", "alt+9", function(e) {
+		e.preventDefault();
+		// Fix for ALT+I and F1 confusion
+		if(e.keyCode == 105){
+			//$.set_center("Your position");
+			return false;
+		} else {
+			return false;
+		}
 		return false;
 	}).bind("keydown", "alt+i F1", function(e) {
 		e.preventDefault();
-		$("#map_toolbox_help").modal("show");
+		if(e.keyCode != 105){
+			$("#map_toolbox_help").modal("show");
+		}
 		return false;
 	}).bind("keydown", "alt+f", function(e) {
 		e.preventDefault();
@@ -117,7 +127,7 @@ $.shortcuts = function() {
 		return false;
 	}).bind("keydown", "alt", function(e) {
 		e.preventDefault();
-		$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr></table>');
+		$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>9</tt></th><td>User position</td></tr></table>');
 		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
 	}).bind("keyup", "alt", function(e) {
 		e.preventDefault();
