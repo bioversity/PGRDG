@@ -6,57 +6,131 @@ OpenLayers 3 based map
 var lat = 50,
 lon = 12,
 zoom = 4,
-map, view;
+map, view,
+exampleNS = {};
+
+exampleNS.getRendererFromQueryString = function() {
+	var obj = {},
+	queryString = location.search.slice(1),
+	re = /([^&=]+)=([^&]*)/g,
+	m;
+	
+	while (m = re.exec(queryString)) {
+		obj[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+	}
+	if ("renderers" in obj) {
+		return obj['renderers'].split(",");
+	} else if ("renderer" in obj) {
+		return [obj["renderer"]];
+	} else {
+		return undefined;
+	}
+};
 
 $.init_map = function() {
 	var selected_map = $("#selected_map").text();
 	view = new ol.View2D({
-		center: ol.proj.transform([lon, lat], "EPSG:4326", "EPSG:3857"),
+		center: $.set_lonlat(lon, lat),
 		zoom: 4
-	});
+	}),
+	layers = [
+		/*
+		new ol.layer.Tile({
+			style: "Terrain labels",
+			source: new ol.source.Stamen({
+				layer: "terrain-labels"
+			}),
+			visible: false
+		}),
+		*/
+		new ol.layer.Tile({
+			style: "Satellite",
+			minResolution: 80,
+			source: new ol.source.MapQuest({
+				layer: "sat",
+				crossOrigin: "anonymous"
+			}),
+			visible: true
+		}),
+		new ol.layer.Tile({
+			style: "Road",
+			source: new ol.source.MapQuest({layer: "osm"}),
+			visible: false
+		}),
+		new ol.layer.Tile({
+			style: "Watercolor",
+			source: new ol.source.Stamen({
+				layer: "watercolor"
+			}),
+			visible: false
+		}),
+		new ol.layer.Tile({
+			style: "Labels",
+			parentLayer: ["Satellite", "Watercolor"],
+			//maxResolution: 2000,
+			source: new ol.source.TileJSON({
+				url: "http://api.tiles.mapbox.com/v3/mapbox.world-borders-light.jsonp",
+				crossOrigin: "anonymous"
+			})
+		})
+	];
+	
 	map = new ol.Map({
 		target: "pgrdg_map",
-		layers: [
-			/*
-			new ol.layer.Tile({
-				source: new ol.source.Stamen({
-					layer: 'watercolor'
-				})
-			}),
-			new ol.layer.Tile({
-				source: new ol.source.Stamen({
-					layer: 'terrain-labels'
-				})
-			}),
-			*/
-			new ol.layer.Tile({
-				source: new ol.source.MapQuest({
-					layer: 'sat',
-					crossOrigin: 'anonymous'
-				})
-			}),
-			new ol.layer.Group({
-				layers: [
-					new ol.layer.Tile({
-						source: new ol.source.TileJSON({
-							url: 'http://api.tiles.mapbox.com/v3/mapbox.world-borders-light.jsonp',
-							crossOrigin: 'anonymous'
-						})
-					})
-				]
-			}),
-		],
+		layers: layers,
 		view: view,
 		controls: ol.control.defaults().extend([
 			new ol.control.FullScreen(),
-			new ol.control.ScaleLine
-		])
+			new ol.control.ScaleLine(),
+			new ol.control.Zoom(),
+			/*
+			new ol.control.ZoomToExtent({
+				extent: 2
+			})
+			*/
+		]),
+		renderer: exampleNS.getRendererFromQueryString()
 	});
 	view = map.getView();
-	map.getLayers().forEach(function(layer, i) {
-		//console.log(layer, i);
-	});
+	//view.fitExtent([-180, -90, 180, 90], map.getSize());
+	map.on("moveend", $.get_visible_boundingbox);
 };
+
+/**
+Position functions
+*/
+$.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); }
+$.get_visible_boundingbox = function(evt) {
+	var map = evt.map,
+	extent = map.getView().calculateExtent(map.getSize()),
+	lonlat = ol.extent.getBottomLeft(extent),
+	bottomLeft = $.set_lonlat(lonlat[0], lonlat[1]),
+	topRight = $.set_lonlat(lonlat[0], lonlat[1]),
+	boundingbox = [topRight[1], $.wrapLon(topRight[0]), bottomLeft[1], $.wrapLon(bottomLeft[0])];
+	
+	if(topRight[1] > 85 || isNaN(topRight[1])) {
+		//console.log($.wrapLon(bottomLeft[0]), topRight[1]);
+		//view.setCenter($.set_lonlat($.wrapLon(bottomLeft[0]), topRight[1]));
+	}
+	if($.get_current_zoom() < 2) {
+		$.set_zoom(2);
+	}
+	
+	return boundingbox;
+};
+$.set_lonlat = function(lon, lat) { return ol.proj.transform([lon, lat], "EPSG:4326", "EPSG:3857"); };
+$.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([a, b, c, d], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
+$.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
+$.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
+
+/**
+Zoom functions
+*/
+$.get_current_zoom = function() { return view.getZoom(); }
+$.set_zoom = function(zoom) { return view.setZoom(zoom); }
+$.increase_zoom = function() { view.setZoom((view.getZoom() + 1)); };
+$.decrease_zoom = function() { view.setZoom((view.getZoom() - 1)); };
+/*
 $.get_click_info = function() {
 	var clicked_coords = $.parseJSON($("#clicked_coords").text());
 	//console.log(clicked_coords);
@@ -79,26 +153,9 @@ $.get_click_info = function() {
 		}
 	});
 };
-$.map_event = function(event) {
-	//console.log("Event: " + event.type);
-	//console.log(map.getZoom());
-};
-$.increase_zoom = function() {
-	var zoom = map.getZoom();
-	map.zoomTo((zoom + 1));
-};
-$.decrease_zoom = function() {
-	var zoom = map.getZoom();
-	map.zoomTo((zoom - 1));
-};
-$.set_lonlat = function(lon, lat) {
-	var lonlat = new OpenLayers.LonLat(lon, lat).transform(
-		new OpenLayers.Projection("EPSG:4326"),
-		new OpenLayers.Projection("EPSG:3857")
-	);
-	return lonlat;			
-};
-$.add_marker = function(lon, lat, new_layer) {
+*/
+$.add_marker = function(lon, lat, name) {
+	/*
 	if(new_layer == undefined || new_layer == null) {
 		new_layer = false
 	}
@@ -113,7 +170,9 @@ $.add_marker = function(lon, lat, new_layer) {
 	} else {
 		layers.mrk.addMarker(new OpenLayers.Marker($.set_lonlat(lon, lat), icon));
 	}
+	*/
 };
+/*
 $.add_popup = function(options, callback) {
 	var options = $.extend({
 		div: "Popup",
@@ -132,7 +191,7 @@ $.add_popup = function(options, callback) {
 		callback.call(this);
 	}
 	var location = new OpenLayers.Geometry.Point(options.lon, options.lat).transform("EPSG:4326", "EPSG:3857");
-	/*
+	
 	var popup = new OpenLayers.Popup.Popover(
 		options.div,
 		location.getBounds().getCenterLonLat(),
@@ -140,7 +199,7 @@ $.add_popup = function(options, callback) {
 		options.title,
 		options.callback
 	);
-	*/
+	* /
 	map.addPopup(new OpenLayers.Popup.FramedCloud(
 		options.div, 
 		location.getBounds().getCenterLonLat(),
@@ -152,7 +211,8 @@ $.add_popup = function(options, callback) {
 		callback
 	));
 }
-$.set_center = function(location) {
+*/
+$.center_map_on = function(location) {
 	var loc_data = {};
 	switch(location) {
 		case "World":
@@ -204,8 +264,9 @@ $.set_center = function(location) {
 					addressdetails: 0,
 					success: function(data) {
 						datap = $.parseJSON(data);
-						$.add_marker(position.coords.longitude, position.coords.latitude);
-						map.setCenter($.set_lonlat(position.coords.longitude, position.coords.latitude), 13);
+						//$.add_marker(position.coords.longitude, position.coords.latitude);
+						$.set_center(position.coords.longitude, position.coords.latitude);
+						$.set_zoom(13);
 						$("#selected_zone").text(datap.display_name).fadeIn(300);
 					}
 				});
@@ -218,38 +279,81 @@ $.set_center = function(location) {
 			break;
 	}
 	if(location != "Your position") {
-		view.setCenter(ol.proj.transform([loc_data.lon, loc_data.lat], "EPSG:4326", "EPSG:3857"));
-		view.setZoom(loc_data.zoom);
+		$.set_center(loc_data.lon, loc_data.lat);
+		$.set_zoom(loc_data.zoom);
 		$("#selected_zone").text(location).fadeIn(300);
 	}
 }
-$.change_map_layer = function(selected_map, item) {
-	var layer = map.getLayersByName(selected_map)[0],
-	lastIndex = map.getNumLayers() -1;
-	//console.log(layer);
+
+
+/**
+Layers functions
+*/
+$.render_layers_on_menu = function() {
+	$("#change_map").append('<ul class="list-unstyled">');
 	
-	map.setLayerIndex(layer, lastIndex);
-	layer.redraw(true);
+	for (var i = 0, ii = layers.length; i < ii; ++i) {
+		var label = layers[i].get("style");
+		
+		if(layers[i].getVisible()) {
+			$("#change_map ul").append('<li class="selected"><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;' + label + '</a>');
+		} else {
+			$("#change_map ul").append('<li><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;' + label + '</a>');
+		}
+	}
+}
+
+$.show_layer = function(selected_layer) {
+	for (var i = 0, ii = layers.length; i < ii; ++i) {
+		var style = layers[i].get("style");
+		if(style == selected_layer) {
+			layers[i].setVisible(1);
+		}
+	}
+}
+$.hide_layer = function(selected_layer) {
+	for (var i = 0, ii = layers.length; i < ii; ++i) {
+		var style = layers[i].get("style");
+		if(style == selected_layer) {
+			layers[i].setVisible(1);
+		}
+	}
+}
+$.change_map_layer = function(selected_layer) {
+	var i, ii, parent_layer;
 	
-	$.each($("#change_map ul li"), function(i, l) {
-		$(this).removeClass("selected")
-		$(this).find("span.fa").removeClass("fa-check-circle").addClass("fa-circle-o");
-	});
-	$("a." + selected_map.replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
-	$("#change_map").fadeOut(450);
-	
-	var layer = map.getLayersByName(selected_map)[0],
-	lastIndex = map.getNumLayers() -1;
-	
-	map.events.register("loadstart", layer, function(event) {
-		console.log("Load Start");
-		//$("#map_toolbox span.fa-tasks").removeClass("fa-tasks").addClass("fa-spinner fa-spin").parent("a").addClass("disabled");
-	});
-	map.setLayerIndex(layer, lastIndex);
-	layer.redraw(true);
-	
-	//$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-tasks").parent("a").removeClass("disabled");
-};
+	for (var i = 0, ii = layers.length; i < ii; ++i) {
+		var label = layers[i].get("style"),
+		pls = layers[i].get("parentLayer");
+		
+		if(layers[i].getVisible() == 1) {
+			$.hide_layer(layers[i].get("style"));
+			$("#change_map a." + label.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
+			layers[i].setVisible(0);
+		}
+		if(label == selected_layer) {
+			if(label == "Labels") {
+				if(pls != undefined) {
+					if($.inArray($("#previous_selected_layer").text(), pls) !== -1) {
+						$.show_layer($("#previous_selected_layer").text());
+						$("#change_map a." + $("#previous_selected_layer").text()).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+					} else {
+						$.hide_layer($("#previous_selected_layer").text());
+						$("#change_map a." + label.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
+					}
+				}
+			} else {
+				$("#previous_selected_layer").text(label);
+			}
+			$.show_layer(selected_layer);
+			$("#change_map a." + selected_layer.replace(" ", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+		}
+	}
+}
+
+/**
+Map functions
+*/
 $.sub_toolbox = function(action) {
 	if($("#" + action).css("display") == "none") {
 		$("#" + action).fadeIn(function() {
@@ -322,6 +426,7 @@ $.sub_toolbox = function(action) {
 		}
 	}
 };
+
 // Search location from given coordinates
 $.find_location = function(options) {
 	$.ajax({
@@ -356,32 +461,35 @@ $.search_location = function(input) {
 				datap = $.parseJSON(data);
 				$("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600);
 				$("#information_zone").html(datap[0].address.city + ", " + ((datap[0].address.county != undefined) ? "(" + datap[0].address.county + ") " : "") + datap[0].address.state + " - " + datap[0].address.country);
-				var lonLat = new OpenLayers.LonLat(datap[0].lon, datap[0].lat).transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					new OpenLayers.Projection("EPSG:3857")
-				),
-				minLat = datap[0].boundingbox[0],
+				
+				var minLat = datap[0].boundingbox[0],
 				maxLat = datap[0].boundingbox[1],
 				minLng = datap[0].boundingbox[2],
 				maxLng = datap[0].boundingbox[3];
-				map.setCenter(
-					new OpenLayers.LonLat(datap[0].lon, datap[0].lat).transform(
-						new OpenLayers.Projection("EPSG:4326"),
-						new OpenLayers.Projection("EPSG:900913")
-					), map.zoomToExtent(new OpenLayers.Bounds(minLng, minLat, maxLng, maxLat).transform("EPSG:4326", "EPSG:900913"))
-				);
+				
+				console.log(datap[0].lon, datap[0].lat);
+				console.log(typeof datap[0].lon);
+				$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
+				$.set_zoom(7);
+				//view.fitExtent([minLat, maxLat, minLng, maxLng], map.getSize());
+				
+				//var textent = ol.extent.transform([minLat, minLng, maxLat, maxLng], ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
+				//console.log(textent);
+				
+				/*
 				$.each(datap, function(k, v) {
 					console.log(k);
-					$.add_marker(datap[k].lon, datap[k].lat);
+					//$.add_marker(datap[k].lon, datap[k].lat);
 				});
+				*/
 				
 				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
 			}
 		});
 	}
 };
-$(document).ready(function() {
-	$.init_map();
+
+$.contextMenu = function() {
 	var $contextMenu = $("#contextMenu");
 	$("body").on("contextmenu", "#pgrdg_map", function(e) {
 		if($("#clicked_coords").length == 0) {
@@ -406,4 +514,10 @@ $(document).ready(function() {
 	$("#pgrdg_map > *").click(function(e) {
 		$contextMenu.hide();
 	});
+}
+
+$(document).ready(function() {
+	$.init_map();
+	$.render_layers_on_menu();
+	$.contextMenu();
 });

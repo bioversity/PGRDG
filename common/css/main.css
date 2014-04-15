@@ -294,6 +294,22 @@ header.map #logo {
 	}
 
 /* OpenLayers 3 */
+.ol-zoom button, .ol-zoom-extent button, .ol-full-screen button {
+	background-color: rgba(255, 255, 255, 0.75) !important;
+	color: #333 !important;
+}
+.ol-zoom button:hover, .ol-zoom button:focus, .ol-zoom-extent button:hover, .ol-zoom-extent button:focus, .ol-full-screen button:hover, .ol-full-screen button:focus {
+	background-color: rgba(255, 255, 255, 0.85) !important;
+}
+.ol-zoom {
+	top: 90px !important;
+}
+.ol-zoom-extent {
+	top: 145px !important;
+}
+.ol-attribution {
+	right: 50px !important;
+}
 .ol-full-screen {
 	
 }

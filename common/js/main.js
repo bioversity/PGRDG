@@ -49,36 +49,36 @@ $.shortcuts = function() {
 	// Shortcuts ever available
 	$("body, #find_location input").bind("keydown", "alt+0", function(e) {
 		e.preventDefault();
-		$.set_center("World");
+		$.center_map_on("World");
 		$("#selected_zone").text("World").fadeIn(300);
 		return false;
 	}).bind("keydown", "alt+1", function(e) {
 		e.preventDefault();
-		$.set_center("Africa");
+		$.center_map_on("Africa");
 		return false;
 	}).bind("keydown", "alt+2", function(e) {
 		e.preventDefault();
-		$.set_center("Antarctica");
+		$.center_map_on("Antarctica");
 		return false;
 	}).bind("keydown", "alt+3", function(e) {
 		e.preventDefault();
-		$.set_center("Asia");
+		$.center_map_on("Asia");
 		return false;
 	}).bind("keydown", "alt+4", function(e) {
 		e.preventDefault();
-		$.set_center("Europe");
+		$.center_map_on("Europe");
 		return false;
 	}).bind("keydown", "alt+5", function(e) {
 		e.preventDefault();
-		$.set_center("North America");
+		$.center_map_on("North America");
 		return false;
 	}).bind("keydown", "alt+6", function(e) {
 		e.preventDefault();
-		$.set_center("Oceania");
+		$.center_map_on("Oceania");
 		return false;
 	}).bind("keydown", "alt+7", function(e) {
 		e.preventDefault();
-		$.set_center("South America");
+		$.center_map_on("South America");
 		return false;
 	}).bind("keydown", "alt+8", function(e) {
 		return false;
@@ -86,7 +86,7 @@ $.shortcuts = function() {
 		e.preventDefault();
 		// Fix for ALT+I and F1 confusion
 		if(e.keyCode == 105){
-			//$.set_center("Your position");
+			//$.center_map_on("Your position");
 			return false;
 		} else {
 			return false;
