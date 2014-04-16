@@ -13,8 +13,9 @@
 	<!--
 	OpenLayers 3
 	-->
-	<link rel="stylesheet" href="common/js/v3.0.0-beta.4/css/ol.css" type="text/css" />
-	<script src="common/js/v3.0.0-beta.4/build/ol.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="common/js/OpenLayers-3.0.0-beta.4/css/ol.css" type="text/css" />
+	<script src="common/js/OpenLayers-3.0.0-beta.4/build/ol.js" type="text/javascript"></script>
+	
 	<script type="text/javascript" src="common/js/main.map3.js"></script>
 <?php } ?>
 <script type="text/javascript" src="common/js/jquery.hotkeys.js"></script>

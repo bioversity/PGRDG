@@ -3,23 +3,20 @@ OpenLayers 3 based map
 */
 
 // Initial map position
-var lat = 50,
-lon = 12,
+var lon = 12,
+lat = 55,
 zoom = 4,
 map, view,
 exampleNS = {};
 
 exampleNS.getRendererFromQueryString = function() {
-	var obj = {},
-	queryString = location.search.slice(1),
-	re = /([^&=]+)=([^&]*)/g,
-	m;
+	var obj = {}, queryString = location.search.slice(1), re = /([^&=]+)=([^&]*)/g, m;
 	
 	while (m = re.exec(queryString)) {
 		obj[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
 	}
 	if ("renderers" in obj) {
-		return obj['renderers'].split(",");
+		return obj["renderers"].split(",");
 	} else if ("renderer" in obj) {
 		return [obj["renderer"]];
 	} else {
@@ -28,23 +25,25 @@ exampleNS.getRendererFromQueryString = function() {
 };
 
 $.init_map = function() {
-	var selected_map = $("#selected_map").text();
+	//var selected_map = $("#selected_map").text();
 	view = new ol.View2D({
 		center: $.set_lonlat(lon, lat),
 		zoom: 4
 	}),
 	layers = [
-		/*
 		new ol.layer.Tile({
-			style: "Terrain labels",
+			style: "Toner",
+			displayOnMenu: false,
+			maxResolution: 80,
 			source: new ol.source.Stamen({
-				layer: "terrain-labels"
+				layer: "toner",
+				crossOrigin: "anonymous"
 			}),
-			visible: false
+			visible: true
 		}),
-		*/
 		new ol.layer.Tile({
 			style: "Satellite",
+			displayOnMenu: true,
 			minResolution: 80,
 			source: new ol.source.MapQuest({
 				layer: "sat",
@@ -54,19 +53,27 @@ $.init_map = function() {
 		}),
 		new ol.layer.Tile({
 			style: "Road",
-			source: new ol.source.MapQuest({layer: "osm"}),
+			displayOnMenu: true,
+			source: new ol.source.MapQuest({
+				layer: "osm",
+				crossOrigin: "anonymous"
+			}),
 			visible: false
 		}),
 		new ol.layer.Tile({
 			style: "Watercolor",
+			displayOnMenu: true,
 			source: new ol.source.Stamen({
-				layer: "watercolor"
+				layer: "watercolor",
+				crossOrigin: "anonymous"
 			}),
 			visible: false
 		}),
 		new ol.layer.Tile({
 			style: "Labels",
+			displayOnMenu: true,
 			parentLayer: ["Satellite", "Watercolor"],
+			hasSeparator: true,
 			//maxResolution: 2000,
 			source: new ol.source.TileJSON({
 				url: "http://api.tiles.mapbox.com/v3/mapbox.world-borders-light.jsonp",
@@ -118,7 +125,7 @@ $.get_visible_boundingbox = function(evt) {
 	
 	return boundingbox;
 };
-$.set_lonlat = function(lon, lat) { return ol.proj.transform([lon, lat], "EPSG:4326", "EPSG:3857"); };
+$.set_lonlat = function(lon, lat) { return ol.proj.transform([parseFloat(lon), parseFloat(lat)], "EPSG:4326", "EPSG:3857"); };
 $.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([a, b, c, d], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
 $.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
 $.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
@@ -154,23 +161,41 @@ $.get_click_info = function() {
 	});
 };
 */
-$.add_marker = function(lon, lat, name) {
-	/*
-	if(new_layer == undefined || new_layer == null) {
-		new_layer = false
+$.uuid = function() {
+	return Math.round(new Date().getTime() + (Math.random() * 100));
+}
+$.add_marker = function(options) {
+	var options = $.extend({
+		lon: 0,
+		lat: 0,
+		uuid: $.uuid(),
+		name: "",
+		title: "",
+		marker_class: "primary",
+		content: "Sample text",
+		callback: function() {}	
+	}, options);
+	if (typeof callback == "function") {
+		callback.call(this);
 	}
-	var markers = new OpenLayers.Layer.Markers("Markers"),
-	size = new OpenLayers.Size(48, 48),
-	offset = new OpenLayers.Pixel(-(size.w/2), -size.h),
-	icon = new OpenLayers.Icon("common/media/img/red_marker.png", size, offset);
-
-	if(new_layer) {
-		map.addLayer(markers);
-		markers.addMarker(new OpenLayers.Marker($.set_lonlat(lon, lat), icon));
-	} else {
-		layers.mrk.addMarker(new OpenLayers.Marker($.set_lonlat(lon, lat), icon));
+	//$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+	if($("#" + options.uuid).length > 0) {
+		$("#" + options.uuid).remove();
 	}
-	*/
+	var marker = new ol.Overlay({
+		position: $.set_lonlat(options.lon, options.lat),
+		positioning: "center-center",
+		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+					cursor: "pointer"
+				}).popover({
+					title: options.title,
+					content: options.content,
+					placement: "top",
+					trigger: "click"
+				}),
+		stopEvent: false
+	});
+	map.addOverlay(marker);
 };
 /*
 $.add_popup = function(options, callback) {
@@ -295,10 +320,15 @@ $.render_layers_on_menu = function() {
 	for (var i = 0, ii = layers.length; i < ii; ++i) {
 		var label = layers[i].get("style");
 		
-		if(layers[i].getVisible()) {
-			$("#change_map ul").append('<li class="selected"><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;' + label + '</a>');
-		} else {
-			$("#change_map ul").append('<li><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;' + label + '</a>');
+		if(layers[i].get("displayOnMenu")) {
+			if(layers[i].getVisible()) {
+				if(layers[i].get("hasSeparator")) {
+					$("#change_map ul").append('<li class="divider"></li>');
+				}
+				$("#change_map ul").append('<li class="selected"><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;' + label + '</a>');
+			} else {
+				$("#change_map ul").append('<li><a title="Change layer" onclick="$.change_map_layer(\'' + label + '\')" href="javascript: void(0);" class="btn change_map_btn ' + label.replace(" ", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;' + label + '</a>');
+			}
 		}
 	}
 }
@@ -308,14 +338,16 @@ $.show_layer = function(selected_layer) {
 		var style = layers[i].get("style");
 		if(style == selected_layer) {
 			layers[i].setVisible(1);
+			//$("#change_map a." + selected_layer.replace(" ", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
 		}
 	}
 }
 $.hide_layer = function(selected_layer) {
 	for (var i = 0, ii = layers.length; i < ii; ++i) {
 		var style = layers[i].get("style");
+		//$("#change_map a." + style.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
 		if(style == selected_layer) {
-			layers[i].setVisible(1);
+			layers[i].setVisible(0);
 		}
 	}
 }
@@ -334,12 +366,16 @@ $.change_map_layer = function(selected_layer) {
 		if(label == selected_layer) {
 			if(label == "Labels") {
 				if(pls != undefined) {
-					if($.inArray($("#previous_selected_layer").text(), pls) !== -1) {
+					// Check if the previous selected layer is able to support Labels layer
+					if(jQuery.inArray($("#previous_selected_layer").text(), pls) !== -1) {
 						$.show_layer($("#previous_selected_layer").text());
 						$("#change_map a." + $("#previous_selected_layer").text()).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
 					} else {
 						$.hide_layer($("#previous_selected_layer").text());
 						$("#change_map a." + label.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
+						
+						$.show_layer("Satellite");
+						$("#change_map a.Satellite").parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
 					}
 				}
 			} else {
@@ -377,7 +413,7 @@ $.sub_toolbox = function(action) {
 							});
 							if(liSelected){
 								liSelected.removeClass("selected");
-								next = liSelected.next();
+								next = liSelected.nextAll('li[class!="divider"]').first();
 								if(next.length > 0){
 									liSelected = next.addClass("selected").focus();
 								} else {
@@ -393,7 +429,7 @@ $.sub_toolbox = function(action) {
 							});
 							if(liSelected){
 								liSelected.removeClass("selected");
-								next = liSelected.prev();
+								next = liSelected.prevAll('li[class!="divider"]').first();
 								if(next.length > 0){
 									liSelected = next.addClass("selected").focus();
 								} else {
@@ -443,6 +479,7 @@ $.find_location = function(options) {
 		}
 	});
 }
+
 // Search location from given string
 $.search_location = function(input) {
 	if(input.length > 0) {
@@ -467,31 +504,42 @@ $.search_location = function(input) {
 				minLng = datap[0].boundingbox[2],
 				maxLng = datap[0].boundingbox[3];
 				
-				console.log(datap[0].lon, datap[0].lat);
-				console.log(typeof datap[0].lon);
-				$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
-				$.set_zoom(7);
+				//console.log(datap[0].lon, datap[0].lat);
+				//console.log(typeof datap[0].lon);
+				//$.set_zoom(7);
 				//view.fitExtent([minLat, maxLat, minLng, maxLng], map.getSize());
 				
 				//var textent = ol.extent.transform([minLat, minLng, maxLat, maxLng], ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
 				//console.log(textent);
-				
-				/*
 				$.each(datap, function(k, v) {
-					console.log(k);
-					//$.add_marker(datap[k].lon, datap[k].lat);
+					var mc;
+					//console.log(datap[k].lon, datap[k].lat);
+					if(k == 0) {
+						mc = "primary";
+					} else {
+						mc = "secondary";
+					}
+					$.add_marker({uuid: datap[k].place_id, lon: datap[k].lon, lat: datap[k].lat, marker_class: mc, name: datap[k].display_name, title: "Search: \"" + input + "\"", content: datap[k].display_name});
 				});
-				*/
-				
 				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
+				$("#" + datap[0].place_id).popover("show");
+				$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
 			}
 		});
 	}
 };
 
 $.contextMenu = function() {
-	var $contextMenu = $("#contextMenu");
+	var $contextMenu = $("#knob");
 	$("body").on("contextmenu", "#pgrdg_map", function(e) {
+		$(".knob").trigger("configure", {
+			"min": 10,
+			"max": 40,
+			"fgColor": "#FF0000",
+			"skin": "tron",
+			"cursor": true
+		});
+		/*
 		if($("#clicked_coords").length == 0) {
 			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');
 		}
@@ -501,11 +549,11 @@ $.contextMenu = function() {
 		var clicked_coords = {"lon": center.lon, "lat": center.lat};
 		$("#clicked_coords").text('{"lon": ' + clicked_coords.lon + ',"lat": ' + clicked_coords.lat + '}');
 		
+		*/
 		$contextMenu.css({
-			display: "block",
-			left: e.pageX,
-			top: e.pageY
-		});
+			left: (e.pageX - 100),
+			top: (e.pageY - 100),
+		}).fadeIn(300);
 		return false;
 	});
 	$contextMenu.on("click", "a", function() {

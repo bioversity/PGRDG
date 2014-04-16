@@ -1,6 +1,6 @@
 {
 	"map": {
-		"default_map_layer": "ESRI",
+		"default_map_layer": "Google Satellite",
 		"layers": {
 			"_comment": "",
 			"Google Physical": {
@@ -50,18 +50,6 @@
 					"href": "javascript: void(0);",
 					"onclick": "$.change_map_layer('Google Satellite', $(this));",
 					"title": "Set Google satellite layer"
-				}
-			},
-			"ESRI": {
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "ESRI"
-				},
-				"attributes": {
-					"class": "btn change_map_btn ESRI_StreetMap",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('ESRI StreetMap', $(this));",
-					"title": "Set ESRI StreetMap layer"
 				}
 			}
 		}
