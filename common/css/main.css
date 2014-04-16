@@ -345,7 +345,7 @@ header.map #logo {
 	min-width: 180px;
 }
 #knob {
-	border: 50px solid rgba(255, 255, 255, 0.5);
+	/*border: 50px solid rgba(255, 255, 255, 0.5);*/
 	text-align: center;
 	left: 100px;
 	height: 200px;
@@ -407,7 +407,7 @@ header.map #logo {
 	top: 50%;
 	left: 50%;
 	overflow: hidden;
-	margin-top: -1.3em;
+	margin-top: -5em;
 	margin-left: -10em;
 	width: 10em;
 	height: 10em;
@@ -428,16 +428,16 @@ header.map #logo {
 .csstransforms .cn-wrapper li a {
 	position: absolute;
 	position: fixed; /* fix the displacement bug in webkit browsers when using tab key */
-	right: -7.25em;
-	bottom: -7.25em;
+	right: -4em;
+	bottom: -4em;
 	display: block;
-	width: 14.5em;
-	height: 14.5em;
+	width: 8em;
+	height: 8em;
 	border-radius: 50%;
 	background: #429a67;
-	background: -webkit-radial-gradient(transparent 35%, #429a67 35%);
-	background: -moz-radial-gradient(transparent 35%, #429a67 35%);
-	background: radial-gradient(transparent 35%, #429a67 35%);
+	background: -webkit-radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
+	background: -moz-radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
+	background: radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
 	color: #fff;
 	text-align: center;
 	text-decoration: none;
@@ -464,9 +464,10 @@ header.map #logo {
 .csstransforms .cn-wrapper li a:hover,
 .csstransforms .cn-wrapper li a:active,
 .csstransforms .cn-wrapper li a:focus {
-	background: -webkit-radial-gradient(transparent 35%, #449e6a 35%);
-	background: -moz-radial-gradient(transparent 35%, #449e6a 35%);
-	background: radial-gradient(transparent 35%, #449e6a 35%);
+	background: -webkit-radial-gradient(transparent 35%, #fff 35%);
+	background: -moz-radial-gradient(transparent 35%, #fff 35%);
+	background: radial-gradient(transparent 35%, #fff 35%);
+	color: #333;
 }
 
 .csstransforms .opened-nav li {
