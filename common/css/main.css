@@ -328,13 +328,20 @@ header.map #logo {
 	height: 1.5em;
 	border-radius: 9px;
 	background-color: #ff0000;
+	border: #ccc 1px solid;
 	opacity: 0.5;
 }
 .marker.primary {
 	background-color: #ff0000;
-	box-shadow: 0 0 12px 12px #ff0000;
 }
 .marker.secondary {
+	background-color: #0ff;
+}
+.cluster.primary {
+	background-color: #ff0000;
+	box-shadow: 0 0 12px 12px #ff0000;
+}
+.cluster.secondary {
 	background-color: #0ff;
 	box-shadow: 0 0 12px 12px #0ff;
 }
@@ -344,49 +351,90 @@ header.map #logo {
 .popover-content {
 	min-width: 180px;
 }
+.popover h3 > a.close {
+	line-height: 0.5em;
+	margin-right: -5px;
+}
+.popover div.popup_btns {
+	border-top: 1px solid #EEEEEE;
+	padding-top: 10px;
+}
+.popover div.popup_btns a {
+	margin: 0 5px;
+}
+.popover div.popup_btns a:first-child {
+	margin: 0;
+}
+.popup_btns a:last-child {
+	margin: 0;
+}
+
+
 #knob {
-	/*border: 50px solid rgba(255, 255, 255, 0.5);*/
+	/*
+	border: 50px solid rgba(255, 255, 255, 0.5);
+	*/
 	text-align: center;
 	left: 100px;
 	height: 200px;
 	width: 200px;
 	border-radius: 200px;
-	position: absolute;
+	position: fixed;
 	top: 100px;
+	margin-top: -200px;
 	z-index: 99999999;
 	display: none;
 }
-/*
+#knob * {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	list-style: none;
+}
 #knob ul {
-	margin: -50px;
-	height: 200px;
-	width: 200px;
-	border-radius: 200px;
+	margin: 0;
 }
-#knob li {
-    display: inline-block;
-    height: 50px;
+
+
+
+.csstransforms .cn-wrapper {
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	z-index: 10;
+	margin-top: -25em;
+	margin-left: -25em;
+	width: 50em;
+	height: 50em;
+	border-radius: 50%;
+	background: transparent;
+	opacity: 0;
+	-webkit-transition: all .3s ease 0.3s;
+	-moz-transition: all .3s ease 0.3s;
+	transition: all .3s ease 0.3s;
+	-webkit-transform: scale(0.1);
+	-ms-transform: scale(0.1);
+	-moz-transform: scale(0.1);
+	transform: scale(0.1);
+	pointer-events: none;
+	overflow: hidden;
 }
-#knob li:first-child {
-    margin-left: 72px;
-}
-*/
 
 /*cover to prevent extra space of anchors from being clickable*/
 .csstransforms .cn-wrapper:after{
-  content:".";
-  display:block;
-  font-size:2em;
-  width:6.2em;
-  height:6.2em;
-  position: absolute;
-  left: 50%;
-  margin-left: -3.1em;
-  top:50%;
-  margin-top: -3.1em;
-  border-radius: 50%;
-  z-index:10;
-  color: transparent;
+	content:".";
+	display:block;
+	font-size:2em;
+	width:6.2em;
+	height:6.2em;
+	position: absolute;
+	left: 50%;
+	margin-left: -3.1em;
+	top:50%;
+	margin-top: -3.1em;
+	border-radius: 50%;
+	z-index:10;
+	color: transparent;
 }
 
 .csstransforms .opened-nav {
@@ -407,7 +455,7 @@ header.map #logo {
 	top: 50%;
 	left: 50%;
 	overflow: hidden;
-	margin-top: -5em;
+	margin-top: 0;
 	margin-left: -10em;
 	width: 10em;
 	height: 10em;
@@ -425,19 +473,19 @@ header.map #logo {
 	pointer-events: none;
 }
 
-.csstransforms .cn-wrapper li a {
+.csstransforms .cn-wrapper li > span {
 	position: absolute;
 	position: fixed; /* fix the displacement bug in webkit browsers when using tab key */
-	right: -4em;
-	bottom: -4em;
+	right: -4.25em;
+	bottom: -4.25em;
 	display: block;
-	width: 8em;
-	height: 8em;
+	width: 8.5em;
+	height: 8.5em;
 	border-radius: 50%;
-	background: #429a67;
-	background: -webkit-radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
-	background: -moz-radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
-	background: radial-gradient(transparent 35%, rgba(255,255,255,0.5) 35%);
+	background: rgba(255, 255, 255, 0.5);
+	background: -webkit-radial-gradient(transparent 35%, rgba(255, 255, 255, 0.5) 35%);
+	background: -moz-radial-gradient(transparent 35%, rgba(255, 255, 255, 0.5) 35%);
+	background: radial-gradient(transparent 35%, rgba(255, 255, 255, 0.5) 35%);
 	color: #fff;
 	text-align: center;
 	text-decoration: none;
@@ -452,22 +500,14 @@ header.map #logo {
 	pointer-events: auto;
 }
 
-.csstransforms .cn-wrapper li a span {
+.csstransforms .cn-wrapper li > span span {
 	position: relative;
-	top: 1.8em;
+	top: 0.75em;
 	display: block;
-	font-size: .5em;
+	font-size: 0.9em;
 	font-weight: 700;
 	text-transform: uppercase;
-}
-
-.csstransforms .cn-wrapper li a:hover,
-.csstransforms .cn-wrapper li a:active,
-.csstransforms .cn-wrapper li a:focus {
-	background: -webkit-radial-gradient(transparent 35%, #fff 35%);
-	background: -moz-radial-gradient(transparent 35%, #fff 35%);
-	background: radial-gradient(transparent 35%, #fff 35%);
-	color: #333;
+	font-weight: normal !important;
 }
 
 .csstransforms .opened-nav li {
@@ -525,64 +565,33 @@ header.map #logo {
 	transform: rotate(172deg) skew(60deg);
 }
 
-.no-csstransforms .cn-wrapper {
-	overflow: hidden;
-	margin: 10em auto;
-	padding: .5em;
-	text-align: center;
-}
-
-.no-csstransforms .cn-wrapper ul {
-	display: inline-block;
-}
-
-.no-csstransforms .cn-wrapper li {
-	float: left;
-	width: 5em;
-	height: 5em;
-	background-color: #fff;
-	text-align: center;
-	font-size: 1em;
-	line-height: 5em;
-}
-
-.no-csstransforms .cn-wrapper li a {
+.cn-wrapper li span {
 	display: block;
 	width: 100%;
 	height: 100%;
 	color: inherit;
 	text-decoration: none;
+	overflow: hidden;
 }
 
-.no-csstransforms .cn-wrapper li a:hover,
-.no-csstransforms .cn-wrapper li a:active,
-.no-csstransforms .cn-wrapper li a:focus {
-	background-color: #f8f8f8;
-}
-
-.no-csstransforms .cn-wrapper li.active a{
-	background-color: #6F325C;
+.cn-wrapper li a {
+	padding: 15px 25px !important;
 	color: #fff;
 }
-
-.no-csstransforms .cn-button {
-	display: none;
+.cn-wrapper li a:hover {
+	color: #2d2d2d !important;
+	background-color: rgba(255, 255, 255, 0.8);
 }
-
-@media only screen and (max-width: 620px) {
-	.no-csstransforms li {
-		width: 4em;
-		height: 4em;
-		line-height: 4em;
-	}
+.cn-wrapper li a:active {
+	background-color: rgba(255, 255, 255, 0.8);
+	padding: 30px 25px !important;
+}
+.cn-wrapper li > span:hover {
+	
 }
 
 @media only screen and (max-width: 500px) {
-	.no-ccstransforms .cn-wrapper {
-		padding: .5em;
-	}
-
-	.no-csstransforms .cn-wrapper li {
+	.cn-wrapper li {
 		width: 4em;
 		height: 4em;
 		font-size: .9em;
@@ -590,18 +599,8 @@ header.map #logo {
 	}
 }
 
-@media only screen and (max-width: 480px) {
-	.csstransforms .cn-wrapper {
-		font-size: .68em;
-	}
-
-	.cn-button {
-		font-size: 1em;
-	}
-}
-
 @media only screen and (max-width:420px) {
-	.no-csstransforms .cn-wrapper li {
+	.cn-wrapper li {
 		width: 100%;
 		height: 3em;
 		line-height: 3em;

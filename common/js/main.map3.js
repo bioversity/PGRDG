@@ -26,6 +26,11 @@ exampleNS.getRendererFromQueryString = function() {
 
 $.init_map = function() {
 	//var selected_map = $("#selected_map").text();
+	$("#pgrdg_map").bind("dragstart", function() {
+		$(this).css("cursor", "move");
+	}).bind("dragstop", function() {
+		$(this).css("cursor", "default");
+	});
 	view = new ol.View2D({
 		center: $.set_lonlat(lon, lat),
 		zoom: 4
@@ -71,6 +76,7 @@ $.init_map = function() {
 		}),
 		new ol.layer.Tile({
 			style: "Labels",
+			minResolution: 80,
 			displayOnMenu: true,
 			parentLayer: ["Satellite", "Watercolor"],
 			hasSeparator: true,
@@ -182,16 +188,21 @@ $.add_marker = function(options) {
 	if($("#" + options.uuid).length > 0) {
 		$("#" + options.uuid).remove();
 	}
+	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
 	var marker = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
 		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
 					cursor: "pointer"
 				}).popover({
-					title: options.title,
-					content: options.content,
+					html: true,
+					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+					content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12">' + set_center_btn + set_zoom_btn + '</div></div>',
 					placement: "top",
 					trigger: "click"
+				}).bind("click", function() {
+					console.log(options.lon, options.lat);
 				}),
 		stopEvent: false
 	});
@@ -552,7 +563,7 @@ $.contextMenu = function() {
 		*/
 		$contextMenu.css({
 			left: (e.pageX - 100),
-			top: (e.pageY - 100),
+			top: (e.pageY - 200),
 		}).fadeIn(300);
 		return false;
 	});
@@ -568,4 +579,5 @@ $(document).ready(function() {
 	$.init_map();
 	$.render_layers_on_menu();
 	$.contextMenu();
+	$(".popover a[title]").tooltip();
 });
