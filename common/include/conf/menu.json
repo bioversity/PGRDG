@@ -121,6 +121,20 @@
 				},
 				"divider": "divider"
 			}
+		},
+		"map_knob_contextmenu": {
+			"Point_info": {
+				"content": {
+					"icon": "fa-info-circle",
+					"text": ""
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"class": "",
+					"title": "Get informations of this point",
+					"onclick": "$.get_click_info();"
+				}
+			}
 		}
 	}
 }

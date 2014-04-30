@@ -144,183 +144,8 @@ $.set_zoom = function(zoom) { return view.setZoom(zoom); }
 $.increase_zoom = function() { view.setZoom((view.getZoom() + 1)); };
 $.decrease_zoom = function() { view.setZoom((view.getZoom() - 1)); };
 /*
-$.get_click_info = function() {
-	var clicked_coords = $.parseJSON($("#clicked_coords").text());
-	//console.log(clicked_coords);
-	
-	$.find_location({
-		lon: clicked_coords.lon,
-		lat: clicked_coords.lat,
-		addressdetails: 1,
-		error: function(data) {
-			alert("An error occurred while communicating with the OpenLS service. Please try again.");
-		},
-		success: function(data) {
-			datap = $.parseJSON(data);
-			$.add_popup({
-				lon: clicked_coords.lon,
-				lat: clicked_coords.lat,
-				title: "Location info",
-				html: datap.display_name
-			});
-		}
-	});
-};
+------------------------------------------------------------------------------------------------------------------------
 */
-$.uuid = function() {
-	return Math.round(new Date().getTime() + (Math.random() * 100));
-}
-$.add_marker = function(options) {
-	var options = $.extend({
-		lon: 0,
-		lat: 0,
-		uuid: $.uuid(),
-		name: "",
-		title: "",
-		marker_class: "primary",
-		content: "Sample text",
-		callback: function() {}	
-	}, options);
-	if (typeof callback == "function") {
-		callback.call(this);
-	}
-	//$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
-	if($("#" + options.uuid).length > 0) {
-		$("#" + options.uuid).remove();
-	}
-	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-	var marker = new ol.Overlay({
-		position: $.set_lonlat(options.lon, options.lat),
-		positioning: "center-center",
-		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
-					cursor: "pointer"
-				}).popover({
-					html: true,
-					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-					content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12">' + set_center_btn + set_zoom_btn + '</div></div>',
-					placement: "top",
-					trigger: "click"
-				}).bind("click", function() {
-					console.log(options.lon, options.lat);
-				}),
-		stopEvent: false
-	});
-	map.addOverlay(marker);
-};
-/*
-$.add_popup = function(options, callback) {
-	var options = $.extend({
-		div: "Popup",
-		lon: 0,
-		lat: 0,
-		size: {
-			width: 200,
-			height: 200
-		},
-		title: "Selected location",
-		html: "Sample text",
-		callback: function() {}	
-	}, options);
-	
-	if (typeof callback == "function") {
-		callback.call(this);
-	}
-	var location = new OpenLayers.Geometry.Point(options.lon, options.lat).transform("EPSG:4326", "EPSG:3857");
-	
-	var popup = new OpenLayers.Popup.Popover(
-		options.div,
-		location.getBounds().getCenterLonLat(),
-		options.html,
-		options.title,
-		options.callback
-	);
-	* /
-	map.addPopup(new OpenLayers.Popup.FramedCloud(
-		options.div, 
-		location.getBounds().getCenterLonLat(),
-		null,
-		options.html,
-		//new OpenLayers.Size(options.size.w, options.size.h),
-		null,
-		true,
-		callback
-	));
-}
-*/
-$.center_map_on = function(location) {
-	var loc_data = {};
-	switch(location) {
-		case "World":
-			loc_data.lon = 0;
-			loc_data.lat = 35;
-			loc_data.zoom = 2.3;
-			break;
-		case "Africa":
-			loc_data.lon = 16;
-			loc_data.lat = 5;
-			loc_data.zoom = 3.7;
-			break;
-		case "Antarctica":
-			loc_data.lon = -50;
-			loc_data.lat = 68;
-			loc_data.zoom = 3;
-			break;
-		case "Asia":
-			loc_data.lon = 100;
-			loc_data.lat = 60;
-			loc_data.zoom = 3;
-			break;
-		case "Europe":
-			loc_data.lon = 12;
-			loc_data.lat = 55;
-			loc_data.zoom = 4;
-			break;
-		case "North America":
-			loc_data.lon = -98;
-			loc_data.lat = 39;
-			loc_data.zoom = 4;
-			break;
-		case "Oceania":
-			loc_data.lon = 130;
-			loc_data.lat = -12;
-			loc_data.zoom = 4;
-			break;
-		case "South America":
-			loc_data.lon = -58;
-			loc_data.lat = -23;
-			loc_data.zoom = 4;
-			break;
-		case "Your position":
-			navigator.geolocation.getCurrentPosition(function(position) {
-				// Success
-				$.find_location({
-					lon: position.coords.longitude,
-					lat: position.coords.latitude,
-					addressdetails: 0,
-					success: function(data) {
-						datap = $.parseJSON(data);
-						//$.add_marker(position.coords.longitude, position.coords.latitude);
-						$.set_center(position.coords.longitude, position.coords.latitude);
-						$.set_zoom(13);
-						$("#selected_zone").text(datap.display_name).fadeIn(300);
-					}
-				});
-				return false;
-			}, function(position) {
-				// Fail
-				$("#selected_zone").html("<i>Unable to find position</i>").fadeIn(300);
-				return false;
-			});
-			break;
-	}
-	if(location != "Your position") {
-		$.set_center(loc_data.lon, loc_data.lat);
-		$.set_zoom(loc_data.zoom);
-		$("#selected_zone").text(location).fadeIn(300);
-	}
-}
-
 
 /**
 Layers functions
@@ -540,43 +365,286 @@ $.search_location = function(input) {
 	}
 };
 
-$.contextMenu = function() {
-	var $contextMenu = $("#knob");
-	$("body").on("contextmenu", "#pgrdg_map", function(e) {
-		$(".knob").trigger("configure", {
-			"min": 10,
-			"max": 40,
-			"fgColor": "#FF0000",
-			"skin": "tron",
-			"cursor": true
+$.get_click_info = function() {
+	var clicked_coords = $.parseJSON($("#clicked_coords").text());
+	console.log(clicked_coords);
+	
+	$.find_location({
+		lon: clicked_coords.lon,
+		lat: clicked_coords.lat,
+		addressdetails: 1,
+		error: function(data) {
+			alert("An error occurred while communicating with the OpenLS service. Please try again.");
+		},
+		success: function(data) {
+			datap = $.parseJSON(data);
+			console.log(datap);
+			$.add_popup({
+				lon: clicked_coords.lon,
+				lat: clicked_coords.lat,
+				title: "Location info",
+				content: datap.display_name
+			});
+		}
+	});
+};
+
+$.uuid = function() {
+	return Math.round(new Date().getTime() + (Math.random() * 100));
+};
+$.add_marker = function(options) {
+	var options = $.extend({
+		lon: 0,
+		lat: 0,
+		uuid: $.uuid(),
+		name: "",
+		title: "",
+		marker_class: "primary",
+		content: "Sample text",
+		callback: function() {}	
+	}, options);
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
+	//$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+	if($("#" + options.uuid).length > 0) {
+		$("#" + options.uuid).remove();
+	}
+	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+	var marker = new ol.Overlay({
+		position: $.set_lonlat(options.lon, options.lat),
+		positioning: "center-center",
+		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+					cursor: "pointer"
+				}).popover({
+					html: true,
+					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+					content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + '</div></div>',
+					placement: "top",
+					trigger: "click"
+				}).bind("click", function() {
+					console.log(options.lon, options.lat);
+				}),
+		stopEvent: false
+	});
+	map.addOverlay(marker);
+};
+
+$.add_point = function(options) {
+	var options = $.extend({
+		lon: 0,
+		lat: 0,
+		uuid: $.uuid(),
+		name: "",
+		title: "",
+		marker_class: "primary",
+		content: "Sample text",
+		callback: function() {}	
+	}, options);
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
+	//$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+	if($("#" + options.uuid).length > 0) {
+		$("#" + options.uuid).remove();
+	}
+	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+	var point = new ol.Overlay({
+		position: $.set_lonlat(options.lon, options.lat),
+		positioning: "center-center",
+		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+					cursor: "pointer"
+				}).bind("click", function() {
+					console.log(options.lon, options.lat);
+				}),
+		stopEvent: false
+	});
+	map.addOverlay(point);
+};
+$.move_point = function(uuid) {
+	$("#" + uuid).addClass("draggable");
+	$("#" + uuid).next().find(".popover-content .content").html('<span class="fa fa-refresh fa-spin"></span>');
+	$("#pgrdg_map").on("mousemove", function(e) {
+		if($("#" + uuid).hasClass("draggable")) {
+			var $selected = $("#" + uuid).parent("div");
+			$("#" + uuid).css({ cursor: "move" });
+			$selected.css({
+				top: parseInt(e.clientY - 9) + "px",
+				left: parseInt(e.clientX - 9) + "px"
+			});
+		}
+	}).on("mouseup", function(e) {
+		// Stop dragging
+		$("#" + uuid).removeClass("draggable");
+		var clicked_coords = map.getCoordinateFromPixel([e.clientX, e.clientY]),
+		hdms = ol.proj.transform(clicked_coords, "EPSG:3857", "EPSG:4326");
+		
+		$.find_location({
+			lon: hdms[0],
+			lat: hdms[1],
+			addressdetails: 1,
+			error: function(data) {
+				alert("An error occurred while communicating with the OpenLS service. Please try again.");
+			},
+			success: function(data) {
+				datap = $.parseJSON(data);
+				console.log(datap);
+				$("#" + uuid).next().find(".popover-content .content").html(datap.display_name + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([hdms[0], hdms[1]]) + '</code>');
+			}
 		});
-		/*
+	});
+};
+
+$.add_popup = function(options, callback) {
+	var options = $.extend({
+		div: "Popup",
+		lon: 0,
+		lat: 0,
+		uuid: $.uuid(),
+		size: {
+			width: 200,
+			height: 200
+		},
+		title: "Selected location",
+		html: "Sample text",
+		callback: function() {}	
+	}, options);
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
+	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+	var edit_point_btn = '<a class="btn btn-default btn-sm" title="Move this point" href="javascript:void(0);" onclick="$.move_point(\'' + options.uuid + '\'); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-arrows"></span></a>';
+	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-trash-o"></span></a>';
+	var popup = new ol.Overlay({
+		position: $.set_lonlat(options.lon, options.lat),
+		positioning: "center-center",
+		element: $('<div class="marker draggable ' + ((options.marker_class != undefined) ? options.marker_class : "") + '" id="' + options.uuid + '"></div>').css({
+					cursor: "pointer"
+				}).popover({
+					html: true,
+					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+					content: '<div class="content">' + options.content + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([options.lon, options.lat]) + '</code>' + '</div><br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-toolbar"><div class="btn-group">' + set_center_btn + set_zoom_btn + '</div><div class="btn-group right">' + edit_point_btn + remove_point_btn + '</div></div></div>',
+					placement: "top",
+					trigger: "click"
+				}),
+		stopEvent: false
+	});
+	map.addOverlay(popup);
+	$("#" + options.uuid).popover("show");
+}
+
+$.center_map_on = function(location) {
+	var loc_data = {};
+	switch(location) {
+		case "World":
+			loc_data.lon = 0;
+			loc_data.lat = 35;
+			loc_data.zoom = 2.3;
+			break;
+		case "Africa":
+			loc_data.lon = 16;
+			loc_data.lat = 5;
+			loc_data.zoom = 3.7;
+			break;
+		case "Antarctica":
+			loc_data.lon = -50;
+			loc_data.lat = 68;
+			loc_data.zoom = 3;
+			break;
+		case "Asia":
+			loc_data.lon = 100;
+			loc_data.lat = 60;
+			loc_data.zoom = 3;
+			break;
+		case "Europe":
+			loc_data.lon = 12;
+			loc_data.lat = 55;
+			loc_data.zoom = 4;
+			break;
+		case "North America":
+			loc_data.lon = -98;
+			loc_data.lat = 39;
+			loc_data.zoom = 4;
+			break;
+		case "Oceania":
+			loc_data.lon = 130;
+			loc_data.lat = -12;
+			loc_data.zoom = 4;
+			break;
+		case "South America":
+			loc_data.lon = -58;
+			loc_data.lat = -23;
+			loc_data.zoom = 4;
+			break;
+		case "Your position":
+			navigator.geolocation.getCurrentPosition(function(position) {
+				// Success
+				$.find_location({
+					lon: position.coords.longitude,
+					lat: position.coords.latitude,
+					addressdetails: 0,
+					success: function(data) {
+						datap = $.parseJSON(data);
+						//$.add_marker(position.coords.longitude, position.coords.latitude);
+						$.set_center(position.coords.longitude, position.coords.latitude);
+						$.set_zoom(13);
+						$("#selected_zone").text(datap.display_name).fadeIn(300);
+					}
+				});
+				return false;
+			}, function(position) {
+				// Fail
+				$("#selected_zone").html("<i>Unable to find position</i>").fadeIn(300);
+				return false;
+			});
+			break;
+	}
+	if(location != "Your position") {
+		$.set_center(loc_data.lon, loc_data.lat);
+		$.set_zoom(loc_data.zoom);
+		$("#selected_zone").text(location).fadeIn(300);
+	}
+}
+/*
+------------------------------------------------------------------------------------------------------------------------
+*/
+
+$.contextMenu = function() {
+	$("#knob").hide();
+	var $contextMenu = $("#knob");
+	$("body").on("contextmenu", "#pgrdg_map, #knob", function(e) {
+		e.preventDefault();
 		if($("#clicked_coords").length == 0) {
 			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');
 		}
-		var clicked_coords = map.getLonLatFromPixel(new OpenLayers.Pixel(e.clientX, e.clientY)),
-		center = new OpenLayers.LonLat(clicked_coords.lon, clicked_coords.lat);
-		center.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-		var clicked_coords = {"lon": center.lon, "lat": center.lat};
-		$("#clicked_coords").text('{"lon": ' + clicked_coords.lon + ',"lat": ' + clicked_coords.lat + '}');
+		var clicked_coords = map.getCoordinateFromPixel([e.clientX, e.clientY]);
+		var hdms = ol.proj.transform(clicked_coords, "EPSG:3857", "EPSG:4326");
 		
-		*/
+		$("#clicked_coords").text('{"lon": ' + hdms[0] + ',"lat": ' + hdms[1] + '}');
+		
 		$contextMenu.css({
 			left: (e.pageX - 100),
 			top: (e.pageY - 200),
 		}).fadeIn(300);
+		
 		return false;
 	});
 	$contextMenu.on("click", "a", function() {
 		$contextMenu.hide();
 	});
-	$("#pgrdg_map > *").click(function(e) {
+	$("#knob, #pgrdg_map, #pgrdg_map > *").click(function(e) {
 		$contextMenu.hide();
 	});
 }
 
 $(document).ready(function() {
 	$.init_map();
+	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle();"><span class="fa fa-info-circle"></span></a>');
 	$.render_layers_on_menu();
 	$.contextMenu();
 	$(".popover a[title]").tooltip();

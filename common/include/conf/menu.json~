@@ -67,6 +67,19 @@
 					"title": "Find a location"
 				}
 			},
+			"Change_map": {
+				"content": {
+					"icon": "fa-tasks",
+					"text": ""
+				},
+				"attributes": {
+					"onclick": "$.sub_toolbox('change_map');",
+					"href": "javascript: void(0);",
+					"class": "btn",
+					"title": "Change map type"
+				},
+				"divider": "divider"
+			},
 			"Lock_view": {
 				"content": {
 					"icon": "fa-lock",
@@ -107,6 +120,20 @@
 					"onclick": "$.get_click_info();"
 				},
 				"divider": "divider"
+			}
+		},
+		"map_knob_contextmenu": {
+			"Point_info": {
+				"content": {
+					"icon": "fa-map-marker",
+					"text": ""
+				},
+				"attributes": {
+					"href": "javascript: void(0);",
+					"class": "",
+					"title": "Get informations of this point",
+					"onclick": "$.get_click_info();"
+				}
 			}
 		}
 	}

@@ -309,12 +309,35 @@ header.map #logo {
 }
 .ol-zoom {
 	top: 90px !important;
+	padding: 1px !important;
 }
 .ol-zoom-extent {
 	top: 145px !important;
 }
 .ol-attribution {
-	right: 50px !important;
+	right: 60px !important;
+	bottom: 10px !important;
+	background-color: rgba(255, 255, 255, 0.6) !important;
+	border-radius: 20px;
+}
+.ol-attribution ul {
+	border-radius: 3px;
+	display: none;
+	float: left;
+	margin: 3px 0px !important;
+	padding-left: 10px !important;
+}
+.ol-attribution a {
+	color: #333 !important;
+	text-decoration: underline !important;
+}
+.ol-attribution a.info {
+	background-color: rgba(255, 255, 255, 0.8) !important;
+	border-radius: 20px;
+	padding: 2px 4px !important;
+}
+.ol-scale-line {
+	background-color: rgba(0, 0, 0, 0.7) !important;
 }
 .ol-full-screen {
 	
@@ -521,6 +544,12 @@ header.map #logo {
 	-moz-transform: rotate(-20deg) skew(60deg);
 	-ms-transform: rotate(-20deg) skew(60deg);
 	transform: rotate(-20deg) skew(60deg);
+}
+.csstransforms .opened-nav li:first-child small {
+	-webkit-transform: rotate(95deg);
+	-moz-transform: rotate(95deg);
+	-ms-transform: rotate(95deg);
+	transform: rotate(95deg);
 }
 
 .csstransforms .opened-nav li:nth-child(2) {
