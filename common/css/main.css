@@ -108,6 +108,41 @@ header.map #logo {
 	bottom: 0;
 	left: 0;
 	z-index: 1;
+	cursor: hand;
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+}
+#pgrdg_map.grabbing {
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
+#pgrdg_map.locked:before {
+	cursor: not-allowed;
+	content: "";
+	background-image:
+		-webkit-linear-gradient(-45deg, rgba(0, 0, 0, 0.5) 25%, transparent 25%,
+		transparent 50%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 75%,
+		transparent 75%, transparent);
+	background-image:
+		-moz-linear-gradient(-45deg, rgba(0, 0, 0, 0.5) 25%, transparent 25%,
+		transparent 50%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 75%,
+		transparent 75%, transparent);
+	background-image:
+		linear-gradient(135deg, rgba(0, 0, 0, 0.5) 25%, transparent 25%,
+		transparent 50%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 75%,
+		transparent 75%, transparent);
+	-pie-background:
+		linear-gradient(135deg, rgba(0, 0, 0, 0.5) 25%, transparent 25%,
+		transparent 50%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 75%,
+		transparent 75%, transparent) 0 0 / 50px 50px, #c16;
+	background-size: 8px 8px;
+	background-color: rgba(0, 0, 0, 0.3);
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	z-index: 2;
 }
 #selected_zone {
 	color: rgba(255, 255, 255, 0.8);
@@ -170,11 +205,22 @@ header.map #logo {
 	background-color: #2d2d2d;
 	height: 1px;
 }
+#map_toolbox a {
+	text-align: center;
+	border-radius: 0;
+	width: 100%;
+}
 #map_toolbox a, #map_sub_toolbox a {
 	color: #ccc;
 }
 #map_toolbox a:hover, #map_sub_toolbox a:hover {
 	color: #fff;
+}
+#map_toolbox a.selected {
+	box-shadow: 0 0 6px 6px #202020 inset;
+}
+#map_toolbox a.selected span {
+	text-shadow: 0 0 6px #fff;
 }
 #map_sub_toolbox {
 }
@@ -314,18 +360,26 @@ header.map #logo {
 .ol-zoom-extent {
 	top: 145px !important;
 }
+.ol-has-tooltip [role="tooltip"] {
+	margin-left: -2px;
+}
 .ol-attribution {
 	right: 60px !important;
 	bottom: 10px !important;
 	background-color: rgba(255, 255, 255, 0.6) !important;
 	border-radius: 20px;
 }
+.ol-attribution.open {
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+}
 .ol-attribution ul {
 	border-radius: 3px;
 	display: none;
 	float: left;
 	margin: 3px 0px !important;
-	padding-left: 10px !important;
+	padding-left: 5px !important;
+	font-size: 12px !important;
 }
 .ol-attribution a {
 	color: #333 !important;

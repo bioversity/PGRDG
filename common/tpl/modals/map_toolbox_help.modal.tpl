@@ -18,7 +18,10 @@
 									<th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Open/close map background layer preferences</td>
+									<th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Lock/unlock map navigation</td>
+								</tr>
+								<tr>
+									<th><tt>ALT<small style="font-weight: normal;">+</small>T</tt></th><td>Open/close map background layer preferences</td>
 								</tr>
 								<tr>
 									<th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td>

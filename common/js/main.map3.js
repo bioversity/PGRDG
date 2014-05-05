@@ -93,10 +93,16 @@ $.init_map = function() {
 		layers: layers,
 		view: view,
 		controls: ol.control.defaults().extend([
-			new ol.control.FullScreen(),
+			new ol.control.MousePosition({
+				className: "custom-mouse-position",
+				target: document.getElementById("location"),
+				coordinateFormat: ol.coordinate.createStringXY(5),
+				undefinedHTML: "&nbsp;"
+			}),
 			new ol.control.ScaleLine(),
 			new ol.control.Zoom(),
 			/*
+			new ol.control.FullScreen(),
 			new ol.control.ZoomToExtent({
 				extent: 2
 			})
@@ -105,34 +111,18 @@ $.init_map = function() {
 		renderer: exampleNS.getRendererFromQueryString()
 	});
 	view = map.getView();
-	//view.fitExtent([-180, -90, 180, 90], map.getSize());
-	map.on("moveend", $.get_visible_boundingbox);
+	
+	//map.on("moveend", $.get_visible_bbox);
 };
 
 /**
 Position functions
 */
 $.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); }
-$.get_visible_boundingbox = function(evt) {
-	var map = evt.map,
-	extent = map.getView().calculateExtent(map.getSize()),
-	lonlat = ol.extent.getBottomLeft(extent),
-	bottomLeft = $.set_lonlat(lonlat[0], lonlat[1]),
-	topRight = $.set_lonlat(lonlat[0], lonlat[1]),
-	boundingbox = [topRight[1], $.wrapLon(topRight[0]), bottomLeft[1], $.wrapLon(bottomLeft[0])];
-	
-	if(topRight[1] > 85 || isNaN(topRight[1])) {
-		//console.log($.wrapLon(bottomLeft[0]), topRight[1]);
-		//view.setCenter($.set_lonlat($.wrapLon(bottomLeft[0]), topRight[1]));
-	}
-	if($.get_current_zoom() < 2) {
-		$.set_zoom(2);
-	}
-	
-	return boundingbox;
-};
+$.get_current_bbox = function() { return map.getView().getView2D().calculateExtent(map.getSize()); }
+
 $.set_lonlat = function(lon, lat) { return ol.proj.transform([parseFloat(lon), parseFloat(lat)], "EPSG:4326", "EPSG:3857"); };
-$.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([a, b, c, d], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
+$.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([parseFloat(a), parseFloat(b), parseFloat(c), parseFloat(d)], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
 $.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
 $.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
 
@@ -363,6 +353,22 @@ $.search_location = function(input) {
 			}
 		});
 	}
+};
+$.toggle_lock_view = function() {
+	var current_view = $.get_current_bbox(),
+	map_status_txt;
+	
+	if(!$("#pgrdg_map").hasClass("locked")) {
+		$("#pgrdg_map").removeClass("grabbing");
+		$("#pgrdg_map").addClass("locked");
+		$("#map_toolbox span.fa-lock").parent("a").addClass("selected");
+		map_status_txt = "locked";
+	} else {
+		$("#pgrdg_map").removeClass("locked");
+		$("#map_toolbox span.fa-lock").parent("a").removeClass("selected");
+		map_status_txt = "unlocked";
+	}
+	$("#selected_zone").text("Map " + map_status_txt).fadeIn(300);
 };
 
 $.get_click_info = function() {
@@ -616,8 +622,9 @@ $.center_map_on = function(location) {
 
 $.contextMenu = function() {
 	$("#knob").hide();
+	$("#pgrdg_map").removeClass("grabbing");
 	var $contextMenu = $("#knob");
-	$("body").on("contextmenu", "#pgrdg_map, #knob", function(e) {
+	$("body").on("contextmenu", "#pgrdg_map:not(.locked), #knob", function(e) {
 		e.preventDefault();
 		if($("#clicked_coords").length == 0) {
 			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');
@@ -644,8 +651,18 @@ $.contextMenu = function() {
 
 $(document).ready(function() {
 	$.init_map();
-	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle();"><span class="fa fa-info-circle"></span></a>');
+	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
+	if(!$("#pgrdg_map").hasClass("locked")) {
+		$("#pgrdg_map").on("mousedown touchstart", function() {
+			$(this).addClass("grabbing");
+		}).on("mouseup touchend", function() {
+			$(this).removeClass("grabbing");
+		});
+		$.contextMenu(true);
+	} else {
+		$.contextMenu(false);
+	}
+	$("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
 	$.render_layers_on_menu();
-	$.contextMenu();
 	$(".popover a[title]").tooltip();
 });
