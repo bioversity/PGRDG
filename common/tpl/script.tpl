@@ -1,7 +1,7 @@
 <script type="text/javascript" src="common/js/jquery.min.js"></script>
 <script type="text/javascript" src="common/js/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
-
 <?php if(strtolower($page) == "map") { ?>
 	<!--
 	OpenLayers2

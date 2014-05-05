@@ -145,6 +145,15 @@ $.shortcuts = function() {
 };
 
 $(document).ready(function() {
+	// Use bootstrap apprise instead javascript's alert
+	window.alert = function(string, args, callback) {
+		if(args == undefined) {
+			args = [];
+			args["title"] = "Warning";
+		}
+		return apprise(string, args, callback);
+	};
+	
 	$("#loginform").jCryption();
 	$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 	$("nav a[title]").tooltip({placement: "bottom", container: "body"});

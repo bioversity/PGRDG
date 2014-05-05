@@ -10,4 +10,6 @@
 <link href="common/css/bootstrap/bootstrap.min.css" rel="stylesheet">
 
 <link href="common/css/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link href="common/css/Entypo/entypo.css" rel="stylesheet" />
+<link href="common/css/ionicons-1.4.1/css/ionicons.css" rel="stylesheet" />
 <link href="common/css/main.css" rel="stylesheet">

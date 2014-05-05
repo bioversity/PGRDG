@@ -273,6 +273,8 @@ $.sub_toolbox = function(action) {
 					}
 					//$(".change_map_btn." + $("#selected_map").text().replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
 					break;
+				case "tools":
+					break;
 			}
 		});
 	} else {
@@ -368,7 +370,22 @@ $.toggle_lock_view = function() {
 		$("#map_toolbox span.fa-lock").parent("a").removeClass("selected");
 		map_status_txt = "unlocked";
 	}
-	$("#selected_zone").text("Map " + map_status_txt).fadeIn(300);
+	$("#selected_zone").text("Map " + map_status_txt).show();
+};
+
+$.gui_misure_distances = function(type) {
+	if(type == "" || type == undefined) {
+		type = "";
+	}
+	switch(type) {
+		case "length":
+			break;
+		case "area":
+			break;
+		default:
+			apprise('<div class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);"><h1 class="entypo flow-line"></h1>Length</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
+			break;
+	}
 };
 
 $.get_click_info = function() {

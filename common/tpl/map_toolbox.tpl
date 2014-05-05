@@ -17,8 +17,10 @@
 	</div>
 	<div id="change_map" class="level1">
 		<span id="selected_map" style="display: none;"><?php print $map_config->json_conf["map"]["default_map_layer"]; ?></span>
+	</div>
+	<div id="tools" class="level3">
 		<?php
-		//print $map_config->menu("layers", "list-unstyled");
+		print $site_config->menu("tools", "list-unstyled");
 		?>
 	</div>
 </div>

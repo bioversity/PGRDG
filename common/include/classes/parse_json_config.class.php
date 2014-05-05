@@ -34,7 +34,6 @@ class parse_json_config {
 			}
 		}
 		$menu_list .=  ">\n";
-		
 		foreach($this->walk($this->json_conf, $menu_position) as $obj => $map_toolbox) {
 			if($obj !== "_comment") {
 				$divider = "";
