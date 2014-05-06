@@ -7,6 +7,7 @@ var lon = 12,
 lat = 55,
 zoom = 4,
 map, view,
+vector_measurement, source_measurement, draw,
 exampleNS = {};
 
 exampleNS.getRendererFromQueryString = function() {
@@ -31,6 +32,7 @@ $.init_map = function() {
 	}).bind("dragstop", function() {
 		$(this).css("cursor", "default");
 	});
+	source_measurement = new ol.source.Vector();
 	view = new ol.View2D({
 		center: $.set_lonlat(lon, lat),
 		zoom: 4
@@ -85,9 +87,27 @@ $.init_map = function() {
 				url: "http://api.tiles.mapbox.com/v3/mapbox.world-borders-light.jsonp",
 				crossOrigin: "anonymous"
 			})
+		}),
+		new ol.layer.Vector({
+			source: source_measurement,
+			style: new ol.style.Style({
+				fill: new ol.style.Fill({
+					color: 'rgba(255, 255, 255, 0.2)'
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#ffcc33',
+					width: 2
+				}),
+				image: new ol.style.Circle({
+					radius: 7,
+					fill: new ol.style.Fill({
+						color: '#ffcc33'
+					})
+				})
+			})
 		})
 	];
-	
+
 	map = new ol.Map({
 		target: "pgrdg_map",
 		layers: layers,
@@ -373,17 +393,119 @@ $.toggle_lock_view = function() {
 	$("#selected_zone").text("Map " + map_status_txt).show();
 };
 
-$.gui_misure_distances = function(type) {
+$.stop_measurements = function() {
+	map.removeInteraction(draw);
+	$("#selected_zone").text("");
+	$("#pgrdg_map").css("cursor", "grab");
+	$("#left_panel #measurements").html("");
+};
+$.gui_measure_distances = function(type) {
+	$("#pgrdg_map").css("cursor", "crosshair");
+	
+	var sketch,
+	sketchElement;
+	formatLength = function(line) {
+		var length = Math.round(line.getLength() * 100) / 100,
+		output;
+		
+		if (length > 100) {
+			output = (Math.round(length / 1000 * 100) / 100) + " " + "km";
+		} else {
+			output = (Math.round(length * 100) / 100) + " " + "m";
+		}
+		return output;
+	},
+	formatArea = function(polygon) {
+		var area = polygon.getArea(),
+		output;
+		
+		if (area > 10000) {
+			output = (Math.round(area / 1000000 * 100) / 100) + " " + "km<sup>2</sup>";
+		} else {
+			output = (Math.round(area * 100) / 100) + " " + "m<sup>2</sup>";
+		}
+		return output;
+	},
+	mouseMoveHandler = function(evt) {
+		if (sketch) {
+			var output,
+			geom = (sketch.getGeometry());
+			
+			if (geom instanceof ol.geom.Polygon) {
+				output = formatArea(/** @type {ol.geom.Polygon} */ (geom));
+			} else if (geom instanceof ol.geom.LineString) {
+				output = formatLength( /** @type {ol.geom.LineString} */ (geom));
+			}
+			sketchElement.innerHTML = output;
+		}
+	};
+
 	if(type == "" || type == undefined) {
 		type = "";
 	}
 	switch(type) {
 		case "length":
+			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><ul id="measure_output"></ul></div>');
+			$.left_panel("filter");
+			
+			draw = new ol.interaction.Draw({
+				source: source_measurement,
+				type: "LineString"
+			});
+			map.addInteraction(draw);
+			$(map.getViewport()).on("mousemove", mouseMoveHandler);
+			
+			draw.on("drawstart", function(evt) {
+				// set sketch
+				sketch = evt.feature;
+				sketchElement = document.createElement("li");
+				$("#selected_zone").text("Distance measurement");
+				var outputList = document.getElementById("measure_output");
+				
+				if (outputList.childNodes) {
+					outputList.insertBefore(sketchElement, outputList.firstChild);
+				} else {
+					outputList.appendChild(sketchElement);
+				}
+			}, this);
+			draw.on("drawend", function(evt) {
+				// unset sketch
+				sketch = null;
+				sketchElement = null;
+			}, this);
 			break;
 		case "area":
+			draw = new ol.interaction.Draw({
+				source: source_measurement,
+				type: "Polygon"
+			});
+			map.addInteraction(draw);
+			$(map.getViewport()).on("mousemove", mouseMoveHandler);
+			
+			draw.on("drawstart", function(evt) {
+				// set sketch
+				sketch = evt.feature;
+				sketchElement = document.createElement("li");
+				$("#selected_zone").text("Area measurement");
+				var outputList = document.getElementById("measure_output");
+				
+				if (outputList.childNodes) {
+					outputList.insertBefore(sketchElement, outputList.firstChild);
+					//console.log(sketchElement, outputList.firstChild);
+				} else {
+					outputList.appendChild(sketchElement);
+					//console.log(sketchElement);
+				}
+			}, this);
+			draw.on("drawend", function(evt) {
+				// unset sketch
+				sketch = null;
+				sketchElement = null;
+			}, this);
+			
 			break;
 		default:
-			apprise('<div class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);"><h1 class="entypo flow-line"></h1>Length</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
+			apprise('<div id="measure_btns" class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'length\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_route"></span>Length</a></div><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'area\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_point_of_interest"></span>Area</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
 			break;
 	}
 };

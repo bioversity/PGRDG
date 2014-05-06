@@ -35,8 +35,10 @@ $.left_panel = function(subject) {
 			$.left_panel("close");
 		}
 	} else {
-		$("#left_panel").animate({"left": "0"}, 300).addClass("visible");
-		$(".olControlZoom").animate({"left": "230px"}, 300);
+		if(subject !== "close") {
+			$("#left_panel").animate({"left": "0"}, 300).addClass("visible");
+			$(".olControlZoom").animate({"left": "230px"}, 300);
+		}
 	}
 };
 
@@ -126,7 +128,11 @@ $.shortcuts = function() {
 		return false;
 	}).bind("keydown", "esc", function(e) {
 		e.preventDefault();
-		$.sub_toolbox("close");
+		$.left_panel("close");
+		if($("header").hasClass("map")) {
+			$.stop_measurements();
+			$.sub_toolbox("close");
+		}
 		return false;
 	}).bind("keydown", "alt", function(e) {
 		e.preventDefault();

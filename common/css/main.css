@@ -195,11 +195,18 @@ header.map #logo {
 	z-index: 100;
 }
 #map_toolbox > ul, #map_sub_toolbox > ul {
-	margin: 5px;
+	margin: 0;
 }
 #map_toolbox > ul li, #map_sub_toolbox > ul li {
 	text-align: center;
 	display: block;
+	padding: 0 5px;
+}
+#map_toolbox > ul li:first-child {
+	padding-top: 5px;
+}
+#map_toolbox > ul li:last-child {
+	padding-bottom: 5px;
 }
 #map_toolbox li.divider {
 	background-color: #2d2d2d;
@@ -215,6 +222,9 @@ header.map #logo {
 }
 #map_toolbox a:hover, #map_sub_toolbox a:hover {
 	color: #fff;
+}
+#map_sub_toolbox #tools a {
+	padding: 3px 0;
 }
 #map_toolbox a.selected {
 	box-shadow: 0 0 6px 6px #202020 inset;
@@ -236,6 +246,7 @@ header.map #logo {
 	display: none;
 	border-radius: 3px;
 	border-top-right-radius: 0px;
+	border-right: #333 1px dotted;
 }
 #map_sub_toolbox > div.level0 {
 	margin-top: 0px;
@@ -444,6 +455,11 @@ header.map #logo {
 }
 .popup_btns a:last-child {
 	margin: 0;
+}
+#measure_btns span {
+	display: block;
+	font-size: 100px;
+	margin-bottom: 30px;
 }
 
 

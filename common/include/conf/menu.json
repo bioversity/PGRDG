@@ -157,16 +157,16 @@
 					"title": "Select an area"
 				}
 			},
-			"Misure_distances": {
+			"Measure_distances": {
 				"content": {
 					"icon": "fa-fw fa-compass",
 					"text": ""
 				},
 				"attributes": {
-					"onclick": "$.gui_misure_distances();",
+					"onclick": "$.gui_measure_distances();",
 					"href": "javascript: void(0);",
 					"class": "btn",
-					"title": "Misure distances"
+					"title": "Measure distances"
 				}
 			}
 		},
