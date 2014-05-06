@@ -5,7 +5,7 @@
 			"Filter": {
 				"_comment": "Here you are defining the <a> tag",
 				"content": {
-					"icon": "fa-search",
+					"icon": "fa fa-search",
 					"text": "Filter"
 				},
 				"attributes": {
@@ -16,7 +16,7 @@
 			},
 			"Map": {
 				"content": {
-					"icon": "fa-globe",
+					"icon": "fa fa-globe",
 					"text": "Map"
 				},
 				"attributes": {
@@ -25,7 +25,7 @@
 			},
 			"Data": {
 				"content": {
-					"icon": "fa-code-fork",
+					"icon": "fa fa-code-fork",
 					"text": "Data"
 				},
 				"attributes": {
@@ -34,7 +34,7 @@
 			},
 			"Charts": {
 				"content": {
-					"icon": "fa-bar-chart-o",
+					"icon": "fa fa-bar-chart-o",
 					"text": "Charts"
 				},
 				"attributes": {
@@ -44,7 +44,7 @@
 			},
 			"Sign in": {
 				"content": {
-					"icon": "fa-sign-in",
+					"icon": "fa fa-sign-in",
 					"text": "Sign in"
 				},
 				"attributes": {
@@ -57,62 +57,67 @@
 		"map_toolbox": {
 			"Find_location": {
 				"content": {
-					"icon": "fa-search",
+					"icon": "ion-search",
 					"text": ""
 				},
 				"attributes": {
 					"onclick": "$.sub_toolbox('find_location');",
 					"href": "javascript: void(0);",
 					"class": "btn",
+					"id": "find_location_btn",
 					"title": "Find a location"
 				},
 				"divider": "divider"
 			},
 			"Change_map": {
 				"content": {
-					"icon": "fa-tasks",
+					"icon": "ion-map",
 					"text": ""
 				},
 				"attributes": {
 					"onclick": "$.sub_toolbox('change_map');",
 					"href": "javascript: void(0);",
 					"class": "btn",
+					"id": "change_map_btn",
 					"title": "Change map type"
 				}
 			},
 			"Lock_view": {
 				"content": {
-					"icon": "fa-lock",
+					"icon": "fa fa-lock",
 					"text": ""
 				},
 				"attributes": {
 					"onclick": "$.toggle_lock_view();",
 					"href": "javascript: void(0);",
 					"class": "btn",
+					"id": "lock_view_btn",
 					"title": "Lock/unlock this view"
 				}
 			},
 			"Tools": {
 				"content": {
-					"icon": "fa-wrench",
+					"icon": "ion-settings",
 					"text": ""
 				},
 				"attributes": {
 					"onclick": "$.sub_toolbox('tools');",
 					"href": "javascript: void(0);",
 					"class": "btn",
+					"id": "tools_btn",
 					"title": "Show/hide tools"
 				},
 				"divider": "divider"
 			},
 			"Help": {
 				"content": {
-					"icon": "fa-question",
+					"icon": "ion-help",
 					"text": ""
 				},
 				"attributes": {
 					"href": "javascript: void(0);",
 					"class": "btn",
+					"id": "help_btn",
 					"title": "Help",
 					"data-toggle": "modal",
 					"data-target": "#map_toolbox_help"
@@ -122,7 +127,7 @@
 		"tools": {
 			"Add_marker": {
 				"content": {
-					"icon": "fa-fw fa-map-marker",
+					"icon": "ion-location",
 					"text": ""
 				},
 				"attributes": {
@@ -134,7 +139,7 @@
 			},
 			"Add_tooltip": {
 				"content": {
-					"icon": "fa-fw fa-comment",
+					"icon": "ion-chatbox-working",
 					"text": ""
 				},
 				"attributes": {
@@ -145,21 +150,9 @@
 				},
 				"divider": "divider"
 			},
-			"Select_area": {
-				"content": {
-					"icon": "fa-fw fa-crop",
-					"text": ""
-				},
-				"attributes": {
-					"onclick": "javascript:void(0);",
-					"href": "javascript: void(0);",
-					"class": "btn",
-					"title": "Select an area"
-				}
-			},
 			"Measure_distances": {
 				"content": {
-					"icon": "fa-fw fa-compass",
+					"icon": "ion-fork-repo",
 					"text": ""
 				},
 				"attributes": {
@@ -173,7 +166,7 @@
 		"map_contextmenu": {
 			"Get_point": {
 				"content": {
-					"icon": "fa-crosshairs",
+					"icon": "fa fa-crosshairs",
 					"text": "Get informations of this point"
 				},
 				"attributes": {
@@ -188,7 +181,7 @@
 		"map_knob_contextmenu": {
 			"Point_info": {
 				"content": {
-					"icon": "fa-info-circle",
+					"icon": "fa fa-info-circle",
 					"text": ""
 				},
 				"attributes": {

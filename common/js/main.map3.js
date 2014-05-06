@@ -8,7 +8,72 @@ lat = 55,
 zoom = 4,
 map, view,
 vector_measurement, source_measurement, draw,
-exampleNS = {};
+SELECT, MODIFY,
+exampleNS = {},
+overlayStyle = (function() {
+	/* jshint -W069 */
+	var styles = {};
+	styles['Polygon'] = [
+		new ol.style.Style({
+			fill: new ol.style.Fill({
+				color: [255, 255, 255, 0.5]
+			})
+		}),
+		new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: [255, 255, 255, 1],
+				width: 5
+			})
+		}),
+		new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: [0, 153, 255, 1],
+				width: 3
+			})
+		})
+	];
+	styles['MultiPolygon'] = styles['Polygon'];
+
+	styles['LineString'] = [
+		new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: [255, 255, 255, 1],
+				width: 5
+			})
+		}),
+		new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: [0, 153, 255, 1],
+				width: 3
+			})
+		})
+	];
+	styles['MultiLineString'] = styles['LineString'];
+
+	styles['Point'] = [
+		new ol.style.Style({
+			image: new ol.style.Circle({
+				radius: 7,
+				fill: new ol.style.Fill({
+					color: [0, 153, 255, 1]
+				}),
+				stroke: new ol.style.Stroke({
+					color: [255, 255, 255, 0.75],
+					width: 1.5
+				})
+			}),
+			zIndex: 100000
+		})
+	];
+	styles['MultiPoint'] = styles['Point'];
+
+	styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+
+	return function(feature, resolution) {
+		return styles[feature.getGeometry().getType()];
+	};
+	/* jshint +W069 */
+})();
 
 exampleNS.getRendererFromQueryString = function() {
 	var obj = {}, queryString = location.search.slice(1), re = /([^&=]+)=([^&]*)/g, m;
@@ -36,6 +101,13 @@ $.init_map = function() {
 	view = new ol.View2D({
 		center: $.set_lonlat(lon, lat),
 		zoom: 4
+	}),
+	select = new ol.interaction.Select({
+		style: overlayStyle
+	}),
+	modify = new ol.interaction.Modify({
+		features: select.getFeatures(),
+		style: overlayStyle
 	}),
 	layers = [
 		new ol.layer.Tile({
@@ -109,6 +181,8 @@ $.init_map = function() {
 	];
 
 	map = new ol.Map({
+		// Taken from http://ol3js.org/en/master/examples/modify-test.html
+		interactions: ol.interaction.defaults().extend([select, modify]),
 		target: "pgrdg_map",
 		layers: layers,
 		view: view,
@@ -238,6 +312,7 @@ Map functions
 */
 $.sub_toolbox = function(action) {
 	if($("#" + action).css("display") == "none") {
+		$("#" + action + "_btn").parent("li").addClass("selected");
 		$("#" + action).fadeIn(function() {
 			switch(action) {
 				case "find_location":
@@ -300,10 +375,14 @@ $.sub_toolbox = function(action) {
 	} else {
 		if(action == "close") {
 			$("#map_sub_toolbox div").fadeOut(300);
+			$("#" + action + "_btn").parent("li").removeClass("selected");
 		} else {
+			$("#" + action + "_btn").parent("li").removeClass("selected");
 			$("#" + action).fadeOut(300, function() {
 				switch(action) {
 					case "change_map":
+						break;
+					case "tools":
 						break;
 				}
 			});
@@ -392,12 +471,44 @@ $.toggle_lock_view = function() {
 	}
 	$("#selected_zone").text("Map " + map_status_txt).show();
 };
-
+$.show_guides = function() {
+	$(document).on("mousemove", function(e){
+		$("#guides").find("#gx").css({
+			top: e.pageY,
+			left: 0,
+			width: e.pageX-5
+		});
+		$("#guides").find("#gxx").css({
+			top: e.pageY,
+			left: e.pageX+5,
+			width: ($(document).width() - e.pageX)
+		});
+		$("#guides").find("#gy").css({
+			left: e.pageX,
+			top: 0,
+			height: e.pageY-5
+		});
+		$("#guides").find("#gyy").css({
+			left: e.pageX,
+			top: e.pageY+5,
+			height: ($(document).height() - e.pageY)
+		});
+	});
+};
+$.start_measurements = function() {
+	$("#pgrdg_map").css("cursor", "crosshair");
+	$("#guides").show();
+}
+$.pause_measurements = function() {
+	//$("#pgrdg_map").css("cursor", "default");
+	$("#guides").hide();
+};
 $.stop_measurements = function() {
 	map.removeInteraction(draw);
 	$("#selected_zone").text("");
 	$("#pgrdg_map").css("cursor", "grab");
 	$("#left_panel #measurements").html("");
+	$("#guides").hide();
 };
 $.gui_measure_distances = function(type) {
 	$("#pgrdg_map").css("cursor", "crosshair");
@@ -447,6 +558,7 @@ $.gui_measure_distances = function(type) {
 		case "length":
 			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><ul id="measure_output"></ul></div>');
 			$.left_panel("filter");
+			$.show_guides();
 			
 			draw = new ol.interaction.Draw({
 				source: source_measurement,
@@ -456,6 +568,8 @@ $.gui_measure_distances = function(type) {
 			$(map.getViewport()).on("mousemove", mouseMoveHandler);
 			
 			draw.on("drawstart", function(evt) {
+				$.start_measurements();
+				
 				// set sketch
 				sketch = evt.feature;
 				sketchElement = document.createElement("li");
@@ -469,12 +583,18 @@ $.gui_measure_distances = function(type) {
 				}
 			}, this);
 			draw.on("drawend", function(evt) {
+				$.pause_measurements();
+				
 				// unset sketch
 				sketch = null;
 				sketchElement = null;
 			}, this);
 			break;
 		case "area":
+			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><ul id="measure_output"></ul></div>');
+			$.left_panel("filter");
+			$.show_guides();
+			
 			draw = new ol.interaction.Draw({
 				source: source_measurement,
 				type: "Polygon"
@@ -483,6 +603,8 @@ $.gui_measure_distances = function(type) {
 			$(map.getViewport()).on("mousemove", mouseMoveHandler);
 			
 			draw.on("drawstart", function(evt) {
+				$("#guides").show();
+				
 				// set sketch
 				sketch = evt.feature;
 				sketchElement = document.createElement("li");
@@ -498,6 +620,8 @@ $.gui_measure_distances = function(type) {
 				}
 			}, this);
 			draw.on("drawend", function(evt) {
+				$("#guides").hide();
+				
 				// unset sketch
 				sketch = null;
 				sketchElement = null;
@@ -763,7 +887,7 @@ $.contextMenu = function() {
 	$("#knob").hide();
 	$("#pgrdg_map").removeClass("grabbing");
 	var $contextMenu = $("#knob");
-	$("body").on("contextmenu", "#pgrdg_map:not(.locked), #knob", function(e) {
+	$("body").on("contextmenu", "#pgrdg_map:not(.locked), #knob:not(header)", function(e) {
 		e.preventDefault();
 		if($("#clicked_coords").length == 0) {
 			$("body").prepend('<span style="display: none;" id="clicked_coords"></span>');

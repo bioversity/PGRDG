@@ -49,7 +49,7 @@ class parse_json_config {
 						$divider = $mo_val;
 					}
 				}
-				$menu_list .= implode(" ", $attributes) . '><span class="fa ' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . '</a></li>' . "\n";
+				$menu_list .= implode(" ", $attributes) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . '</a></li>' . "\n";
 				if($divider !== "") {
 					$menu_list .= '	<li class="' . $divider . '"></li>' . "\n";
 				}
@@ -85,7 +85,7 @@ class parse_json_config {
 						$divider = $mo_val;
 					}
 				}
-				$menu_list .= implode(" ", $attributes) . '><small class="fa ' . $map_toolbox["content"]["icon"] . '"></small></a></span></li>' . "\n";
+				$menu_list .= implode(" ", $attributes) . '><small class="' . $map_toolbox["content"]["icon"] . '"></small></a></span></li>' . "\n";
 				if($divider !== "") {
 					$menu_list .= '	<li class="' . $divider . '"></li>' . "\n";
 				}
