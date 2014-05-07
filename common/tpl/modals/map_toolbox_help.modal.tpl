@@ -12,22 +12,22 @@
 						<div class="table-responsive">
 							<table class="table">
 								<tr>
-									<th><tt>F1</tt> <small style="font-weight: normal;">or</small> <tt>ALT<small style="font-weight: normal;">+</small>I</tt></th><td>Show this help</td>
+									<th><kbd>F1</kbd> <small style="font-weight: normal;">or</small> <kbd>ALT<small style="font-weight: normal;">+</small>I</kbd></th><td>Show this help</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>F</kbd></th><td>Search a location inside a map</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Lock/unlock map navigation</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>L</kbd></th><td>Lock/unlock map navigation</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>T</tt></th><td>Open/close map background layer preferences</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>T</kbd></th><td>Open/close map background layer preferences</td>
 								</tr>
 								<tr>
-									<th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td>
+									<th><br /><kbd>ALT<small style="font-weight: normal;">+</small>+</kbd></th><td><br />Zoom in</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>-</kbd></th><td>Zoom out</td>
 								</tr>
 							</table>
 						</div>
@@ -37,28 +37,28 @@
 						<div class="table-responsive">
 							<table class="table">
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td>Entire world</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>0</kbd></th><td>Entire world</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>1</kbd></th><td>Africa</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>2</kbd></th><td>Antarctica</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>3</kbd></th><td>Asia</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>4</kbd></th><td>Europe</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>5</kbd></th><td>North America</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>6</kbd></th><td>Oceania</td>
 								</tr>
 								<tr>
-									<th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>7</kbd></th><td>South America</td>
 								</tr>
 							</table>
 						</div>

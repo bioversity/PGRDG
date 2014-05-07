@@ -8,12 +8,12 @@ lat = 55,
 zoom = 4,
 map, view,
 vector_measurement, source_measurement, draw,
-SELECT, MODIFY,
+select, modify,
 exampleNS = {},
 overlayStyle = (function() {
 	/* jshint -W069 */
 	var styles = {};
-	styles['Polygon'] = [
+	styles["Polygon"] = [
 		new ol.style.Style({
 			fill: new ol.style.Fill({
 				color: [255, 255, 255, 0.5]
@@ -32,9 +32,9 @@ overlayStyle = (function() {
 			})
 		})
 	];
-	styles['MultiPolygon'] = styles['Polygon'];
+	styles["MultiPolygon"] = styles["Polygon"];
 
-	styles['LineString'] = [
+	styles["LineString"] = [
 		new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: [255, 255, 255, 1],
@@ -48,9 +48,9 @@ overlayStyle = (function() {
 			})
 		})
 	];
-	styles['MultiLineString'] = styles['LineString'];
+	styles["MultiLineString"] = styles["LineString"];
 
-	styles['Point'] = [
+	styles["Point"] = [
 		new ol.style.Style({
 			image: new ol.style.Circle({
 				radius: 7,
@@ -65,9 +65,9 @@ overlayStyle = (function() {
 			zIndex: 100000
 		})
 	];
-	styles['MultiPoint'] = styles['Point'];
+	styles["MultiPoint"] = styles["Point"];
 
-	styles['GeometryCollection'] = styles['Polygon'].concat(styles['Point']);
+	styles["GeometryCollection"] = styles["Polygon"].concat(styles["Point"]);
 
 	return function(feature, resolution) {
 		return styles[feature.getGeometry().getType()];
@@ -125,8 +125,7 @@ $.init_map = function() {
 			displayOnMenu: true,
 			minResolution: 80,
 			source: new ol.source.MapQuest({
-				layer: "sat",
-				crossOrigin: "anonymous"
+				layer: "sat"
 			}),
 			visible: true
 		}),
@@ -134,8 +133,7 @@ $.init_map = function() {
 			style: "Road",
 			displayOnMenu: true,
 			source: new ol.source.MapQuest({
-				layer: "osm",
-				crossOrigin: "anonymous"
+				layer: "osm"
 			}),
 			visible: false
 		}),
@@ -143,8 +141,7 @@ $.init_map = function() {
 			style: "Watercolor",
 			displayOnMenu: true,
 			source: new ol.source.Stamen({
-				layer: "watercolor",
-				crossOrigin: "anonymous"
+				layer: "watercolor"
 			}),
 			visible: false
 		}),
@@ -164,16 +161,16 @@ $.init_map = function() {
 			source: source_measurement,
 			style: new ol.style.Style({
 				fill: new ol.style.Fill({
-					color: 'rgba(255, 255, 255, 0.2)'
+					color: "rgba(255, 255, 255, 0.2)"
 				}),
 				stroke: new ol.style.Stroke({
-					color: '#ffcc33',
+					color: "#ffcc33",
 					width: 2
 				}),
 				image: new ol.style.Circle({
 					radius: 7,
 					fill: new ol.style.Fill({
-						color: '#ffcc33'
+						color: "#ffcc33"
 					})
 				})
 			})
@@ -206,7 +203,43 @@ $.init_map = function() {
 	});
 	view = map.getView();
 	
-	//map.on("moveend", $.get_visible_bbox);
+	var featureOverlay = new ol.FeatureOverlay({
+		map: map,
+		style: new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: "rgba(255, 0, 0, 0.5)",
+				width: 5
+			}),
+			fill: new ol.style.Fill({
+				color: "rgba(255, 0, 0, 1)"
+			})
+		})
+	}),
+	highlight,
+	previous_cursor = "",
+	displayFeatureInfo = function(pixel) {
+		var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+			return feature;
+		});
+		
+		if (feature !== highlight) {
+			if (feature) {
+				featureOverlay.addFeature(feature);
+				previous_cursor = $("#pgrdg_map").css("cursor");
+				$("#pgrdg_map").css("cursor", "pointer");
+			}
+			if (highlight) {
+				featureOverlay.removeFeature(highlight);
+				$("#pgrdg_map").css("cursor", previous_cursor);
+			}
+			highlight = feature;
+		}
+	};
+	
+	$(map.getViewport()).on("mousemove", function(evt) {
+		var pixel = map.getEventPixel(evt.originalEvent);
+		displayFeatureInfo(pixel);
+	});
 };
 
 /**
@@ -410,7 +443,7 @@ $.find_location = function(options) {
 // Search location from given string
 $.search_location = function(input) {
 	if(input.length > 0) {
-		$("#map_toolbox span.fa-search").removeClass("fa-search").addClass("fa-spinner fa-spin").parent("a").addClass("disabled");
+		$("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
 		$.ajax({
 			url: "API/",
 			type: "get",
@@ -419,7 +452,7 @@ $.search_location = function(input) {
 			data: {proxy: "true", type: "get", header: "text/json", address: "http://nominatim.openstreetmap.org/search.php", params: {q: encodeURIComponent(input), format: "json", addressdetails: 1, bounded: 1, limit: 10, polygon_geojson: 1}},
 			error: function(data) {
 				alert("An error occurred while communicating with the OpenLS service. Please try again.");
-				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
+				$("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
 			},
 			success: function(data) {
 				datap = $.parseJSON(data);
@@ -448,7 +481,7 @@ $.search_location = function(input) {
 					}
 					$.add_marker({uuid: datap[k].place_id, lon: datap[k].lon, lat: datap[k].lat, marker_class: mc, name: datap[k].display_name, title: "Search: \"" + input + "\"", content: datap[k].display_name});
 				});
-				$("#map_toolbox span.fa-spinner").removeClass("fa-spinner fa-spin").addClass("fa-search").parent("a").removeClass("disabled");
+				$("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
 				$("#" + datap[0].place_id).popover("show");
 				$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
 			}
@@ -495,9 +528,13 @@ $.show_guides = function() {
 		});
 	});
 };
-$.start_measurements = function() {
+$.start_measurements = function(click_on_start) {
 	$("#pgrdg_map").css("cursor", "crosshair");
 	$("#guides").show();
+		
+	if(click_on_start !== null && typeof(click_on_start) == "array") {
+		// Add function to preselect starting point
+	}
 }
 $.pause_measurements = function() {
 	//$("#pgrdg_map").css("cursor", "default");
@@ -507,20 +544,34 @@ $.stop_measurements = function() {
 	map.removeInteraction(draw);
 	$("#selected_zone").text("");
 	$("#pgrdg_map").css("cursor", "grab");
-	$("#left_panel #measurements").html("");
 	$("#guides").hide();
 };
-$.gui_measure_distances = function(type) {
+$.gui_measure_distances = function(options) {
+	var options = $.extend({
+		lon: 0,
+		lat: 0,
+		click_on_start: null,
+		title: "",
+		type: "length",
+		callback: function() {}	
+	}, options);
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
 	$("#pgrdg_map").css("cursor", "crosshair");
 	
 	var sketch,
 	sketchElement;
 	formatLength = function(line) {
 		var length = Math.round(line.getLength() * 100) / 100,
+		edit_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-edit"></span></a> ',
+		remove_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-trash-o"></span></a> ',
+		export_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-floppy-o"></span></a> ',
 		output;
 		
+		//console.log(line.getCoordinates());
 		if (length > 100) {
-			output = (Math.round(length / 1000 * 100) / 100) + " " + "km";
+			output = '<td style="vertical-align: middle;">' + (Math.round(length / 1000 * 100) / 100) + " " + "km" + '</td><td class="text-right" style="vertical-align: middle; width: 50%;"><div class="btn-group">' + edit_btn + remove_btn + '</div>' + export_btn + '</td>';
 		} else {
 			output = (Math.round(length * 100) / 100) + " " + "m";
 		}
@@ -551,12 +602,12 @@ $.gui_measure_distances = function(type) {
 		}
 	};
 
-	if(type == "" || type == undefined) {
-		type = "";
+	if(options.type == "" || options.type == undefined) {
+		options.type = "length";
 	}
-	switch(type) {
+	switch(options.type) {
 		case "length":
-			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><ul id="measure_output"></ul></div>');
+			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
 			$.left_panel("filter");
 			$.show_guides();
 			
@@ -565,22 +616,19 @@ $.gui_measure_distances = function(type) {
 				type: "LineString"
 			});
 			map.addInteraction(draw);
+			$(document.elementFromPoint(100, 100)).click();
 			$(map.getViewport()).on("mousemove", mouseMoveHandler);
 			
 			draw.on("drawstart", function(evt) {
-				$.start_measurements();
+				$.start_measurements(options.click_on_start);
 				
 				// set sketch
 				sketch = evt.feature;
-				sketchElement = document.createElement("li");
+				sketchElement = document.createElement("tr");
 				$("#selected_zone").text("Distance measurement");
 				var outputList = document.getElementById("measure_output");
 				
-				if (outputList.childNodes) {
-					outputList.insertBefore(sketchElement, outputList.firstChild);
-				} else {
-					outputList.appendChild(sketchElement);
-				}
+				outputList.appendChild(sketchElement);
 			}, this);
 			draw.on("drawend", function(evt) {
 				$.pause_measurements();
@@ -591,7 +639,7 @@ $.gui_measure_distances = function(type) {
 			}, this);
 			break;
 		case "area":
-			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><ul id="measure_output"></ul></div>');
+			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
 			$.left_panel("filter");
 			$.show_guides();
 			
@@ -603,7 +651,7 @@ $.gui_measure_distances = function(type) {
 			$(map.getViewport()).on("mousemove", mouseMoveHandler);
 			
 			draw.on("drawstart", function(evt) {
-				$("#guides").show();
+				$.start_measurements(options.click_on_start);
 				
 				// set sketch
 				sketch = evt.feature;
@@ -628,8 +676,19 @@ $.gui_measure_distances = function(type) {
 			}, this);
 			
 			break;
+		case "point":
+			$.gui_measure_distances({type: "length", click_on_start: [10, 10]});
+			/*
+			apprise("Search a location to calculate distances.<br ><p>From:<br />this point (" + ((options.title.length > 0) ? ' "' + options.title + '" - ' : "") + "lon: " + options.lon + ", lat: " + options.lat + ")</p>To:<br />", {"title": "Measure distance between two points", "input": true}, function(r) {
+				if(r) {
+					$.search_location(r);
+					$(".popover").popover("hide");
+				}
+			});
+			*/
+			break;
 		default:
-			apprise('<div id="measure_btns" class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'length\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_route"></span>Length</a></div><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'area\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_point_of_interest"></span>Area</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
+			apprise('<div id="measure_btns" class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances({type: \'length\'}); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_route"></span>Length</a></div><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances({type: \'area\'}); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_point_of_interest"></span>Area</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
 			break;
 	}
 };
@@ -682,6 +741,7 @@ $.add_marker = function(options) {
 	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
 	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
 	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances({type: \'point\', lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
 	var marker = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
@@ -690,7 +750,7 @@ $.add_marker = function(options) {
 				}).popover({
 					html: true,
 					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-					content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + '</div></div>',
+					content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>',
 					placement: "top",
 					trigger: "click"
 				}).bind("click", function() {
@@ -778,6 +838,7 @@ $.add_popup = function(options, callback) {
 			width: 200,
 			height: 200
 		},
+		name: "",
 		title: "Selected location",
 		html: "Sample text",
 		callback: function() {}	
@@ -789,6 +850,7 @@ $.add_popup = function(options, callback) {
 	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
 	var edit_point_btn = '<a class="btn btn-default btn-sm" title="Move this point" href="javascript:void(0);" onclick="$.move_point(\'' + options.uuid + '\'); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-arrows"></span></a>';
 	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-trash-o"></span></a>';
+	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances({type: \'point\', lon: \'' + options.lon + '\', lat:\'' + options.lat + ', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
 	var popup = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
@@ -797,7 +859,7 @@ $.add_popup = function(options, callback) {
 				}).popover({
 					html: true,
 					title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-					content: '<div class="content">' + options.content + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([options.lon, options.lat]) + '</code>' + '</div><br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-toolbar"><div class="btn-group">' + set_center_btn + set_zoom_btn + '</div><div class="btn-group right">' + edit_point_btn + remove_point_btn + '</div></div></div>',
+					content: '<div class="content">' + options.content + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([options.lon, options.lat]) + '</code>' + '</div><br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-toolbar"><div class="btn-group">' + set_center_btn + set_zoom_btn + '</div><div class="btn-group right">' + edit_point_btn + remove_point_btn + measure_distance_btn + '</div></div></div>',
 					placement: "top",
 					trigger: "click"
 				}),
@@ -916,9 +978,19 @@ $(document).ready(function() {
 	$.init_map();
 	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 	if(!$("#pgrdg_map").hasClass("locked")) {
-		$("#pgrdg_map").on("mousedown touchstart", function() {
-			$(this).addClass("grabbing");
+		$("#pgrdg_map").on("mousedown touchstart", function(em) {
+			var startX = em.clientX,
+			startY = em.clientY;
+			$("#pgrdg_map").mousemove(function(emm) {
+				console.log(startX, startY, "dragging...");
+				if(Math.abs(startX - emm.clientX) > 1 && Math.abs(startY - emm.clientY) > 1) {
+					$("#pgrdg_map").addClass("grabbing");
+				} else {
+					$(this).removeClass("grabbing");
+				}
+			});
 		}).on("mouseup touchend", function() {
+			$("#pgrdg_map").unbind("mousemove");
 			$(this).removeClass("grabbing");
 		});
 		$.contextMenu(true);

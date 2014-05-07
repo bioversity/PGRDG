@@ -115,9 +115,9 @@ header.map #logo {
 	cursor: -webkit-grab;
 }
 #pgrdg_map.grabbing {
-	cursor: grabbing;
-	cursor: -moz-grabbing;
-	cursor: -webkit-grabbing;
+	cursor: grabbing !important;
+	cursor: -moz-grabbing !important;
+	cursor: -webkit-grabbing !important;
 }
 #pgrdg_map.locked:before {
 	cursor: not-allowed;
