@@ -4,9 +4,15 @@
 class parse_json_config {
 	function __construct($config = "") {
 		if(trim($config) == "") {
-			$config = "common/include/conf/menu.json";
+			// Uncomment if you want to remote json menu
+			//$config = "common/include/conf/menu.json";
+			include("common/include/conf/menu.php");
+			$config = $menu;
+			
 		}
-		$this->json_conf = json_decode(file_get_contents($config), true);
+		// Same as comment before
+		//$this->json_conf = json_decode(file_get_contents($config), true);
+		$this->json_conf = $config;
 	}
 	private function walk($array, $key) {
 		if(!is_array($array)) {
