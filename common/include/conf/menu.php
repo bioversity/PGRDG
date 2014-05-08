@@ -158,6 +158,7 @@ $menu["menu"]["tools"] = array(
 			"onclick" => "$.gui_measure_distances();",
 			"href" => "javascript:void(0);",
 			"class" => "btn",
+			"id" => "measure_distances_btn",
 			"title" => "Measure distances"
 		)
 	)

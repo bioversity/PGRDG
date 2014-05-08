@@ -285,20 +285,34 @@ header.map #logo {
 #map_sub_toolbox a.btn {
 	padding: 5px 10px !important;
 }
+#map_sub_toolbox a.selected {
+	box-shadow: 0 0 6px 6px #2a2a2a inset;
+}
+#map_sub_toolbox a.selected span {
+	text-shadow: 0 0 6px #fff;
+}
 #map_sub_toolbox li {
     margin: -2px -12px;
 }
-#map_sub_toolbox li.selected, #map_sub_toolbox li:hover, #map_toolbox li.selected, #map_toolbox li:hover {
+#map_toolbox li.selected,
+#map_toolbox li:hover,
+#map_sub_toolbox li.selected,
+#map_sub_toolbox li a.selected,
+#map_sub_toolbox li:hover {
 	background-color: #333;
 	/*border-left: 1px solid #ccc;*/
     /*border-right: 1px solid #ccc;*/
     border-radius: 0;
     color: #fff;
 }
-#map_sub_toolbox li:first-child.selected, #map_sub_toolbox li:first-child:hover {
+#map_sub_toolbox li:first-child.selected,
+#map_sub_toolbox li:first-child a.selected,
+#map_sub_toolbox li:first-child:hover {
 	border-radius: 3px 0 0 0;
 }
-#map_sub_toolbox li:last-child.selected, #map_sub_toolbox li:last-child:hover {
+#map_sub_toolbox li:last-child.selected,
+#map_sub_toolbox li:last-child a.selected,
+#map_sub_toolbox li:last-child:hover {
 	border-radius: 0 0 3px 3px;
 }
 #map_toolbox li.selected {

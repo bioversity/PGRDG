@@ -221,16 +221,37 @@ $.init_map = function() {
 		var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
 			return feature;
 		});
-		
 		if (feature !== highlight) {
 			if (feature) {
 				featureOverlay.addFeature(feature);
 				previous_cursor = $("#pgrdg_map").css("cursor");
-				$("#pgrdg_map").css("cursor", "pointer");
+				if(previous_cursor == "pointer") {
+					previous_cursor = "grab";
+				}
+				$("#pgrdg_map").css("cursor", "pointer").bind("mousedown", function(e) {
+					if(previous_cursor == "crosshair") {
+						if(highlight) {
+							$.stop_measurements();
+							$("#guides").show();
+						} else {
+							$("#pgrdg_map").css("cursor", previous_cursor);
+							$("#guides").hide();
+						}
+					} else {
+						if(highlight) {
+							console.log("hilighted");
+							$("#guides").show();
+							$("#pgrdg_map").css("cursor",  "crosshair");
+						} else {
+							console.log("not hilighted");
+							$("#pgrdg_map").css("cursor",  previous_cursor);
+							$("#guides").hide();
+						}
+					}
+				});
 			}
 			if (highlight) {
 				featureOverlay.removeFeature(highlight);
-				$("#pgrdg_map").css("cursor", previous_cursor);
 			}
 			highlight = feature;
 		}
@@ -537,159 +558,167 @@ $.start_measurements = function(click_on_start) {
 	}
 }
 $.pause_measurements = function() {
-	//$("#pgrdg_map").css("cursor", "default");
 	$("#guides").hide();
 };
 $.stop_measurements = function() {
 	map.removeInteraction(draw);
+	$("#measure_distances_btn").removeClass("selected").parent("li").removeClass("selected");
 	$("#selected_zone").text("");
 	$("#pgrdg_map").css("cursor", "grab");
 	$("#guides").hide();
+	
+	$("#measure_distances_btn").removeClass("selected").parent("li").removeClass("selected");
+	$("#selected_zone").text("");
 };
-$.gui_measure_distances = function(options) {
+$.gui_measure_distances = function(type, options) {
+	if(type == undefined) {
+		type = "";
+	}
 	var options = $.extend({
 		lon: 0,
 		lat: 0,
 		click_on_start: null,
 		title: "",
-		type: "length",
 		callback: function() {}	
 	}, options);
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
 	$("#pgrdg_map").css("cursor", "crosshair");
-	
-	var sketch,
-	sketchElement;
-	formatLength = function(line) {
-		var length = Math.round(line.getLength() * 100) / 100,
-		edit_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-edit"></span></a> ',
-		remove_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-trash-o"></span></a> ',
-		export_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-floppy-o"></span></a> ',
-		output;
-		
-		//console.log(line.getCoordinates());
-		if (length > 100) {
-			output = '<td style="vertical-align: middle;">' + (Math.round(length / 1000 * 100) / 100) + " " + "km" + '</td><td class="text-right" style="vertical-align: middle; width: 50%;"><div class="btn-group">' + edit_btn + remove_btn + '</div>' + export_btn + '</td>';
-		} else {
-			output = (Math.round(length * 100) / 100) + " " + "m";
-		}
-		return output;
-	},
-	formatArea = function(polygon) {
-		var area = polygon.getArea(),
-		output;
-		
-		if (area > 10000) {
-			output = (Math.round(area / 1000000 * 100) / 100) + " " + "km<sup>2</sup>";
-		} else {
-			output = (Math.round(area * 100) / 100) + " " + "m<sup>2</sup>";
-		}
-		return output;
-	},
-	mouseMoveHandler = function(evt) {
-		if (sketch) {
-			var output,
-			geom = (sketch.getGeometry());
+	if(!$("#measure_distances_btn").hasClass("selected")) {
+		var sketch,
+		sketchElement;
+		formatLength = function(line) {
+			var length = Math.round(line.getLength() * 100) / 100,
+			edit_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-edit"></span></a> ',
+			remove_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-trash-o"></span></a> ',
+			export_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-floppy-o"></span></a> ',
+			output;
 			
-			if (geom instanceof ol.geom.Polygon) {
-				output = formatArea(/** @type {ol.geom.Polygon} */ (geom));
-			} else if (geom instanceof ol.geom.LineString) {
-				output = formatLength( /** @type {ol.geom.LineString} */ (geom));
+			//console.log(line.getCoordinates());
+			if (length > 100) {
+				output = '<td style="vertical-align: middle;">' + (Math.round(length / 1000 * 100) / 100) + " " + "km" + '</td><td class="text-right" style="vertical-align: middle; width: 50%;"><!--div class="btn-group">' + edit_btn + remove_btn + '</div-->' + export_btn + '</td>';
+			} else {
+				output = (Math.round(length * 100) / 100) + " " + "m";
 			}
-			sketchElement.innerHTML = output;
-		}
-	};
-
-	if(options.type == "" || options.type == undefined) {
-		options.type = "length";
-	}
-	switch(options.type) {
-		case "length":
-			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
-			$.left_panel("filter");
-			$.show_guides();
+			return output;
+		},
+		formatArea = function(polygon) {
+			var area = polygon.getArea(),
+			output;
 			
-			draw = new ol.interaction.Draw({
-				source: source_measurement,
-				type: "LineString"
-			});
-			map.addInteraction(draw);
-			$(document.elementFromPoint(100, 100)).click();
-			$(map.getViewport()).on("mousemove", mouseMoveHandler);
-			
-			draw.on("drawstart", function(evt) {
-				$.start_measurements(options.click_on_start);
+			if (area > 10000) {
+				output = (Math.round(area / 1000000 * 100) / 100) + " " + "km<sup>2</sup>";
+			} else {
+				output = (Math.round(area * 100) / 100) + " " + "m<sup>2</sup>";
+			}
+			return output;
+		},
+		mouseMoveHandler = function(evt) {
+			if (sketch) {
+				var output,
+				geom = (sketch.getGeometry());
 				
-				// set sketch
-				sketch = evt.feature;
-				sketchElement = document.createElement("tr");
+				if (geom instanceof ol.geom.Polygon) {
+					output = formatArea(/** @type {ol.geom.Polygon} */ (geom));
+				} else if (geom instanceof ol.geom.LineString) {
+					output = formatLength( /** @type {ol.geom.LineString} */ (geom));
+				}
+				sketchElement.innerHTML = output;
+			}
+		};
+		switch(type) {
+			case "length":
+				$("#measure_distances_btn").addClass("selected").parent("li").addClass("selected");
 				$("#selected_zone").text("Distance measurement");
-				var outputList = document.getElementById("measure_output");
+				$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
+				$.left_panel("filter");
+				$.show_guides();
 				
-				outputList.appendChild(sketchElement);
-			}, this);
-			draw.on("drawend", function(evt) {
-				$.pause_measurements();
+				draw = new ol.interaction.Draw({
+					source: source_measurement,
+					type: "LineString"
+				});
+				map.addInteraction(draw);
+				$(document.elementFromPoint(100, 100)).click();
+				$(map.getViewport()).on("mousemove", mouseMoveHandler);
 				
-				// unset sketch
-				sketch = null;
-				sketchElement = null;
-			}, this);
-			break;
-		case "area":
-			$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
-			$.left_panel("filter");
-			$.show_guides();
-			
-			draw = new ol.interaction.Draw({
-				source: source_measurement,
-				type: "Polygon"
-			});
-			map.addInteraction(draw);
-			$(map.getViewport()).on("mousemove", mouseMoveHandler);
-			
-			draw.on("drawstart", function(evt) {
-				$.start_measurements(options.click_on_start);
-				
-				// set sketch
-				sketch = evt.feature;
-				sketchElement = document.createElement("li");
-				$("#selected_zone").text("Area measurement");
-				var outputList = document.getElementById("measure_output");
-				
-				if (outputList.childNodes) {
-					outputList.insertBefore(sketchElement, outputList.firstChild);
-					//console.log(sketchElement, outputList.firstChild);
-				} else {
+				draw.on("drawstart", function(evt) {
+					$.start_measurements(options.click_on_start);
+					
+					// set sketch
+					sketch = evt.feature;
+					sketchElement = document.createElement("tr");
+					var outputList = document.getElementById("measure_output");
+					
 					outputList.appendChild(sketchElement);
-					//console.log(sketchElement);
-				}
-			}, this);
-			draw.on("drawend", function(evt) {
-				$("#guides").hide();
+				}, this);
+				draw.on("drawend", function(evt) {
+					$.stop_measurements();
+					
+					// unset sketch
+					sketch = null;
+					sketchElement = null;
+				}, this);
+				break;
+			case "area":
+				$("#measure_distances_btn").addClass("selected").parent("li").addClass("selected");
+				$("#selected_zone").text("Area measurement");
+				$("#left_panel .panel-body:not(.text-right)").html('<div id="measurements"><h5 class="text-primary">Measuring distances between points</h5><table class="table table-condensed"><thead><tr><th>Distance</th><th></th></tr></thead><tbody id="measure_output"></tbody></table></div>');
+				$.left_panel("filter");
+				$.show_guides();
 				
-				// unset sketch
-				sketch = null;
-				sketchElement = null;
-			}, this);
-			
-			break;
-		case "point":
-			$.gui_measure_distances({type: "length", click_on_start: [10, 10]});
-			/*
-			apprise("Search a location to calculate distances.<br ><p>From:<br />this point (" + ((options.title.length > 0) ? ' "' + options.title + '" - ' : "") + "lon: " + options.lon + ", lat: " + options.lat + ")</p>To:<br />", {"title": "Measure distance between two points", "input": true}, function(r) {
-				if(r) {
-					$.search_location(r);
-					$(".popover").popover("hide");
-				}
-			});
-			*/
-			break;
-		default:
-			apprise('<div id="measure_btns" class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances({type: \'length\'}); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_route"></span>Length</a></div><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances({type: \'area\'}); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_point_of_interest"></span>Area</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
-			break;
+				draw = new ol.interaction.Draw({
+					source: source_measurement,
+					type: "Polygon"
+				});
+				map.addInteraction(draw);
+				$(map.getViewport()).on("mousemove", mouseMoveHandler);
+				
+				draw.on("drawstart", function(evt) {
+					$.start_measurements(options.click_on_start);
+					
+					// set sketch
+					sketch = evt.feature;
+					sketchElement = document.createElement("li");
+					var outputList = document.getElementById("measure_output");
+					
+					if (outputList.childNodes) {
+						outputList.insertBefore(sketchElement, outputList.firstChild);
+						//console.log(sketchElement, outputList.firstChild);
+					} else {
+						outputList.appendChild(sketchElement);
+						//console.log(sketchElement);
+					}
+				}, this);
+				draw.on("drawend", function(evt) {
+					$("#guides").hide();
+					
+					// unset sketch
+					sketch = null;
+					sketchElement = null;
+				}, this);
+				
+				break;
+			case "point":
+				$("#measure_distances_btn").addClass("selected").parent("li").addClass("selected");
+				$("#selected_zone").text("Distance measurement");
+				$.gui_measure_distances({type: "length", click_on_start: [10, 10]});
+				/*
+				apprise("Search a location to calculate distances.<br ><p>From:<br />this point (" + ((options.title.length > 0) ? ' "' + options.title + '" - ' : "") + "lon: " + options.lon + ", lat: " + options.lat + ")</p>To:<br />", {"title": "Measure distance between two points", "input": true}, function(r) {
+					if(r) {
+						$.search_location(r);
+						$(".popover").popover("hide");
+					}
+				});
+				*/
+				break;
+			default:
+				apprise('<div id="measure_btns" class="row"><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'length\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_route"></span>Length</a></div><div class="col-sm-6"><a class="btn btn-lg" href="javascript: void(0);" onclick="$.gui_measure_distances(\'area\'); $(\'#apprise\').modal(\'hide\');"><span class="picol picol_point_of_interest"></span>Area</a></div><div class="col-sm-6"></div></div>', {"title": "Measure", "showFooter": false});
+				break;
+		}
+	} else {
+		$.stop_measurements();
 	}
 };
 
@@ -741,7 +770,7 @@ $.add_marker = function(options) {
 	var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
 	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
 	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances({type: \'point\', lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
+	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
 	var marker = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
@@ -850,7 +879,7 @@ $.add_popup = function(options, callback) {
 	var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
 	var edit_point_btn = '<a class="btn btn-default btn-sm" title="Move this point" href="javascript:void(0);" onclick="$.move_point(\'' + options.uuid + '\'); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-arrows"></span></a>';
 	var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-trash-o"></span></a>';
-	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances({type: \'point\', lon: \'' + options.lon + '\', lat:\'' + options.lat + ', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
+	var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + ', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
 	var popup = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
