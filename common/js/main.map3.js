@@ -366,6 +366,8 @@ Map functions
 */
 $.sub_toolbox = function(action) {
 	if($("#" + action).css("display") == "none") {
+		$.reset_map_toolbox();
+		
 		$("#" + action + "_btn").parent("li").addClass("selected");
 		$("#" + action).fadeIn(function() {
 			switch(action) {
@@ -510,20 +512,21 @@ $.search_location = function(input) {
 	}
 };
 $.toggle_lock_view = function() {
-	var current_view = $.get_current_bbox(),
-	map_status_txt;
+	var current_view = $.get_current_bbox();
 	
 	if(!$("#pgrdg_map").hasClass("locked")) {
 		$("#pgrdg_map").removeClass("grabbing");
 		$("#pgrdg_map").addClass("locked");
-		$("#map_toolbox span.fa-lock").parent("a").addClass("selected");
-		map_status_txt = "locked";
+		$("#lock_view_btn").addClass("pulse");
+		$.reset_map_toolbox();
+		$.disable_map_toolbox();
+		$("#selected_zone").text("Map locked").show();
 	} else {
 		$("#pgrdg_map").removeClass("locked");
-		$("#map_toolbox span.fa-lock").parent("a").removeClass("selected");
-		map_status_txt = "unlocked";
+		$("#lock_view_btn").removeClass("pulse");
+		$.enable_map_toolbox();
+		$("#selected_zone").text("Map unlocked").show().delay(2000).fadeOut(600);
 	}
-	$("#selected_zone").text("Map " + map_status_txt).show();
 };
 $.show_guides = function() {
 	$(document).on("mousemove", function(e){
@@ -899,80 +902,90 @@ $.add_popup = function(options, callback) {
 }
 
 $.center_map_on = function(location) {
-	var loc_data = {};
-	switch(location) {
-		case "World":
-			loc_data.lon = 0;
-			loc_data.lat = 35;
-			loc_data.zoom = 2.3;
-			break;
-		case "Africa":
-			loc_data.lon = 16;
-			loc_data.lat = 5;
-			loc_data.zoom = 3.7;
-			break;
-		case "Antarctica":
-			loc_data.lon = -50;
-			loc_data.lat = 68;
-			loc_data.zoom = 3;
-			break;
-		case "Asia":
-			loc_data.lon = 100;
-			loc_data.lat = 60;
-			loc_data.zoom = 3;
-			break;
-		case "Europe":
-			loc_data.lon = 12;
-			loc_data.lat = 55;
-			loc_data.zoom = 4;
-			break;
-		case "North America":
-			loc_data.lon = -98;
-			loc_data.lat = 39;
-			loc_data.zoom = 4;
-			break;
-		case "Oceania":
-			loc_data.lon = 130;
-			loc_data.lat = -12;
-			loc_data.zoom = 4;
-			break;
-		case "South America":
-			loc_data.lon = -58;
-			loc_data.lat = -23;
-			loc_data.zoom = 4;
-			break;
-		case "Your position":
-			navigator.geolocation.getCurrentPosition(function(position) {
-				// Success
-				$.find_location({
-					lon: position.coords.longitude,
-					lat: position.coords.latitude,
-					addressdetails: 0,
-					success: function(data) {
-						datap = $.parseJSON(data);
-						//$.add_marker(position.coords.longitude, position.coords.latitude);
-						$.set_center(position.coords.longitude, position.coords.latitude);
-						$.set_zoom(13);
-						$("#selected_zone").text(datap.display_name).fadeIn(300);
-					}
+	if(!$("#pgrdg_map").hasClass("locked")) {
+		var loc_data = {};
+		switch(location) {
+			case "World":
+				loc_data.lon = 0;
+				loc_data.lat = 35;
+				loc_data.zoom = 2.3;
+				break;
+			case "Africa":
+				loc_data.lon = 16;
+				loc_data.lat = 5;
+				loc_data.zoom = 3.7;
+				break;
+			case "Antarctica":
+				loc_data.lon = -50;
+				loc_data.lat = 68;
+				loc_data.zoom = 3;
+				break;
+			case "Asia":
+				loc_data.lon = 100;
+				loc_data.lat = 60;
+				loc_data.zoom = 3;
+				break;
+			case "Europe":
+				loc_data.lon = 12;
+				loc_data.lat = 55;
+				loc_data.zoom = 4;
+				break;
+			case "North America":
+				loc_data.lon = -98;
+				loc_data.lat = 39;
+				loc_data.zoom = 4;
+				break;
+			case "Oceania":
+				loc_data.lon = 130;
+				loc_data.lat = -12;
+				loc_data.zoom = 4;
+				break;
+			case "South America":
+				loc_data.lon = -58;
+				loc_data.lat = -23;
+				loc_data.zoom = 4;
+				break;
+			case "Your position":
+				navigator.geolocation.getCurrentPosition(function(position) {
+					// Success
+					$.find_location({
+						lon: position.coords.longitude,
+						lat: position.coords.latitude,
+						addressdetails: 0,
+						success: function(data) {
+							datap = $.parseJSON(data);
+							//$.add_marker(position.coords.longitude, position.coords.latitude);
+							$.set_center(position.coords.longitude, position.coords.latitude);
+							$.set_zoom(13);
+							$("#selected_zone").text(datap.display_name).fadeIn(300);
+						}
+					});
+					return false;
+				}, function(position) {
+					// Fail
+					$("#selected_zone").html("<i>Unable to find position</i>").fadeIn(300);
+					return false;
 				});
-				return false;
-			}, function(position) {
-				// Fail
-				$("#selected_zone").html("<i>Unable to find position</i>").fadeIn(300);
-				return false;
-			});
-			break;
-	}
-	if(location != "Your position") {
-		$.set_center(loc_data.lon, loc_data.lat);
-		$.set_zoom(loc_data.zoom);
-		$("#selected_zone").text(location).fadeIn(300);
+				break;
+		}
+		if(location != "Your position") {
+			$.set_center(loc_data.lon, loc_data.lat);
+			$.set_zoom(loc_data.zoom);
+			$("#selected_zone").text(location).fadeIn(300);
+		}
 	}
 }
 /*
 ------------------------------------------------------------------------------------------------------------------------
 */
+
+/*
+Map Toolbox
+*/
+$.reset_map_toolbox = function() { $("#map_sub_toolbox div").fadeOut(100); $("#map_toolbox li").removeClass("selected"); };
+$.disable_map_toolbox = function() { $("#map_toolbox a:not(#lock_view_btn)").addClass("disabled").parent("li").addClass("disabled"); };
+$.enable_map_toolbox = function() { $("#map_toolbox li, #map_toolbox a").removeClass("disabled"); };
+
 
 $.contextMenu = function() {
 	$("#knob").hide();

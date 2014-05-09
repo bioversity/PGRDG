@@ -64,7 +64,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"href" => "javascript:void(0);",
 			"class" => "btn",
 			"id" => "find_location_btn",
-			"title" => "Find a location"
+			"title" => "Find a location (ALT+F)"
 		),
 		"divider" => "divider"
 	),
@@ -78,7 +78,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"href" => "javascript:void(0);",
 			"class" => "btn",
 			"id" => "change_map_btn",
-			"title" => "Change map type"
+			"title" => "Change map type (ALT+T)"
 		)
 	),
 	"Lock_view" => array(
@@ -91,7 +91,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"href" => "javascript:void(0);",
 			"class" => "btn",
 			"id" => "lock_view_btn",
-			"title" => "Lock/unlock this view"
+			"title" => "Lock/unlock this view (ALT+L)"
 		)
 	),
 	"Tools" => array(
@@ -117,9 +117,8 @@ $menu["menu"]["map_toolbox"] = array(
 			"href" => "javascript:void(0);",
 			"class" => "btn",
 			"id" => "help_btn",
-			"title" => "Help",
-			"data-toggle" => "modal",
-			"data-target" => "#map_toolbox_help"
+			"title" => "Help (F1)",
+			"onclick" => "$.show_help();"
 		)
 	)
 );

@@ -97,14 +97,16 @@ $.shortcuts = function() {
 	}).bind("keydown", "alt+i F1", function(e) {
 		e.preventDefault();
 		if(e.keyCode != 105){
-			$("#map_toolbox_help").modal("show");
+			$.show_help();
 		}
 		return false;
 	}).bind("keydown", "alt+f", function(e) {
 		e.preventDefault();
 		// Fix for ALT+6 confusion
 		if(e.keyCode == 70){
-			$.sub_toolbox("find_location");
+			if(!$("#pgrdg_map").hasClass("locked")) {
+				$.sub_toolbox("find_location");
+			}
 			return false;
 		} else {
 			return false;
@@ -114,21 +116,27 @@ $.shortcuts = function() {
 		$.toggle_lock_view();
 	}).bind("keydown", "alt+t", function(e) {
 		e.preventDefault();
-		$.sub_toolbox("change_map");
+		if(!$("#pgrdg_map").hasClass("locked")) {
+			$.sub_toolbox("change_map");
+		}
 		return false;
 	}).bind("keydown", "alt++", function(e) {
 		e.preventDefault();
-		$("#selected_zone").text("Zoom in").fadeIn(300);
-		$.increase_zoom();
+		if(!$("#pgrdg_map").hasClass("locked")) {
+			$("#selected_zone").text("Zoom in").fadeIn(300);
+			$.increase_zoom();
+		}
 		return false;
 	}).bind("keydown", "alt+-", function(e) {
 		e.preventDefault();
-		$("#selected_zone").text("Zoom out").fadeIn(300);
-		$.decrease_zoom();
+		if(!$("#pgrdg_map").hasClass("locked")) {
+			$("#selected_zone").text("Zoom out").fadeIn(300);
+			$.decrease_zoom();
+		}
 		return false;
 	}).bind("keydown", "esc", function(e) {
 		e.preventDefault();
-		$.left_panel("close");
+		//$.left_panel("close");
 		if($("header").hasClass("map")) {
 			$.stop_measurements();
 			$.sub_toolbox("close");
@@ -141,7 +149,9 @@ $.shortcuts = function() {
 	}).bind("keyup", "alt", function(e) {
 		e.preventDefault();
 		$("#information_zone").html("");
-		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+		if(!$("#pgrdg_map").hasClass("locked")) {
+			$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+		}
 	});
 	
 	$("#find_location input").bind("keydown", "return", function() {
@@ -149,6 +159,12 @@ $.shortcuts = function() {
 		$.search_location($(this).val());
 	});
 };
+$.show_help = function() {
+	if($("header").hasClass("map")) {
+		$.reset_map_toolbox();
+		$("#map_toolbox_help").modal("show");
+	}
+}
 
 $(document).ready(function() {
 	// Use bootstrap apprise instead javascript's alert
