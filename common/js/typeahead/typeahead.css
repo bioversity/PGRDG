@@ -1,9 +1,9 @@
 .tt-query,
 .tt-hint {
-    width: 396px;
-    height: 30px;
-    padding: 8px 12px;
-    font-size: 24px;
+    width: 100%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
     line-height: 30px;
     border: 2px solid #ccc;
     -webkit-border-radius: 8px;
@@ -25,7 +25,7 @@
 .tt-dropdown-menu {
     width: 422px;
     margin-top: 12px;
-    padding: 8px 0;
+    padding: 0;
     background-color: #fff;
     border: 1px solid #ccc;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -35,18 +35,38 @@
     -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
+	
+	max-height: 250px;
+	overflow-y: auto;
 }
 
 .tt-suggestion {
     padding: 3px 20px;
     font-size: 18px;
     line-height: 24px;
+	font-size: 15px;
+}
+.tt-suggestion:first-child {
+	padding-top: 8px;
+	/*border-top-right-radius: 8px;*/
+	border-top-left-radius: 8px;
+}
+.tt-suggestion:last-child {
+	padding-bottom: 8px;
+	/*border-bottom-right-radius: 8px;*/
+	border-bottom-left-radius: 8px;
 }
 
-.tt-suggestion.tt-is-under-cursor {
-    color: #fff;
-    background-color: #0097cf;
-
+.twitter-typeahead span {
+	color: #fff;
+}
+.tt-cursor {
+    background-color: #C1D82F;
+	font-size: 15px;
+	font-family: 'HelveticaNeueW01-45Ligh';
+}
+.tt-cursor > p {
+    color: #666;
 }
 
 .tt-suggestion p {

@@ -691,7 +691,9 @@
     var css = {
         wrapper: {
             position: "relative",
-            display: "inline-block"
+            display: "inline-block",
+	    marginTop: "4px",
+	    width: "100%"
         },
         hint: {
             position: "absolute",

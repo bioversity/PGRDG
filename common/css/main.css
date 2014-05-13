@@ -70,8 +70,7 @@ header.map #logo {
 #left_panel {
 	position: fixed;
 	top: 110px;
-	left: -221px;
-	width: 221px;
+	left: -1000px;
 	height: 100%;
 	background-color: transparent;
 	background-image: linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
@@ -87,6 +86,18 @@ header.map #logo {
 }
 #left_panel.visible {
 	left: 0;
+}
+#left_panel div.panel-header {
+	padding: 0 20px 0 15px;
+}
+#left_panel div.panel-header h1 {
+	font-family: HelveticaNeueW01-45Ligh;
+	font-size: 1.6em;
+	margin: 0;
+	color: #666;
+}
+#left_panel div.panel-body {
+	padding: 5px 20px 5px 15px;
 }
 #left_panel > div.panel-body:first-child {
 	padding: 5px 0;
