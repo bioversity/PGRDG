@@ -2,33 +2,43 @@ $.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComp
 $.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
 $.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
 $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
+$.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
+$.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; for(var i = 0; i <= 16; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); } return text; };
 
-$.ucfirst = function(str) {
-	str += "";
-	var f = str.charAt(0).toUpperCase();
-	return f + str.substr(1);
-};
-$.makeid = function() {
-	var text = "",
-	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
-	for(var i = 0; i <= 16; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
-}
-var password = $.makeid(),
+
+/**
+* Global vars
+*/
+var lang = "en",
+service_dns = "http://pgrdg.grinfo.private/",
+system_constants, operators = [],
+password = $.makeid(),
 auth = false;
+/*
+-----------------------------------------------------------------------
+*/
+	
 $.cryptAjax = function(url, options) {
 	if(!auth) {
 		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
 			auth = true;
-			
 			$.ajax(url, options);
 		});
 	} else {
 		$.ajax(url, options);
 	}
+};
+$.ask_to_service = function(op, callback) {
+	$.cryptAjax({
+		url: "API/index.php?proxy=true&type=service&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + op),
+		dataType: "json",
+		type: "GET",
+		success: function(response, status, xhr) {
+			if(response.status.state == "ok") {
+				callback(response.results);
+			}
+		}
+	});
 };
 
 $.left_panel = function(subject, width) {

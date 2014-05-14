@@ -11,11 +11,11 @@ $descriptorspec = array(
 
 if(isset($_GET["getPublicKey"])) {
 	$arrOutput = array(
-		"publickey" => file_get_contents("../../conf/rsa_2048_pub.pem")
+		"publickey" => file_get_contents("../../conf/.rsa_keys/rsa_2048_pub.pem")
 	);
 	print json_encode($arrOutput);
 } elseif (isset($_GET["handshake"])) {
-	$cmd = sprintf("openssl rsautl -decrypt -inkey ../../conf/rsa_2048_priv.pem");
+	$cmd = sprintf("openssl rsautl -decrypt -inkey ../../conf/.rsa_keys/rsa_2048_priv.pem");
 	$process = proc_open($cmd, $descriptorspec, $pipes);
 	if (is_resource($process)) {
 		 fwrite($pipes[0], base64_decode($_POST["key"]));

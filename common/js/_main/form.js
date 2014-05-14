@@ -52,39 +52,33 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		class: "",
 		placeholder: "Choose..."
 	}, options);
-	
-	// Waiting a service that returns this object...
-	var operators = {
-		kOPERATOR_EQUAL: {label: "Equals", key: "$EQ", selected: false},
-		kOPERATOR_EQUAL_NOT: {label: "Not equal", key: "$NE", selected: false},
-		kOPERATOR_PREFIX: {label: "Starts with", key: "$PX", selected: false},
-		kOPERATOR_CONTAINS: {label: "Contains", key: "$CX", selected: true},
-		kOPERATOR_SUFFIX: {label: "Ends with", key: "$SX", selected: false},
-		kOPERATOR_REGEX: {label: "Regular expression", key: "$RE", selected: false}
-	},
-	op_btn_list = "",
-	selected_label = "Operator";
+	var op_btn_list = "",
+	selected_label = "Operator",
+	radio = "";
 	
 	$.selected_menu = function(k, v) {
 		var kk = k.replace("$", "");
-		console.log(kk);
 		$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
 		$("#autocomplete ul.dropdown-menu li").removeClass("active");
 		$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
 		$("#" + options.id).focus();
 	};
-	$.each(operators, function(k, v) {
-		console.log(k, v.selected);
-		if(v.selected){
-			selected_label_key = v.key;
-			selected_label_value = v.label;
-			op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+	$.each(options.op, function(k, v) {
+		if(v.key == "$i") {
+			radio += '<div class="checkbox"><label><input type="checkbox" id="' + options.id + '_operator_i" ' + ((v.selected) ? 'checked="checked"' : "") + ' value="" /> ' + v.label + '</label></div>';
 		} else {
-			op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+			if(v.title == undefined) {
+				if(v.selected){
+					selected_label_key = v.key;
+					selected_label_value = v.label;
+					op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+				} else {
+					op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+				}
+			}
 		}
 	});
-	var radio = '<div class="checkbox"><label><input type="checkbox" id="' + options.id + '_operator_i" checked="checked" value="" /> Accent and case insensitive</label></div>';
-	$(this).append('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div>' + radio + '</div>');
+	$(this).append('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + radio + '</div>');
 	
 	remoteAutocomplete = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
@@ -92,13 +86,12 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: "http://192.168.20.208/API/?type=service&proxy=%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64("http://192.168.181.11/Service.php?op=matchTagLabels&lang=en&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=matchTermLabels&lang=en&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
 				var res = [];
 				$.each(parsedResponse, function(respType, v) {
-					console.log(parsedResponse["status"].state);
 					if(parsedResponse["status"].state == "ok" && parsedResponse["paging"].affected > 0) {
 						if(respType == "results") {
 							for (i = 0; i < v.length; i++) {
@@ -119,12 +112,16 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	$("#" + options.id).typeahead({
 		hint: true,
 		highlight: true,
-		minLength: 3
+		minLength: 3,
+		limit: 50
 	}, {
 		displayKey: "value",
 		source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
-	}).on('typeahead:mismatched', function(e) {
-		$("#" + e.target.id).css("background-color", "#ffcccc");
+	}).bind("keydown", "return", function(e) {
+		if($.trim($(this).val()) !== "") {
+			// ADD FUNCTION HERE (USER PRESS ENTER KEY)
+			alert("ok");
+		}
 	});
 	
 	if (typeof callback == "function") {
@@ -178,8 +175,28 @@ $.fn.addAutocomplete = function(options, data, callback) {
 
 
 $(document).ready(function() {
-	$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>Pincopallo</h1></div>')
-	$("#left_panel > .panel-body:last-child").addTraitAutocomplete({id: "main_search", class: "", placeholder: "Search here"}, "remote");
+	$.ask_to_service("list-constants", function(system_constants) {
+		$.ask_to_service(system_constants["kAPI_OP_LIST_OPERATORS"], function(r) {
+			$.each(r, function(rx, rv) {
+				if(rv.label !== undefined) {
+					operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected});
+				} else {
+					if(rx == "label") {
+						operators.push({"label": rv});
+					} else if(rx == "title") {
+						operators.push({"title": rv});
+					}
+				}
+			});
+			$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + r["title"] + '</h1></div>')
+			$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
+				id: "main_search",
+				class: "",
+				placeholder: r["placeholder"],
+				op: operators
+			}, "remote");
+		});
+	});
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
 		if (typeof callback == "function") {

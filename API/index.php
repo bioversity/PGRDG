@@ -3,23 +3,17 @@ require_once("../common/include/classes/frontend_api.class.php");
 
 if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 	$api = new frontend_api();
-	//$api->debug();
-	print $api->ask_service($_GET["address"]);
+	if($_GET["debug"] == "debug") {
+		$api->debug();
+	}
+	switch($_GET["type"]) {
+		case "service":
+			print $api->ask_service($_GET["address"]);
+			break;
+	}
+	
 	exit();
 	/*
-	$url = base64_decode(rawurldecode($_GET["address"]));
-	if($_GET["debug"] == "true") {
-		print $url;
-		exit();
-	}
-	if($_GET["type"] == "service") {
-		header("Content-type: application/json");
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		$result = curl_exec($ch);
-		curl_close($ch);
-	}
-	exit();
 	if($_GET["type"] == "post") {
 		header("Content-type: " . $_GET["header"]);
 		$fields_string = "";	
