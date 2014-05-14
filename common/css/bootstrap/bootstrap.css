@@ -1711,6 +1711,13 @@ output {
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
           box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
 }
+	/* PERSONALIZATION */
+	.form-control:focus {
+	  border-color: #aec12e;
+	  outline: 0;
+	  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(193, 216, 47, .6);
+			  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(193, 216, 47, .6);
+	}
 .form-control::-moz-placeholder {
   color: #999;
   opacity: 1;
@@ -2079,6 +2086,48 @@ fieldset[disabled] .btn-default.active {
   color: #fff;
   background-color: #333;
 }
+	/* PERSONALIZATION */
+	.btn-default {
+	  color: #333;
+	  background-color: #c1d82f;
+	  border-color: #aec12e;
+	}
+	.btn-default:hover,
+	.btn-default:focus,
+	.btn-default:active,
+	.btn-default.active,
+	.open .dropdown-toggle.btn-default {
+	  color: #333;
+	  background-color: #aec12e;
+	  border-color: #9baa2a;
+	}
+	.btn-default:active,
+	.btn-default.active,
+	.open .dropdown-toggle.btn-default {
+	  background-image: none;
+	}
+	.btn-default.disabled,
+	.btn-default[disabled],
+	fieldset[disabled] .btn-default,
+	.btn-default.disabled:hover,
+	.btn-default[disabled]:hover,
+	fieldset[disabled] .btn-default:hover,
+	.btn-default.disabled:focus,
+	.btn-default[disabled]:focus,
+	fieldset[disabled] .btn-default:focus,
+	.btn-default.disabled:active,
+	.btn-default[disabled]:active,
+	fieldset[disabled] .btn-default:active,
+	.btn-default.disabled.active,
+	.btn-default[disabled].active,
+	fieldset[disabled] .btn-default.active {
+	  background-color: #c1d82f;
+	  border-color: #aec12e;
+	}
+	.btn-default .badge {
+	  color: #c1d82f;
+	  background-color: #333;
+	}
 .btn-primary {
   color: #fff;
   background-color: #3c9332;
@@ -3074,6 +3123,21 @@ input[type="button"].btn-block {
   background-color: #3c9332;
   outline: 0;
 }
+	/* PERSONALIZATION */
+	.dropdown-menu > li > a:hover,
+	.dropdown-menu > li > a:focus {
+	  color: #262626;
+	  text-decoration: none;
+	  background-color: #d2db99;
+	}
+	.dropdown-menu > .active > a,
+	.dropdown-menu > .active > a:hover,
+	.dropdown-menu > .active > a:focus {
+	  color: #262626;
+	  text-decoration: none;
+	  background-color: #c1d82f;
+	  outline: 0;
+	}
 .dropdown-menu > .disabled > a,
 .dropdown-menu > .disabled > a:hover,
 .dropdown-menu > .disabled > a:focus {

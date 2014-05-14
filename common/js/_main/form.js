@@ -84,9 +84,9 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: "http://192.168.20.208/API/?type=service&proxy=%QUERY",
+			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=matchTermLabels&lang=en&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + kAPI_OP_MATCH_TERM_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -117,11 +117,29 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	}, {
 		displayKey: "value",
 		source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
-	}).bind("keydown", "return", function(e) {
-		if($.trim($(this).val()) !== "") {
-			// ADD FUNCTION HERE (USER PRESS ENTER KEY)
-			alert("ok");
-		}
+	}).on("typeahead:selected", function(evt, data){
+			// Autocomplete
+			var op = kAPI_OP_MATCH_TAG_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}');
+			$.ask_to_service(op, function(response) {
+				console.log(response);
+			});
+		return false;
+	}).on("change", function() {
+		$(this).trigger("typeahead:_changed");
+	}).on("typeahead:_changed", function() {
+			// User input
+			var op = kAPI_OP_MATCH_TAG_BY_LABEL + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}');
+			$.ask_to_service(op, function(response) {
+				console.log(response);
+			});
+	}).bind("keydown", "alt+left", function(e) {
+		$.left_panel("close", "", function() {
+			$("#" + options.id).blur();
+		});
+		return false;
+	}).bind("keydown", "alt+right", function(e) {
+		$.left_panel("open");
+		return false;
 	});
 	
 	if (typeof callback == "function") {

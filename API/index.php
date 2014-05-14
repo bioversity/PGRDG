@@ -1,14 +1,24 @@
 <?php
 require_once("../common/include/classes/frontend_api.class.php");
+$api = new frontend_api();
 
+if(empty($_GET)) {
+	$api->set_content_type("text");
+	print "May the force be with you...!\n\n";
+	exit();
+}
 if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
-	$api = new frontend_api();
-	if($_GET["debug"] == "debug") {
+	
+	if($_GET["debug"] == "true") {
 		$api->debug();
 	}
 	switch($_GET["type"]) {
 		case "service":
-			print $api->ask_service($_GET["address"]);
+			if($_GET["debug"] == "true") {
+				print_r($api->ask_service($_GET["address"]));
+			} else {
+				print $api->ask_service($_GET["address"]);
+			}
 			break;
 	}
 	

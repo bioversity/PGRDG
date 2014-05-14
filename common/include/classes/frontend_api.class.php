@@ -16,18 +16,6 @@ class frontend_api {
 	
 	/* PRIVATE FUNCTIONS */
 	
-	private function set_content_type($content_type) {
-		switch($content_type) {
-			case "json":
-				header("Content-type: application/json");
-				break;
-			case "text":
-			default:
-				header("Content-type: text/plain");
-				break;
-		}
-	}
-	
 	private function browse($url) {
 		// Set the user agent as "PGRD Request" if not exists
 		$this->input["agent"] = ($this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
@@ -52,11 +40,19 @@ class frontend_api {
 		
 		return $result;
 	}
-	private function compose_url($params_array, $urlencode_value = "") {
+	private function compose_url($params_array, $urlencode_value = "", $urlencode = true) {
 		$url_composed = "";
 		foreach($params_array as $key => $value) {
-			if($key == $urlencode_value && !$this->debug) {
-				$value = rawurlencode($value);
+			if($key == $urlencode_value) {
+				$params = json_decode($value, 1);
+				if($this->debug) {
+					$params["log-request"] = true;
+				}
+				if($urlencode) {
+					$value = rawurlencode(json_encode($params));
+				} else {
+					$value = json_encode($params);
+				}
 			}
 			$url_composed[] = $key . "=" . $value;
 		}
@@ -73,29 +69,50 @@ class frontend_api {
 		$url_exploded = parse_url($url);
 		$url_first_part = str_replace($url_exploded["query"], "", $url);
 		parse_str($url_exploded["query"], $parsed_query);
-		$url_query = $this->compose_url($parsed_query, "param");
+		$url_query = $this->compose_url($parsed_query, "param", true);
 		if($this->debug) {
 			print "FIRST URL PART:		" . $url_first_part . "\n";
 			print "URL QUERY:		" . $url_query . "\n";
 			print "URL EXPLODED QUERY:\n";
-			
+			print_r($url_exploded);
+			print "\n\n";
+			print "BUILDED QUERY (UNENCODED):	" . $url_first_part . $this->compose_url($parsed_query, "param", false) . "\n";
+			print "BUILDED QUERY (ENCODED):	" . $url_first_part . $this->compose_url($parsed_query, "param", true) . "\n";
 			print "\n\n";
 		}
 		return $url_first_part . $url_query;
 	}
 	
 	/* PUBLIC FUNCTIONS */
+	public function set_content_type($content_type) {
+		switch($content_type) {
+			case "json":
+				header("Content-type: application/json");
+				break;
+			case "text":
+			default:
+				header("Content-type: text/plain");
+				break;
+		}
+	}
+	
 	public function debug() {
 		$this->set_content_type("text");
 		$this->debug = true;
 	}
+	
 	public function ask_service($address) {
 		$this->set_content_type("json");
 		$url = $this->build_url_for_service($address);
 		if($this->debug) {
-			print $url;
+			print "URL: " . $url . "\n";
 		}
-		return $this->browse($url);
+		if($this->debug) {
+			print str_repeat("-", 200) . "\n";
+			return json_decode($this->browse($url), 1);
+		} else {
+			return $this->browse($url);
+		}
 	}
 }
 

@@ -11,6 +11,7 @@ $.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabc
 */
 var lang = "en",
 service_dns = "http://pgrdg.grinfo.private/",
+service_url = "API/?type=service&proxy=",
 system_constants, operators = [],
 password = $.makeid(),
 auth = false;
@@ -30,7 +31,7 @@ $.cryptAjax = function(url, options) {
 };
 $.ask_to_service = function(op, callback) {
 	$.cryptAjax({
-		url: "API/index.php?proxy=true&type=service&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + op),
+		url: service_url + "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + op),
 		dataType: "json",
 		type: "GET",
 		success: function(response, status, xhr) {
@@ -41,22 +42,28 @@ $.ask_to_service = function(op, callback) {
 	});
 };
 
-$.left_panel = function(subject, width) {
+$.left_panel = function(subject, width, callback) {
 	if(width == "" || width == undefined) {
 		var width = 484;
 	}
+	movement = width;
 	width += "px";
 	$("#left_panel").css({
 		"width": width
 	});
-	if($("#left_panel").hasClass("visible")) {
+	var content_witdth = $("#content").css("width");
+	if($("#left_panel").hasClass("visible") && subject !== "open") {
 		if(subject == "close") {
 			$(".olControlZoom").animate({"left": "10px"}, 300);
 			$("#left_panel").animate({"left": "-" + width}, 300, "swing", function() {
 				$(this).removeClass("visible");
 				
 				// Callback
+				if (typeof callback == "function") {
+					callback.call(this);
+				}
 			});
+			$("#content").animate({"padding-left": "10px"}, 300);
 		} else {
 			$.left_panel("close");
 		}
@@ -68,7 +75,11 @@ $.left_panel = function(subject, width) {
 				
 				$(this).find("input[type=search]").focus();
 				// Callback
+				if (typeof callback == "function") {
+					callback.call(this);
+				}
 			});
+			$("#content").animate({"padding-left": (movement+10) + "px"}, 250);
 		}
 	}
 };
@@ -81,89 +92,129 @@ $.shortcuts = function() {
 	
 	// Shortcuts ever available
 	$("body, #find_location input").bind("keydown", "alt+0", function(e) {
-		e.preventDefault();
-		$.center_map_on("World");
-		$("#selected_zone").text("World").fadeIn(300);
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("World");
+			$("#selected_zone").text("World").fadeIn(300);
+		}
 		return false;
 	}).bind("keydown", "alt+1", function(e) {
-		e.preventDefault();
-		$.center_map_on("Africa");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("Africa");
+		}
 		return false;
 	}).bind("keydown", "alt+2", function(e) {
-		e.preventDefault();
-		$.center_map_on("Antarctica");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("Antarctica");
+		}
 		return false;
 	}).bind("keydown", "alt+3", function(e) {
-		e.preventDefault();
-		$.center_map_on("Asia");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("Asia");
+		}
 		return false;
 	}).bind("keydown", "alt+4", function(e) {
-		e.preventDefault();
-		$.center_map_on("Europe");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("Europe");
+		}
 		return false;
 	}).bind("keydown", "alt+5", function(e) {
-		e.preventDefault();
-		$.center_map_on("North America");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("North America");
+		}
 		return false;
 	}).bind("keydown", "alt+6", function(e) {
-		e.preventDefault();
-		$.center_map_on("Oceania");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("Oceania");
+		}
 		return false;
 	}).bind("keydown", "alt+7", function(e) {
-		e.preventDefault();
-		$.center_map_on("South America");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.center_map_on("South America");
+		}
 		return false;
 	}).bind("keydown", "alt+8", function(e) {
+		if($("header").hasClass("map")) {
+		}
 		return false;
 	}).bind("keydown", "alt+9", function(e) {
-		e.preventDefault();
-		// Fix for ALT+I and F1 confusion
-		if(e.keyCode == 105){
-			//$.center_map_on("Your position");
-			return false;
-		} else {
-			return false;
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			// Fix for ALT+I and F1 confusion
+			if(e.keyCode == 105){
+				//$.center_map_on("Your position");
+				return false;
+			} else {
+				return false;
+			}
 		}
 		return false;
 	}).bind("keydown", "alt+i F1", function(e) {
-		e.preventDefault();
-		if(e.keyCode != 105){
-			$.show_help();
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			if(e.keyCode != 105){
+				$.show_help();
+			}
 		}
 		return false;
 	}).bind("keydown", "alt+f", function(e) {
-		e.preventDefault();
-		// Fix for ALT+6 confusion
-		if(e.keyCode == 70){
-			if(!$("#pgrdg_map").hasClass("locked")) {
-				$.sub_toolbox("find_location");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			// Fix for ALT+6 confusion
+			if(e.keyCode == 70){
+				if(!$("#pgrdg_map").hasClass("locked")) {
+					$.sub_toolbox("find_location");
+				}
+				return false;
+			} else {
+				return false;
 			}
-			return false;
-		} else {
-			return false;
 		}
+		return false;
 	}).bind("keydown", "alt+l", function(e) {
-		e.preventDefault();
-		$.toggle_lock_view();
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$.toggle_lock_view();
+		}
+		return false;
 	}).bind("keydown", "alt+t", function(e) {
-		e.preventDefault();
-		if(!$("#pgrdg_map").hasClass("locked")) {
-			$.sub_toolbox("change_map");
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			if(!$("#pgrdg_map").hasClass("locked")) {
+				$.sub_toolbox("change_map");
+			}
 		}
 		return false;
 	}).bind("keydown", "alt++", function(e) {
-		e.preventDefault();
-		if(!$("#pgrdg_map").hasClass("locked")) {
-			$("#selected_zone").text("Zoom in").fadeIn(300);
-			$.increase_zoom();
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			if(!$("#pgrdg_map").hasClass("locked")) {
+				$("#selected_zone").text("Zoom in").fadeIn(300);
+				$.increase_zoom();
+			}
 		}
 		return false;
 	}).bind("keydown", "alt+-", function(e) {
-		e.preventDefault();
-		if(!$("#pgrdg_map").hasClass("locked")) {
-			$("#selected_zone").text("Zoom out").fadeIn(300);
-			$.decrease_zoom();
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			if(!$("#pgrdg_map").hasClass("locked")) {
+				$("#selected_zone").text("Zoom out").fadeIn(300);
+				$.decrease_zoom();
+			}
 		}
+		return false;
+	}).bind("keydown", "alt+left", function(e) {
+		$.left_panel("close");
+		return false;
+	}).bind("keydown", "alt+right", function(e) {
+		$.left_panel("open");
 		return false;
 	}).bind("keydown", "esc", function(e) {
 		e.preventDefault();
@@ -174,21 +225,27 @@ $.shortcuts = function() {
 		}
 		return false;
 	}).bind("keydown", "alt", function(e) {
-		e.preventDefault();
-		$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Lock/unlock map navigation</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>T</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>9</tt></th><td>User position</td></tr></table>');
-		$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
-	}).bind("keyup", "alt", function(e) {
-		e.preventDefault();
-		$("#information_zone").html("");
-		if(!$("#pgrdg_map").hasClass("locked")) {
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Lock/unlock map navigation</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>T</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>9</tt></th><td>User position</td></tr></table>');
 			$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+		}
+	}).bind("keyup", "alt", function(e) {
+		if($("header").hasClass("map")) {
+			e.preventDefault();
+			$("#information_zone").html("");
+			if(!$("#pgrdg_map").hasClass("locked")) {
+				$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+			}
 		}
 	});
 	
-	$("#find_location input").bind("keydown", "return", function() {
-		$.sub_toolbox("find_location");
-		$.search_location($(this).val());
-	});
+	if($("header").hasClass("map")) {
+		$("#find_location input").bind("keydown", "return", function() {
+			$.sub_toolbox("find_location");
+			$.search_location($(this).val());
+		});
+	}
 };
 $.show_help = function() {
 	if($("header").hasClass("map")) {
@@ -218,6 +275,7 @@ $(document).ready(function() {
 		
 	});
 	$.shortcuts();
+	$.left_panel("open");
 	$("#login").on("shown.bs.modal", function() {
 		$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
 			$.cryptAjax({
