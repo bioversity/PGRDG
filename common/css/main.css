@@ -79,6 +79,15 @@ section.container {
 	padding: 12.5px;
 	width: 100%;
 	top: 110px;
+	display: none;
+}
+#content h1,
+#content h2,
+#content h3,
+#content h4,
+#content h5,
+#content h6 {
+	margin-top: 0;
 }
 
 #left_panel {

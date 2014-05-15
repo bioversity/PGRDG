@@ -56,20 +56,34 @@ class frontend_api {
 			}
 			$url_composed[] = $key . "=" . $value;
 		}
-		return implode("&", $url_composed);
+		if(count($url_composed) == 1) {
+			return $url_composed[0];
+		} else {
+			return implode("&", $url_composed);
+		}
 	}
 	private function build_url_for_service($base64_url) {
-		$url = base64_decode(rawurldecode($base64_url));
+		if(base64_decode($base64_url, true)) {
+			$url = base64_decode(rawurldecode($base64_url));
+		} else {
+			$url = $base64_url;
+		}
 		if($this->debug) {
+			/**
+			* Screen output
+			*/
+			print str_repeat("*", 50) . "\n";
 			print "### DEBUG VERSION ###\n\n";
-			print str_repeat("-", 100) . "\n";
+			print str_repeat("-", 50) . "\n";
 			print "URL:			" . $url . "\n";
 		}
-		
 		$url_exploded = parse_url($url);
 		$url_first_part = str_replace($url_exploded["query"], "", $url);
 		parse_str($url_exploded["query"], $parsed_query);
 		$url_query = $this->compose_url($parsed_query, "param", true);
+		/**
+		* Screen output
+		*/
 		if($this->debug) {
 			print "FIRST URL PART:		" . $url_first_part . "\n";
 			print "URL QUERY:		" . $url_query . "\n";
@@ -104,12 +118,20 @@ class frontend_api {
 	public function ask_service($address) {
 		$this->set_content_type("json");
 		$url = $this->build_url_for_service($address);
+		
 		if($this->debug) {
+			/**
+			* Screen output
+			*/
 			print "URL: " . $url . "\n";
 		}
 		if($this->debug) {
-			print str_repeat("-", 200) . "\n";
-			return json_decode($this->browse($url), 1);
+			/**
+			* Screen output
+			*/
+			print str_repeat("-", 50) . "\n";
+			print_r(json_decode($this->browse($url), 1));
+			print "\n\n";
 		} else {
 			return $this->browse($url);
 		}

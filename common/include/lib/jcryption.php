@@ -88,10 +88,10 @@
 		}
 		
 		if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-			echo json_encode(array("data" => $data));
+			//echo json_encode(array("data" => $data));
 		} else {
 			parse_str($data, $output);
-			print_r($output);
+			//print_r($output);
 		}
 	} else {
 		echo json_encode($_POST);

@@ -10,7 +10,6 @@ $.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabc
 * Global vars
 */
 var lang = "en",
-service_dns = "http://pgrdg.grinfo.private/",
 service_url = "API/?type=service&proxy=",
 system_constants, operators = [],
 password = $.makeid(),
@@ -21,7 +20,7 @@ auth = false;
 	
 $.cryptAjax = function(url, options) {
 	if(!auth) {
-		$.jCryption.authenticate(password, "common/include/funcs/_ajax/decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/decrypt.php?handshake=true", function(AESKey) {
+		$.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
 			auth = true;
 			$.ajax(url, options);
 		});
@@ -29,14 +28,39 @@ $.cryptAjax = function(url, options) {
 		$.ajax(url, options);
 	}
 };
-$.ask_to_service = function(op, callback) {
+$.ask_to_service = function(options, callback) {
+	var opt = $.extend({
+		op: "",
+		parameters: {}
+	}, options);
+	var param,
+	obj_len = $.map(opt.parameters, function(n, i) { return i; }).length;
+	
+	if(obj_len > 0) {
+		
+	}
+	if(typeof(options) == "string") {
+		param = "address=" + $.utf8_to_b64(options) + "&lang=" + lang + "&param={}";
+	} else {
+		param = "address=" + $.utf8_to_b64(opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
+	}
 	$.cryptAjax({
-		url: service_url + "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + op),
+		url: "API/",
 		dataType: "json",
-		type: "GET",
-		success: function(response, status, xhr) {
+		type: "POST",
+		data: {
+			jCryption: $.jCryption.encrypt(param, password),
+			type: "ask_service"
+		},
+		success: function(response) {
 			if(response.status.state == "ok") {
-				callback(response.results);
+				callback(response);
+			} else {
+				alert("There's an error in the response:<br />See the console for more informations");
+				console.group("The Service has returned an error");
+				console.error(response.status.message);
+				console.dir(response);
+				console.groupEnd();
 			}
 		}
 	});
@@ -44,7 +68,7 @@ $.ask_to_service = function(op, callback) {
 
 $.left_panel = function(subject, width, callback) {
 	if(width == "" || width == undefined) {
-		var width = 484;
+		var width = 488;
 	}
 	movement = width;
 	width += "px";
@@ -74,12 +98,13 @@ $.left_panel = function(subject, width, callback) {
 				$(this).addClass("visible");
 				
 				$(this).find("input[type=search]").focus();
+				
 				// Callback
 				if (typeof callback == "function") {
 					callback.call(this);
 				}
 			});
-			$("#content").animate({"padding-left": (movement+10) + "px"}, 250);
+			$("#content").animate({"padding-left": (movement+15) + "px"}, 250);
 		}
 	}
 };
@@ -275,7 +300,6 @@ $(document).ready(function() {
 		
 	});
 	$.shortcuts();
-	$.left_panel("open");
 	$("#login").on("shown.bs.modal", function() {
 		$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
 			$.cryptAjax({

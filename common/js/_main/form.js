@@ -54,7 +54,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	}, options);
 	var op_btn_list = "",
 	selected_label = "Operator",
-	radio = "";
+	radio = "",
+	user_input;
 	
 	$.selected_menu = function(k, v) {
 		var kk = k.replace("$", "");
@@ -86,7 +87,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64(service_dns + "Service.php?op=" + kAPI_OP_MATCH_TERM_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?op=" + kAPI_OP_MATCH_TAG_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -118,20 +119,42 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		displayKey: "value",
 		source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
 	}).on("typeahead:selected", function(evt, data){
-			// Autocomplete
-			var op = kAPI_OP_MATCH_TAG_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}');
-			$.ask_to_service(op, function(response) {
-				console.log(response);
-			});
+		// Autocomplete
+		var kAPI = new Object;
+		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+		kAPI["parameters"] = new Object;
+		kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
+		
+		$.ask_to_service(kAPI, function(response) {
+			console.log(response);
+			$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
+			$("#content .content-body").html("<pre>" + JSON.stringify(response, null, "\t") + "</pre>");
+		});
 		return false;
 	}).on("change", function() {
 		$(this).trigger("typeahead:_changed");
 	}).on("typeahead:_changed", function() {
-			// User input
-			var op = kAPI_OP_MATCH_TAG_BY_LABEL + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}');
-			$.ask_to_service(op, function(response) {
-				console.log(response);
-			});
+		// User input
+		var kAPI = new Object;
+		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+		kAPI["parameters"] = new Object;
+		kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
+		
+		$.ask_to_service(kAPI, function(response) {
+			console.log(response);
+			$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
+			$("#content .content-body").html("<pre>" + JSON.stringify(response, null, "\t") + "</pre>");
+		});
 	}).bind("keydown", "alt+left", function(e) {
 		$.left_panel("close", "", function() {
 			$("#" + options.id).blur();
@@ -157,7 +180,7 @@ $.fn.addAutocomplete = function(options, data, callback) {
 		class: "",
 		placeholder: "Choose..."
 	}, options);
-	$(this).append('<div id="autocomplete"><input type="text" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div>');
+	$(this).append('<div id="autocomplete">' + /*<span class="icomoon icon-spinner-2"></span> */ '<input type="text" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div>');
 	
 	var substringMatcher = function(strs) {
 		return function findMatches(q, cb) {
@@ -194,8 +217,8 @@ $.fn.addAutocomplete = function(options, data, callback) {
 
 $(document).ready(function() {
 	$.ask_to_service("list-constants", function(system_constants) {
-		$.ask_to_service(system_constants["kAPI_OP_LIST_OPERATORS"], function(r) {
-			$.each(r, function(rx, rv) {
+		$.ask_to_service(system_constants.results["kAPI_OP_LIST_OPERATORS"], function(r) {
+			$.each(r.results, function(rx, rv) {
 				if(rv.label !== undefined) {
 					operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected});
 				} else {
@@ -213,6 +236,9 @@ $(document).ready(function() {
 				placeholder: r["placeholder"],
 				op: operators
 			}, "remote");
+			$.left_panel("open", "", function() {
+				$("#content").fadeIn(300);
+			});
 		});
 	});
 	/*
