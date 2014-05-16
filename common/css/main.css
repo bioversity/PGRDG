@@ -5,6 +5,10 @@ body {
 	background-color: transparent;
 	text-align: left;
 }
+hr {
+	margin-top: 0;
+	margin-bottom: 15px;
+}
 
 body > div.container {
 	padding: 0;
@@ -22,15 +26,24 @@ header {
 	background-image: -o-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 }
+header.main {
+	height: 111px;
+}
 header.map {
 	background-color: rgba(255, 255, 255, 0.9);
 	background-image: none !important;
+	height: 76px;
 }
 header, footer {
 	background: #fff;
 }
+header .container {
+	display: inline-block;
+	padding-left: 375px !important;
+	padding-right: 0;
+}
 header.map .container {
-	display: inline;
+	padding-left: 5px !important;
 }
 header.map #logo {
 	padding-left: 10px;
@@ -88,6 +101,11 @@ section.container {
 #content h5,
 #content h6 {
 	margin-top: 0;
+}
+#content .btn-group{
+	bottom: 15px;
+    position: relative;
+    top: 6px;
 }
 
 #left_panel {
