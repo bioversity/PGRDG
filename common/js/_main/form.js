@@ -92,6 +92,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	selected_label = "Operator",
 	checkbox = "",
 	user_input,
+	is_autocompleted = false,
 	selected_label_key = "",
 	selected_label_value = "";
 	
@@ -162,8 +163,9 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	}, {
 		displayKey: "value",
 		source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
-	}).on("typeahead:selected", function(evt, data){
+	}).on("typeahead:selected", function(){
 		// Autocomplete
+		console.log("Autocomplete", is_autocompleted);
 		var kAPI = new Object;
 		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 		kAPI["parameters"] = new Object;
@@ -190,40 +192,48 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre>' + JSON.stringify(response, null, "\t") + '</pre>'});
 			}
 		});
+		is_autocompleted = true;
 		return false;
-	}).on("change", function() {
+	//}).on("keydown", "esc", function() {
+	}).bind("keydown", "return", function(event) {
 		$(this).trigger("typeahead:_changed");
-	}).on("typeahead:_changed", function() {
+		return false;
+	}).on("typeahead:_changed", function(e) {
 		// User input
-		var kAPI = new Object;
-		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
-		kAPI["parameters"] = new Object;
-		kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
-		
-		$.execTraitAutocomplete(kAPI, function(response) {
-			var the_title = "";
-			if(response.paging.affected > 0) {
-				$.each(operators, function(ck, cv) {
-					$.each(kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
-						if(ccv == cv.key) {
-							if(cv.main) {
-								the_title = cv.title;
-							} else {
-								the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+		if(!is_autocompleted) {
+			console.log("User input", is_autocompleted);
+			var kAPI = new Object;
+			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+			kAPI["parameters"] = new Object;
+			kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
+			
+			$.execTraitAutocomplete(kAPI, function(response) {
+				var the_title = "";
+				if(response.paging.affected > 0) {
+					$.each(operators, function(ck, cv) {
+						$.each(kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
+							if(ccv == cv.key) {
+								if(cv.main) {
+									the_title = cv.title;
+								} else {
+									the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+								}
 							}
-						}
+						});
 					});
-				});
-				
-				$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
-				$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre>' + JSON.stringify(response, null, "\t") + '</pre>'});
-			}
-		});
+					
+					$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
+					$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre>' + JSON.stringify(response, null, "\t") + '</pre>'});
+				}
+			});
+		}
+		is_autocompleted = false;
+		return false;
 	}).bind("keydown", "alt+left", function(e) {
 		$.left_panel("close", "", function() {
 			$("#" + options.id).blur();
