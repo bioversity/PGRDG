@@ -304,33 +304,44 @@ $.fn.addAutocomplete = function(options, data, callback) {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-
-$(document).ready(function() {
-	$.ask_to_service("list-constants", function(system_constants) { // <--- Da mettere nel cookie
-		$.ask_to_service(system_constants.results["kAPI_OP_LIST_OPERATORS"], function(oprts) {
-			$.each(oprts.results, function(rx, rv) {
-				if(rv.label !== undefined) {
-					operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
-				} else {
-					if(rx == "label") {
-						operators.push({"label": rv});
-					} else if(rx == "title") {
-						operators.push({"title": rv});
-					}
+$.get_operators_list = function(system_constants) {
+	if(typeof(system_constants) == "string") {
+		system_constants = jQuery.parseJSON(system_constants);
+	}
+	
+	$.ask_to_service(system_constants.results["kAPI_OP_LIST_OPERATORS"], function(oprts) {
+		$.each(oprts.results, function(rx, rv) {
+			if(rv.label !== undefined) {
+				operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
+			} else {
+				if(rx == "label") {
+					operators.push({"label": rv});
+				} else if(rx == "title") {
+					operators.push({"title": rv});
 				}
-			});
-			$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>')
-			$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
-				id: "main_search",
-				class: "",
-				placeholder:  oprts.results.placeholder,
-				op: operators
-			}, "remote");
-			$.left_panel("open", "", function() {
-				$("#content").fadeIn(300);
-			});
+			}
+		});
+		$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>')
+		$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
+			id: "main_search",
+			class: "",
+			placeholder:  oprts.results.placeholder,
+			op: operators
+		}, "remote");
+		$.left_panel("open", "", function() {
+			$("#content").fadeIn(300);
 		});
 	});
+}
+$(document).ready(function() {
+	if($.cookie("system_data") == undefined) {
+		$.ask_to_service("list-constants", function(system_constants) {
+			$.cookie("system_data", $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
+			$.get_operators_list(system_constants);
+		});
+	} else {
+		$.get_operators_list($.b64_to_utf8($.cookie("system_data")));
+	}
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
 		if (typeof callback == "function") {

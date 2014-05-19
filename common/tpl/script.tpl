@@ -2,6 +2,8 @@
 <script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="common/js/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
+<!-- jquery.cookie -->
+<script src="common/js/jquery-cookie/jquery.cookie.js"></script>
 <!-- Jcryption -->
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
 <!-- Jquery Choosen -->
