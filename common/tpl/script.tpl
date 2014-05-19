@@ -27,8 +27,8 @@
 	
 	<script type="text/javascript" src="common/js/_main/map3.js"></script>
 <?php } ?>
+<script type="text/javascript" src="common/js/_main/main.js"></script>
 <script type="text/javascript" src="common/js/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="common/js/_main/form.js"></script>
 <script type="text/javascript" src="common/js/_service/Api.inc.js"></script>
 <script type="text/javascript" src="common/js/_service/Types.inc.js"></script>
-<script type="text/javascript" src="common/js/_main/main.js"></script>

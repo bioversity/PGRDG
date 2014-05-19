@@ -334,13 +334,15 @@ $.get_operators_list = function(system_constants) {
 	});
 }
 $(document).ready(function() {
-	if($.cookie("system_data") == undefined) {
-		$.ask_to_service("list-constants", function(system_constants) {
-			$.cookie("system_data", $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
-			$.get_operators_list(system_constants);
-		});
-	} else {
-		$.get_operators_list($.b64_to_utf8($.cookie("system_data")));
+	if($.browser_cookie_status()) {
+		if($.cookie("pgrdg_cache") == undefined) {
+			$.ask_to_service("list-constants", function(system_constants) {
+				$.cookie("pgrdg_cache", $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
+				$.get_operators_list(system_constants);
+			});
+		} else {
+			$.get_operators_list($.b64_to_utf8($.cookie("pgrdg_cache")));
+		}
 	}
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {

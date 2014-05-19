@@ -71,7 +71,7 @@
 			},
 			"Change_map": {
 				"content": {
-					"icon": "ion-social-buffer",
+					"icon": "ionicons ion-social-buffer",
 					"text": ""
 				},
 				"attributes": {

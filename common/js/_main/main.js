@@ -1,3 +1,4 @@
+$.browser_cookie_status = function() { var cookieEnabled = (navigator.cookieEnabled) ? true : false; if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) { document.cookie = "testcookie"; cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false; } return (cookieEnabled); }
 $.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
 $.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
 $.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
@@ -242,7 +243,7 @@ $.shortcuts = function() {
 		$.left_panel("open");
 		return false;
 	}).bind("keydown", "esc", function(e) {
-		e.preventDefault();
+		//e.preventDefault();
 		//$.left_panel("close");
 		if($("header").hasClass("map")) {
 			$.stop_measurements();
@@ -280,42 +281,46 @@ $.show_help = function() {
 }
 
 $(document).ready(function() {
-	// Use bootstrap apprise instead javascript's alert
-	window.alert = function(string, args, callback) {
-		if(args == undefined) {
-			args = [];
-			args["title"] = "Warning";
-		}
-		return apprise(string, args, callback);
-	};
-	
-	$("#loginform").jCryption();
-	$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
-	$("nav a[title]").tooltip({placement: "bottom", container: "body"});
-	$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
-		$(this).tooltip("hide");
-	});
-	
-	$("#btn-login").click(function() {
+	if(!$.browser_cookie_status()) {
+		apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
+	} else {
+		// Use bootstrap apprise instead javascript's alert
+		window.alert = function(string, args, callback) {
+			if(args == undefined) {
+				args = [];
+				args["title"] = "Warning";
+			}
+			return apprise(string, args, callback);
+		};
 		
-	});
-	$.shortcuts();
-	$("#login").on("shown.bs.modal", function() {
-		$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
-			$.cryptAjax({
-				url: "API/index.php",
-				dataType: "json",
-				type: "POST",
-				data: {
-					jCryption: $.jCryption.encrypt($("#loginform").serialize(), password),
-					type: "login"
-				},
-				success: function(response) {
-					console.log(response);
-				}
-			});
+		$("#loginform").jCryption();
+		$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
+		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
+		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
+			$(this).tooltip("hide");
 		});
-		$("#login-username").focus();
-		if (!data) return e.preventDefault()
-	});
+		
+		$("#btn-login").click(function() {
+			
+		});
+		$.shortcuts();
+		$("#login").on("shown.bs.modal", function() {
+			$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
+				$.cryptAjax({
+					url: "API/index.php",
+					dataType: "json",
+					type: "POST",
+					data: {
+						jCryption: $.jCryption.encrypt($("#loginform").serialize(), password),
+						type: "login"
+					},
+					success: function(response) {
+						console.log(response);
+					}
+				});
+			});
+			$("#login-username").focus();
+			if (!data) return e.preventDefault()
+		});
+	}
 });

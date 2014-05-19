@@ -70,7 +70,7 @@ $menu["menu"]["map_toolbox"] = array(
 	),
 	"Change_map" => array(
 		"content" => array(
-			"icon" => "ion-map",
+			"icon" => "ion-social-buffer",
 			"text" => ""
 		),
 		"attributes" => array(
