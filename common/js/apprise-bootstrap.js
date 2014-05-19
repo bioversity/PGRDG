@@ -26,7 +26,7 @@ function apprise(string, args, callback) {
 		"fa_icon": "",
 		"title": "",
 		"progress": false,
-		"allowExit": false
+		"allowExit": true
 	}
 	if (args) {
 		for (var index in default_args) {

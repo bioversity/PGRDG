@@ -1,6 +1,6 @@
 /*=======================================================================================
  *																						*
- *										Api.inc.js										*
+ *										Api.inc.php										*
  *																						*
  *======================================================================================*/
  
@@ -9,19 +9,7 @@
  *
  * This file contains the definitions for the service application interface, 
  *
- * To convert this file to javascript use the following grep pattern:
- * <code>
- * search:  ^define\( "(.+)",.+(\'.+\').*;
- * replace: var \1 = \2;
- * </code>
- *
- * To convert the definitions into constants:
- * <code>
- * search:  ^\tdefine\( \"(.+)\"\,(.+)(\'.+\') \);\r
- * replace: \tconst \1 =   \2\3;\r
- * </code>
- *
- *	@author		Milko A. Škofič <m.skofic@cgiar.org>
+ *	@author		Milko A. ?kofi? <m.skofic@cgiar.org>
  *	@version	1.00 04/05/2014
  */
 
@@ -70,6 +58,13 @@ var kAPI_RESPONSE_STATUS = 'status';
  * number of returned records.
  */
 var kAPI_RESPONSE_PAGING = 'paging';
+
+/**
+ * Request.
+ *
+ * This tag identifies the results section which holds the eventual service request.
+ */
+var kAPI_RESPONSE_REQUEST = 'request';
 
 /**
  * Results.
@@ -240,6 +235,60 @@ var kAPI_DICTIONARY_IDS = 'ids';
  * message field.
  */
 var kAPI_OP_PING = 'ping';
+
+/**
+ * List parameter constants.
+ *
+ * This tag defines the list parameter constants operation.
+ *
+ * This operation requires no parameters, it will return the key/value list of all parameter
+ * constants.
+ */
+var kAPI_OP_LIST_CONSTANTS = 'list-constants';
+
+/**
+ * List operator parameters.
+ *
+ * This tag defines the list operator parameters operation.
+ *
+ * This operation requires no parameters, it will return the list of all operator parameters
+ * including the followig information:
+ *
+ * <ul>
+ *	<li><i>index</i>: The key holds the operator key.
+ *	<li><i>value</i>: The value is an array structured as follows:
+ *	 <ul>
+ *		<li><tt>key</tt>: The operator key.
+ *		<li><tt>label</tt>: The operator label in the language provided to the service.
+ *		<li><tt>title</tt>: The operator display title, in which the <tt>@pattern@</tt>
+ *			token should be replaced by the search pattern.
+ *		<li><tt>type</tt>: The operator type:
+ *		 <ul>
+ *			<li><tt>string</tt>: Operators applying to string values.
+ *			<li><tt>range</tt>: Operators applying to range values.
+ *		 </ul>
+ *		<li><tt>main</tt>: A boolean flag which if <tt>TRUE</tt> indicates that the operator
+ *			is one of the main choices, meaning that only one of those holding the same type
+ *			may be used; if <tt>FALSE</tt> the operator is a flag modifier, meaning that any
+ *			number of these may be included in the parameter.
+ *		<li><tt>selected</tt>: A boolean flag indicating the default choice.
+ *	 </ul>
+ * </ul>
+ */
+var kAPI_OP_LIST_OPERATORS = 'list-operators';
+
+/**
+ * List reference count parameters.
+ *
+ * This tag defines the list reference count parameters operation.
+ *
+ * This operation requires no parameters, it will return the key/value list of all
+ * parameters governing reference count selection. The key represents the paramater flag
+ * used to select only those items having a reference count in a specific collection, the
+ * value holds the related tag holding the reference count, this value is the tag sequence
+ * number.
+ */
+var kAPI_OP_LIST_REF_COUNTS = 'list-ref-counts';
 
 /**
  * Match tag labels.
@@ -485,8 +534,67 @@ var kAPI_OP_MATCH_TAG_BY_LABEL = 'matchTagByLabel';
  */
 var kAPI_OP_MATCH_TERM_BY_LABEL = 'matchTermByLabel';
 
+/**
+ * Get tag enumerations.
+ *
+ * This tag defines the get tag enumerations operation.
+ *
+ * The service will return the enumerated set related to the provided tag.
+ *
+ * This operation expects the following parameters:
+ *
+ * <ul>
+ *	<li><tt>{@link kAPI_PARAM_TAG}</tt>: <em>Tag</em>. This required parameter can either be
+ *		an integer referencing the tag sequence number or a string referencing the tag
+ *		native identifier.
+ * </ul>
+ *
+ * The result will be returned in the {@link kAPI_RESPONSE_RESULTS} section of the response,
+ * it will be an array whose key represents the term native identifier and the elements are
+ * structured as follows:
+ *
+ * <ul>
+ *	<li><tt>{@link kAPI_RESULT_ENUM_NODE}</tt>: The enumerated value node identifier.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_LABEL}</tt>: The enumerated value label.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_DESCR}</tt>: The enumerated value description.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_KIND}</tt>: The enumerated value kind.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_CHILDREN}</tt>: If the current enumeration has
+ *		sub-elements, this item will contain the elements array.
+ * </ul>
+ */
+var kAPI_OP_GET_TAG_ENUMERATIONS = 'getTagEnumerations';
+
+/**
+ * Get node enumerations.
+ *
+ * This tag defines the get node enumerations operation.
+ *
+ * The service will return the enumerated set related to the provided node.
+ *
+ * This operation expects the following parameters:
+ *
+ * <ul>
+ *	<li><tt>{@link kAPI_PARAM_NODE}</tt>: <em>Node</em>. This required parameter is an
+ *		integer referencing the node native identifier.
+ * </ul>
+ *
+ * The result will be returned in the {@link kAPI_RESPONSE_RESULTS} section of the response,
+ * it will be an array whose key represents the term native identifier and the elements are
+ * structured as follows:
+ *
+ * <ul>
+ *	<li><tt>{@link kAPI_RESULT_ENUM_NODE}</tt>: The enumerated value node identifier.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_LABEL}</tt>: The enumerated value label.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_DESCR}</tt>: The enumerated value description.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_KIND}</tt>: The enumerated value kind.
+ *	<li><tt>{@link kAPI_RESULT_ENUM_CHILDREN}</tt>: If the current enumeration has
+ *		sub-elements, this item will contain the elements array.
+ * </ul>
+ */
+var kAPI_OP_GET_NODE_ENUMERATIONS = 'getNodeEnumerations';
+
 /*=======================================================================================
- *	PARAMETERS																			*
+ *	REQUEST PARAMETERS																	*
  *======================================================================================*/
 
 /**
@@ -497,6 +605,25 @@ var kAPI_OP_MATCH_TERM_BY_LABEL = 'matchTermByLabel';
  * This parameter represents a string match pattern, it is used to match strings.
  */
 var kAPI_PARAM_PATTERN = 'pattern';
+
+/**
+ * Tag (string/int).
+ *
+ * This tag defines the requested tag.
+ *
+ * This parameter represents either an integer referencing a tag sequence number or a string
+ * referencing a tag native identifier.
+ */
+var kAPI_PARAM_TAG = 'tag';
+
+/**
+ * Node (int).
+ *
+ * This tag defines the requested node.
+ *
+ * This parameter represents an integer referencing a node native identifier.
+ */
+var kAPI_PARAM_NODE = 'node';
 
 /**
  * Match operator (strings array).
@@ -531,7 +658,45 @@ var kAPI_PARAM_PATTERN = 'pattern';
 var kAPI_PARAM_OPERATOR = 'operator';
 
 /*=======================================================================================
- *	FLAG PARAMETERS																		*
+ *	GENERIC REQUEST FLAG PARAMETERS														*
+ *======================================================================================*/
+
+/**
+ * Log request (boolean).
+ *
+ * This parameter determines whether the request should be returned by the service.
+ *
+ * If the parameter is <tt>TRUE</tt>, the service will return the request in the
+ * {@link kAPI_RESPONSE_REQUEST} section of the response.
+ *
+ * If the parameter is <tt>FALSE</tt> or omitted, the request will not be returned.
+ */
+var kAPI_PARAM_LOG_REQUEST = 'log-request';
+
+/**
+ * Trace (boolean).
+ *
+ * This parameter determines whether eventual errors should feature the exception trace.
+ *
+ * If the parameter is <tt>TRUE</tt>, the error will include the trace.
+ */
+var kAPI_PARAM_LOG_TRACE = 'log-trace';
+
+/**
+ * Recurse (boolean).
+ *
+ * This parameter determines whether the request should recursively be applied to nested
+ * levels.
+ *
+ * This parameter is relevant only to those services which need to traverse structures, if
+ * the parameter is <tt>TRUE</tt>, the service will traverse all nested levels, returning
+ * the tree of results; if the parameter is <tt>FALSE</tt>, the service will only traverse
+ * the root level of the structure.
+ */
+var kAPI_PARAM_RECURSE = 'recurse';
+
+/*=======================================================================================
+ *	REFERENCE COUNT FLAG REQUEST PARAMETERS												*
  *======================================================================================*/
 
 /**
@@ -623,3 +788,45 @@ var kAPI_PARAM_HAS_UNIT_REFS = 'unit-refs';
  * If the parameter is omitted, the filter will not be used.
  */
 var kAPI_PARAM_HAS_ENTITY_REFS = 'entity-refs';
+
+/*=======================================================================================
+ *	ENUMERATION RESULT PARAMETERS														*
+ *======================================================================================*/
+
+/**
+ * Node (int).
+ *
+ * This tag is used when returning an enumeration element, it defines the element's node.
+ */
+var kAPI_RESULT_ENUM_NODE = 'node';
+
+/**
+ * Label (string).
+ *
+ * This tag is used when returning an enumeration element, it defines the element's label.
+ */
+var kAPI_RESULT_ENUM_LABEL = 'label';
+
+/**
+ * Description (string).
+ *
+ * This tag is used when returning an enumeration element, it defines the element's
+ * definition or description.
+ */
+var kAPI_RESULT_ENUM_DESCR = 'description';
+
+/**
+ * Value (boolean).
+ *
+ * This tag is used when returning an enumeration element, if <tt>TRUE</tt>, the element can
+ * be considered as an enumerated value, if not, the element is a category.
+ */
+var kAPI_RESULT_ENUM_VALUE = 'value';
+
+/**
+ * Children (array).
+ *
+ * This tag is used when returning an enumeration element, it defines the element's subset,
+ * that is, it will contain all the elements whose parent is the current element.
+ */
+var kAPI_RESULT_ENUM_CHILDREN = 'children';

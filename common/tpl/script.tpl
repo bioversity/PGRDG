@@ -32,3 +32,4 @@
 <script type="text/javascript" src="common/js/_main/form.js"></script>
 <script type="text/javascript" src="common/js/_service/Api.inc.js"></script>
 <script type="text/javascript" src="common/js/_service/Types.inc.js"></script>
+<script type="text/javascript" src="common/js/_service/Tags.inc.js"></script>

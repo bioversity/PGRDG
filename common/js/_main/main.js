@@ -32,7 +32,11 @@ $.cryptAjax = function(url, options) {
 $.ask_to_service = function(options, callback) {
 	var opt = $.extend({
 		op: "",
-		parameters: {}
+		lang: "en",
+		parameters: {
+			limit: 50,
+			tag: ""
+		}
 	}, options);
 	var param,
 	obj_len = $.map(opt.parameters, function(n, i) { return i; }).length;
@@ -45,6 +49,7 @@ $.ask_to_service = function(options, callback) {
 	} else {
 		param = "address=" + $.utf8_to_b64(opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 	}
+	console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 	$.cryptAjax({
 		url: "API/",
 		dataType: "json",
@@ -289,6 +294,7 @@ $(document).ready(function() {
 			if(args == undefined) {
 				args = [];
 				args["title"] = "Warning";
+				args["icon"] = "warning";
 			}
 			return apprise(string, args, callback);
 		};
@@ -315,7 +321,7 @@ $(document).ready(function() {
 						type: "login"
 					},
 					success: function(response) {
-						console.log(response);
+						//console.log(response);
 					}
 				});
 			});
