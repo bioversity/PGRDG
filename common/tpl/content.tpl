@@ -1,4 +1,4 @@
-<div id="content">
+<div id="content" class="left">
 	<h1 class="pull-left content-title">Output</h1>
 	<div class="pull-right">
 		<div class="btn-group">
@@ -9,3 +9,4 @@
 	<hr />
 	<div class="content-body"></div>
 </div>
+<div id="results"></div>

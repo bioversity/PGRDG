@@ -107,6 +107,23 @@ section.container {
     position: relative;
     top: 6px;
 }
+#content .row .panel .disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+#content .row .panel-heading a {
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer !important;
+  font-size: 1.5em;
+  height: 0.8em;
+  margin-top: -2px;
+}
+#content .row .panel-heading a > span {
+	height: 0;
+    padding: 0;
+	line-height: 0;
+}
 
 #left_panel {
 	position: fixed;
@@ -822,6 +839,12 @@ section.container {
 }
 .cn-wrapper li > span:hover {
 	
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+	margin: 10px 0;
 }
 
 @media only screen and (max-width: 500px) {

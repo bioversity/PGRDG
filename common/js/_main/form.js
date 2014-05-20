@@ -45,34 +45,85 @@ $.close_chosen = function() { $(this).trigger("chosen:close"); };
 /* Create the form
 */
 $.create_form = function(response) {
-	var dictionary = response.dictionary,
-	collection = dictionary.collection,
-	ids = dictionary[kAPI_DICTIONARY_IDS][0],
-	tags = dictionary.tags;
-	
-	$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: ids}}}, function(res) {
-		console.log(res);
-	});
-	/*
-	function get_definition_node(response) {
-		$.each(response.results[collection][ids], function(ci_k, ci_v) {
-			console.log(ci_k, ci_v);
-			if(ci_k == kTAG_DATA_KIND) {
-				var kind = ci_v;
+	var dictionary = response[kAPI_RESULTS_DICTIONARY],
+	collection = dictionary[kAPI_DICTIONARY_COLLECTION],
+	ids = dictionary[kAPI_DICTIONARY_IDS],
+	tags = dictionary.tags,
+	forms = {},
+	html_form = "",
+	get_form_data = function(counter, data) {
+		var form_data = {};
+		
+		$.each(data, function(ik, iv) {
+			if(ik == kTAG_DATA_TYPE) {
+				form_data.type = iv;
 			}
-			get_keys(response);
+			if(ik == kTAG_DATA_KIND) {
+				form_data.kind = iv;
+			}
+			if(ik == kTAG_LABEL) {
+				form_data.label = iv;
+			}
+			if(ik == kTAG_DESCRIPTION) {
+				form_data.description = iv;
+			}
+			if(ik == kTAG_DEFINITION) {
+				form_data.definition = iv;
+			}
+		});
+		return form_data;
+	},
+	generate_form = function() {
+		$.each(ids, function(idk, idv) {
+			// Creates an object with all the forms
+			//forms[idk] = get_form_data(idk, response.results[collection][idv]);
+			
+			forms = get_form_data(idk, response.results[collection][idv]);
+					console.log(forms);
+			
+			switch(forms.type){
+				case ":type:int":
+					if(jQuery.inArray(":type:quantitative", forms.kind)) { }
+					var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this));" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
+					
+					html_form += '<div class="col-sm-4 vcenter"><div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title"><span class="disabled">' + forms.label + '</span> ' + enable_disable_btn + '</h3></div><div class="panel-body disabled">' + ((forms.description !== undefined && forms.description.length > 0) ? forms.description : forms.definition) + '</div></div></div>';
+
+					break;
+			}
+		});
+		
+		return '<div class="row">' + html_form + '</div>';
+	};
+	
+	return generate_form();
+	/*
+	for (i = 0; i < ids.length; i++) {
+		// getTagEnumerations suggested by Milko
+		$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: ids[i]}}}, function(res) {
+			console.log(res);
 		});
 	}
-	function get_keys(response) {
-		$.each(tags, function(id, tag) {
-			//console.log(id, tag);
-		});
-	}
-	get_definition_node(response);sole.log("Dictionary:", dictionary);
-	console.log("Collection:", collection);
-	console.log("Ids:", ids);
-	console.log("Tags:", tags);
 	*/
+};
+
+$.toggle_form_item = function(item) {
+	var $this = item;
+	if($this.find("span").hasClass("fa-square-o")) {
+		$this.attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
+		$this.parent().find("span").removeClass("disabled");
+		$this.closest(".panel").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
+	} else {
+		$($this).attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
+		$this.closest(".panel").find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+	}
+	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
+		return false;
+	});
+};
+
+$.toggle_json_source = function(item) {
+	var $this = item;
+	$($this).parents(".panel-heading").next().find(".panel-body > pre").slideToggle();
 };
 
 /**
@@ -94,7 +145,7 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));" class="pull-right"><span class="fa fa-times" style="color: #666;"></span></a></h4>'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div><div class="col-sm-1"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));" class="pull-right"><span class="fa fa-times" style="color: #666;"></span></a></div></h4>'),
 		node_body_collapse = $('<div id="' + options.id + '" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
@@ -105,7 +156,7 @@ $.fn.addCollapsible = function(options, callback) {
 	node_body_collapse.appendTo(root_node);
 	
 	$(this).find("#accordion").append(root_node);
-	$("#accordion a").tooltip();
+	$("#accordion a").tooltip({container: "body"});
 
 	
 	if (typeof callback == "function") {
@@ -223,10 +274,9 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					}
 				});
 				
-				$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre>' + JSON.stringify(response, null, "\t") + '</pre>'});
-				
 				// Create forms
-				$.create_form(response);
+				var forms = $.create_form(response);
+				$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 			}
 		});
 		is_autocompleted = true;
@@ -263,11 +313,10 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 						});
 					});
 					
-					$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
-					$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre>' + JSON.stringify(response, null, "\t") + '</pre>'});
-					
 					// Create forms
-					$.create_form(response);
+					var forms = $.create_form(response);
+					$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
+					$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 				}
 			});
 		}

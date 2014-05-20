@@ -19,7 +19,7 @@ function apprise(string, args, callback) {
 		"showFooter": true,
 		"invertedVerify": false,
 		"textOk": "Ok", 			// Ok button default text
-		"textCancel": "Annulla",		// Cancel button default text
+		"textCancel": "Cancel",		// Cancel button default text
 		"textYes": "Si", 			// Yes button default text
 		"textNo": "No", 			// No button default text
 		"icon": "",

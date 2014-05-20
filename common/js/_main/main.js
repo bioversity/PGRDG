@@ -32,10 +32,13 @@ $.cryptAjax = function(url, options) {
 $.ask_to_service = function(options, callback) {
 	var opt = $.extend({
 		op: "",
-		lang: "en",
 		parameters: {
+			lang: "en",
 			limit: 50,
-			tag: ""
+			param: {
+				"log-request": "true",
+				tag: ""
+			}
 		}
 	}, options);
 	var param,
@@ -49,7 +52,7 @@ $.ask_to_service = function(options, callback) {
 	} else {
 		param = "address=" + $.utf8_to_b64(opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 	}
-	console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
+	//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 	$.cryptAjax({
 		url: "API/",
 		dataType: "json",
