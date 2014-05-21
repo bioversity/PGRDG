@@ -1,6 +1,6 @@
 /*=======================================================================================
  *																						*
- *									Tags.inc.js											*
+ *									Tags.inc.php										*
  *																						*
  *======================================================================================*/
  
@@ -512,10 +512,23 @@ var kTAG_DESCRIPTION = 32;
  *	<li><em>Kind</em>: {@link kTYPE_LIST}
  * </ul>
  *
- * This tag holds a series of <em>notes<em> or <em>comments</em> in a single text unrelated
- * to a specific language.
+ * This tag holds a series of <em>notes<em> or <em>comments</em> in a list of texts
+ * unrelated to a specific language.
  */
 var kTAG_NOTE = 33;
+
+/**
+ * Examples (<code>:examples</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_STRING}
+ *	<li><em>Kind</em>: {@link kTYPE_LIST}
+ * </ul>
+ *
+ * This tag holds a series of <em>examples<em> or <em>instances</em> in a list of texts
+ * unrelated to a specific language.
+ */
+var kTAG_EXAMPLE = 34;
 
 /*=======================================================================================
  *	OBJECT STATISTICAL TAGS																*
@@ -533,7 +546,7 @@ var kTAG_NOTE = 33;
  * featuring a specific property</em>. This is generally used to assess <em>tag usage
  * frequency in unit objects</em>.
  */
-var kTAG_UNIT_COUNT = 34;
+var kTAG_UNIT_COUNT = 35;
 
 /**
  * Entity count (<code>:entity-count</code)
@@ -547,7 +560,7 @@ var kTAG_UNIT_COUNT = 34;
  * featuring a specific property</em>. This is generally used to assess <em>tag usage
  * frequency in entity objects</em>.
  */
-var kTAG_ENTITY_COUNT = 35;
+var kTAG_ENTITY_COUNT = 36;
 
 /**
  * Tag count (<code>:tag-count</code)
@@ -560,7 +573,7 @@ var kTAG_ENTITY_COUNT = 35;
  * This tag holds an <em>integer</em> value representing the <em>number of tag objects
  * that reference the current object</em>.
  */
-var kTAG_TAG_COUNT = 36;
+var kTAG_TAG_COUNT = 37;
 
 /**
  * Term count (<code>:term-count</code)
@@ -573,7 +586,7 @@ var kTAG_TAG_COUNT = 36;
  * This tag holds an <em>integer</em> value representing the <em>number of term objects
  * that reference the current object</em>.
  */
-var kTAG_TERM_COUNT = 37;
+var kTAG_TERM_COUNT = 38;
 
 /**
  * Node count (<code>:node-count</code)
@@ -586,7 +599,7 @@ var kTAG_TERM_COUNT = 37;
  * This tag holds an <em>integer</em> value representing the <em>number of node objects
  * that reference the current object</em>.
  */
-var kTAG_NODE_COUNT = 38;
+var kTAG_NODE_COUNT = 39;
 
 /**
  * Edge count (<code>:node-count</code)
@@ -599,7 +612,7 @@ var kTAG_NODE_COUNT = 38;
  * This tag holds an <em>integer</em> value representing the <em>number of edge objects
  * that reference the current object</em>.
  */
-var kTAG_EDGE_COUNT = 39;
+var kTAG_EDGE_COUNT = 40;
 
 /**
  * Tag offsets (<code>:offset:tag</code)
@@ -614,7 +627,7 @@ var kTAG_EDGE_COUNT = 39;
  * paths</em> in which the tag was referenced <em>as a leaf offset in tag objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_TAG_OFFSETS = 40;
+var kTAG_TAG_OFFSETS = 41;
 
 /**
  * Term offsets (<code>:offset:term</code)
@@ -629,7 +642,7 @@ var kTAG_TAG_OFFSETS = 40;
  * paths</em> in which the tag was referenced <em>as a leaf offset in term objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_TERM_OFFSETS = 41;
+var kTAG_TERM_OFFSETS = 42;
 
 /**
  * Node offsets (<code>:offset:node</code)
@@ -644,7 +657,7 @@ var kTAG_TERM_OFFSETS = 41;
  * paths</em> in which the tag was referenced <em>as a leaf offset in node objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_NODE_OFFSETS = 42;
+var kTAG_NODE_OFFSETS = 43;
 
 /**
  * Edge offsets (<code>:offset:edge</code)
@@ -659,7 +672,7 @@ var kTAG_NODE_OFFSETS = 42;
  * paths</em> in which the tag was referenced <em>as a leaf offset in edge objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_EDGE_OFFSETS = 43;
+var kTAG_EDGE_OFFSETS = 44;
 
 /**
  * Entity offsets (<code>:offset:entity</code)
@@ -674,7 +687,7 @@ var kTAG_EDGE_OFFSETS = 43;
  * paths</em> in which the tag was referenced <em>as a leaf offset in entity objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_ENTITY_OFFSETS = 44;
+var kTAG_ENTITY_OFFSETS = 45;
 
 /**
  * Unit offsets (<code>:offset:unit</code)
@@ -689,7 +702,7 @@ var kTAG_ENTITY_OFFSETS = 44;
  * paths</em> in which the tag was referenced <em>as a leaf offset in unit objects</em>.
  * This property is held exclusively by tag objects.
  */
-var kTAG_UNIT_OFFSETS = 45;
+var kTAG_UNIT_OFFSETS = 46;
 
 /**
  * Object tags (<code>:object-tags</code)
@@ -703,7 +716,7 @@ var kTAG_UNIT_OFFSETS = 45;
  * This tag holds an <em>array</em> of <em>elements</em> holding a <em>tag sequence
  * number</em> and all the <em>leaf offset paths</em> where the tag is referenced.
  */
-var kTAG_OBJECT_TAGS = 46;
+var kTAG_OBJECT_TAGS = 47;
 
 /**
  * Object offsets (<code>:object-offsets</code)
@@ -717,7 +730,7 @@ var kTAG_OBJECT_TAGS = 46;
  * as the key and as value the <em>list of offset paths</em> where the tag was used as a
  * leaf offset.
  */
-var kTAG_OBJECT_OFFSETS = 47;
+var kTAG_OBJECT_OFFSETS = 48;
 
 /**
  * Object references (<code>:object-references</code)
@@ -731,7 +744,7 @@ var kTAG_OBJECT_OFFSETS = 47;
  * property is an array, <em>indexed by collection name</em> with as value the references
  * to objects in that collection.
  */
-var kTAG_OBJECT_REFERENCES = 48;
+var kTAG_OBJECT_REFERENCES = 49;
 
 /**
  * Tag container structure (<code>:tag:struct</code)
@@ -747,7 +760,7 @@ var kTAG_OBJECT_REFERENCES = 48;
  * featuring this tag is stored in an object, the container structure must be created if not
  * yet there.
  */
-var kTAG_TAG_STRUCT = 49;
+var kTAG_TAG_STRUCT = 50;
 
 /**
  * Container structure list index (<code>:tag:struct-index</code)
@@ -763,7 +776,71 @@ var kTAG_TAG_STRUCT = 49;
  * structure that represents the structure index or key. No two elements of the list may
  * have an offset, defined by the current attribute, with the same value.
  */
-var kTAG_TAG_STRUCT_IDX = 50;
+var kTAG_TAG_STRUCT_IDX = 51;
+
+/*=======================================================================================
+ *	PROPERTY DESCRIPTION TAGS															*
+ *======================================================================================*/
+
+/**
+ * Minimum value (<code>:min-val</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_FLOAT}
+ * </ul>
+ *
+ * This tag holds a <em>floating point number</em> representing the <em>minimum value</em>
+ * occurrence of the property.
+ */
+var kTAG_MIN_VAL = 52;
+
+/**
+ * Minimum range (<code>:min-range</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_FLOAT}
+ * </ul>
+ *
+ * This tag holds a <em>floating point number</em> representing the <em>minimum value</em>
+ * that a property may hold.
+ */
+var kTAG_MIN_RANGE = 53;
+
+/**
+ * Maximum (<code>:max-val</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_FLOAT}
+ * </ul>
+ *
+ * This tag holds a <em>floating point number</em> representing the <em>maximum value</em>
+ * occurrence of the property.
+ */
+var kTAG_MAX_VAL = 54;
+
+/**
+ * Maximum range (<code>:max-range</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_FLOAT}
+ * </ul>
+ *
+ * This tag holds a <em>floating point number</em> representing the <em>maximum value</em>
+ * that a property may hold.
+ */
+var kTAG_MAX_RANGE = 55;
+
+/**
+ * Pattern (<code>:grep</code)
+ *
+ * <ul>
+ *	<li><em>Type</em>: {@link kTYPE_STRING}
+ * </ul>
+ *
+ * This tag holds a <em>string</em> representing a <em>regular expression pattern</em>, it
+ * used to provide a validation pattern for coded strings.
+ */
+var kTAG_PATTERN = 56;
 
 /*=======================================================================================
  *	GENERIC TAGS																		*
@@ -778,7 +855,7 @@ var kTAG_TAG_STRUCT_IDX = 50;
  *
  * This tag holds a <em>string</em> which represents a discriminating type or category.
  */
-var kTAG_TYPE = 51;
+var kTAG_TYPE = 57;
 
 /**
  * Language (<code>:language</code)
@@ -791,7 +868,7 @@ var kTAG_TYPE = 51;
  * code</em>, this tag is generally used as an element of a structure for indicating the
  * element's language.
  */
-var kTAG_LANGUAGE = 52;
+var kTAG_LANGUAGE = 58;
 
 /**
  * Text (<code>:text</code)
@@ -803,7 +880,7 @@ var kTAG_LANGUAGE = 52;
  * This tag holds a <em>string</em> which represents a <em>text</em>, this tag is generally
  * used as an element of a structure for indicating the element's text.
  */
-var kTAG_TEXT = 53;
+var kTAG_TEXT = 59;
 
 /**
  * URL (<code>:url</code)
@@ -815,71 +892,20 @@ var kTAG_TEXT = 53;
  * This tag holds a <em>string</em> which represents an <em>internet address</em>, this tag
  * is generally used to hold an URL.
  */
-var kTAG_URL = 54;
+var kTAG_URL = 60;
 
 /**
- * Minimum (<code>:min</code)
- *
- * <ul>
- *	<li><em>Type</em>: {@link kTYPE_FLOAT}
- * </ul>
- *
- * This tag holds a <em>floating point number</em> representing a <em>minimum value</em>.
- * This tag can be used both as a range limit in validation, or as an indication of the
- * actual range.
- */
-var kTAG_MIN = 55;
-
-/**
- * Maximum (<code>:max</code)
- *
- * <ul>
- *	<li><em>Type</em>: {@link kTYPE_FLOAT}
- * </ul>
- *
- * This tag holds a <em>floating point number</em> representing a <em>maximum value</em>.
- * This tag can be used both as a range limit in validation, or as an indication of the
- * actual range.
- */
-var kTAG_MAX = 56;
-
-/**
- * Pattern (<code>:grep</code)
- *
- * <ul>
- *	<li><em>Type</em>: {@link kTYPE_STRING}
- * </ul>
- *
- * This tag holds a <em>string</em> representing a <em>regular expression pattern</em>.
- * This tag can be used toprovide a validation pattern for coded strings.
- */
-var kTAG_PATTERN = 57;
-
-/**
- * Geographic location (<code>:geo</code)
+ * Geographic location shape (<code>:geo</code)
  *
  * <ul>
  *	<li><em>Type</em>: {@link kTYPE_SHAPE}
  * </ul>
  *
- * This tag holds the <em>geographic location</em> of an object. This value is expressed as
- * a geometric shape that can be a <em>point</em> or a <em>polygon</em>.
+ * This tag holds the <em>geographic shape</em> of an object. This value is expressed as
+ * a geometric shape that can be a <em>point</em> or a <em>polygon</em> which describes the
+ * position and shape of an object.
  */
-var kTAG_GEO_LOCATION = 58;
-
-/**
- * Public geographic location (<code>:geo-pub</code)
- *
- * <ul>
- *	<li><em>Type</em>: {@link kTYPE_SHAPE}
- * </ul>
- *
- * This tag holds the <em>public geographic location</em> of an object. This value is
- * expressed as a geometric shape that can be a <em>point</em> or a <em>polygon</em>.
- * This value may not coincide with the actual geographic location, which could be
- * restricted, this value is what is allowed to be displayed to clients.
- */
-var kTAG_GEO_PUB_LOCATION = 59;
+var kTAG_GEO_SHAPE = 61;
 
 /*=======================================================================================
  *	CONNECTION ATTRIBUTES																*
@@ -895,7 +921,7 @@ var kTAG_GEO_PUB_LOCATION = 59;
  * This tag holds a <em>string</em> which identifies a specific network connection
  * <em>protocol</em> or <em>scheme</em>.
  */
-var kTAG_CONN_PROTOCOL = 60;
+var kTAG_CONN_PROTOCOL = 62;
 
 /**
  * Connection host (<code>:connection:host</code)
@@ -907,7 +933,7 @@ var kTAG_CONN_PROTOCOL = 60;
  * This tag holds a <em>string</em> which identifies a specific network connection
  * <em>domain name</em> or <em>internet address</em>.
  */
-var kTAG_CONN_HOST = 61;
+var kTAG_CONN_HOST = 63;
 
 /**
  * Connection port (<code>:connection:port</code)
@@ -919,7 +945,7 @@ var kTAG_CONN_HOST = 61;
  * This tag holds an <em>integer</em> which identifies a specific network <em>TCP or UDP
  * port number</em>.
  */
-var kTAG_CONN_PORT = 62;
+var kTAG_CONN_PORT = 64;
 
 /**
  * Connection user code (<code>:connection:user</code)
@@ -931,7 +957,7 @@ var kTAG_CONN_PORT = 62;
  * This tag holds a <em>string</em> which identifies a specific <em>user code</em> used to
  * <em>authenticate with a service</em>.
  */
-var kTAG_CONN_USER = 63;
+var kTAG_CONN_USER = 65;
 
 /**
  * Connection user password (<code>:connection:password</code)
@@ -943,7 +969,7 @@ var kTAG_CONN_USER = 63;
  * This tag holds a <em>string</em> which identifies a specific <em>user password</em> which
  * allows to <em>authenticate with a service</em>.
  */
-var kTAG_CONN_PASS = 64;
+var kTAG_CONN_PASS = 66;
 
 /**
  * Database name (<code>:connection:database</code)
@@ -954,7 +980,7 @@ var kTAG_CONN_PASS = 64;
  *
  * This tag holds a <em>string</em> which identifies a specific <em>database</em>.
  */
-var kTAG_CONN_BASE = 65;
+var kTAG_CONN_BASE = 67;
 
 /**
  * Collection name (<code>:connection:collection</code)
@@ -966,7 +992,7 @@ var kTAG_CONN_BASE = 65;
  * This tag holds a <em>string</em> which identifies a specific <em>database
  * collection</em>.
  */
-var kTAG_CONN_COLL = 66;
+var kTAG_CONN_COLL = 68;
 
 /**
  * Connection options (<code>:connection:options</code)
@@ -979,7 +1005,7 @@ var kTAG_CONN_COLL = 66;
  * network connection</em>. The key part identifies the option, the value part provides the
  * option value.
  */
-var kTAG_CONN_OPTS = 67;
+var kTAG_CONN_OPTS = 69;
 
 /*=======================================================================================
  *	ENTITY ATTRIBUTES																	*
@@ -995,7 +1021,7 @@ var kTAG_CONN_OPTS = 67;
  * This tag holds a <em>string</em> representing the <em>first name</em> of an entity, this
  * implies that the entity is an individual.
  */
-var kTAG_ENTITY_FNAME = 68;
+var kTAG_ENTITY_FNAME = 70;
 
 /**
  * Entity last name (<code>:entity:lname</code)
@@ -1007,7 +1033,7 @@ var kTAG_ENTITY_FNAME = 68;
  * This tag holds a <em>string</em> representing the <em>surname</em> of an entity, this
  * implies that the entity is an individual.
  */
-var kTAG_ENTITY_LNAME = 69;
+var kTAG_ENTITY_LNAME = 71;
 
 /**
  * Entity type (<code>:type:entity</code)
@@ -1019,7 +1045,7 @@ var kTAG_ENTITY_LNAME = 69;
  * This tag holds an <em>enumerated set</em> which describes the <em>types of an
  * entity</em>.
  */
-var kTAG_ENTITY_TYPE = 70;
+var kTAG_ENTITY_TYPE = 72;
 
 /**
  * Entity kind (<code>:kind:entity</code)
@@ -1031,7 +1057,7 @@ var kTAG_ENTITY_TYPE = 70;
  * This tag holds an <em>enumerated set</em> which describes the <em>kinds of an
  * entity</em>.
  */
-var kTAG_ENTITY_KIND = 71;
+var kTAG_ENTITY_KIND = 73;
 
 /**
  * Entity acronym (<code>:entity:acronym</code)
@@ -1044,7 +1070,7 @@ var kTAG_ENTITY_KIND = 71;
  * This tag holds a a <em>list of strings</em> representing the entity <em>acronyms</em> or
  * <em>abbreviations</em>.
  */
-var kTAG_ENTITY_ACRONYM = 72;
+var kTAG_ENTITY_ACRONYM = 74;
 
 /**
  * Entity mail (<code>:entity:mail</code)
@@ -1056,7 +1082,7 @@ var kTAG_ENTITY_ACRONYM = 72;
  * This tag holds a <em>list of mailing addresses discriminated by their type</em>. Each
  * element of the list represents an address which should be used according to its type.
  */
-var kTAG_ENTITY_MAIL = 73;
+var kTAG_ENTITY_MAIL = 75;
 
 /**
  * Entity e-mail (<code>:entity:email</code)
@@ -1068,7 +1094,7 @@ var kTAG_ENTITY_MAIL = 73;
  * This tag holds a <em>list of e-mail addresses discriminated by their type</em>. Each
  * element of the list represents an e-mail which should be used according to its type.
  */
-var kTAG_ENTITY_EMAIL = 74;
+var kTAG_ENTITY_EMAIL = 76;
 
 /**
  * Entity link (<code>:entity:url</code)
@@ -1081,7 +1107,7 @@ var kTAG_ENTITY_EMAIL = 74;
  * element of the list represents an internet link which can be categorised according to its
  * type.
  */
-var kTAG_ENTITY_LINK = 75;
+var kTAG_ENTITY_LINK = 77;
 
 /**
  * Entity phone (<code>:entity:phone</code)
@@ -1093,7 +1119,7 @@ var kTAG_ENTITY_LINK = 75;
  * This tag holds a <em>list of telephone numbers discriminated by their type</em>. Each
  * element of the list represents a phone number which should be used according to its type.
  */
-var kTAG_ENTITY_PHONE = 76;
+var kTAG_ENTITY_PHONE = 78;
 
 /**
  * Entity fax (<code>:entity:fax</code)
@@ -1105,7 +1131,7 @@ var kTAG_ENTITY_PHONE = 76;
  * This tag holds a <em>list of telefax numbers discriminated by their type</em>. Each
  * element of the list represents a fax number which should be used according to its type.
  */
-var kTAG_ENTITY_FAX = 77;
+var kTAG_ENTITY_FAX = 79;
 
 /**
  * Entity affiliation (<code>:entity:affiliation</code)
@@ -1118,7 +1144,7 @@ var kTAG_ENTITY_FAX = 77;
  * element of the list represents an entity object reference which is qualified by the
  * element's type.
  */
-var kTAG_ENTITY_AFFILIATION = 78;
+var kTAG_ENTITY_AFFILIATION = 80;
 
 /**
  * Entity country (<code>:entity:country</code)
@@ -1129,7 +1155,7 @@ var kTAG_ENTITY_AFFILIATION = 78;
  *
  * This tag holds an <em>enumerated value representing the country of the entity</em>.
  */
-var kTAG_ENTITY_COUNTRY = 79;
+var kTAG_ENTITY_COUNTRY = 81;
 
 /**
  * Valid entity (<code>:entity:valid</code)
@@ -1142,7 +1168,7 @@ var kTAG_ENTITY_COUNTRY = 79;
  * attribute is used by obsolete or defunct entities for referring to the current substitute
  * or valid entity.
  */
-var kTAG_ENTITY_VALID = 80;
+var kTAG_ENTITY_VALID = 82;
 
 /*=======================================================================================
  *	OPERATION OFFSETS																	*

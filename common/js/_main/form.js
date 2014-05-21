@@ -1,37 +1,4 @@
 /**
-/* Add Chosen form (select with search engine)
-*/
-$.fn.addChosen = function(options, content, callback) {
-	var options = $.extend({
-		id: "",
-		class: "",
-		placeholder: "Choose...",
-		no_results_text: "",
-		multiple: false,
-		allow_single_deselect: true,
-		max_select: 1,
-		rtl: 0,
-		btn_menu: {}
-	}, options);
-	
-	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '">';
-	$.each(content, function(text, attributes) {
-		select += '<option val="' + attributes.val + '">' + text + '</option>';
-	});
-	$(this).append(select);
-	
-	$(this).find(".chosen-select").chosen({
-		id: "content",
-		max_selected_options: options.max_select,
-		allow_single_deselect: options.allow_single_deselect,
-		no_results_text: options.no_results_text
-	}).on("change", function(evt, params) {
-		if (typeof callback == "function") {
-			callback.call(this);
-		}
-	});
-};
-/**
 /* Manage chosen form
 /* Functions to be called inside the $.addChosen() plugin
 */
@@ -90,7 +57,7 @@ $.create_form = function(response) {
 					for (kind = 0; kind < forms.kind.length; kind++) {
 						switch(forms.kind[kind]) {
 							case kTYPE_LIST: // List
-								form = "Chosen select";
+								form = $.addChosen();
 								break;
 							case kTYPE_CATEGORICAL: // Categorical
 								form = "Autocomplete";
@@ -103,49 +70,53 @@ $.create_form = function(response) {
 								break;
 							case kTYPE_ENUM: // Enum
 							case kTYPE_SET: // Enum-set
-								form = "Chosen select";
+								form = $.add_chosen({multiple: true, tree_checkbox: true});
 								break;
 							default:
-								form = $add_simple_input();
+								form = $.add_simple_input();
 								break;
 						}
 					}
 					break;
 				case kTYPE_URL: // URL
-					form = $add_simple_input({type: "search"});
-					break;
 				case kTYPE_STRING: // String
 					for (kind = 0; kind < forms.kind.length; kind++) {
 						//console.log(forms.kind[kind]);
 						switch(forms.kind[kind]) {
 							case kTYPE_LIST: // List
-								form = "Chosen select";
+								form = $.add_chosen();
 								break;
 							case kTYPE_CATEGORICAL: // Categorical
 								form = "Autocomplete";
 								break;
 							case kTYPE_DISCRETE: // Discrete
-								form = $.add_simple_input();
+								form = $.add_chosen();
 								break;
 							case kTYPE_QUANTITATIVE: // Quantitative
 								form = $.add_range();
 								break;
 							case kTYPE_ENUM: // Enum
 							case kTYPE_SET: // Enum-set
-								form = "Chosen select";
+								form = $.add_chosen({multiple: true, tree_checkbox: true});
 								break;
 							default:
-								form = $add_simple_input();
+								form = $.add_simple_input();
+								//form = $.add_chosen({multiple: true});
 								break;
 						}
 					}
+					break;
+				case kTYPE_ENUM: // Enum
+				case kTYPE_SET: // Enum-set
+					form = $.add_chosen({multiple: true, tree_checkbox: true});
 					break;
 				default:
 					form = "";
 					break;
 			}
 			
-			html_form += '<div class="col-sm-4 vcenter"><div class="panel panel-success disabled"><div class="panel-heading"><h3 class="panel-title"><span class="disabled">' + forms.label + '</span> ' + enable_disable_btn + '</h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + forms.type + " (" + forms.kind + ")" + form + '</div></div></div>';
+			var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></small>';
+			html_form += '<div class="col-lg-4 vcenter"><div class="panel panel-success disabled"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + form + '</div></div></div>';
 		});
 		
 		return '<div class="row">' + html_form + '</div>';
@@ -169,10 +140,12 @@ $.toggle_form_item = function(item) {
 		$this.parent().find("span").removeClass("disabled");
 		$this.closest(".panel").removeClass("disabled").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
+		$this.closest(".panel").find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 	} else {
 		$($this).attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
 		$this.closest(".panel").addClass("disabled").find(".panel-heading h3 > span, .panel-body").addClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", true);
+		$this.closest(".panel").find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
 	}
 	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
 		console.log(e);
@@ -204,7 +177,7 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div><div class="col-sm-1 text-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div></h4>'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div></h4>'),
 		node_body_collapse = $('<div id="' + options.id + '" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
@@ -217,7 +190,7 @@ $.fn.addCollapsible = function(options, callback) {
 	$(this).find("#accordion").append(root_node);
 	$("#accordion a").tooltip({container: "body"});
 
-	
+	$(".chosen-select").chosen();
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
@@ -462,7 +435,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 /**
 /* Add simple input form
 */
-$.add_simple_input = function(options, callback) {
+$.add_simple_input = function(options) {
 	var options = $.extend({
 		id: $.makeid(),
 		class: "form-control",
@@ -477,7 +450,7 @@ $.add_simple_input = function(options, callback) {
 /**
 /* Add range input group form
 */
-$.add_range = function(options, callback) {
+$.add_range = function(options) {
 	var options = $.extend({
 		id: [$.makeid(), $.makeid()],
 		class: ["form-control", "form-control"],
@@ -488,9 +461,37 @@ $.add_range = function(options, callback) {
 	return '<div class="input-group"><span class="input-group-addon">From</span><input class="' + options.class[0] + '" type="number" id="' + options.id[0] + '" name="" placeholder="' + options.placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon">to</span><input class="' + options.class[1] + '" type="number" id="' + options.id[1] + '" name="" placeholder="' + options.placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
 };
 
+/**
+/* Add Chosen autocomplete
+*/
+$.add_chosen = function(options, content) {
+	if(content == undefined || content == "") {
+		content = {text: "Test", value: "ok"};
+	}
+	var options = $.extend({
+		id: $.makeid(),
+		class: "",
+		placeholder: "Choose...",
+		no_results_text: "",
+		multiple: false,
+		allow_single_deselect: true,
+		max_select: 1,
+		tree_checkbox: false,
+		rtl: 0,
+		btn_menu: {},
+		disabled: true
+	}, options);
+	
+	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
+	select += '<option val="' + content.val + '">' + content.text + '</option>';
+	
+	return select;
+};
 
 /**
 /* Add a generic autocomplete form
+/*
+/* Plugin
 */
 $.fn.addAutocomplete = function(options, data, callback) {
 	var options = $.extend({
@@ -527,6 +528,42 @@ $.fn.addAutocomplete = function(options, data, callback) {
 		name: 'data',
 		displayKey: 'value',
 		source: substringMatcher(data)
+	});
+};
+
+/**
+/* Add Chosen form (select with search engine)
+/*
+/* Plugin
+*/
+$.fn.addChosen = function(options, content, callback) {
+	var options = $.extend({
+		id: $.makeid(),
+		class: "",
+		placeholder: "Choose...",
+		no_results_text: "",
+		multiple: false,
+		allow_single_deselect: true,
+		max_select: 1,
+		rtl: 0,
+		btn_menu: {}
+	}, options);
+	
+	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '">';
+	$.each(content, function(text, attributes) {
+		select += '<option val="' + attributes.val + '">' + text + '</option>';
+	});
+	$(this).append(select);
+	
+	$(this).find(".chosen-select").chosen({
+		id: "content",
+		max_selected_options: options.max_select,
+		allow_single_deselect: options.allow_single_deselect,
+		no_results_text: options.no_results_text
+	}).on("change", function(evt, params) {
+		if (typeof callback == "function") {
+			callback.call(this);
+		}
 	});
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
