@@ -49,6 +49,7 @@ $.create_form = function(response) {
 	collection = dictionary[kAPI_DICTIONARY_COLLECTION],
 	ids = dictionary[kAPI_DICTIONARY_IDS],
 	tags = dictionary.tags,
+	form = "",
 	forms = {},
 	html_form = "",
 	get_form_data = function(counter, data) {
@@ -81,15 +82,70 @@ $.create_form = function(response) {
 			forms = get_form_data(idk, response.results[collection][idv]);
 					console.log(forms);
 			
+			var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this));" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
+			
 			switch(forms.type){
-				case ":type:int":
-					if(jQuery.inArray(":type:quantitative", forms.kind)) { }
-					var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this));" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
-					
-					html_form += '<div class="col-sm-4 vcenter"><div class="panel panel-success"><div class="panel-heading"><h3 class="panel-title"><span class="disabled">' + forms.label + '</span> ' + enable_disable_btn + '</h3></div><div class="panel-body disabled">' + ((forms.description !== undefined && forms.description.length > 0) ? forms.description : forms.definition) + '</div></div></div>';
-
+				case kTYPE_FLOAT:
+				case kTYPE_INT:
+					for (kind = 0; kind < forms.kind.length; kind++) {
+						switch(forms.kind[kind]) {
+							case kTYPE_LIST: // List
+								form = "Chosen select";
+								break;
+							case kTYPE_CATEGORICAL: // Categorical
+								form = "Autocomplete";
+								break;
+							case kTYPE_DISCRETE: // Discrete
+								form = $.add_simple_input();
+								break;
+							case kTYPE_QUANTITATIVE: // Quantitative
+								form = $.add_range();
+								break;
+							case kTYPE_ENUM: // Enum
+							case kTYPE_SET: // Enum-set
+								form = "Chosen select";
+								break;
+							default:
+								form = $add_simple_input();
+								break;
+						}
+					}
+					break;
+				case kTYPE_URL: // URL
+					form = $add_simple_input({type: "search"});
+					break;
+				case kTYPE_STRING: // String
+					for (kind = 0; kind < forms.kind.length; kind++) {
+						//console.log(forms.kind[kind]);
+						switch(forms.kind[kind]) {
+							case kTYPE_LIST: // List
+								form = "Chosen select";
+								break;
+							case kTYPE_CATEGORICAL: // Categorical
+								form = "Autocomplete";
+								break;
+							case kTYPE_DISCRETE: // Discrete
+								form = $.add_simple_input();
+								break;
+							case kTYPE_QUANTITATIVE: // Quantitative
+								form = $.add_range();
+								break;
+							case kTYPE_ENUM: // Enum
+							case kTYPE_SET: // Enum-set
+								form = "Chosen select";
+								break;
+							default:
+								form = $add_simple_input();
+								break;
+						}
+					}
+					break;
+				default:
+					form = "";
 					break;
 			}
+			
+			html_form += '<div class="col-sm-4 vcenter"><div class="panel panel-success disabled"><div class="panel-heading"><h3 class="panel-title"><span class="disabled">' + forms.label + '</span> ' + enable_disable_btn + '</h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + forms.type + " (" + forms.kind + ")" + form + '</div></div></div>';
 		});
 		
 		return '<div class="row">' + html_form + '</div>';
@@ -111,12 +167,15 @@ $.toggle_form_item = function(item) {
 	if($this.find("span").hasClass("fa-square-o")) {
 		$this.attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		$this.parent().find("span").removeClass("disabled");
-		$this.closest(".panel").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
+		$this.closest(".panel").removeClass("disabled").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
+		$this.closest(".panel").find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
 	} else {
 		$($this).attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
-		$this.closest(".panel").find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+		$this.closest(".panel").addClass("disabled").find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+		$this.closest(".panel").find("input").attr("disabled", true);
 	}
 	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
+		console.log(e);
 		return false;
 	});
 };
@@ -145,7 +204,7 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div><div class="col-sm-1"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));" class="pull-right"><span class="fa fa-times" style="color: #666;"></span></a></div></h4>'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div><div class="col-sm-1 text-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div></h4>'),
 		node_body_collapse = $('<div id="' + options.id + '" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
@@ -395,6 +454,40 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 	});
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/**
+/* FORM GENERATION
+*/
+
+
+/**
+/* Add simple input form
+*/
+$.add_simple_input = function(options, callback) {
+	var options = $.extend({
+		id: $.makeid(),
+		class: "form-control",
+		placeholder: "Enter value...",
+		type: "text",
+		disabled: true
+	}, options);
+	
+	return '<input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
+};
+
+/**
+/* Add range input group form
+*/
+$.add_range = function(options, callback) {
+	var options = $.extend({
+		id: [$.makeid(), $.makeid()],
+		class: ["form-control", "form-control"],
+		placeholder: [0, 0],
+		disabled: true
+	}, options);
+	
+	return '<div class="input-group"><span class="input-group-addon">From</span><input class="' + options.class[0] + '" type="number" id="' + options.id[0] + '" name="" placeholder="' + options.placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon">to</span><input class="' + options.class[1] + '" type="number" id="' + options.id[1] + '" name="" placeholder="' + options.placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+};
+
 
 /**
 /* Add a generic autocomplete form

@@ -1,6 +1,9 @@
 input::-moz-focus-inner, * {
 	outline: 0 !important;
 }
+input[type=number] {
+	text-align: right;
+}
 body {
 	background-color: transparent;
 	text-align: left;
@@ -107,22 +110,39 @@ section.container {
     position: relative;
     top: 6px;
 }
-#content .row .panel .disabled {
-	opacity: 0.5;
+#content .row .panel.disabled {
+	border-color: #ddd;
+}
+#content .row .panel > .disabled {
 	cursor: not-allowed;
 }
+#content .row .panel.disabled > .panel-heading {
+	background-color: #eee;
+	border-color: #ddd;
+	color: #999;
+}
+#content .row .panel.disabled > .panel-body {
+	color: #999;
+}
+
+
 #content .row .panel-heading a {
-  background-color: #fff;
-  border-radius: 4px;
-  cursor: pointer !important;
-  font-size: 1.5em;
-  height: 0.8em;
-  margin-top: -2px;
+	background-color: #fff;
+	border-radius: 9px;
+	cursor: pointer !important;
+	font-size: 1.5em;
+	width: 19px;
+	height: 19px;
+	line-height: 22px;
+}
+#content .row .panel.disabled > .panel-heading a:hover {
+	color: #666 !important;
 }
 #content .row .panel-heading a > span {
 	height: 0;
     padding: 0;
 	line-height: 0;
+	margin-top: 10px;
 }
 
 #left_panel {
