@@ -13,11 +13,11 @@ function apprise(string, args, callback) {
 		"confirm": false, 			// Ok and Cancel buttons
 		"verify": false, 			// Yes and No buttons
 		"input": false,
-		"inputIp": false,
+		"inputIP": false,
 		"message": false, 			// Textarea (can be true or string for default text)
 		"showHeader": true,
 		"showFooter": true,
-		"invertedVerify": false,
+		"invertedBtns": false,
 		"textOk": "Ok", 			// Ok button default text
 		"textCancel": "Cancel",		// Cancel button default text
 		"textYes": "Si", 			// Yes button default text
@@ -25,6 +25,7 @@ function apprise(string, args, callback) {
 		"icon": "",
 		"fa_icon": "",
 		"title": "",
+		"titleClass": "text-primary",
 		"progress": false,
 		"allowExit": true,
 		"class": ""
@@ -64,7 +65,7 @@ function apprise(string, args, callback) {
 								title_class = " text-danger";
 								break;
 							default:
-								title_class = " text-primary";
+								title_class = " " + args["titleClass"];
 								break;
 						}
 						var title_icon = '<span class="fa ' + args["icon"] + '"></span>&nbsp;&nbsp;';
@@ -117,12 +118,12 @@ function apprise(string, args, callback) {
 				}
 			}
 		}
-		if (args["inputIp"]) {
+		if (args["inputIP"]) {
 			row.prepend('<div class="form-group col-sm-5"><p>Tipo di indirizzo:</p><label><input type="radio" id="ipv4" name="ipaddr" class="ipaddr" checked /> <acronym title="Internet Protocol versione 4">IPv4</acronym></label><br /><label><input type="radio" id="ipv6" name="ipaddr" class="ipaddr" /> <acronym title="Internet Protocol versione 6">IPv6</acronym></label><br /><label><input type="radio" id="dns" name="ipaddr" class="ipaddr" /> <acronym title="Domain Name System">DNS</acronym></label></div>');
 			
 			$.add_input = function(args) {
-				if (typeof(args["inputIp"]) == 'string') {
-					row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args["inputIp"] + '" /></div>');
+				if (typeof(args["inputIP"]) == 'string') {
+					row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args["inputIP"] + '" /></div>');
 				} else {
 					if(args["fa_icon"]) {
 						row.find("div.col-sm-10").append('<input type="text" class="form-control" /></div>');
@@ -151,7 +152,7 @@ function apprise(string, args, callback) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args["textCancel"] + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textOk"] + '</button>');
 			btn_group.appendTo(footer);
-		} else if (args["invertedVerify"]) {
+		} else if (args["invertedBtns"]) {
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-default">' + args["textOk"] + '</button>');
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-primary right">' + args["textCancel"] + '</button>');
 			btn_group.appendTo(footer);
@@ -185,7 +186,7 @@ function apprise(string, args, callback) {
 		}
 	});
 	$("#apprise").modal(modal).on("shown.bs.modal", function() {
-		if(args["inputIp"]) {
+		if(args["inputIP"]) {
 			$(this).find(".form-control").ipAddress().focus();
 		} else if(args["input"]) {
 			$(this).find(".form-control").focus();

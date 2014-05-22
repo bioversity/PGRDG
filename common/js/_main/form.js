@@ -47,7 +47,15 @@ $.create_form = function(response) {
 			//forms[idk] = get_form_data(idk, response.results[collection][idv]);
 			
 			forms = get_form_data(idk, response.results[collection][idv]);
-					console.log(forms);
+			console.log(forms.type, idv);
+			
+			if(forms.type == kTYPE_ENUM || forms.type == kTYPE_SET) {
+				var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}};
+				console.log("LA URL", JSON.stringify({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}}));
+				$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}}, function(res) {
+					console.log("OKAY", lang);
+				});
+			}
 			
 			var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this));" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
 			
@@ -250,7 +258,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&lang=" + lang + "&param=" + $.rawurlencode('{"limit":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -288,7 +296,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		kAPI["parameters"] = new Object;
 		kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
@@ -326,7 +334,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 			kAPI["parameters"] = new Object;
 			kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
 			kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS]["log-request"] = "true";
+			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
 			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
@@ -473,7 +481,7 @@ $.add_range = function(options) {
 */
 $.add_chosen = function(options, content) {
 	if(content == undefined || content == "") {
-		content = {text: "Test", value: "ok"}; // <----------------------------------- Waiting right data from Milko's Service...
+		content = {text: "Test", value: "ok"}, {text: "Test", value: "jkhsdgf"}; // <----------------------------------- Waiting right data from Milko's Service...
 	}
 	var options = $.extend({
 		id: $.makeid(),
@@ -608,18 +616,38 @@ $.get_operators_list = function(system_constants) {
 		});
 	});
 }
-$(document).ready(function() {
-	if($.browser_cookie_status()) {
-		if($.cookie("pgrdg_cache") == undefined) {
-			// http://pgrdg.grinfo.private/Service.php?op=list-constants
-			$.ask_to_service("list-constants", function(system_constants) {
-				$.cookie("pgrdg_cache", $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
-				$.get_operators_list(system_constants);
-			});
-		} else {
-			$.get_operators_list($.b64_to_utf8($.cookie("pgrdg_cache")));
+
+$.check_cookie = function(cname, callback) {
+	if(typeof(cname) == "string") {
+		cname = new Array(cname);
+	}
+	for(var q = 0; q < cname.length; q++) {
+		var name = cname[q];
+		
+		if($.browser_cookie_status()) {
+			if($.cookie("pgrdg_cache_" + name) == undefined) {
+				// http://pgrdg.grinfo.private/Service.php?op={name}
+				$.ask_to_service(name, function(system_constants) {
+					$.cookie("pgrdg_cache_" + name, $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
+					$.get_operators_list(system_constants);
+					
+					if (typeof callback == "function") {
+						callback.call(this);
+					}
+				});
+			} else {
+				$.get_operators_list($.b64_to_utf8($.cookie("pgrdg_cache_" + name)));
+				if (typeof callback == "function") {
+					callback.call(this);
+				}
+			}
 		}
 	}
+}
+$(document).ready(function() {
+	$.check_cookie("list-constants", function() {
+		//$.check_cookie(kAPI_OP_LIST_REF_COUNTS); // Remind that you can pass also an array
+	});
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
 		if (typeof callback == "function") {
