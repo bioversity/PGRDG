@@ -26,14 +26,15 @@ function apprise(string, args, callback) {
 		"fa_icon": "",
 		"title": "",
 		"progress": false,
-		"allowExit": true
+		"allowExit": true,
+		"class": ""
 	}
 	if (args) {
 		for (var index in default_args) {
 			if (typeof(args[index]) == "undefined") args[index] = default_args[index];
 		}
 	}
-	var modal = $('<div class="modal fade" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((!args["allowExit"]) ? ' data-backdrop="static" data-keyboard="false"' : '') + '></div>'),
+	var modal = $('<div class="modal fade ' + args["class"] + '" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((!args["allowExit"]) ? ' data-backdrop="static" data-keyboard="false"' : '') + '></div>'),
 	dialog = $('<div class="modal-dialog">'),
 	content = $('<div class="modal-content">'),
 	header = $('<div class="modal-header">'),

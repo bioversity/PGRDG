@@ -117,8 +117,6 @@ section.container {
 }
 #content .row .panel.disabled {
 	border-color: #ddd;
-}
-#content .row .panel > .disabled {
 	cursor: not-allowed;
 }
 #content .row .panel.disabled > .panel-heading {

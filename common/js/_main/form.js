@@ -60,7 +60,7 @@ $.create_form = function(response) {
 								form = $.addChosen();
 								break;
 							case kTYPE_CATEGORICAL: // Categorical
-								form = "Autocomplete";
+													form = "Autocomplete";
 								break;
 							case kTYPE_DISCRETE: // Discrete
 								form = $.add_simple_input();
@@ -87,7 +87,7 @@ $.create_form = function(response) {
 								form = $.add_chosen();
 								break;
 							case kTYPE_CATEGORICAL: // Categorical
-								form = "Autocomplete";
+													form = "Autocomplete";
 								break;
 							case kTYPE_DISCRETE: // Discrete
 								form = $.add_chosen();
@@ -116,7 +116,7 @@ $.create_form = function(response) {
 			}
 			
 			var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></small>';
-			html_form += '<div class="col-lg-4 vcenter"><div class="panel panel-success disabled"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + form + '</div></div></div>';
+			html_form += '<div class="col-lg-4 vcenter"><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + form + '</div></div></div>';
 		});
 		
 		return '<div class="row">' + html_form + '</div>';
@@ -138,12 +138,12 @@ $.toggle_form_item = function(item) {
 	if($this.find("span").hasClass("fa-square-o")) {
 		$this.attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		$this.parent().find("span").removeClass("disabled");
-		$this.closest(".panel").removeClass("disabled").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
+		$this.closest(".panel").removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
 		$this.closest(".panel").find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 	} else {
 		$($this).attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
-		$this.closest(".panel").addClass("disabled").find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+		$this.closest(".panel").addClass("disabled").attr("data-original-title", "This item is disable").tooltip().find(".panel-heading h3 > span, .panel-body").addClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", true);
 		$this.closest(".panel").find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
 	}
@@ -309,6 +309,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				// Create forms
 				var forms = $.create_form(response);
 				$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+				$("#content .panel").tooltip();
 			}
 		});
 		is_autocompleted = true;
@@ -349,6 +350,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					var forms = $.create_form(response);
 					$("#content .content-title").text('Output for "' + $("#" + options.id).val() + '"');
 					$("#content .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+					$("#content .panel").tooltip();
+					$(".tt-dropdown-menu").css("display", "none");
 				}
 			});
 		}
@@ -389,15 +392,19 @@ $.reset_all_searches = function(ask) {
 	var next = false;
 	
 	if(ask) {
-		apprise("Are you sure?", {title: "Warning", icon: "warning", confirm: true}, function(r) {
-			if(r) {
-				$("#content #right_btn").fadeOut(300, function() {
-					$("#content .content-title").text("Output");
-					$("#content .content-body").html("");
-					$("input.typeahead.tt-input").val("").focus();
-				});
-			}
-		});
+		if($("#apprise.reset-all").length > 0) {
+			$("#apprise.reset-all").modal("show");
+		} else {
+			apprise("Are you sure?", {title: "Warning", icon: "warning", class: "reset-all", confirm: true}, function(r) {
+				if(r) {
+					$("#content #right_btn").fadeOut(300, function() {
+						$("#content .content-title").text("Output");
+						$("#content .content-body").html("");
+						$("input.typeahead.tt-input").val("").focus();
+					});
+				}
+			});
+		}
 	} else {
 		$("#content #right_btn").fadeOut(300, function() {
 			$("#content .content-title").text("Output");
@@ -466,7 +473,7 @@ $.add_range = function(options) {
 */
 $.add_chosen = function(options, content) {
 	if(content == undefined || content == "") {
-		content = {text: "Test", value: "ok"};
+		content = {text: "Test", value: "ok"}; // <----------------------------------- Waiting right data from Milko's Service...
 	}
 	var options = $.extend({
 		id: $.makeid(),
@@ -483,7 +490,10 @@ $.add_chosen = function(options, content) {
 	}, options);
 	
 	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
-	select += '<option val="' + content.val + '">' + content.text + '</option>';
+	if(content.value !== undefined) {
+		select += '<option val="' + content.value + '">' + content.text + '</option>';
+	}
+	select += '</select>';
 	
 	return select;
 };

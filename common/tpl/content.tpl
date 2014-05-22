@@ -1,4 +1,4 @@
-<div id="content" class="left">
+<div id="content" class="left container-fluid">
 	<h1 class="pull-left content-title">Output</h1>
 	<div class="pull-right">
 		<div class="btn-group">
