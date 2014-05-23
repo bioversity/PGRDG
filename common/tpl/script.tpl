@@ -22,8 +22,8 @@
 		<script type="text/javascript" src="common/js/main.map.js"></script>
 		-->
 	<!-- OpenLayers 3 -->
-	<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/css/ol.css" type="text/css" />
-	<script src="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/build/ol.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="common/js/OpenLayers/ol3js/css/ol.css" type="text/css" />
+	<script src="common/js/OpenLayers/ol3js/src/ol/ol.js" type="text/javascript"></script>
 	
 	<script type="text/javascript" src="common/js/_main/map3.js"></script>
 <?php } ?>
