@@ -1,9 +1,9 @@
-[submodule "common/js/chosen"]
-	path = common/js/chosen
-	url = git@github.com:harvesthq/chosen.git
 [submodule "common/js/jquery-cookie"]
 	path = common/js/jquery-cookie
 	url = git@github.com:carhartl/jquery-cookie.git
 [submodule "common/js/jQuery-Knob"]
 	path = common/js/jQuery-Knob
 	url = git@github.com:aterrien/jQuery-Knob.git
+[submodule "common/js/OpenLayers/ol3js"]
+	path = common/js/OpenLayers/ol3js
+	url = git@github.com:openlayers/ol3.git
