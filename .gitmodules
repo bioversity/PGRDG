@@ -10,3 +10,6 @@
 [submodule "common/js/jquery.hotkeys"]
 	path = common/js/jquery.hotkeys
 	url = git@github.com:jeresig/jquery.hotkeys.git
+[submodule "common/js/chosen"]
+	path = common/js/chosen
+	url = git@github.com:harvesthq/chosen.git
