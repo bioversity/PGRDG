@@ -7,7 +7,7 @@
 <!-- Jcryption -->
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
 <!-- Jquery Choosen -->
-<link rel="stylesheet" href="common/css/chosen-bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="common/js/chosen/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 <!-- Typeahead -->
 <link rel="stylesheet" href="common/js/typeahead/typeahead.css" type="text/css" />
