@@ -7,7 +7,7 @@
 <!-- Jcryption -->
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
 <!-- Jquery Choosen -->
-<link rel="stylesheet" href="common/js/chosen/chosen-bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="common/css/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
 <!-- Typeahead -->
 <link rel="stylesheet" href="common/js/typeahead/typeahead.css" type="text/css" />
@@ -28,7 +28,7 @@
 	<script type="text/javascript" src="common/js/_main/map3.js"></script>
 <?php } ?>
 <script type="text/javascript" src="common/js/_main/main.js"></script>
-<script type="text/javascript" src="common/js/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="common/js/_main/form.js"></script>
 <script type="text/javascript" src="common/js/_service/Api.inc.js"></script>
 <script type="text/javascript" src="common/js/_service/Types.inc.js"></script>

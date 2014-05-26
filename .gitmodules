@@ -7,3 +7,6 @@
 [submodule "common/js/OpenLayers/ol3js"]
 	path = common/js/OpenLayers/ol3js
 	url = git@github.com:openlayers/ol3.git
+[submodule "common/js/jquery.hotkeys"]
+	path = common/js/jquery.hotkeys
+	url = git@github.com:jeresig/jquery.hotkeys.git
