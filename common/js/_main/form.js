@@ -50,22 +50,21 @@ $.create_form = function(response) {
 			console.log(forms.type, idv);
 			
 			if(forms.type == kTYPE_ENUM || forms.type == kTYPE_SET) {
-				var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}};
-				console.log("LA URL", JSON.stringify({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}}));
-				$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {tag: idv}}}, function(res) {
+				var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}};
+				//console.log("LA URL", url);
+				$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
 					console.log("OKAY", lang);
 				});
 			}
 			
-			var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this));" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
-			
 			switch(forms.type){
 				case kTYPE_FLOAT:
 				case kTYPE_INT:
+					// RANGE
 					for (kind = 0; kind < forms.kind.length; kind++) {
 						switch(forms.kind[kind]) {
 							case kTYPE_LIST: // List
-								form = $.addChosen();
+								//form = $.addChosen();
 								break;
 							case kTYPE_CATEGORICAL: // Categorical
 													form = "Autocomplete";
@@ -88,6 +87,7 @@ $.create_form = function(response) {
 					break;
 				case kTYPE_URL: // URL
 				case kTYPE_STRING: // String
+					// STRING
 					for (kind = 0; kind < forms.kind.length; kind++) {
 						//console.log(forms.kind[kind]);
 						switch(forms.kind[kind]) {
@@ -116,15 +116,23 @@ $.create_form = function(response) {
 					break;
 				case kTYPE_ENUM: // Enum
 				case kTYPE_SET: // Enum-set
-					form = $.add_chosen({multiple: true, tree_checkbox: true});
+					// CHOSEN
+					form = $.add_multiselect({multiple: true, tree_checkbox: true}, function() {
+						/*
+						$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
+							console.log("YEAH!", res);
+						});
+						*/						
+					});
 					break;
 				default:
 					form = "";
 					break;
 			}
+			var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
 			
-			var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></small>';
-			html_form += '<div class="col-lg-4 vcenter"><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body disabled"><p>' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</p>' + form + '</div></div></div>';
+			var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>';
+			html_form += '<div class="col-lg-4 vcenter"><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body disabled"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
 		});
 		
 		return '<div class="row">' + html_form + '</div>';
@@ -141,19 +149,50 @@ $.create_form = function(response) {
 	*/
 };
 
-$.toggle_form_item = function(item) {
-	var $this = item;
+$.toggle_form_item = function(item, enumeration) {
+	var $this = item,
+	data = [];
 	if($this.find("span").hasClass("fa-square-o")) {
 		$this.attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		$this.parent().find("span").removeClass("disabled");
 		$this.closest(".panel").removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
-		$this.closest(".panel").find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
+		
+		if($this.closest(".panel").find(".chosen-select").length > 0){
+			$this.closest(".panel").find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
+		}
+		if($this.closest(".panel").find("select.multiselect").length > 0){
+			$this.closest(".panel").find("select.multiselect").multiselect("enable");
+			
+			if($this.closest(".panel").find("select.multiselect option").length == 0) {
+				// Get tag enumeration
+				$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
+					$.each(res.results, function(k, v) {
+						console.log(k, v);
+						data.push({label: '<i>' + v.label + '</i>', value: v.term});
+						//$this.closest(".panel").find("select.multiselect").append('<option value="' + v.term + '">' + v.label + '</option>');
+					});
+					console.log(data);
+					$this.closest(".panel").find("select.multiselect").multiselect("dataprovider", data);
+					$this.closest(".panel").find("select.multiselect").multiselect("rebuild");
+					$this.closest(".panel").find("ul.multiselect-container").find(".label_icon").addClass("fa fa-caret-right");
+					$this.closest(".panel").find("button.multiselect").closest(".btn-group").addClass("open");
+					$this.closest(".panel").find("button.multiselect").focus();
+				});
+			} else {
+				$this.closest(".panel").find("select.multiselect").multiselect("rebuild");
+			}
+		}
 	} else {
 		$($this).attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
 		$this.closest(".panel").addClass("disabled").attr("data-original-title", "This item is disable").tooltip().find(".panel-heading h3 > span, .panel-body").addClass("disabled");
 		$this.closest(".panel").find("input").attr("disabled", true);
-		$this.closest(".panel").find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
+		if($this.closest(".panel").find(".chosen-select").length > 0){
+			$this.closest(".panel").find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
+		}
+		if($this.closest(".panel").find("select.multiselect").length > 0){
+			$this.closest(".panel").find("select.multiselect").multiselect("disable");
+		}
 	}
 	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
 		console.log(e);
@@ -198,7 +237,22 @@ $.fn.addCollapsible = function(options, callback) {
 	$(this).find("#accordion").append(root_node);
 	$("#accordion a").tooltip({container: "body"});
 
-	$(".chosen-select").chosen();
+	$("select.chosen-select").chosen();
+	$("select.multiselect").multiselect({
+		buttonClass: "form-control",
+		maxHeight: 200,
+		includeSelectAllDivider: true,
+		enableFiltering: true,
+		templates: {
+			filter: '<div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div>',
+			li: '<li><a href="javascript:void(0);"><label><span class="label_icon"></span></label></a></li>'
+		},
+		onChange: function(element, checked) {
+			$("button.multiselect").attr("data-original-title", $("button.multiselect").attr("title"));
+		}
+	});
+	$("select.multiselect").multiselect("disable");
+	
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
@@ -481,7 +535,9 @@ $.add_range = function(options) {
 */
 $.add_chosen = function(options, content) {
 	if(content == undefined || content == "") {
-		content = {text: "Test", value: "ok"}, {text: "Test", value: "jkhsdgf"}; // <----------------------------------- Waiting right data from Milko's Service...
+		content = [{text: "Test", value: "ok"}, {text: "Test", value: "jkhsdgf"}]; // <----------------------------------- Waiting right data from Milko's Service...
+	} else {
+		console.log("Chosen: ", content);
 	}
 	var options = $.extend({
 		id: $.makeid(),
@@ -498,11 +554,42 @@ $.add_chosen = function(options, content) {
 	}, options);
 	
 	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
-	if(content.value !== undefined) {
-		select += '<option val="' + content.value + '">' + content.text + '</option>';
+	for (var c = 0; c < content.length; c++) {
+		if(content[c].value !== undefined) {
+			select += '<option val="' + content[c].value + '">' + content[c].text + '</option>';
+		}
 	}
 	select += '</select>';
 	
+	return select;
+};
+
+/**
+/* Add Multiselect autocomplete
+*/
+$.add_multiselect = function(options, callback) {
+	if(content == undefined || content == "") {
+		content = [{text: '<span class="fa fa-spin fa-spinner"></span> Wait...', value: ""}]; // <----------------------------------- Waiting right data from Milko's Service...
+	}
+	var options = $.extend({
+		id: $.makeid(),
+		class: "",
+		placeholder: "Choose...",
+		no_results_text: "",
+		multiple: false,
+		allow_single_deselect: true,
+		max_select: 1,
+		tree_checkbox: false,
+		rtl: 0,
+		btn_menu: {},
+		disabled: true
+	}, options);
+	
+	var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
+	
+	if (typeof callback == "function") {
+		callback.call(this);
+	}
 	return select;
 };
 

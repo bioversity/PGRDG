@@ -643,6 +643,30 @@ section.container {
 	margin-bottom: 30px;
 }
 
+label.checkbox {
+	margin: 0;
+}
+#accordion .panel .btn-group, #accordion .panel .multiselect {
+	width: 100%;
+}
+.multiselect {
+	text-align: left;
+}
+.multiselect b.caret {
+	position: absolute;
+	top: 14px;
+	right: 8px;
+}
+.multiselect-group {
+	font-weight: bold;
+	text-decoration: underline;
+}
+.multiselect-container.dropdown-menu {
+	width: 100%;
+}
+.multiselect-container > .input-group {
+	padding: 5px;
+}
 
 #knob {
 	/*

@@ -33,9 +33,9 @@ $.ask_to_service = function(options, callback) {
 	var opt = $.extend({
 		op: "",
 		parameters: {
-			lang: "en",
-			limit: 50,
+			lang: lang,
 			param: {
+				limit: 50,
 				"log-request": "true",
 				tag: ""
 			}

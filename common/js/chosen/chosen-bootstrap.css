@@ -60,12 +60,13 @@ select.form-control + .chosen-container .chosen-search input[type=text] {
 }
 
 select.form-control + .chosen-container .chosen-results {
-    margin: 2px 0 0;
-    padding: 5px 0;
+    margin: 0 !important;
+    padding: 0;
     font-size: 14px;
     list-style: none;
     background-color: #fff;
     margin-bottom: 5px;
+	border-radius: 4px;
 }
 
 select.form-control + .chosen-container .chosen-results li , 
@@ -74,7 +75,7 @@ select.form-control + .chosen-container .chosen-results li.active-result {
     padding: 3px 20px;
     clear: both;
     font-weight: normal;
-    line-height: 1.428571429;
+    line-height: 2em;
     color: #333;
     white-space: nowrap;
     background-image:none;

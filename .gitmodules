@@ -13,3 +13,6 @@
 [submodule "common/js/chosen"]
 	path = common/js/chosen
 	url = git@github.com:harvesthq/chosen.git
+[submodule "common/js/bootstrap-multiselect"]
+	path = common/js/bootstrap-multiselect
+	url = git@github.com:davidstutz/bootstrap-multiselect.git
