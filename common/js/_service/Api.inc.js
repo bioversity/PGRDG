@@ -222,6 +222,13 @@ var kAPI_DICTIONARY_TAGS = 'tags';
  */
 var kAPI_DICTIONARY_IDS = 'ids';
 
+/**
+ * Cluster.
+ *
+ * This tag indicates the dictionary cluster.
+ */
+var kAPI_DICTIONARY_CLUSTER = 'cluster';
+
 /*=======================================================================================
  *	OPERATIONS																			*
  *======================================================================================*/

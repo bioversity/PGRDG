@@ -59,6 +59,25 @@ var kOPERATOR_SUFFIX = '$SX';			// Ends with.
  */
 var kOPERATOR_REGEX = '$RE';			// Regular expression.
 
+
+/*=======================================================================================
+ *	RANGE OPERATORS																		*
+ *======================================================================================*/
+
+/**
+ * Range inclusive.
+ *
+ * This enumeration represents a range including limits.
+ */
+var kOPERATOR_IRANGE = '$IRG';			// Range inclusive.
+
+/**
+ * Range exclusive.
+ *
+ * This enumeration represents a range excluding limits.
+ */
+var kOPERATOR_ERANGE = '$ERG';			// Range exclusive.
+
 /*=======================================================================================
  *	MODIFIERS																			*
  *======================================================================================*/

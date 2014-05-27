@@ -90,12 +90,30 @@ section.container {
     width: 100%;
 	padding: 0;
 }
-#content {
-    position: relative;
-	padding: 12.5px;
-	width: 100%;
-	top: 110px;
+#content-head {
 	display: none;
+	position: fixed;
+    display: table-row;
+	top: 110px;
+	width: 100%;
+	z-index: 1;
+	padding-top: 10px;
+	background-color: #fff;
+	box-shadow: 0 0 6px #d0d0d0;
+}
+#content-body {
+    display: table-row;
+	width: 100%;
+	position: absolute;
+}
+#content-head #breadcrumb {
+	display: none;
+}
+#content {
+    display: table;
+	padding-top: 110px;
+	width: 100%;
+	margin-top: 98px;
 }
 #content h1,
 #content h2,
@@ -105,21 +123,21 @@ section.container {
 #content h6 {
 	margin-top: 0;
 }
-#content .btn-group{
+#content-head .btn-group {
 	bottom: 15px;
     position: relative;
     top: 6px;
 }
-#content .row .panel .chosen-container {
+#content-body .row .panel .chosen-container {
 	display: block;
 	width: auto !important;
 	position: relative;
 }
-#content .row .panel.disabled {
+#content-body .row .panel.disabled {
 	border-color: #ddd;
 	cursor: not-allowed;
 }
-#content .row .panel.disabled > .panel-heading {
+#content-body .row .panel.disabled > .panel-heading {
 	background-color: #eee;
 	border-color: #ddd;
 	color: #999;
@@ -127,12 +145,12 @@ section.container {
 #content .row .panel.disabled > .panel-body {
 	color: #999;
 }
-#content .panel-group .panel {
+#content-body .panel-group .panel {
 	overflow: visible;
 }
 
 
-#content .row .panel-heading a {
+#content-body .row .panel-heading a {
 	background-color: #fff;
 	border-radius: 9px;
 	cursor: pointer !important;
@@ -141,13 +159,13 @@ section.container {
 	height: 19px;
 	line-height: 22px;
 }
-#content .row .panel-heading a:first-child {
+#content-body .row .panel-heading a:first-child {
 	color: #333 !important;
 }
-#content .row .panel.disabled > .panel-heading a:hover {
+#content-body .row .panel.disabled > .panel-heading a:hover {
 	color: #666 !important;
 }
-#content .row .panel-heading a > span {
+#content-body .row .panel-heading a > span {
 	height: 0;
     padding: 0;
 	line-height: 0;

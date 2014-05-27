@@ -104,7 +104,7 @@ $.left_panel = function(subject, width, callback) {
 	$("#left_panel").css({
 		"width": width
 	});
-	var content_witdth = $("#content").css("width");
+	var content_witdth = $("#content-body").css("width");
 	if($("#left_panel").hasClass("visible") && subject !== "open") {
 		if(subject == "close") {
 			$(".olControlZoom").animate({"left": "10px"}, 300);
@@ -116,7 +116,7 @@ $.left_panel = function(subject, width, callback) {
 					callback.call(this);
 				}
 			});
-			$("#content").animate({"padding-left": "10px"}, 300);
+			$("#content-head, #content-body").animate({"padding-left": "10px"}, 300);
 		} else {
 			$.left_panel("close");
 		}
@@ -133,7 +133,7 @@ $.left_panel = function(subject, width, callback) {
 					callback.call(this);
 				}
 			});
-			$("#content").animate({"padding-left": (movement+15) + "px"}, 250);
+			$("#content-head, #content-body").animate({"padding-left": (movement+15) + "px"}, 250);
 		}
 	}
 };

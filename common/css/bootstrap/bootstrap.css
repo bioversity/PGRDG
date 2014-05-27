@@ -3435,6 +3435,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   height: auto;
 }
 .input-group-addon,
+.input-group-addon_white,
 .input-group-btn,
 .input-group .form-control {
   display: table-cell;
@@ -3445,6 +3446,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   border-radius: 0;
 }
 .input-group-addon,
+.input-group-addon_white,
 .input-group-btn {
   width: 1%;
   white-space: nowrap;
@@ -3459,6 +3461,17 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   text-align: center;
   background-color: #eee;
   border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.input-group-addon_white {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid none;
   border-radius: 4px;
 }
 .input-group-addon.input-sm {
