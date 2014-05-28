@@ -105,7 +105,7 @@ $.ask_to_service = function(options, callback) {
 		});
 	//}
 };
-
+$.resize_forms_mask = function() { $.each($(".panel-mask"), function(i, d) { $(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 1) + "px"); }); }
 $.left_panel = function(subject, width, callback) {
 	if(width == "" || width == undefined) {
 		var width = 488;
@@ -120,6 +120,7 @@ $.left_panel = function(subject, width, callback) {
 		if(subject == "close") {
 			$(".olControlZoom").animate({"left": "10px"}, 300);
 			$("#left_panel").animate({"left": "-" + width}, 300, "swing", function() {
+				$.resize_forms_mask();
 				$(this).removeClass("visible");
 				
 				// Callback
@@ -135,10 +136,10 @@ $.left_panel = function(subject, width, callback) {
 		if(subject !== "close") {
 			$(".olControlZoom").animate({"left": width}, 300);
 			$("#left_panel").animate({"left": "0"}, 300, "easeOutExpo", function() {
+				$.resize_forms_mask();
 				$(this).addClass("visible");
 				
 				$(this).find("input[type=search]").focus();
-				
 				// Callback
 				if (typeof callback == "function") {
 					callback.call(this);

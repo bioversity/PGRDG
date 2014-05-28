@@ -182,6 +182,7 @@ section.container {
 	font-weight: bold;
 }
 #content-body .panel-body > p {
+	word-wrap: break-word;
 	overflow-x: auto;
 }
 

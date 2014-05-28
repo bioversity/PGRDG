@@ -140,7 +140,7 @@ $.create_form = function(response) {
 				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>';
-				html_form += '<div class="col-lg-4 vcenter"><div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
+				html_form += '<div class="col-lg-3 col-md-6 col-sm-12 vcenter"><div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
 			});
 		});
 		
@@ -407,10 +407,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				
 				$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 				$("#content-body .panel").tooltip();
-				$.each($(".panel-mask"), function(i, d) {
-					console.log(i, d);
-					$(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 3) + "px");
-				});
+				$.resize_forms_mask();
 			}
 		});
 		is_autocompleted = true;
@@ -454,10 +451,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 					$("#content-body .panel").tooltip();
 					$(".tt-dropdown-menu").css("display", "none");
-					$.each($(".panel-mask"), function(i, d) {
-						console.log(i, d);
-						$(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 3) + "px");
-					});
+					$.resize_forms_mask();
 				}
 			});
 		}
@@ -822,6 +816,9 @@ $.check_cookie = function(cname, callback) {
 	}
 }
 $(document).ready(function() {
+	$(window).resize(function () {
+		$.resize_forms_mask();
+	});
 	$.check_cookie("list-constants", function() {
 		//$.check_cookie(kAPI_OP_LIST_REF_COUNTS); // Remind that you can pass also an array
 	});
