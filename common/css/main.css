@@ -105,6 +105,7 @@ section.container {
     display: table-row;
 	width: 100%;
 	position: absolute;
+	z-index: 0;
 }
 #content-head #breadcrumb {
 	display: none;
@@ -142,6 +143,45 @@ section.container {
 	border-color: #ddd;
 	color: #999;
 }
+#content-body .panel-mask {
+	background-color: rgba(255, 255, 255, 0.5);
+	position: absolute;
+	height: 99%;
+	width: 92%;
+	margin-top: 1px;
+	margin-left: 1px;
+	border-radius: 4px;
+	color: transparent;
+	text-align: center;
+	z-index: 5;
+}
+#content-body .panel-mask:hover {
+	background-color: rgba(0, 0, 0, 0.55);
+	box-shadow: 0 0 10px rgba(50, 50, 50, 0.5);
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.25);
+	text-shadow: 0 0 2em rgba(255, 255, 255, 0.25);
+}
+#content-body .panel-mask span {
+	font-size: 128px;
+	margin-top: -64px;
+	position: relative;
+	top: 35%;
+	display: block;
+}
+.panel-mask small:before {
+	content: "";
+	display: block;
+	margin-top: 15%;
+	padding-bottom: 0;
+}
+.panel-mask small {
+	display: block;
+	font-size: 2em;
+	font-variant: small-caps;
+	font-weight: bold;
+}
+
 #content .row .panel.disabled > .panel-body {
 	color: #999;
 }
