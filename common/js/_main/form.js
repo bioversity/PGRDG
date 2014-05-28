@@ -55,7 +55,7 @@ $.create_form = function(response) {
 					var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}};
 					//console.log("LA URL", url);
 					$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
-						//console.log("OKAY", lang);
+						console.log("OKAY", lang);
 					});
 				}
 				
@@ -63,6 +63,8 @@ $.create_form = function(response) {
 					case kTYPE_FLOAT:
 					case kTYPE_INT:
 						// RANGE
+						form = $.add_range();
+						/*
 						for (kind = 0; kind < forms.kind.length; kind++) {
 							switch(forms.kind[kind]) {
 								case kTYPE_LIST: // List
@@ -86,10 +88,13 @@ $.create_form = function(response) {
 									break;
 							}
 						}
+						*/
 						break;
 					case kTYPE_URL: // URL
 					case kTYPE_STRING: // String
 						// STRING
+						form = $.add_input();
+						/*
 						for (kind = 0; kind < forms.kind.length; kind++) {
 							//console.log(forms.kind[kind]);
 							switch(forms.kind[kind]) {
@@ -115,6 +120,7 @@ $.create_form = function(response) {
 									break;
 							}
 						}
+						*/
 						break;
 					case kTYPE_ENUM: // Enum
 					case kTYPE_SET: // Enum-set
@@ -128,7 +134,7 @@ $.create_form = function(response) {
 						});
 						break;
 					default:
-						form = "";
+						form = $.add_simple_input();
 						break;
 				}
 				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
@@ -172,7 +178,6 @@ $.toggle_form_item = function(item, enumeration) {
 		$("#content-body").animate({"margin-top": "50px"});
 		
 		$panel.find("a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
-		console.log($panel.html());
 		//console.log(item, enumeration);
 		$panel.removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$panel.find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
@@ -186,7 +191,7 @@ $.toggle_form_item = function(item, enumeration) {
 			
 			if($panel.find("select.multiselect option").length == 0) {
 				// Get tag enumeration
-				$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
+				$.ask_to_service({loaderType: $panel.find("a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
 					$.each(res.results, function(k, v) {
 						//console.log(k, v);
 						data.push({label: '<i>' + v.label + '</i>', value: v.term});
@@ -399,8 +404,13 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				
 				// Create forms
 				var forms = $.create_form(response);
+				
 				$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 				$("#content-body .panel").tooltip();
+				$.each($(".panel-mask"), function(i, d) {
+					console.log(i, d);
+					$(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 3) + "px");
+				});
 			}
 		});
 		is_autocompleted = true;
@@ -444,6 +454,10 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 					$("#content-body .panel").tooltip();
 					$(".tt-dropdown-menu").css("display", "none");
+					$.each($(".panel-mask"), function(i, d) {
+						console.log(i, d);
+						$(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 3) + "px");
+					});
 				}
 			});
 		}

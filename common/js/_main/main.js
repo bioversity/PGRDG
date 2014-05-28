@@ -31,6 +31,7 @@ $.cryptAjax = function(url, options) {
 };
 $.ask_to_service = function(options, callback) {
 	var opt = $.extend({
+		loaderType: "external",
 		op: "",
 		parameters: {
 			lang: lang,
@@ -54,12 +55,18 @@ $.ask_to_service = function(options, callback) {
 	}
 	//if(options != kAPI_OP_LIST_CONSTANTS) {
 		//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
-		if($("#apprise.ask_service").length == 0) {
-			apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-spinner fa-spin", progress: true, allowExit: false});
-		} else {
-			if($("#apprise.ask_service").css("display") == "none") {
-				$("#apprise.ask_service").modal("show");
+		if(typeof(opt.loaderType) == "string") {
+			if($("#apprise.ask_service").length == 0) {
+				apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-spinner fa-spin", progress: true, allowExit: false});
+			} else {
+				if($("#apprise.ask_service").css("display") == "none") {
+					$("#apprise.ask_service").modal("show");
+				}
 			}
+		} else {
+			var $element = opt.loaderType,
+			element_data = $element.html();
+			$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
 		}
 		$.cryptAjax({
 			url: "API/",
@@ -72,8 +79,12 @@ $.ask_to_service = function(options, callback) {
 			},
 			success: function(response) {
 				if(response.status.state == "ok") {
-					$("#apprise.ask_service").modal("hide");
-					callback(response);
+					if(typeof(opt.loaderType) == "string") {
+						$("#apprise.ask_service").modal("hide");
+						callback(response);
+					} else {
+						$element.html(element_data);
+					}
 				} else {
 					alert("There's an error in the response:<br />See the console for more informations");
 						console.group("The Service has returned an error");
