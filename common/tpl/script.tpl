@@ -31,6 +31,6 @@
 <script type="text/javascript" src="common/js/_main/main.js"></script>
 <script type="text/javascript" src="common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="common/js/_main/form.js"></script>
-<script type="text/javascript" src="../API/?definitions=api"></script>
-<script type="text/javascript" src="../API/?definitions=tags"></script>
-<script type="text/javascript" src="../API/?definitions=types"></script>
+<script type="text/javascript" src="../API/?definitions=api&keep_update=true"></script>
+<script type="text/javascript" src="../API/?definitions=tags&keep_update=true"></script>
+<script type="text/javascript" src="../API/?definitions=types&keep_update=true"></script>

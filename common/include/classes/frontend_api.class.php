@@ -136,10 +136,11 @@ class frontend_api {
 		if($keep_update) {
 			$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
 			$milko_script = $this->browse($definitions_url);
-			preg_match_all("/\"([^\s+].*)\".*,.*\'([^\s].*)\'.*$/msU", $milko_script, $matches);
+			preg_match_all("/\"([^\s+].*)\".*,.*([\d+]|\'[^\s].*\').*$/msU", $milko_script, $matches);
 			
+			//print_r($matches);
 			for($i = 0; $i <= count($matches[0]); $i++) {
-				$defined_constants[$matches[1][$i]] = $matches[2][$i];
+				$defined_constants[$matches[1][$i]] = trim($matches[2][$i], "'");
 			}
 			$script_constants = array_filter($defined_constants);
 		} else {
@@ -150,7 +151,7 @@ class frontend_api {
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
 		}
 		foreach($script_constants as $define => $value) {
-			$js .= "var " . $define . ' = "' . $value . '";' . "\n";
+			$js .= "var " . $define . ' = ' . (is_numeric($value) ? $value : '"' . $value . '"') . ';' . "\n";
 		}
 		print $js;
 		exit();
