@@ -150,7 +150,7 @@ class frontend_api {
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
 		}
 		foreach($script_constants as $define => $value) {
-			$js .= "var " . $define . ' = "' . $value . '"' . "\n";
+			$js .= "var " . $define . ' = "' . $value . '";' . "\n";
 		}
 		print $js;
 		exit();
