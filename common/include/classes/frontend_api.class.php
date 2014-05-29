@@ -12,6 +12,16 @@ class frontend_api {
 	function __construct($input = array()) {
 		$this->input = $input;
 		$this->debug = false;
+		
+		// Generates RSA keys if don't exits
+		// See my gist for further documentation: https://gist.github.com/gubi/7532110
+		if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
+			// You need openssl to generate these keys...
+			shell_exec('openssl genrsa -out ../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048');
+			if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_pub.pem")) {
+				shell_exec('openssl rsa -pubout -in ../common/include/conf/.rsa_keys/rsa_2048_priv.pem -out common/include/conf/.rsa_keys/rsa_2048_pub.pem');
+			}
+		}
 	}
 	
 	/* PRIVATE FUNCTIONS */
