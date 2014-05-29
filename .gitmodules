@@ -19,3 +19,12 @@
 [submodule "API/Service"]
 	path = API/Service
 	url = git@github.com:milko/OntologyWrapper.git
+[submodule "common/js/jquery.storage"]
+	path = common/js/jquery.storage
+	url = git@github.com:julien-maurel/jQuery-Storage-API.git
+[submodule "common/js/jquery-storage"]
+	path = common/js/jquery-storage
+	url = git@github.com:julien-maurel/jQuery-Storage-API.git
+[submodule "common/js/jquery-md5"]
+	path = common/js/jquery-md5
+	url = git@github.com:placemarker/jQuery-MD5.git

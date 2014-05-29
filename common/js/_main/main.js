@@ -12,9 +12,11 @@ $.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabc
 */
 var lang = "en",
 service_url = "API/?type=service&proxy=",
-system_constants, operators = [],
+system_constants,
+operators = [],
 password = $.makeid(),
-auth = false;
+auth = false,
+storage = $.localStorage;
 /*
 -----------------------------------------------------------------------
 */
@@ -30,6 +32,7 @@ $.cryptAjax = function(url, options) {
 	}
 };
 $.ask_to_service = function(options, callback) {
+	console.log("ok");
 	var opt = $.extend({
 		loaderType: "external",
 		op: "",
@@ -53,57 +56,65 @@ $.ask_to_service = function(options, callback) {
 	} else {
 		param = "address=" + $.utf8_to_b64(opt.op + "&" + kAPI_REQUEST_LANGUAGE + "=" +opt.parameters.lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
 	}
-	//if(options != kAPI_OP_LIST_CONSTANTS) {
-		//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
-		if(typeof(opt.loaderType) == "string") {
-			if($("#apprise.ask_service").length == 0) {
-				apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-spinner fa-spin", progress: true, allowExit: false});
-			} else {
-				if($("#apprise.ask_service").css("display") == "none") {
-					$("#apprise.ask_service").modal("show");
-				}
-			}
-		} else {
-			var $element = opt.loaderType,
-			element_data = $element.html();
-			$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
-		}
-		$.cryptAjax({
-			url: "API/",
-			dataType: "json",
-			type: "POST",
-			timeout: 30000,
-			data: {
-				jCryption: $.jCryption.encrypt(param, password),
-				type: "ask_service"
-			},
-			success: function(response) {
-				if(response.status.state == "ok") {
-					if(typeof(opt.loaderType) == "string") {
-						$("#apprise.ask_service").modal("hide");
-						callback(response);
-					} else {
-						$element.html(element_data);
-					}
+	if(!storage.isEmpty("pgrdg_cache.query") && storage.get("pgrdg_cache.query.key") == $.md5(param)) {
+		alert(storage.get("pgrdg_cache.response"));
+	} else {
+		//if(options != kAPI_OP_LIST_CONSTANTS) {
+			//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
+			if(typeof(opt.loaderType) == "string") {
+				if($("#apprise.ask_service").length == 0) {
+					apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-spinner fa-spin", progress: true, allowExit: false});
 				} else {
-					alert("There's an error in the response:<br />See the console for more informations");
-						console.group("The Service has returned an error");
-						console.error(response.status.message);
-						console.dir(response);
-					console.groupEnd();
+					if($("#apprise.ask_service").css("display") == "none") {
+						$("#apprise.ask_service").modal("show");
+					}
 				}
-			},
-			error: function() {
-				$("#apprise.ask_service").modal("destroy");
-				if($("#apprise.service_coffee").length == 0) {
-					apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
-				}
-				setTimeout(function() {
-					$.ask_to_service(options, callback);
-				}, 3000);
+			} else {
+				var $element = opt.loaderType,
+				element_data = $element.html();
+				$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
 			}
-		});
-	//}
+			$.cryptAjax({
+				url: "API/",
+				dataType: "json",
+				type: "POST",
+				timeout: 30000,
+				data: {
+					jCryption: $.jCryption.encrypt(param, password),
+					type: "ask_service"
+				},
+				success: function(response) {
+					var storage_obj = {};
+					storage_obj[$.md5(param)] = {"query": param, "response": response};
+					storage.set({"pgrdg_cache": {"ask": storage_obj}});
+					
+					if(response.status.state == "ok") {
+						if(typeof(opt.loaderType) == "string") {
+							$("#apprise.ask_service").modal("hide");
+							callback(response);
+						} else {
+							$element.html(element_data);
+						}
+					} else {
+						alert("There's an error in the response:<br />See the console for more informations");
+							console.group("The Service has returned an error");
+							console.error(response.status.message);
+							console.dir(response);
+						console.groupEnd();
+					}
+				},
+				error: function() {
+					$("#apprise.ask_service").modal("destroy");
+					if($("#apprise.service_coffee").length == 0) {
+						apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
+					}
+					setTimeout(function() {
+						$.ask_to_service(options, callback);
+					}, 3000);
+				}
+			});
+		//}
+	}
 };
 $.resize_forms_mask = function() { $.each($(".panel-mask"), function(i, d) { $(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 1) + "px"); }); }
 $.left_panel = function(subject, width, callback) {

@@ -49,7 +49,6 @@ $.create_form = function(response) {
 				//forms[idk] = get_form_data(idk, response.results[collection][idv]);
 				
 				forms = get_form_data(idk, response.results[collection][idv]);
-				//console.log(forms.type, idv);
 				
 				if(forms.type == kTYPE_ENUM || forms.type == kTYPE_SET) {
 					var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}};
@@ -524,6 +523,12 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 						$.reset_all_searches();
 					});
 				});
+				$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-success save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
+				$("#content-head a.save_btn").fadeIn(300, function() {
+					$(this).on("click", function() {
+						$.reset_all_searches();
+					});
+				});
 				callback.call(this, response);
 			} else {
 				apprise("Entered text has produced 0 results", {title: "No results", icon: "warning"}, function(r) {
@@ -788,7 +793,7 @@ $.get_operators_list = function(system_constants) {
 	});
 }
 
-$.check_cookie = function(cname, callback) {
+$.check_storage = function(cname, callback) {
 	if(typeof(cname) == "string") {
 		cname = new Array(cname);
 	}
@@ -796,10 +801,12 @@ $.check_cookie = function(cname, callback) {
 		var name = cname[q];
 		
 		if($.browser_cookie_status()) {
-			if($.cookie("pgrdg_cache_" + name) == undefined) {
+			if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
 				// http://pgrdg.grinfo.private/Service.php?op={name}
 				$.ask_to_service(name, function(system_constants) {
-					$.cookie("pgrdg_cache_" + name, $.utf8_to_b64(JSON.stringify(system_constants)), { expires: 7, path: '/' });
+					var storage_obj = {};
+					storage_obj[$.md5(name)] = {"query": name, "response": $.utf8_to_b64(JSON.stringify(system_constants))};
+					storage.set({"pgrdg_cache": {"take": storage_obj}});
 					$.get_operators_list(system_constants);
 					
 					if (typeof callback == "function") {
@@ -807,7 +814,7 @@ $.check_cookie = function(cname, callback) {
 					}
 				});
 			} else {
-				$.get_operators_list($.b64_to_utf8($.cookie("pgrdg_cache_" + name)));
+				$.get_operators_list($.b64_to_utf8(storage.get("pgrdg_cache.take." + $.md5(name) + ".response")));
 				if (typeof callback == "function") {
 					callback.call(this);
 				}
@@ -819,8 +826,8 @@ $(document).ready(function() {
 	$(window).resize(function () {
 		$.resize_forms_mask();
 	});
-	$.check_cookie("list-constants", function() {
-		//$.check_cookie(kAPI_OP_LIST_REF_COUNTS); // Remind that you can pass also an array
+	$.check_storage("list-constants", function() {
+		//$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
 	$("button.dropdown-toggle").on("click", function(e) {
 		e.preventDefault();

@@ -2,10 +2,12 @@
 <script type="text/javascript" src="common/js/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="common/js/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="common/js/apprise-bootstrap.js"></script>
-<!-- jquery.cookie -->
+<!-- jquery.cookie & storage -->
 <script src="common/js/jquery-cookie/jquery.cookie.js"></script>
-<!-- Jcryption -->
+<script src="common/js/jquery-storage/jquery.storageapi.js"></script>
+<!-- Jcryption & MD5 -->
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
+<script type="text/javascript" src="common/js/jquery-md5/jquery.md5.js"></script>
 <!-- Jquery Choosen -->
 <link rel="stylesheet" href="common/js/chosen/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
