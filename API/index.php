@@ -23,6 +23,11 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 	
 	exit();
 }
+if(isset($_GET["definitions"]) && trim($_GET["definitions"]) !== "") {
+	$api->set_content_type("text");
+	
+	$api->get_definitions($_GET["definitions"], (($_GET["keep_update"] == "true") ? true : false));
+}
 if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 	require_once("../common/include/lib/jcryption.php");
 	require_once("../common/include/funcs/_ajax/_decrypt.php");

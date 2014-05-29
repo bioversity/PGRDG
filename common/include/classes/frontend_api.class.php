@@ -13,6 +13,13 @@ class frontend_api {
 		$this->input = $input;
 		$this->debug = false;
 		
+		$this->check_rsa();
+	}
+	
+	/* PRIVATE FUNCTIONS */
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+	
+	private function check_rsa() {
 		// Generates RSA keys if don't exits
 		// See my gist for further documentation: https://gist.github.com/gubi/7532110
 		if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
@@ -23,9 +30,6 @@ class frontend_api {
 			}
 		}
 	}
-	
-	/* PRIVATE FUNCTIONS */
-	
 	private function browse($url) {
 		// Set the user agent as "PGRD Request" if not exists
 		$this->input["agent"] = ($this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
@@ -106,8 +110,51 @@ class frontend_api {
 		}
 		return $url_first_part . $url_query;
 	}
+	private function getUserDefinedConstants() {
+		// Taken from http://stackoverflow.com/a/7538100
+		$constants = get_defined_constants(true);
+		return (isset($constants["user"]) ? $constants["user"] : array());  
+	}
 	
 	/* PUBLIC FUNCTIONS */
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+	
+	public function get_definitions($type, $keep_update) {
+		switch(strtolower($type)) {
+			case "api":			$def_file = "Api.inc.php";				break;
+			case "domains":		$def_file = "Domains.inc.php";			break;
+			case "flags":			$def_file = "Flags.inc.php";			break;
+			case "operators":		$def_file = "Operators.inc.php";			break;
+			case "predicates":		$def_file = "Predicates.inc.php";		break;
+			case "query":			$def_file = "Query.inc.php";			break;
+			case "session":			$def_file = "Session.inc.php";			break;
+			case "tags":			$def_file = "Tags.inc.php";				break;
+			case "tokens":			$def_file = "Tokens.inc.php";			break;
+			case "types":			$def_file = "Types.inc.php";			break;
+		}
+		$global_constants = $this->getUserDefinedConstants();
+		if($keep_update) {
+			$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
+			$milko_script = $this->browse($definitions_url);
+			preg_match_all("/\"([^\s+].*)\".*,.*\'([^\s].*)\'.*$/msU", $milko_script, $matches);
+			
+			for($i = 0; $i <= count($matches[0]); $i++) {
+				$defined_constants[$matches[1][$i]] = $matches[2][$i];
+			}
+			$script_constants = array_filter($defined_constants);
+		} else {
+			$definitions_dir = "Service/Library/definitions/";
+			include($definitions_dir . $def_file);
+			$after_include_constants = $this->getUserDefinedConstants();
+
+			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
+		}
+		foreach($script_constants as $define => $value) {
+			$js .= "var " . $define . ' = "' . $value . '"' . "\n";
+		}
+		print $js;
+		exit();
+	}
 	public function set_content_type($content_type) {
 		switch($content_type) {
 			case "json":
