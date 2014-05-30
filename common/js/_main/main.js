@@ -32,7 +32,6 @@ $.cryptAjax = function(url, options) {
 	}
 };
 $.ask_to_service = function(options, callback) {
-	console.log("ok");
 	var opt = $.extend({
 		loaderType: "external",
 		op: "",
@@ -45,19 +44,26 @@ $.ask_to_service = function(options, callback) {
 			}
 		}
 	}, options);
-	var param,
-	obj_len = $.map(opt.parameters, function(n, i) { return i; }).length;
-	
-	if(obj_len > 0) {
-		
-	}
+	var param, verbose_param;
 	if(typeof(options) == "string") {
 		param = "address=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		verbose_param = "address= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 	} else {
 		param = "address=" + $.utf8_to_b64(opt.op + "&" + kAPI_REQUEST_LANGUAGE + "=" +opt.parameters.lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
+		verbose_param = "address= BASE64(" + opt.op + "&" + kAPI_REQUEST_LANGUAGE + "=" +opt.parameters.lang + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
 	}
-	if(!storage.isEmpty("pgrdg_cache.query") && storage.get("pgrdg_cache.query.key") == $.md5(param)) {
-		alert(storage.get("pgrdg_cache.response"));
+	if(!storage.isEmpty("pgrdg_cache.ask") && storage.isSet("pgrdg_cache.ask." + $.md5(param))) {
+		var response = storage.get("pgrdg_cache.ask." + $.md5(param) + ".response");
+		if(response.status.state == "ok") {
+			response.id = $.md5(param);
+			callback(response);
+		} else {
+			alert("There's an error in the response:<br />See the console for more informations");
+			console.group("The Service has returned an error");
+				console.error(response.status.message);
+				console.dir(response);
+				console.groupEnd();
+		}
 	} else {
 		//if(options != kAPI_OP_LIST_CONSTANTS) {
 			//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
@@ -84,23 +90,22 @@ $.ask_to_service = function(options, callback) {
 					type: "ask_service"
 				},
 				success: function(response) {
-					var storage_obj = {};
-					storage_obj[$.md5(param)] = {"query": param, "response": response};
-					storage.set({"pgrdg_cache": {"ask": storage_obj}});
-					
+					storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "verbose": verbose_param}, "response": response});
+					response.id = $.md5(param);
 					if(response.status.state == "ok") {
 						if(typeof(opt.loaderType) == "string") {
 							$("#apprise.ask_service").modal("hide");
 							callback(response);
 						} else {
 							$element.html(element_data);
+							callback(response);
 						}
 					} else {
 						alert("There's an error in the response:<br />See the console for more informations");
-							console.group("The Service has returned an error");
+						console.group("The Service has returned an error");
 							console.error(response.status.message);
 							console.dir(response);
-						console.groupEnd();
+							console.groupEnd();
 					}
 				},
 				error: function() {
@@ -344,7 +349,6 @@ $(document).ready(function() {
 			}
 			return apprise(string, args, callback);
 		};
-		
 		$("#loginform").jCryption();
 		$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 		$("nav a[title]").tooltip({placement: "bottom", container: "body"});

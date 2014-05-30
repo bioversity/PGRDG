@@ -2178,6 +2178,49 @@ fieldset[disabled] .btn {
 	  color: #fff;
 	  background-color: #333;
 	}
+	
+	/* BTN ORANGE */
+	.btn-orange {
+	  color: #fff;
+	  background-color: #f29500;
+	  border-color: #eeaa30;
+	}
+	.btn-orange:hover,
+	.btn-orange:focus,
+	.btn-orange:active,
+	.btn-orange.active,
+	.open .dropdown-toggle.btn-orange {
+	  color: #fff;
+	  background-color: #eeaa30;
+	  border-color: #f29500;
+	}
+	.btn-orange:active,
+	.btn-orange.active,
+	.open .dropdown-toggle.btn-orange {
+	  background-image: none;
+	}
+	.btn-orange.disabled,
+	.btn-orange[disabled],
+	fieldset[disabled] .btn-orange,
+	.btn-orange.disabled:hover,
+	.btn-orange[disabled]:hover,
+	fieldset[disabled] .btn-orange:hover,
+	.btn-orange.disabled:focus,
+	.btn-orange[disabled]:focus,
+	fieldset[disabled] .btn-orange:focus,
+	.btn-orange.disabled:active,
+	.btn-orange[disabled]:active,
+	fieldset[disabled] .btn-orange:active,
+	.btn-orange.disabled.active,
+	.btn-orange[disabled].active,
+	fieldset[disabled] .btn-orange.active {
+	  background-color: #f29500;
+	  border-color: #eeaa30;
+	}
+	.btn-orange .badge {
+	  color: #fff;
+	  background-color: #333;
+	}
 
 .btn-primary {
   color: #fff;

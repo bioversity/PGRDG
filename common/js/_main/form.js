@@ -39,8 +39,20 @@ $.create_form = function(response) {
 			if(ik == kTAG_DEFINITION) {
 				form_data.definition = iv;
 			}
+			if(ik == kTAG_UNIT_COUNT) {
+				form_data.count = iv;
+			}
+			if(ik == kTAG_MIN_VAL) {
+				form_data.min = iv;
+			}
+			if(ik == kTAG_MAX_VAL) {
+				form_data.max = iv;
+			}
 		});
 		return form_data;
+	},
+	is_kind_quantitative = function() {
+		return ($.inArray(kTYPE_QUANTITATIVE, forms.kind) == 0) ? true : false;
 	},
 	generate_form = function() {
 		$.each(cluster, function(term, id_arr) {
@@ -50,6 +62,7 @@ $.create_form = function(response) {
 				
 				forms = get_form_data(idk, response.results[collection][idv]);
 				
+				/* DEPRECATED
 				if(forms.type == kTYPE_ENUM || forms.type == kTYPE_SET) {
 					var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}};
 					//console.log("LA URL", url);
@@ -57,89 +70,110 @@ $.create_form = function(response) {
 						console.log("OKAY", lang);
 					});
 				}
+				*/
+				forms.size = "single";
 				
-				switch(forms.type){
-					case kTYPE_FLOAT:
-					case kTYPE_INT:
-						// RANGE
-						form = $.add_range();
-						/*
-						for (kind = 0; kind < forms.kind.length; kind++) {
-							switch(forms.kind[kind]) {
-								case kTYPE_LIST: // List
-									//form = $.addChosen();
-									break;
-								case kTYPE_CATEGORICAL: // Categorical
-														form = "Autocomplete";
-									break;
-								case kTYPE_DISCRETE: // Discrete
-									form = $.add_simple_input();
-									break;
-								case kTYPE_QUANTITATIVE: // Quantitative
-									form = $.add_range();
-									break;
-								case kTYPE_ENUM: // Enum
-								case kTYPE_SET: // Enum-set
-									form = $.add_chosen({multiple: true, tree_checkbox: true});
-									break;
-								default:
-									form = $.add_input();
-									break;
-							}
-						}
-						*/
-						break;
-					case kTYPE_URL: // URL
-					case kTYPE_STRING: // String
-						// STRING
-						form = $.add_input();
-						/*
-						for (kind = 0; kind < forms.kind.length; kind++) {
-							//console.log(forms.kind[kind]);
-							switch(forms.kind[kind]) {
-								case kTYPE_LIST: // List
-									form = $.add_chosen();
-									break;
-								case kTYPE_CATEGORICAL: // Categorical
-														form = "Autocomplete";
-									break;
-								case kTYPE_DISCRETE: // Discrete
-									form = $.add_chosen();
-									break;
-								case kTYPE_QUANTITATIVE: // Quantitative
-									form = $.add_range();
-									break;
-								case kTYPE_ENUM: // Enum
-								case kTYPE_SET: // Enum-set
-									form = $.add_chosen({multiple: true, tree_checkbox: true});
-									break;
-								default:
-									form = $.add_input();
-									//form = $.add_chosen({multiple: true});
-									break;
-							}
-						}
-						*/
-						break;
-					case kTYPE_ENUM: // Enum
-					case kTYPE_SET: // Enum-set
-						// CHOSEN
-						form = $.add_multiselect({multiple: true, tree_checkbox: true}, function() {
+				if(is_kind_quantitative()) {
+					form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max});
+					forms.size = "double";
+				} else {
+					switch(forms.type){
+						case kTYPE_FLOAT:
+						case kTYPE_INT:
+							// RANGE
+							form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max});
+							forms.size = "double";
 							/*
-							$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
-								console.log("YEAH!", res);
+							for (kind = 0; kind < forms.kind.length; kind++) {
+								switch(forms.kind[kind]) {
+									case kTYPE_LIST: // List
+										//form = $.addChosen();
+										break;
+									case kTYPE_CATEGORICAL: // Categorical
+															form = "Autocomplete";
+										break;
+									case kTYPE_DISCRETE: // Discrete
+										form = $.add_simple_input();
+										break;
+									case kTYPE_QUANTITATIVE: // Quantitative
+										form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max});
+										forms.size = "double";
+										break;
+									case kTYPE_ENUM: // Enum
+									case kTYPE_SET: // Enum-set
+										form = $.add_chosen({multiple: true, tree_checkbox: true});
+										break;
+									default:
+										form = $.add_input();
+										break;
+								}
+							}
+							*/
+							break;
+						case kTYPE_URL: // URL
+						case kTYPE_STRING: // String
+							// STRING
+							form = $.add_input();
+							/*
+							for (kind = 0; kind < forms.kind.length; kind++) {
+								//console.log(forms.kind[kind]);
+								switch(forms.kind[kind]) {
+									case kTYPE_LIST: // List
+										form = $.add_chosen();
+										break;
+									case kTYPE_CATEGORICAL: // Categorical
+															form = "Autocomplete";
+										break;
+									case kTYPE_DISCRETE: // Discrete
+										form = $.add_chosen();
+										break;
+									case kTYPE_QUANTITATIVE: // Quantitative
+										form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max});
+										forms.size = "double";
+										break;
+									case kTYPE_ENUM: // Enum
+									case kTYPE_SET: // Enum-set
+										form = $.add_chosen({multiple: true, tree_checkbox: true});
+										break;
+									default:
+										form = $.add_input();
+										//form = $.add_chosen({multiple: true});
+										break;
+								}
+							}
+							*/
+							break;
+						case kTYPE_ENUM: // Enum
+						case kTYPE_SET: // Enum-set
+							// CHOSEN
+							form = $.add_multiselect({tree_checkbox: true}, function() {
+								/*
+								$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
+									console.log("YEAH!", res);
+								});
+								*/
 							});
-							*/						
-						});
+							break;
+						default:
+							form = $.add_simple_input();
+							break;
+					}
+				}
+				switch(forms.size) {
+					case "double":
+						var form_size = "col-lg-6 col-md-9 col-sm-12";
 						break;
+					case "single":
 					default:
-						form = $.add_simple_input();
+						var form_size = "col-lg-3 col-md-6 col-sm-12";
 						break;
 				}
-				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-right" title="Enable this item"><span class="fa fa-square-o"></span></a>';
+				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="Enable this item"><span class="fa fa-square-o"></span></a>',
+				badge = '<span class="badge pull-right">' + ((forms.count !== undefined && forms.count > 0) ? forms.count : 0) + '</span>',
+				mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>';
-				html_form += '<div class="col-lg-3 col-md-6 col-sm-12 vcenter"><div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div><div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
+				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
 			});
 		});
 		
@@ -171,12 +205,12 @@ $.toggle_form_item = function(item, enumeration) {
 		var $panel = $this.closest(".panel"),
 		$panel_mask = $panel.prev(".panel-mask");
 	}
-	if($panel.find("a.pull-right span").hasClass("fa-square-o")) {
+	if($panel.find("a.pull-left span, a.pull-right span").hasClass("fa-square-o")) {
 		$panel_mask.fadeOut(300);
 		$("#breadcrumb").fadeIn(300);
 		$("#content-body").animate({"margin-top": "50px"});
 		
-		$panel.find("a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
+		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		//console.log(item, enumeration);
 		$panel.removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$panel.find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
@@ -190,11 +224,10 @@ $.toggle_form_item = function(item, enumeration) {
 			
 			if($panel.find("select.multiselect option").length == 0) {
 				// Get tag enumeration
-				$.ask_to_service({loaderType: $panel.find("a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
+				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
 					$.each(res.results, function(k, v) {
-						//console.log(k, v);
 						data.push({label: '<i>' + v.label + '</i>', value: v.term});
-						//$panel.find("select.multiselect").append('<option value="' + v.term + '">' + v.label + '</option>');
+						$panel.find("select.multiselect").append('<option value="' + v.term + '">' + v.label + '</option>');
 					});
 					//console.log(data);
 					$panel.find("select.multiselect").multiselect("dataprovider", data);
@@ -209,7 +242,7 @@ $.toggle_form_item = function(item, enumeration) {
 		}
 	} else {
 		$panel_mask.fadeIn(300);
-		$panel.find("a.pull-right").attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
+		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
 		
 		$panel.addClass("disabled").attr("data-original-title", "This item is disable").tooltip().find(".panel-heading h3 > span, .panel-body").addClass("disabled");
 		$panel.find("input").attr("disabled", true);
@@ -228,7 +261,7 @@ $.toggle_form_item = function(item, enumeration) {
 		$panel.prev(".panel-mask").css("display: block");
 	}
 	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
-		console.log(e);
+		//console.log(e);
 		//return false;
 	});
 };
@@ -255,10 +288,10 @@ $.fn.addCollapsible = function(options, callback) {
 		$(".collapse").collapse("hide");
 	}
 	
-	var root_node = $('<div class="panel panel-default">'),
+	var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-code"></span> json</div></h4>'),
-		node_body_collapse = $('<div id="' + options.id + '" class="panel-collapse collapse in">'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
+		node_body_collapse = $('<div class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
 	
@@ -388,25 +421,27 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
 		$.execTraitAutocomplete(kAPI, function(response) {
-			var the_title = "";
-			if(response.paging.affected > 0) {
-				$("#content-head .content-title").text('Output for "' + $("#" + options.id).val() + '"');
-				$.each(operators, function(ck, cv) {
-					if(cv.key == kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
-						if(cv.main) {
-							the_title = cv.title;
-						} else {
-							the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+			if($("#accordion > #" + response.id).length == 0) {
+				var the_title = "";
+				if(response.paging.affected > 0) {
+					$("#content-head .content-title").html('<small class="fa fa-list-alt"></small> Output for "' + $("#" + options.id).val() + '"');
+					$.each(operators, function(ck, cv) {
+						if(cv.key == kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
+							if(cv.main) {
+								the_title = cv.title;
+							} else {
+								the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+							}
 						}
-					}
-				});
-				
-				// Create forms
-				var forms = $.create_form(response);
-				
-				$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
-				$("#content-body .panel").tooltip();
-				$.resize_forms_mask();
+					});
+					
+					// Create forms
+					var forms = $.create_form(response);
+					
+					$("#content-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+					$("#content-body .panel").tooltip();
+					$.resize_forms_mask();
+				}
 			}
 		});
 		is_autocompleted = true;
@@ -417,44 +452,47 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		return false;
 	}).on("typeahead:_changed", function(e) {
 		// User input
-		if(!is_autocompleted) {
-			var kAPI = new Object;
-			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
-			kAPI["parameters"] = new Object;
-			kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
-			kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
-			
-			$.execTraitAutocomplete(kAPI, function(response) {
-				var the_title = "";
-				if(response.paging.affected > 0) {
-					$.each(operators, function(ck, cv) {
-						$.each(kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
-							if(ccv == cv.key) {
-								if(cv.main) {
-									the_title = cv.title;
-								} else {
-									the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
-								}
-							}
-						});
-					});
-					
-					// Create forms
-					var forms = $.create_form(response);
-					$("#content-head .content-title").text('Output for "' + $("#" + options.id).val() + '"');
-					$("#content").fadeIn(300);
-					$("#content-body .content-body").addCollapsible({title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
-					$("#content-body .panel").tooltip();
-					$(".tt-dropdown-menu").css("display", "none");
-					$.resize_forms_mask();
-				}
-			});
+		if($("#" + options.id).val().length >= 3) { 
+			if(!is_autocompleted) {
+				var kAPI = new Object;
+				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+				kAPI["parameters"] = new Object;
+				kAPI["parameters"][kAPI_REQUEST_LANGUAGE] = lang;
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
+				
+				$.execTraitAutocomplete(kAPI, function(response) {
+					if($("#accordion > #" + response.id).length == 0) {
+						var the_title = "";
+						if(response.paging.affected > 0) {
+							$.each(operators, function(ck, cv) {
+								$.each(kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
+									if(ccv == cv.key) {
+										if(cv.main) {
+											the_title = cv.title;
+										} else {
+											the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+										}
+									}
+								});
+							});
+							// Create forms
+							var forms = $.create_form(response);
+							$("#content-head .content-title").html('<small class="fa fa-list-alt"></small> Output for "' + $("#" + options.id).val() + '"');
+							$("#content").fadeIn(300);
+							$("#content-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+							$("#content-body .panel").tooltip();
+							$(".tt-dropdown-menu").css("display", "none");
+							$.resize_forms_mask();
+						}
+					}
+				});
+			}
+			is_autocompleted = false;
 		}
-		is_autocompleted = false;
 		return false;
 	}).bind("keydown", "alt+left", function(e) {
 		$.left_panel("close", "", function() {
@@ -471,11 +509,13 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 	}
 };
 $.remove_search = function(search) {
-	$this = search;
+	$this = search,
+	search_id = $this.closest(".panel").attr("id");
 	
-	apprise("Are you sure to remove this search?", {title: "Warning", icon: "warning", confirm: true}, function(r) {
+	apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
 		if(r) {
 			$($this).parents(".panel").fadeOut(300, function() {
+				storage.remove("pgrdg_cache.ask." + search_id);
 				$(this).remove(); $("#main_search").focus();
 				if($("#accordion .panel").length == 0) {
 					$.reset_all_searches(false);
@@ -490,6 +530,7 @@ $.reset_all_searches = function(ask) {
 	}
 	var next = false;
 	
+	console.log($("#accordion > div.panel"));
 	if(ask) {
 		if($("#apprise.reset-all").length > 0) {
 			$("#apprise.reset-all").modal("show");
@@ -523,10 +564,12 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 						$.reset_all_searches();
 					});
 				});
-				$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-success save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
+				if($("#content-head .btn-group a.save_btn").length == 0) {
+					$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
+				}
 				$("#content-head a.save_btn").fadeIn(300, function() {
 					$(this).on("click", function() {
-						$.reset_all_searches();
+						alert("ok");
 					});
 				});
 				callback.call(this, response);
@@ -557,7 +600,7 @@ $.selected_form_menu = function(id, k, v) {
 	$("#autocomplete ul.dropdown-menu li").removeClass("active");
 	$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
 	$("#" + id).focus();
-	console.log("AAA: ", id);
+	//console.log("AAA: ", id);
 };
 $.add_input = function(options) {
 	var options = $.extend({
@@ -612,9 +655,35 @@ $.add_range = function(options) {
 		id: [$.makeid(), $.makeid()],
 		class: ["form-control", "form-control"],
 		placeholder: [0, 0],
+		min: 0,
+		max: 0,
+		type: "",
 		disabled: true
-	}, options);
-	return '<div class="input-group"><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="number" id="' + options.id[0] + '" name="" placeholder="' + options.placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="number" id="' + options.id[1] + '" name="" placeholder="' + options.placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+	}, options),
+	op_btn_list = "";
+	input_type = (options.type == kTYPE_INT || options.type == kTYPE_FLOAT) ? "number" : "text",
+	placeholder = [(options.placeholder[0] !== undefined) ? options.placeholder[0] : 0, (options.placeholder[1] !== undefined) ? options.placeholder[1] : 0],
+	min = (options.min !== undefined) ? options.min : options.placeholder[0],
+	max = (options.max !== undefined) ? options.max : options.placeholder[1];
+	
+	$.each(operators, function(k, v) {
+		if(v.main) {
+			if(v.main !== undefined) {
+				if(v.type == "string") {
+					if(v.selected){
+						if(v.main) {
+							selected_label_key = v.key;
+							selected_label_value = v.label;
+						}
+						op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id + '\', \'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+					} else {
+						op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id + '\', \'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+					}
+				}
+			}
+		}
+	});
+	return '<div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" name="" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
 };
 
 /**
@@ -655,9 +724,6 @@ $.add_chosen = function(options, content) {
 /* Add Multiselect autocomplete
 */
 $.add_multiselect = function(options, callback) {
-	if(content == undefined || content == "") {
-		content = [{text: '<span class="fa fa-spin fa-spinner"></span> Wait...', value: ""}]; // <----------------------------------- Waiting right data from Milko's Service...
-	}
 	var options = $.extend({
 		id: $.makeid(),
 		class: "",
@@ -804,9 +870,7 @@ $.check_storage = function(cname, callback) {
 			if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
 				// http://pgrdg.grinfo.private/Service.php?op={name}
 				$.ask_to_service(name, function(system_constants) {
-					var storage_obj = {};
-					storage_obj[$.md5(name)] = {"query": name, "response": $.utf8_to_b64(JSON.stringify(system_constants))};
-					storage.set({"pgrdg_cache": {"take": storage_obj}});
+					storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": $.utf8_to_b64(JSON.stringify(system_constants))});
 					$.get_operators_list(system_constants);
 					
 					if (typeof callback == "function") {
