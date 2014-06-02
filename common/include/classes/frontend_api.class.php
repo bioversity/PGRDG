@@ -78,7 +78,9 @@ class frontend_api {
 	}
 	private function build_url_for_service($base64_url) {
 		if(base64_decode($base64_url, true)) {
-			$url = base64_decode(rawurldecode($base64_url));
+			$service_conf = parse_ini_file("../common/include/conf/service.ini");
+			$service_url = $service_conf["url"] . "/Service.php";
+			$url = str_replace("{SERVICE_URL}", $service_url, base64_decode(rawurldecode($base64_url)));
 		} else {
 			$url = $base64_url;
 		}

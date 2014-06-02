@@ -170,7 +170,8 @@ $.create_form = function(response) {
 				}
 				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="Enable this item"><span class="fa fa-square-o"></span></a>',
 				badge = '<span class="badge pull-right">' + ((forms.count !== undefined && forms.count > 0) ? forms.count : 0) + '</span>',
-				mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
+				//mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
+				mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>';
 				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
@@ -378,7 +379,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				//var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -567,9 +569,15 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 				if($("#content-head .btn-group a.save_btn").length == 0) {
 					$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
 				}
-				$("#content-head a.save_btn").fadeIn(300, function() {
+				$("#content-head .btn-group a.save_btn").fadeIn(300, function() {
 					$(this).on("click", function() {
-						alert("ok");
+						console.log(storage.get("pgrdg_cache"));
+						
+						//console.log($("#" + $("#accordion > div.panel-default").attr("id") + " div.panel-success:not(.disabled) div.panel-body form").serialize());
+						$.each($("#" + $("#accordion > div.panel-default").attr("id") + " div.panel-success:not(.disabled)"), function(i, v) {
+							console.log(i, v);
+							console.log($(this).find("form").serialize());
+						});
 					});
 				});
 				callback.call(this, response);
@@ -597,8 +605,14 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 $.selected_form_menu = function(id, k, v) {
 	var kk = k.replace("$", "");
 	$("#" + id + "_operator").attr("class", "").addClass(kk).text(v);
-	$("#autocomplete ul.dropdown-menu li").removeClass("active");
-	$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
+	if(id == "main_search") {
+		$("#autocomplete ul.dropdown-menu li").removeClass("active");
+		$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
+	} else {
+		$("#" + id + "_operator_type_ul li").removeClass("active");
+		$("#" + id + "_operator_type_ul li." + kk).addClass("active");
+		$("#" + id + "_operator_type").val(k);
+	}
 	$("#" + id).focus();
 	//console.log("AAA: ", id);
 };
@@ -629,7 +643,7 @@ $.add_input = function(options) {
 			}
 		}
 	});
-	return '<div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+	return '<form onsubmit="false"><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div></form>';
 };
 
 /**
@@ -644,7 +658,7 @@ $.add_simple_input = function(options) {
 		disabled: true
 	}, options);
 	
-	return '<input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
+	return '<form onsubmit="false"><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></form>';
 };
 
 /**
@@ -660,14 +674,19 @@ $.add_range = function(options) {
 		type: "",
 		disabled: true
 	}, options),
-	op_btn_list = "";
+	op_btn_list = "",
+	checkbox = "";
 	input_type = (options.type == kTYPE_INT || options.type == kTYPE_FLOAT) ? "number" : "text",
 	placeholder = [(options.placeholder[0] !== undefined) ? options.placeholder[0] : 0, (options.placeholder[1] !== undefined) ? options.placeholder[1] : 0],
 	min = (options.min !== undefined) ? options.min : options.placeholder[0],
 	max = (options.max !== undefined) ? options.max : options.placeholder[1];
 	
 	$.each(operators, function(k, v) {
-		if(v.main) {
+		if(!v.main) {
+			if(v.label !== undefined) {
+				checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id[0] + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" name="case_sensitive" value="" /> ' + v.label + '</label></div>';
+			}
+		} else {
 			if(v.main !== undefined) {
 				if(v.type == "string") {
 					if(v.selected){
@@ -675,15 +694,15 @@ $.add_range = function(options) {
 							selected_label_key = v.key;
 							selected_label_value = v.label;
 						}
-						op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id + '\', \'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id[0] + '\', \'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
 					} else {
-						op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id + '\', \'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_form_menu(\'' + options.id[0] + '\', \'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
 					}
 				}
 			}
 		}
 	});
-	return '<div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" name="" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+	return '<form onsubmit="false"><div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '</form>';
 };
 
 /**
@@ -709,13 +728,13 @@ $.add_chosen = function(options, content) {
 		disabled: true
 	}, options);
 	
-	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
+	var select = '<form onsubmit="false"><select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
 	for (var c = 0; c < content.length; c++) {
 		if(content[c].value !== undefined) {
 			select += '<option val="' + content[c].value + '">' + content[c].text + '</option>';
 		}
 	}
-	select += '</select>';
+	select += '</select></form>';
 	
 	return select;
 };
@@ -738,7 +757,7 @@ $.add_multiselect = function(options, callback) {
 		disabled: true
 	}, options);
 	
-	var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
+	var select = '<form onsubmit="false"><select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select></form>';
 	
 	if (typeof callback == "function") {
 		callback.call(this);
