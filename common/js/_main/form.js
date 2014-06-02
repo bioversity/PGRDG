@@ -173,8 +173,9 @@ $.create_form = function(response) {
 				//mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
 				mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 				
-				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>';
-				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' + form + '</div></div></div>';
+				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>',
+				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" />';
+				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
 			});
 		});
 		
@@ -214,31 +215,34 @@ $.toggle_form_item = function(item, enumeration) {
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		//console.log(item, enumeration);
 		$panel.removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
-		$panel.find("input").attr("disabled", false).closest(".panel").find("input").first().focus();
+		$panel.find("input").attr("disabled", false).closest(".panel").find("input:not([type=hidden])").first().focus();
 		$panel.find("button").attr("disabled", false);
 		
 		if($panel.find(".chosen-select").length > 0){
 			$panel.find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 		}
-		if($panel.find("select.multiselect").length > 0){
-			$panel.find("select.multiselect").multiselect("enable");
+		if($panel.find("ul.multiselect").length > 0){
+			$panel.find("ul.multiselect").removeClass("disabled");
 			
-			if($panel.find("select.multiselect option").length == 0) {
+			if($panel.find("ul.multiselect li").length == 0) {
+				// See http://bootsnipp.com/snippets/featured/collapsible-tree-menu
 				// Get tag enumeration
 				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
 					$.each(res.results, function(k, v) {
 						data.push({label: '<i>' + v.label + '</i>', value: v.term});
-						$panel.find("select.multiselect").append('<option value="' + v.term + '">' + v.label + '</option>');
+						$panel.find("ul.multiselect").append('<li value="' + v.term + '"><a role="menuitem" tabindex="-1" href="#">' + v.label + '</a></li>');
 					});
+					/*
 					//console.log(data);
 					$panel.find("select.multiselect").multiselect("dataprovider", data);
 					$panel.find("select.multiselect").multiselect("rebuild");
 					$panel.find("ul.multiselect-container").find(".label_icon").addClass("fa fa-caret-right");
 					$panel.find("button.multiselect").closest(".btn-group").addClass("open");
 					$panel.find("button.multiselect").focus();
+					*/
 				});
 			} else {
-				$panel.find("select.multiselect").multiselect("rebuild");
+				//$panel.find("select.multiselect").multiselect("rebuild");
 			}
 		}
 	} else {
@@ -252,8 +256,8 @@ $.toggle_form_item = function(item, enumeration) {
 		if($panel.find(".chosen-select").length > 0){
 			$panel.find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
 		}
-		if($panel.find("select.multiselect").length > 0){
-			$panel.find("select.multiselect").multiselect("disable");
+		if($panel.find("ul.multiselect").length > 0){
+			$panel.find("ul.multiselect").multiselect("disable");
 		}
 		if($(".breadcrumb").html() == "") {
 			$("#breadcrumb").fadeOut(300);
@@ -291,8 +295,8 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
-		node_body_collapse = $('<div class="panel-collapse collapse in">'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
+		node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
 	
@@ -305,6 +309,7 @@ $.fn.addCollapsible = function(options, callback) {
 	$("#accordion a").tooltip({container: "body"});
 
 	$("select.chosen-select").chosen();
+	/*
 	$("select.multiselect").multiselect({
 		buttonClass: "form-control",
 		maxHeight: 200,
@@ -319,7 +324,7 @@ $.fn.addCollapsible = function(options, callback) {
 		}
 	});
 	$("select.multiselect").multiselect("disable");
-	
+	*/
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
@@ -561,6 +566,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 	$.ask_to_service(kAPI, function(response) {
 		if (typeof callback == "function") {
 			if(response.paging.affected > 0) {
+				var selected_forms = {}, form_data = {};
 				$("#content-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
 					$("#content-head #right_btn").on("click", function() {
 						$.reset_all_searches();
@@ -571,13 +577,22 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 				}
 				$("#content-head .btn-group a.save_btn").fadeIn(300, function() {
 					$(this).on("click", function() {
-						console.log(storage.get("pgrdg_cache"));
-						
-						//console.log($("#" + $("#accordion > div.panel-default").attr("id") + " div.panel-success:not(.disabled) div.panel-body form").serialize());
-						$.each($("#" + $("#accordion > div.panel-default").attr("id") + " div.panel-success:not(.disabled)"), function(i, v) {
-							console.log(i, v);
-							console.log($(this).find("form").serialize());
+						form_data.history = storage.get("pgrdg_cache.ask");
+						$.each($("#accordion > div.panel-default"), function(k, v) {
+							frm_keys = $(this).attr("id");
+							selected_forms[frm_keys] = {}
+							selected_forms[frm_keys].request = storage.get("pgrdg_cache.ask." + frm_keys);
+							selected_forms[frm_keys].key = $(this).attr("id");
+							selected_forms[frm_keys].forms = [];
+								
+							$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
+								//forms.push($(this).find("form").serialize());
+								selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
+							});
 						});
+						form_data.form = selected_forms;
+						console.log(form_data);
+						//console.log(JSON.stringify(form_data));
 					});
 				});
 				callback.call(this, response);
@@ -627,7 +642,12 @@ $.add_input = function(options) {
 	op_btn_list = "";
 	
 	$.each(operators, function(k, v) {
-		if(v.main) {
+		if(!v.main) {
+			if(v.label !== undefined) {
+				checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id[0] + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" name="case_sensitive" value="" /> ' + v.label + '</label></div>';
+			}
+		} else {
+			checkbox = "";
 			if(v.main !== undefined) {
 				if(v.type == "string") {
 					if(v.selected){
@@ -643,7 +663,7 @@ $.add_input = function(options) {
 			}
 		}
 	});
-	return '<form onsubmit="false"><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div></form>';
+	return '<div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
 };
 
 /**
@@ -658,12 +678,16 @@ $.add_simple_input = function(options) {
 		disabled: true
 	}, options);
 	
-	return '<form onsubmit="false"><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></form>';
+	return '<input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
 };
 
 /**
 /* Add range input group form
 */
+$.check_range_value = function(item) {
+	var $this = item;
+	$this.val(($this.val() == "" ) ? $this.attr("placeholder") : $this.val());
+};
 $.add_range = function(options) {
 	var options = $.extend({
 		id: [$.makeid(), $.makeid()],
@@ -680,15 +704,10 @@ $.add_range = function(options) {
 	placeholder = [(options.placeholder[0] !== undefined) ? options.placeholder[0] : 0, (options.placeholder[1] !== undefined) ? options.placeholder[1] : 0],
 	min = (options.min !== undefined) ? options.min : options.placeholder[0],
 	max = (options.max !== undefined) ? options.max : options.placeholder[1];
-	
 	$.each(operators, function(k, v) {
-		if(!v.main) {
-			if(v.label !== undefined) {
-				checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id[0] + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" name="case_sensitive" value="" /> ' + v.label + '</label></div>';
-			}
-		} else {
+		if(v.main) {
 			if(v.main !== undefined) {
-				if(v.type == "string") {
+				if(v.type == "range") {
 					if(v.selected){
 						if(v.main) {
 							selected_label_key = v.key;
@@ -702,7 +721,7 @@ $.add_range = function(options) {
 			}
 		}
 	});
-	return '<form onsubmit="false"><div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '</form>';
+	return '<div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" onblur="$.check_range_value($(this))" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
 };
 
 /**
@@ -728,13 +747,13 @@ $.add_chosen = function(options, content) {
 		disabled: true
 	}, options);
 	
-	var select = '<form onsubmit="false"><select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
+	var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '>';
 	for (var c = 0; c < content.length; c++) {
 		if(content[c].value !== undefined) {
 			select += '<option val="' + content[c].value + '">' + content[c].text + '</option>';
 		}
 	}
-	select += '</select></form>';
+	select += '</select>';
 	
 	return select;
 };
@@ -757,8 +776,8 @@ $.add_multiselect = function(options, callback) {
 		disabled: true
 	}, options);
 	
-	var select = '<form onsubmit="false"><select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select></form>';
-	
+	//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
+	var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
 	if (typeof callback == "function") {
 		callback.call(this);
 	}

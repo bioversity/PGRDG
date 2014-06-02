@@ -11,7 +11,7 @@
 <!-- Jquery Choosen -->
 <link rel="stylesheet" href="common/js/chosen/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>
-<script type="text/javascript" src="common/js/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+<!--script type="text/javascript" src="common/js/bootstrap-multiselect/js/bootstrap-multiselect.js"></script-->
 <!-- Typeahead -->
 <link rel="stylesheet" href="common/js/typeahead/typeahead.css" type="text/css" />
 <script type="text/javascript" src="common/js/typeahead/typeahead.bundle.js"></script>
