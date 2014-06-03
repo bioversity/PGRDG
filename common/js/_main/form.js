@@ -196,13 +196,46 @@ $.create_form = function(response) {
 /**
 /* Change behavior depending if form is checked
 */
+$.create_tree = function(v, item) {
+	$.get_node = function(node) {
+		$param = item;
+		$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+		$("#node_" + node).html('<span class="fa fa-refresh fa-spin"></span>');
+		
+		$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
+			$("#node_" + node).html("");
+			$.each(res.results, function(k, v) {
+				$("#node_" + node).append($.create_tree(v, $panel));
+				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
+			});
+			/*
+			$panel.find("a.treeselect").removeClass("disabled");
+			$.each(res.results, function(k, v) {
+				treeselect_content += $.create_tree(v);
+				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
+			});
+			treeselect_content += '</ul>';
+			*/
+		});
+	}
+	var content = "",
+	$panel = item,
+	triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
+	checkbox = '<div class="checkbox"><label><input type="checkbox" /> {LABEL}</label></div>';
+	
+	if (v.children !== undefined && v.children > 0) {
+		content += '<li>' + triangle + '<span title="' + v.description + '">' + v.label + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
+	} else {
+		content += '<li value="' + v.term + '">' + ((v.value !== undefined && v.value == true) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
+	}
+	return content;
+};
 $.toggle_form_item = function(item, enumeration) {
 	var $this = item,
 	data = [];
 	if($this.hasClass("panel-mask")) {
 		var $panel = $this.next(".panel"),
 		$panel_mask = $this;
-		
 	} else {
 		var $panel = $this.closest(".panel"),
 		$panel_mask = $panel.prev(".panel-mask");
@@ -221,9 +254,33 @@ $.toggle_form_item = function(item, enumeration) {
 		if($panel.find(".chosen-select").length > 0){
 			$panel.find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 		}
-		if($panel.find("ul.multiselect").length > 0){
-			$panel.find("ul.multiselect").removeClass("disabled");
+		if($panel.find("a.treeselect").length > 0){
+			var treeselect_content = '<div style="overflow-y: scroll; overflow-x: hidden; height: 150px;"><ul class="list-unstyled">';
 			
+			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
+				$panel.find("a.treeselect").removeClass("disabled");
+				$.each(res.results, function(k, v) {
+					treeselect_content += $.create_tree(v, $panel);
+					//data.push({label: '<i>' + v.label + '</i>', value: v.term});
+				});
+				treeselect_content += '</ul>';
+			});
+			$panel.find("a.treeselect").popover({
+				html: true,
+				placement: "auto",
+				title: '<div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div>',
+				content: function() {
+					treeselect_content += '</ul></li></ul></div>';
+					return treeselect_content;
+				},
+				container: "section.container"
+			}).on("shown.bs.popover", function(e) {
+				$(".popover-title input").focus();
+				$("a.tree-toggler").click(function () {
+					$(this).parent().children("ul.tree").toggle(300);
+				});
+			});
+			/*
 			if($panel.find("ul.multiselect li").length == 0) {
 				// See http://bootsnipp.com/snippets/featured/collapsible-tree-menu
 				// Get tag enumeration
@@ -239,11 +296,12 @@ $.toggle_form_item = function(item, enumeration) {
 					$panel.find("ul.multiselect-container").find(".label_icon").addClass("fa fa-caret-right");
 					$panel.find("button.multiselect").closest(".btn-group").addClass("open");
 					$panel.find("button.multiselect").focus();
-					*/
+					* /
 				});
 			} else {
 				//$panel.find("select.multiselect").multiselect("rebuild");
 			}
+			*/
 		}
 	} else {
 		$panel_mask.fadeIn(300);
@@ -777,10 +835,17 @@ $.add_multiselect = function(options, callback) {
 	}, options);
 	
 	//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
-	var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
+	//var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
+	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect" data-toggle="popover" id="' + options.id + '">' + options.placeholder + ' <span class="caret"></a>';
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
+	$("#" + options.id).popover({
+		html: true,
+		title: "ok",
+		content: '<div style="overflow-y: scroll; overflow-x: hidden; height: 500px;"><ul class="nav nav-list"><li><label class="tree-toggler nav-header">Header 1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 1.1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li></ul></li><li class="divider"></li><li><label class="tree-toggler nav-header">Header 2</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li><li><label class="tree-toggler nav-header">Header 2.2</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.2.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li></ul></li></ul></div>',
+		container: 'body'
+	});
 	return select;
 };
 
@@ -938,6 +1003,15 @@ $(document).ready(function() {
 		} else {
 			$(this).closest(".input-group-btn").addClass("open");
 		}
+	});
+	$("body").on("click", function(e) {
+		$('[data-toggle="popover"]').each(function () {
+			//the 'is' for buttons that trigger popups
+			//the 'has' for icons within a button that triggers a popup
+			if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
+				$(this).popover("hide");
+			}
+		});
 	});
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
