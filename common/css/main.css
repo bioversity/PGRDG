@@ -727,6 +727,35 @@ label.checkbox {
 #accordion .panel .btn-group, #accordion .panel .multiselect {
 	width: 100%;
 }
+.list-group-item-heading {
+	border-bottom: 1px solid #ddd;
+	color: #999;
+	padding: 0 0 10px;
+}
+.list-group-item {
+	padding: 0;
+	border: 0px none;
+}
+.popover .nav > li > a {
+	padding: 0;
+	display: inline-block;
+}
+.popover .nav > li > a:hover, .nav > li > a:focus {
+	background-color: transparent;
+}
+.popover {
+	z-index: 3;
+    display: block !important;
+    max-width: 400px !important;
+    width: 350px;
+}
+.popover .input-group {
+	z-index: 0;
+}
+.popover-content ul.list-unstyled {
+	margin: 0;
+}
+
 .multiselect {
 	text-align: left;
 }

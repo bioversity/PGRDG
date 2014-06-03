@@ -7,6 +7,9 @@ $.focus_chosen = function() { $(this).trigger("chosen:activate"); };
 $.open_chosen = function() { $(this).trigger("chosen:open"); };
 $.close_chosen = function() { $(this).trigger("chosen:close"); };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+$.get_title = function(v) {
+	return ((v.description !== undefined && v.description.length > 0) ? ((v.description !== undefined && v.description.length > 0) ? v.description : "") : ((v.definition !== undefined && v.definition.length > 0) ? v.definition : ""))
+};
 
 /**
 /* Create the form
@@ -173,8 +176,8 @@ $.create_form = function(response) {
 				//mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
 				mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 				
-				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + ((forms.description !== undefined && forms.description.length > 0) ? ((forms.description !== undefined && forms.description.length > 0) ? forms.description : "") : ((forms.definition !== undefined && forms.definition.length > 0) ? forms.definition : "")) + '</small>',
-				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" />';
+				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
+				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + term + '" />';
 				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
 			});
 		});
@@ -196,40 +199,6 @@ $.create_form = function(response) {
 /**
 /* Change behavior depending if form is checked
 */
-$.create_tree = function(v, item) {
-	$.get_node = function(node) {
-		$param = item;
-		$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
-		$("#node_" + node).html('<span class="fa fa-refresh fa-spin"></span>');
-		
-		$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
-			$("#node_" + node).html("");
-			$.each(res.results, function(k, v) {
-				$("#node_" + node).append($.create_tree(v, $panel));
-				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
-			});
-			/*
-			$panel.find("a.treeselect").removeClass("disabled");
-			$.each(res.results, function(k, v) {
-				treeselect_content += $.create_tree(v);
-				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
-			});
-			treeselect_content += '</ul>';
-			*/
-		});
-	}
-	var content = "",
-	$panel = item,
-	triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-	checkbox = '<div class="checkbox"><label><input type="checkbox" /> {LABEL}</label></div>';
-	
-	if (v.children !== undefined && v.children > 0) {
-		content += '<li>' + triangle + '<span title="' + v.description + '">' + v.label + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
-	} else {
-		content += '<li value="' + v.term + '">' + ((v.value !== undefined && v.value == true) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
-	}
-	return content;
-};
 $.toggle_form_item = function(item, enumeration) {
 	var $this = item,
 	data = [];
@@ -241,12 +210,7 @@ $.toggle_form_item = function(item, enumeration) {
 		$panel_mask = $panel.prev(".panel-mask");
 	}
 	if($panel.find("a.pull-left span, a.pull-right span").hasClass("fa-square-o")) {
-		$panel_mask.fadeOut(300);
-		$("#breadcrumb").fadeIn(300);
-		$("#content-body").animate({"margin-top": "50px"});
-		
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
-		//console.log(item, enumeration);
 		$panel.removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$panel.find("input").attr("disabled", false).closest(".panel").find("input:not([type=hidden])").first().focus();
 		$panel.find("button").attr("disabled", false);
@@ -254,16 +218,18 @@ $.toggle_form_item = function(item, enumeration) {
 		if($panel.find(".chosen-select").length > 0){
 			$panel.find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 		}
+		// Treeselect
 		if($panel.find("a.treeselect").length > 0){
-			var treeselect_content = '<div style="overflow-y: scroll; overflow-x: hidden; height: 150px;"><ul class="list-unstyled">';
+			$panel.find("a.treeselect").addClass("disabled");
+			var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; min-height: 100px; max-height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
 			
 			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
 				$panel.find("a.treeselect").removeClass("disabled");
 				$.each(res.results, function(k, v) {
 					treeselect_content += $.create_tree(v, $panel);
-					//data.push({label: '<i>' + v.label + '</i>', value: v.term});
 				});
 				treeselect_content += '</ul>';
+				$panel.find("a.treeselect").popover("show");
 			});
 			$panel.find("a.treeselect").popover({
 				html: true,
@@ -273,36 +239,43 @@ $.toggle_form_item = function(item, enumeration) {
 					treeselect_content += '</ul></li></ul></div>';
 					return treeselect_content;
 				},
-				container: "section.container"
+				container: "body"
 			}).on("shown.bs.popover", function(e) {
-				$(".popover-title input").focus();
+				$(".popover-title input").keyup( function() {
+					var that = this;
+					// affect all table rows on in systems table
+					var tableBody = $(".popover-content > div");
+					var tableRowsClass = $(".popover-content > div li");
+					
+					tableRowsClass.each(function(i, val) {
+						//Lower text for case insensitive
+						var rowText = $(val).text().toLowerCase();
+						var inputText = $(that).val().toLowerCase();
+						
+						if( rowText.indexOf( inputText ) == -1 ) {
+							//hide rows
+							tableRowsClass.eq(i).hide();
+						} else {
+							$(".search-sf").remove();
+							tableRowsClass.eq(i).show();
+						}
+					});
+					//all tr elements are hidden
+					if(tableRowsClass.children(":visible").length == 0) {
+						if(tableBody.find(".search-sf").length == 0) {
+							tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+						}
+					}
+				}).focus();
+				$(".popover-body li").tooltip();
 				$("a.tree-toggler").click(function () {
 					$(this).parent().children("ul.tree").toggle(300);
 				});
 			});
-			/*
-			if($panel.find("ul.multiselect li").length == 0) {
-				// See http://bootsnipp.com/snippets/featured/collapsible-tree-menu
-				// Get tag enumeration
-				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
-					$.each(res.results, function(k, v) {
-						data.push({label: '<i>' + v.label + '</i>', value: v.term});
-						$panel.find("ul.multiselect").append('<li value="' + v.term + '"><a role="menuitem" tabindex="-1" href="#">' + v.label + '</a></li>');
-					});
-					/*
-					//console.log(data);
-					$panel.find("select.multiselect").multiselect("dataprovider", data);
-					$panel.find("select.multiselect").multiselect("rebuild");
-					$panel.find("ul.multiselect-container").find(".label_icon").addClass("fa fa-caret-right");
-					$panel.find("button.multiselect").closest(".btn-group").addClass("open");
-					$panel.find("button.multiselect").focus();
-					* /
-				});
-			} else {
-				//$panel.find("select.multiselect").multiselect("rebuild");
-			}
-			*/
 		}
+		$panel_mask.fadeOut(300);
+		$("#breadcrumb").fadeIn(300);
+		$("#content-body").animate({"margin-top": "50px"});
 	} else {
 		$panel_mask.fadeIn(300);
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
@@ -314,8 +287,9 @@ $.toggle_form_item = function(item, enumeration) {
 		if($panel.find(".chosen-select").length > 0){
 			$panel.find(".chosen-select").prop("disabled", true).trigger("chosen:updated");
 		}
-		if($panel.find("ul.multiselect").length > 0){
-			$panel.find("ul.multiselect").multiselect("disable");
+		// Treeselect
+		if($panel.find("a.treeselect").length > 0){
+			$panel.find("a.treeselect").addClass("disabled");
 		}
 		if($(".breadcrumb").html() == "") {
 			$("#breadcrumb").fadeOut(300);
@@ -323,10 +297,6 @@ $.toggle_form_item = function(item, enumeration) {
 		}
 		$panel.prev(".panel-mask").css("display: block");
 	}
-	$(".row span.disabled, .panel-body.disabled").on("click", function(e) {
-		//console.log(e);
-		//return false;
-	});
 };
 
 $.toggle_json_source = function(item) {
@@ -819,6 +789,35 @@ $.add_chosen = function(options, content) {
 /**
 /* Add Multiselect autocomplete
 */
+$.create_tree = function(v, item) {
+	$.get_node = function(node) {
+		$param = item;
+		$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+		$("#node_" + node).html('<span class="fa fa-refresh fa-spin"></span>');
+		
+		$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
+			$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+			$("#node_" + node).html("");
+			$.each(res.results, function(k, v) {
+				$("#node_" + node).append($.create_tree(v, $panel));
+				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
+			});
+			$("#node_" + node).fadeIn(300);
+		});
+	}
+	var $panel = item,
+	content = "",
+	triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
+	checkbox = '<div class="checkbox"><label><input type="checkbox" /> {LABEL}</label></div>';
+	checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" /> {LABEL}</label></div>';
+	
+	if (v.children !== undefined && v.children > 0) {
+		content += '<li class="list-group-item-heading">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value == true) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
+	} else {
+		content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value == true) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
+	}
+	return content;
+};
 $.add_multiselect = function(options, callback) {
 	var options = $.extend({
 		id: $.makeid(),
@@ -836,7 +835,7 @@ $.add_multiselect = function(options, callback) {
 	
 	//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
 	//var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
-	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect" data-toggle="popover" id="' + options.id + '">' + options.placeholder + ' <span class="caret"></a>';
+	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect disabled" data-toggle="popover" id="' + options.id + '">' + options.placeholder + ' <span class="caret"></a>';
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
