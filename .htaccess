@@ -48,15 +48,15 @@ RewriteBase /
 # ----------- URI CONVERSION -----------
 #
 	#RewriteRule ^API/(.*)/? pgrdg/API/index.php?$1 [L]
-	RewriteCond %{QUERY_STRING} id=1
-	RewriteRule ^API$ /pgrdg/API/index.php? [L,R=301]
+	#RewriteCond %{QUERY_STRING} id=1
+	#RewriteRule ^API$ /API/index.php? [L,R=301]
 
 	# Convert GET keys "(?|&)x=" in slash "/"
-	RewriteCond %{REQUEST_URI} !^/(API|API/.*?)($|/)
+	RewriteCond $0 !^(API|API/.*?)($|/)
 	RewriteRule ^([^/\.]+)/?$ /index.php?p=$1 [QSA]
-	RewriteCond %{REQUEST_URI} !^/(API|API/.*?)($|/)
+	RewriteCond $0 !^(API|API/.*?)($|/)
 	RewriteRule ^([^/\.]+)/([^/]+)/?$ /index.php?p=$1&s=$2 [QSA]
-	RewriteCond %{REQUEST_URI} !^/(API|API/.*?)($|/)
+	RewriteCond $0 !^(API|API/.*?)($|/)
 	RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/?$ /index.php?p=$1&s=$2&ss=$3 [QSA]
 
 # ----------- ERROR PAGES -----------
