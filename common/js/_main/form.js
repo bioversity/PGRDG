@@ -796,7 +796,7 @@ $.create_tree = function(v, item) {
 		$("#node_" + node).html('<span class="fa fa-refresh fa-spin"></span>');
 		
 		$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
-			$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+			$("#" + node + "_toggler").find("span").removeClass("fa-caret-down").addClass("fa-caret-right");
 			$("#node_" + node).html("");
 			$.each(res.results, function(k, v) {
 				$("#node_" + node).append($.create_tree(v, $panel));
