@@ -828,6 +828,7 @@ $.manage_tree_checkbox = function(term, item) {
 		selected_enums.splice($.inArray(term, selected_enums), 1);
 	}
 	$("#" + item).val(selected_enums);
+	console.dir(selected_enums);
 };
 $.add_multiselect = function(options, callback) {
 	var options = $.extend({
@@ -1001,11 +1002,10 @@ $(document).ready(function() {
 		//$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
 	$("button.dropdown-toggle").on("click", function(e) {
-		e.preventDefault();
-		if($(this).closest(".input-group-btn").hasClass("open")) {
-			$(this).closest(".input-group-btn").removeClass("open");
+		if($(this).closest(".input-group").hasClass("open")) {
+			$(this).closest(".input-group").removeClass("open");
 		} else {
-			$(this).closest(".input-group-btn").addClass("open");
+			$(this).closest(".input-group").addClass("open");
 		}
 	});
 	$("body").on("click", function(e) {
