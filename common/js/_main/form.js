@@ -221,6 +221,7 @@ $.toggle_form_item = function(item, enumeration) {
 		// Treeselect
 		if($panel.find("a.treeselect").length > 0){
 			$panel.find("a.treeselect").addClass("disabled");
+			var treeselect_id = $panel.find("a.treeselect").attr("id");
 			var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
 			
 			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
@@ -229,46 +230,70 @@ $.toggle_form_item = function(item, enumeration) {
 					treeselect_content += $.create_tree(v, $panel);
 				});
 				treeselect_content += '</ul>';
-				$panel.find("a.treeselect").popover("show");
 			});
-			$panel.find("a.treeselect").popover({
-				html: true,
-				placement: "auto",
-				title: '<div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div>',
-				content: function() {
-					treeselect_content += '</ul></li></ul></div>';
-					return treeselect_content;
-				},
-				container: "body"
-			}).on("shown.bs.popover", function(e) {
-				$(".popover-title input").keyup( function() {
-					var that = this;
-					// affect all table rows on in systems table
-					var tableBody = $(".popover-content > div");
-					var tableRowsClass = $(".popover-content > div li");
-					
-					tableRowsClass.each(function(i, val) {
-						//Lower text for case insensitive
-						var rowText = $(val).text().toLowerCase();
-						var inputText = $(that).val().toLowerCase();
+			if($("body > .popover").length > 0) {
+				console.log("exists");
+				if(!$("body > .popover").hasClass("in")) {
+				console.log("visible");
+					$("body > .popover").addClass("in");
+				} else {
+				console.log("not visible");
+					$("body > .popover").removeClass("in");
+				}
+			} else {
+				console.log("generated");
+				$panel.find("a.treeselect").popover({
+					html: true,
+					placement: "auto",
+					title: '<div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div>',
+					content: function() {
+						treeselect_content += '</ul></li></ul></div>';
+						return treeselect_content;
+					},
+					container: "body"
+				}).on("shown.bs.popover", function(e) {
+					$.check_treeselect($panel);
+					$(".popover-title input").keyup( function() {
+						var that = this;
+						// affect all table rows on in systems table
+						var tableBody = $(".popover-content > div");
+						var tableRowsClass = $(".popover-content > div li");
 						
-						if(rowText.indexOf( inputText ) == -1) {
-							//hide rows
-							tableRowsClass.eq(i).hide();
-						} else {
-							$(".search-sf").remove();
-							tableRowsClass.eq(i).show();
+						tableRowsClass.each(function(i, val) {
+							//Lower text for case insensitive
+							var rowText = $(val).text().toLowerCase();
+							var inputText = $(that).val().toLowerCase();
+							
+							if(rowText.indexOf( inputText ) == -1) {
+								//hide rows
+								tableRowsClass.eq(i).hide();
+							} else {
+								$(".search-sf").remove();
+								tableRowsClass.eq(i).show();
+							}
+						});
+						//all tr elements are hidden
+						if(tableRowsClass.children(":visible").length == 0) {
+							if(tableBody.find(".search-sf").length == 0) {
+								tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+							}
 						}
+					}).focus();
+					$(".popover-body li").tooltip();
+					$("body").on("click", function (e) {
+						$('[data-toggle="popover"]').each(function () {
+							if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
+								$("body > .popover").popover("hide");
+								if($("#" + treeselect_id + "_popover_content").length == 0) {
+									$("body").append('<div id="' + treeselect_id + '_popover_content" style="display: none">' + $("body > .popover").find(".popover-content").html());
+								} else {
+									$("#" + treeselect_id + "_popover_content").html($("body > .popover").find(".popover-content").html());
+								}
+							}
+						});
 					});
-					//all tr elements are hidden
-					if(tableRowsClass.children(":visible").length == 0) {
-						if(tableBody.find(".search-sf").length == 0) {
-							tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
-						}
-					}
-				}).focus();
-				$(".popover-body li").tooltip();
-			});
+				});
+			}
 		}
 		$panel_mask.fadeOut(300);
 		$("#breadcrumb").fadeIn(300);
@@ -315,7 +340,7 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
 		node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
@@ -596,6 +621,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 					$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
 				}
 				$("#content-head .btn-group a.save_btn").fadeIn(300, function() {
+					var active_forms = {};
 					$(this).on("click", function() {
 						form_data.history = storage.get("pgrdg_cache.ask");
 						$.each($("#accordion > div.panel-default"), function(k, v) {
@@ -606,12 +632,33 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 							selected_forms[frm_keys].forms = [];
 								
 							$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
-								//forms.push($(this).find("form").serialize());
+								var af_obj = $(this).find("form").serializeObject();
+								
+								if(af_obj["input-type"] == "input-enum") {
+									var rt = {};
+									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+									rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+									active_forms[af_obj.tags] = rt;
+								}
 								selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
 							});
 						});
 						form_data.form = selected_forms;
-						console.log(form_data);
+						
+						$.ask_to_service({
+							op: kAPI_OP_MATCH_UNITS,
+							parameters: {
+								lang: lang,
+								param: {
+									limit: 300,
+									criteria: active_forms,
+									grouping: []
+								}
+							}
+						}, function(res) {	
+							console.log(res);
+						});
+						//console.log(operators);
 						//console.log(JSON.stringify(form_data));
 					});
 				});
@@ -683,7 +730,7 @@ $.add_input = function(options) {
 			}
 		}
 	});
-	return '<div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_STRING + '" /><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
 };
 
 /**
@@ -698,7 +745,7 @@ $.add_simple_input = function(options) {
 		disabled: true
 	}, options);
 	
-	return '<input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
 };
 
 /**
@@ -741,7 +788,7 @@ $.add_range = function(options) {
 			}
 		}
 	});
-	return '<div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" onblur="$.check_range_value($(this))" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_RANGE + '" /><div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" onblur="$.check_range_value($(this))" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
 };
 
 /**
@@ -797,6 +844,7 @@ $.create_tree = function(v, item) {
 						//data.push({label: '<i>' + v.label + '</i>', value: v.term});
 					});
 					$("#node_" + node).slideDown(300);
+					$.check_treeselect($panel);
 				});
 			} else {
 				$("#node_" + node).addClass("open").slideDown(300);
@@ -810,8 +858,8 @@ $.create_tree = function(v, item) {
 	panel_input_term_id = $panel.find('input[name="term"]').attr("id");
 	content = "",
 	triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-	checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
-	checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+	checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+	checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 	
 	if (v.children !== undefined && v.children > 0) {
 		content += '<li class="list-group-item-heading">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value == true) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
@@ -821,15 +869,29 @@ $.create_tree = function(v, item) {
 	return content;
 };
 var selected_enums = [];
-$.manage_tree_checkbox = function(term, item) {
+var selected_enums_terms = [];
+$.manage_tree_checkbox = function(term, label, item) {
 	if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
 		selected_enums.push(term);
+		selected_enums_terms.push(label);
 	} else {
 		selected_enums.splice($.inArray(term, selected_enums), 1);
+		selected_enums_terms.splice($.inArray(label, selected_enums_terms), 1);
 	}
 	$("#" + item).val(selected_enums);
-	console.dir(selected_enums);
+	$("#" + item.replace("_term", "")).attr("title", selected_enums_terms.join(", ")).attr("data-title", selected_enums_terms.join(", ")).tooltip();
+	$("#" + item.replace("_term", "") + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums.length + " items selected" : ((selected_enums_terms.length == 0) ? "Choose..." : selected_enums_terms.join(", "))));
 };
+$.check_treeselect = function(item) {
+	var $panel = item,
+	selected_checkboxes = $("#" + $panel.find("a.treeselect").attr("id") + "_term").val();
+	if(selected_checkboxes !== undefined) {
+		var selected_checkboxes_arr = selected_checkboxes.split(",");
+		for (var i = 0; i < selected_checkboxes_arr.length; i++) {
+			$("#" + $.md5(selected_checkboxes_arr[i]) + "_checkbox").attr("checked", true);
+		}
+	}
+}
 $.add_multiselect = function(options, callback) {
 	var options = $.extend({
 		id: $.makeid(),
@@ -847,11 +909,11 @@ $.add_multiselect = function(options, callback) {
 	
 	//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
 	//var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
-	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect disabled" data-toggle="popover" id="' + options.id + '">' + options.placeholder + ' <span class="caret"></a>';
+	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect disabled" data-toggle="popover" id="' + options.id + '"><span>' + options.placeholder + '</span> <span class="caret"></a>';
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
-	return '<input id="' + options.id + '_term" type="hidden" name="term" value="" />' + select;
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
 };
 
 /**
@@ -1007,15 +1069,6 @@ $(document).ready(function() {
 		} else {
 			$(this).closest(".input-group").addClass("open");
 		}
-	});
-	$("body").on("click", function(e) {
-		$('[data-toggle="popover"]').each(function () {
-			//the 'is' for buttons that trigger popups
-			//the 'has' for icons within a button that triggers a popup
-			if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
-				$(this).popover("hide");
-			}
-		});
 	});
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {

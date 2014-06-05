@@ -34,23 +34,25 @@ $.cryptAjax = function(url, options) {
 $.ask_to_service = function(options, callback) {
 	var opt = $.extend({
 		loaderType: "external",
-		op: "",
+		kAPI_REQUEST_OPERATION: "",
 		parameters: {
-			lang: lang,
-			param: {
-				limit: 50,
-				"log-request": "true",
-				tag: ""
+			kAPI_REQUEST_LANGUAGE: lang,
+			kAPI_REQUEST_PARAMETERS: {
+				kAPI_PAGING_LIMIT: 50,
+				kAPI_PARAM_LOG_REQUEST: "true",
+				kAPI_PARAM_TAG: ""
 			}
 		}
 	}, options);
-	var param, verbose_param;
+	var param, param_nob64, verbose_param;
 	if(typeof(options) == "string") {
 		param = "address=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		param_nob64 = "address=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 		verbose_param = "address= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 	} else {
-		param = "address=" + $.utf8_to_b64(opt.op + "&" + kAPI_REQUEST_LANGUAGE + "=" +opt.parameters.lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
-		verbose_param = "address= BASE64(" + opt.op + "&" + kAPI_REQUEST_LANGUAGE + "=" +opt.parameters.lang + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
+		param = "address=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
+		param_nob64 = "address=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
+		verbose_param = "address= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
 	}
 	if(!storage.isEmpty("pgrdg_cache.ask") && storage.isSet("pgrdg_cache.ask." + $.md5(param))) {
 		var response = storage.get("pgrdg_cache.ask." + $.md5(param) + ".response");
@@ -61,11 +63,14 @@ $.ask_to_service = function(options, callback) {
 			alert("There's an error in the response:<br />See the console for more informations");
 			console.group("The Service has returned an error");
 				console.error(response.status.message);
+				console.warn(param);
+				console.warn(param_nob64);
+				console.warn(verbose_param);
 				console.dir(response);
 				console.groupEnd();
 		}
 	} else {
-		//if(options != kAPI_OP_LIST_CONSTANTS) {
+		//if(options != __["kAPI_OP_LIST_CONSTANTS"]) {
 			//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 			if(typeof(opt.loaderType) == "string") {
 				if($("#apprise.ask_service").length == 0) {
@@ -104,6 +109,9 @@ $.ask_to_service = function(options, callback) {
 						alert("There's an error in the response:<br />See the console for more informations");
 						console.group("The Service has returned an error");
 							console.error(response.status.message);
+							console.warn(param);
+							console.warn(param_nob64);
+							console.warn(verbose_param);
 							console.dir(response);
 							console.groupEnd();
 					}

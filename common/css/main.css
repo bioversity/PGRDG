@@ -199,6 +199,17 @@ section.container {
 #content-body .panel-group .panel {
 	overflow: visible;
 }
+.btn.treeselect {
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 20px;
+}
+.btn.treeselect .caret {
+  margin-top: 0.6em;
+  position: absolute;
+  right: 40px;
+}
 
 
 #content-body .row .panel-heading a {
@@ -694,6 +705,9 @@ section.container {
 }
 .popover {
 	z-index: auto;
+}
+.popover:not(.in) {
+	z-index: -1;
 }
 .popover-content {
 	min-width: 180px;

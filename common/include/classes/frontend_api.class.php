@@ -121,7 +121,7 @@ class frontend_api {
 	/* PUBLIC FUNCTIONS */
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 	
-	public function get_definitions($type, $keep_update) {
+	public function get_definitions($type, $keep_update, $response_type = "all") {
 		switch(strtolower($type)) {
 			case "api":			$def_file = "Api.inc.php";				break;
 			case "domains":		$def_file = "Domains.inc.php";			break;
@@ -151,8 +151,18 @@ class frontend_api {
 
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
 		}
-		foreach($script_constants as $define => $value) {
-			$js .= "var " . $define . ' = "' . $value . '";' . "\n";
+		if($response_type == "string" || $response_type == "all") {
+			foreach($script_constants as $define => $value) {
+				$js .= "var " . $define . ' = "' . $value . '";' . "\n";
+				$k[$define] = $value;
+			}
+		}
+		if($response_type == "all") { $js .= "\n"; }
+		if($response_type == "array" || $response_type == "all") {
+			$js .= "var __ = {};\n";
+			foreach($script_constants as $define => $value) {
+				$js .= '__["' . $define . '"] = "' . $value . '";' . "\n";
+			}
 		}
 		print $js;
 		exit();
