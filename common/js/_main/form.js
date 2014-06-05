@@ -221,7 +221,7 @@ $.toggle_form_item = function(item, enumeration) {
 		// Treeselect
 		if($panel.find("a.treeselect").length > 0){
 			$panel.find("a.treeselect").addClass("disabled");
-			var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; min-height: 100px; max-height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
+			var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
 			
 			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
 				$panel.find("a.treeselect").removeClass("disabled");
@@ -252,7 +252,7 @@ $.toggle_form_item = function(item, enumeration) {
 						var rowText = $(val).text().toLowerCase();
 						var inputText = $(that).val().toLowerCase();
 						
-						if( rowText.indexOf( inputText ) == -1 ) {
+						if(rowText.indexOf( inputText ) == -1) {
 							//hide rows
 							tableRowsClass.eq(i).hide();
 						} else {
@@ -268,9 +268,6 @@ $.toggle_form_item = function(item, enumeration) {
 					}
 				}).focus();
 				$(".popover-body li").tooltip();
-				$("a.tree-toggler").click(function () {
-					$(this).parent().children("ul.tree").toggle(300);
-				});
 			});
 		}
 		$panel_mask.fadeOut(300);
@@ -299,11 +296,6 @@ $.toggle_form_item = function(item, enumeration) {
 	}
 };
 
-$.toggle_json_source = function(item) {
-	var $this = item;
-	$($this).parents(".panel-heading").next().find(".panel-body > pre").slideToggle();
-};
-
 /**
 /* Add collapsible content
 */
@@ -323,7 +315,7 @@ $.fn.addCollapsible = function(options, callback) {
 	
 	var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),
 		node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$.toggle_json_source($(this));" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
+			node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
 		node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 	
@@ -792,24 +784,34 @@ $.add_chosen = function(options, content) {
 $.create_tree = function(v, item) {
 	$.get_node = function(node) {
 		$param = item;
-		$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
-		$("#node_" + node).html('<span class="fa fa-refresh fa-spin"></span>');
-		
-		$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
+		if(!$("#node_" + node).hasClass("open")) {
+			$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+			
+			if($("#node_" + node).html() == "") {
+				$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Retriving data...');
+				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {	
+					//$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
+					$("#node_" + node).html("").css("display", "none");
+					$.each(res.results, function(k, v) {
+						$("#node_" + node).append($.create_tree(v, $panel)).addClass("open");
+						//data.push({label: '<i>' + v.label + '</i>', value: v.term});
+					});
+					$("#node_" + node).slideDown(300);
+				});
+			} else {
+				$("#node_" + node).addClass("open").slideDown(300);
+			}
+		} else {
 			$("#" + node + "_toggler").find("span").removeClass("fa-caret-down").addClass("fa-caret-right");
-			$("#node_" + node).html("");
-			$.each(res.results, function(k, v) {
-				$("#node_" + node).append($.create_tree(v, $panel));
-				//data.push({label: '<i>' + v.label + '</i>', value: v.term});
-			});
-			$("#node_" + node).fadeIn(300);
-		});
+			$("#node_" + node).slideUp(300).removeClass("open");
+		}
 	}
 	var $panel = item,
+	panel_input_term_id = $panel.find('input[name="term"]').attr("id");
 	content = "",
 	triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-	checkbox = '<div class="checkbox"><label><input type="checkbox" /> {LABEL}</label></div>';
-	checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" /> {LABEL}</label></div>';
+	checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+	checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 	
 	if (v.children !== undefined && v.children > 0) {
 		content += '<li class="list-group-item-heading">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value == true) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
@@ -817,6 +819,15 @@ $.create_tree = function(v, item) {
 		content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value == true) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
 	}
 	return content;
+};
+var selected_enums = [];
+$.manage_tree_checkbox = function(term, item) {
+	if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
+		selected_enums.push(term);
+	} else {
+		selected_enums.splice($.inArray(term, selected_enums), 1);
+	}
+	$("#" + item).val(selected_enums);
 };
 $.add_multiselect = function(options, callback) {
 	var options = $.extend({
@@ -839,13 +850,7 @@ $.add_multiselect = function(options, callback) {
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
-	$("#" + options.id).popover({
-		html: true,
-		title: "ok",
-		content: '<div style="overflow-y: scroll; overflow-x: hidden; height: 500px;"><ul class="nav nav-list"><li><label class="tree-toggler nav-header">Header 1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 1.1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li></ul></li><li class="divider"></li><li><label class="tree-toggler nav-header">Header 2</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.1.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li><li><label class="tree-toggler nav-header">Header 2.2</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li><li><label class="tree-toggler nav-header">Header 2.2.1</label><ul class="nav nav-list tree"><li><a href="#">Link</a></li><li><a href="#">Link</a></li></ul></li></ul></li></ul></li></ul></div>',
-		container: 'body'
-	});
-	return select;
+	return '<input id="' + options.id + '_term" type="hidden" name="term" value="" />' + select;
 };
 
 /**

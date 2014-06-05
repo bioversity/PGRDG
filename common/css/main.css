@@ -755,6 +755,9 @@ label.checkbox {
 .popover-content ul.list-unstyled {
 	margin: 0;
 }
+.popover div.checkbox-inline {
+	margin-left: 2px;
+}
 
 .multiselect {
 	text-align: left;
