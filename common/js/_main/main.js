@@ -152,24 +152,29 @@ $.left_panel = function(subject, width, callback) {
 					callback.call(this);
 				}
 			});
-			$("#content-head, #content-body").animate({"padding-left": "10px"}, 300);
+			$("#content-head, #content-body").animate({"padding-left": "35px"}, 300, function() {
+				$("#left_panel .folder_menu").animate({"right": "-258px"}, 300);
+			});
 		} else {
 			$.left_panel("close");
 		}
 	} else {
 		if(subject !== "close") {
-			$(".olControlZoom").animate({"left": width}, 300);
-			$("#left_panel").animate({"left": "0"}, 300, "easeOutExpo", function() {
-				$.resize_forms_mask();
-				$(this).addClass("visible");
-				
-				$(this).find("input[type=search]").focus();
-				// Callback
-				if (typeof callback == "function") {
-					callback.call(this);
-				}
+			$("#left_panel .folder_menu").animate({"right": "258px"}, 300, function() {
+			$("#content").animate({"left": "0"}, 300);
+				$(".olControlZoom").animate({"left": width}, 300);
+				$("#left_panel").animate({"left": "0"}, 300, "easeOutExpo", function() {
+					$.resize_forms_mask();
+					$(this).addClass("visible");
+					
+					$(this).find("input[type=search]").focus();
+					// Callback
+					if (typeof callback == "function") {
+						callback.call(this);
+					}
+				});
 			});
-			$("#content-head, #content-body").animate({"padding-left": (movement+15) + "px"}, 250);
+			$("#content-head, #content-body").delay(300).animate({"padding-left": (movement+15) + "px"}, 250);
 		}
 	}
 };

@@ -241,7 +241,6 @@ $.toggle_form_item = function(item, enumeration) {
 					$("body > .popover").removeClass("in");
 				}
 			} else {
-				console.log("generated");
 				$panel.find("a.treeselect").popover({
 					html: true,
 					placement: "auto",
@@ -282,13 +281,12 @@ $.toggle_form_item = function(item, enumeration) {
 					$(".popover-body li").tooltip();
 					$("body").on("click", function (e) {
 						$('[data-toggle="popover"]').each(function () {
-							if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
-								$("body > .popover").popover("hide");
-								if($("#" + treeselect_id + "_popover_content").length == 0) {
-									$("body").append('<div id="' + treeselect_id + '_popover_content" style="display: none">' + $("body > .popover").find(".popover-content").html());
-								} else {
-									$("#" + treeselect_id + "_popover_content").html($("body > .popover").find(".popover-content").html());
+							if (!$(this).is(e.target)) {
+								if($(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
+									$(this).popover("hide");
 								}
+							} else {
+								$(this).popover("show");
 							}
 						});
 					});
@@ -430,7 +428,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
 				//var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -470,6 +468,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
 		$.execTraitAutocomplete(kAPI, function(response) {
@@ -513,6 +512,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
 				
@@ -589,7 +589,7 @@ $.reset_all_searches = function(ask) {
 		} else {
 			apprise("Are you sure?", {title: "Warning", icon: "warning", class: "reset-all", confirm: true}, function(r) {
 				if(r) {
-					$("#content-head #right_btn").fadeOut(300, function() {
+					$("#content-head #right_btn, #content-head .save_btn").fadeOut(300, function() {
 						$("#content-head .content-title").text("Output");
 						$("#breadcrumb").fadeOut(300).find(".breadcrumb").html("");
 						$("#content-body .content-body").html("");
@@ -599,7 +599,7 @@ $.reset_all_searches = function(ask) {
 			});
 		}
 	} else {
-		$("#content-head #right_btn").fadeOut(300, function() {
+		$("#content-head #right_btn, #content-head .save_btn").fadeOut(300, function() {
 			$("#content-head .content-title").text("Output");
 			$("#breadcrumb").fadeOut(300).find(".breadcrumb").html("");
 			$("#content-body .content-body").html("");
@@ -655,7 +655,8 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 									grouping: []
 								}
 							}
-						}, function(res) {	
+						}, function(res) {
+							$("#content-head, #content-body").animate({"left": "-100%"}, 300);
 							console.log(res);
 						});
 						//console.log(operators);
@@ -871,6 +872,7 @@ $.create_tree = function(v, item) {
 var selected_enums = [];
 var selected_enums_terms = [];
 $.manage_tree_checkbox = function(term, label, item) {
+	var id = item.replace("_term");
 	if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
 		selected_enums.push(term);
 		selected_enums_terms.push(label);
@@ -878,9 +880,11 @@ $.manage_tree_checkbox = function(term, label, item) {
 		selected_enums.splice($.inArray(term, selected_enums), 1);
 		selected_enums_terms.splice($.inArray(label, selected_enums_terms), 1);
 	}
+	storage.set("pgrdg_cache.temp.selected_enums." + id, selected_enums);
+	storage.set("pgrdg_cache.temp.selected_enums_terms." + id, selected_enums_terms);
 	$("#" + item).val(selected_enums);
-	$("#" + item.replace("_term", "")).attr("title", selected_enums_terms.join(", ")).attr("data-title", selected_enums_terms.join(", ")).tooltip();
-	$("#" + item.replace("_term", "") + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums.length + " items selected" : ((selected_enums_terms.length == 0) ? "Choose..." : selected_enums_terms.join(", "))));
+	$("#" + item.replace("_term", "")).attr("title", storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", ")).attr("data-title", storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", ")).tooltip();
+	$("#" + item.replace("_term", "") + " span:first-child").text(((storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length > 1) ? storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length + " items selected" : ((storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length == 0) ? "Choose..." : storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", "))));
 };
 $.check_treeselect = function(item) {
 	var $panel = item,

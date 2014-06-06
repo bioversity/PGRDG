@@ -90,26 +90,7 @@ section.container {
     width: 100%;
 	padding: 0;
 }
-#content-head {
-	display: none;
-	position: fixed;
-    display: table-row;
-	top: 110px;
-	width: 100%;
-	z-index: 1;
-	padding-top: 10px;
-	background-color: #fff;
-	box-shadow: 0 0 6px #d0d0d0;
-}
-#content-body {
-    display: table-row;
-	width: 100%;
-	position: absolute;
-	z-index: 0;
-}
-#content-head #breadcrumb {
-	display: none;
-}
+
 #content {
     display: table;
 	padding-top: 110px;
@@ -124,10 +105,30 @@ section.container {
 #content h6 {
 	margin-top: 0;
 }
+#content-head {
+	display: none;
+	position: fixed;
+    display: table-row;
+	top: 110px;
+	width: 100%;
+	z-index: 1;
+	padding-top: 10px;
+	background-color: #fff;
+	box-shadow: 6px 0 6px #d0d0d0;
+}
 #content-head .btn-group {
 	bottom: 15px;
     position: relative;
     top: 6px;
+}
+#content-head #breadcrumb {
+	display: none;
+}
+#content-body {
+    display: table-row;
+	width: 100%;
+	position: absolute;
+	z-index: 0;
 }
 #content-body .row .panel .chosen-container {
 	display: block;
@@ -285,6 +286,143 @@ section.container {
 }
 #left_panel > div.panel-body:first-child a:hover, #left_panel > div.panel-body:first-child a:focus, #left_panel > div.panel-body:first-child a:active {
 	text-decoration: none;
+}
+/*
+.folder_menu {
+	display: block;
+	height: 30px;
+	line-height: 25px;
+	padding: 0;
+	position: relative;
+	right: -259px;
+	top: 227px;
+	transform: rotate(90deg);
+	width: 100%;
+}
+.folder_menu > ul {
+	height: 30px;
+	line-height: 30px;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+.folder_menu > ul li {
+	background-color: #fff;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-top-left-radius: 18px 25px;
+	border-top-right-radius: 18px 25px;
+	box-shadow: 0 -4px 8px #ccc;
+	display: inline-block;
+	line-height: 30px;
+	white-space: nowrap;
+	position: relative;
+}
+.folder_menu li + li {
+	margin-left: -15px;
+	z-index: -1;
+}
+.folder_menu li:first-child {
+	border-top-left-radius: 3px;
+}
+.folder_menu li:first-child a {
+	margin-left: 5px;
+}
+*/
+.folder_menu {
+	position: relative;
+	right: 258px;
+	text-indent: 0;
+	top: 259px;
+	margin-top: -30px;
+	transform: rotate(90deg);
+}
+.folder_menu > ul {
+	margin-left: 9px;
+}
+.folder_menu li:before {
+	background-color: #f0f0f0;
+	border-left: 1px solid #ccc;
+	border-top-left-radius: 18px 25px;
+	box-shadow: -4px 0 4px #dedede;
+	content: "";
+	height: 100%;
+	margin-left: -10px;
+	position: absolute;
+	width: 10px;
+	z-index: -1;
+}
+.folder_menu li:first-child:before {
+  background: linear-gradient(to right, #f0f0f0, #fff) repeat scroll 0 0 rgba(0, 0, 0, 0);
+  border-left: 0 none;
+  border-top-left-radius: 0;
+  box-shadow: none;
+}
+.folder_menu li:after {
+	background-color: #f0f0f0;
+	border-right: 1px solid #ccc;
+	border-top-right-radius: 18px 25px;
+	box-shadow: 4px 0 4px #dedede;
+	content: "";
+	height: 100%;
+	position: absolute;
+	right: -10px;
+	top: 0;
+	width: 10px;
+	z-index: 1;
+}
+.folder_menu li + li:before {
+	box-shadow: -4px 0 4px #dedede;
+}
+.folder_menu li + li:after {
+	box-shadow: 4px 0 4px #ccc;
+}
+.folder_menu li:first-child:after {
+	background-color: #fff;
+}
+.folder_menu ul li {
+	background-color: #f0f0f0;
+	border-top: #eee 1px solid;
+	margin: 0;
+	padding: 0;
+}
+.folder_menu li:first-child {
+	background-color: #fff;
+}
+.folder_menu li:first-child + li {
+	background-color: #f0f0f0;
+}
+.folder_menu li:first-child + li:before, .folder_menu li:first-child + li:after {
+	background-color: #f0f0f0;
+}
+.folder_menu ul li + li {
+	background-color: #ddd;
+	margin-left: 10px;
+}
+.folder_menu li + li:before, .folder_menu li + li:after {
+	background-color: #ddd;
+}
+.folder_menu li:hover, .folder_menu li:hover:not(:first-child):before, .folder_menu li:hover:after {
+	background-color: #fff !important;
+	z-index: 1;
+}
+
+.folder_menu ul li a {
+	margin: -1px 5px 0;
+	padding: 5px 0 2px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.folder_menu ul li a:hover {
+	background-color: #fff;
+	border-color: rgba(0, 0, 0, 0);
+}
+.folder_menu > ul li.active a {
+	margin-top: -1px;
+}
+.folder_menu > ul li.active:first-child > a {
+	border-left: 0 none;
+	border-top-left-radius: 0
 }
 
 #pgrdg_map {

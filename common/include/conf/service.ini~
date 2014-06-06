@@ -1,0 +1,3 @@
+[Service]
+;url = "http://pgrdg.grinfo.private"
+url = "http://192.168.20.253/weblib/OntologyWrapper/Library/service" ;Temp allowed Service for my remote tests
