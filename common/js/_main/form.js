@@ -869,10 +869,15 @@ $.create_tree = function(v, item) {
 	}
 	return content;
 };
-var selected_enums = [];
-var selected_enums_terms = [];
 $.manage_tree_checkbox = function(term, label, item) {
-	var id = item.replace("_term");
+	var selected_enums = [],
+	selected_enums_terms = [],
+	id = item.replace("_term", ""),
+	$item_val = $("#" + item).val(),
+	$item_label_val = $("#" + item.replace("_term", "_label")).val();
+	
+	if($item_val !== "") { selected_enums = $item_val.split(","); }
+	if($item_label_val !== "") { selected_enums_terms = $item_label_val.split(","); }
 	if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
 		selected_enums.push(term);
 		selected_enums_terms.push(label);
@@ -880,11 +885,10 @@ $.manage_tree_checkbox = function(term, label, item) {
 		selected_enums.splice($.inArray(term, selected_enums), 1);
 		selected_enums_terms.splice($.inArray(label, selected_enums_terms), 1);
 	}
-	storage.set("pgrdg_cache.temp.selected_enums." + id, selected_enums);
-	storage.set("pgrdg_cache.temp.selected_enums_terms." + id, selected_enums_terms);
 	$("#" + item).val(selected_enums);
-	$("#" + item.replace("_term", "")).attr("title", storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", ")).attr("data-title", storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", ")).tooltip();
-	$("#" + item.replace("_term", "") + " span:first-child").text(((storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length > 1) ? storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length + " items selected" : ((storage.get("pgrdg_cache.temp.selected_enums_terms." + id).length == 0) ? "Choose..." : storage.get("pgrdg_cache.temp.selected_enums_terms." + id).join(", "))));
+	$("#" + item.replace("_term", "_label")).val(selected_enums_terms);
+	$("#" + id).attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
+	$("#" +id + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums_terms.length + " items selected" : ((selected_enums_terms.length == 0) ? "Choose..." : selected_enums_terms.join(", "))));
 };
 $.check_treeselect = function(item) {
 	var $panel = item,
@@ -917,7 +921,7 @@ $.add_multiselect = function(options, callback) {
 	if (typeof callback == "function") {
 		callback.call(this);
 	}
-	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input type="hidden" id="' + options.id + '_label" value="" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
 };
 
 /**
