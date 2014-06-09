@@ -554,7 +554,7 @@
             if (!o || !o.local && !o.prefetch && !o.remote) {
                 $.error("one of local, prefetch, or remote is required");
             }
-            this.limit = o.limit || 5;
+            this.limit = o.limit || 50;
             this.sorter = getSorter(o.sorter);
             this.dupDetector = o.dupDetector || ignoreDuplicates;
             this.local = oParser.local(o);

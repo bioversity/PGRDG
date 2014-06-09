@@ -436,7 +436,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				$.each(parsedResponse, function(respType, v) {
 					if(parsedResponse["status"].state == "ok" && parsedResponse["paging"].affected > 0) {
 						if(respType == "results") {
-							for (i = 0; i < v.length; i++) {
+							for (i = 0; i < parsedResponse["paging"]["affected"]; i++) {
 								var re = [];
 								re["value"] = v[i];
 								res.push(re);
@@ -458,7 +458,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		limit: 50
 	}, {
 		displayKey: "value",
-		source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
+		//source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
+		source: remoteAutocomplete.ttAdapter()
 	}).on("typeahead:selected", function(){
 		// Autocomplete
 		var kAPI = new Object;
@@ -492,6 +493,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					$("#content-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 					$("#content-body .panel").tooltip();
 					$.resize_forms_mask();
+					$("#autocomplete .typeahead").trigger("blur");
 				}
 			}
 		});
@@ -539,6 +541,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 							$("#content-body .panel").tooltip();
 							$(".tt-dropdown-menu").css("display", "none");
 							$.resize_forms_mask();
+							$("#autocomplete .typeahead").trigger("blur");
 						}
 					}
 				});
@@ -959,7 +962,8 @@ $.fn.addAutocomplete = function(options, data, callback) {
 	$(this).find(".typeahead").typeahead({
 		hint: true,
 		highlight: true,
-		minLength: 1
+		minLength: 1,
+		limit: 50
 	}, {
 		name: 'data',
 		displayKey: 'value',
