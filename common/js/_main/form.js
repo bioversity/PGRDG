@@ -173,8 +173,8 @@ $.create_form = function(response) {
 				}
 				var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="Enable this item"><span class="fa fa-square-o"></span></a>',
 				badge = '<span class="badge pull-right">' + ((forms.count !== undefined && forms.count > 0) ? forms.count : 0) + '</span>',
-				//mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
-				mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
+				mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
+				//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
 				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + term + '" />';
@@ -294,9 +294,9 @@ $.toggle_form_item = function(item, enumeration) {
 			}
 		}
 		$panel_mask.fadeOut(300);
-		$("#breadcrumb").fadeIn(300);
-		$("#content-body").animate({"margin-top": "50px"});
+		$(".save_btn").removeClass("disabled");
 	} else {
+		var forms_count = 0;
 		$panel_mask.fadeIn(300);
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
 		
@@ -311,9 +311,13 @@ $.toggle_form_item = function(item, enumeration) {
 		if($panel.find("a.treeselect").length > 0){
 			$panel.find("a.treeselect").addClass("disabled");
 		}
-		if($(".breadcrumb").html() == "") {
-			$("#breadcrumb").fadeOut(300);
-			$("#content-body").animate({"margin-top": "0px"});
+		$.each($("#accordion > div.panel-default"), function(k, v) {
+			$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
+				forms_count++;
+			});
+		});
+		if(forms_count == 0) {
+			$(".save_btn").addClass("disabled");
 		}
 		$panel.prev(".panel-mask").css("display: block");
 	}
@@ -427,8 +431,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				//var state = "true&address=" + $.utf8_to_b64("http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
 			filter: function (parsedResponse) {
@@ -469,14 +473,14 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+		//kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
 		$.execTraitAutocomplete(kAPI, function(response) {
 			if($("#accordion > #" + response.id).length == 0) {
 				var the_title = "";
 				if(response.paging.affected > 0) {
-					$("#content-head .content-title").html('<small class="fa fa-list-alt"></small> Output for "' + $("#" + options.id).val() + '"');
+					$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
 					$.each(operators, function(ck, cv) {
 						if(cv.key == kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
 							if(cv.main) {
@@ -490,8 +494,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 					// Create forms
 					var forms = $.create_form(response);
 					
-					$("#content-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
-					$("#content-body .panel").tooltip();
+					$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+					$("#forms-body .panel").tooltip();
 					$.resize_forms_mask();
 					$("#autocomplete .typeahead").trigger("blur");
 				}
@@ -514,7 +518,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+				//kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
 				
@@ -535,10 +539,10 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 							});
 							// Create forms
 							var forms = $.create_form(response);
-							$("#content-head .content-title").html('<small class="fa fa-list-alt"></small> Output for "' + $("#" + options.id).val() + '"');
-							$("#content").fadeIn(300);
-							$("#content-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
-							$("#content-body .panel").tooltip();
+							$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
+							$("#forms").fadeIn(300);
+							$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+							$("#forms-body .panel").tooltip();
 							$(".tt-dropdown-menu").css("display", "none");
 							$.resize_forms_mask();
 							$("#autocomplete .typeahead").trigger("blur");
@@ -592,20 +596,18 @@ $.reset_all_searches = function(ask) {
 		} else {
 			apprise("Are you sure?", {title: "Warning", icon: "warning", class: "reset-all", confirm: true}, function(r) {
 				if(r) {
-					$("#content-head #right_btn, #content-head .save_btn").fadeOut(300, function() {
-						$("#content-head .content-title").text("Output");
-						$("#breadcrumb").fadeOut(300).find(".breadcrumb").html("");
-						$("#content-body .content-body").html("");
+					$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
+						$("#forms-head .content-title").text("");
+						$("#forms-body .content-body").html("");
 						$("input.typeahead.tt-input").val("").focus();
 					});
 				}
 			});
 		}
 	} else {
-		$("#content-head #right_btn, #content-head .save_btn").fadeOut(300, function() {
-			$("#content-head .content-title").text("Output");
-			$("#breadcrumb").fadeOut(300).find(".breadcrumb").html("");
-			$("#content-body .content-body").html("");
+		$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
+			$("#forms-head .content-title").text("Output");
+			$("#forms-body .content-body").html("");
 			$("input.typeahead.tt-input").val("").focus();
 		});
 	}
@@ -615,15 +617,18 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 		if (typeof callback == "function") {
 			if(response.paging.affected > 0) {
 				var selected_forms = {}, form_data = {};
-				$("#content-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
-					$("#content-head #right_btn").on("click", function() {
+				$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+					$("#forms-head #right_btn").on("click", function() {
 						$.reset_all_searches();
 					});
 				});
-				if($("#content-head .btn-group a.save_btn").length == 0) {
-					$("#content-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Save <span class="fa fa-chevron-right"></span></a>');
+				$("section.container").animate({"padding-top": "145px"});
+				$("#breadcrumb").animate({"top": "110px"});
+				if($("#forms-head .btn-group a.save_btn").length == 0) {
+					$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 				}
-				$("#content-head .btn-group a.save_btn").fadeIn(300, function() {
+				$("#forms").fadeIn(300);
+				$("#forms-head .btn-group a.save_btn").fadeIn(300, function() {
 					var active_forms = {};
 					$(this).on("click", function() {
 						form_data.history = storage.get("pgrdg_cache.ask");
@@ -659,8 +664,18 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 								}
 							}
 						}, function(res) {
-							$("#content-head, #content-body").animate({"left": "-100%"}, 300);
 							console.log(res);
+							$("#breadcrumb #goto_form_btn").html('<span class="text-muted fa fa-tasks"></span> <a href="javascript: void(0);" title="Return to forms panel" data-toggle="tooltip" data-container="body" onclick="$.content_panel(\'forms\');">Forms</a></li>').fadeIn(300);
+							$("#breadcrumb #goto_summary_btn").fadeIn(300);
+							$("#forms").fadeOut(300);
+							
+							$("#summary-head .content-title").html("Research summary");
+							$("#summary-body .content-body").html('<div class="list-group"></div>');
+							$.each(res.results, function(tag, values) {
+								console.log(values);
+								$("#summary-body .content-body > .list-group").append('<a href="#" class="list-group-item"><span class="badge">' + values.count + '</span><h4 class="list-group-item-heading">' + values[30] + '</h4><p class="list-group-item-text">' + values[31] + '</p></a>');
+							});
+							$("#summary").fadeIn(300);
 						});
 						//console.log(operators);
 						//console.log(JSON.stringify(form_data));
@@ -1036,7 +1051,7 @@ $.get_operators_list = function(system_constants) {
 			operators = operators;
 		});
 		$.left_panel("open", "", function() {
-			$("#content-body").fadeIn(300);
+			$("#forms-body").fadeIn(300);
 		});
 	});
 }

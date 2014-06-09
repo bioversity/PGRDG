@@ -4310,10 +4310,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   content: "/\00a0";
 }
 	/* PERSONALIZATIONS */
-	.breadcrumb > li + li:before {
-		padding: 0 5px;
-		color: #ccc;
-		content: "\00a0";
+	#content-head .breadcrumb > li + li:before {
+		padding: 0 10px;
+		color: #aaa;
+		content: " >";
 	}
 .breadcrumb > .active {
   color: #999;

@@ -68,6 +68,11 @@ $.ask_to_service = function(options, callback) {
 				console.warn(verbose_param);
 				console.dir(response);
 				console.groupEnd();
+			
+			
+			$("body").bind("keydown", "esc", function(e) {
+				$(".modal").modal("hide");
+			});
 		}
 	} else {
 		//if(options != __["kAPI_OP_LIST_CONSTANTS"]) {
@@ -139,11 +144,11 @@ $.left_panel = function(subject, width, callback) {
 	$("#left_panel").css({
 		"width": width
 	});
-	var content_witdth = $("#content-body").css("width");
+	var content_witdth = $("#forms-body").css("width");
 	if($("#left_panel").hasClass("visible") && subject !== "open") {
 		if(subject == "close") {
-			$(".olControlZoom").animate({"left": "10px"}, 300);
-			$("#left_panel").animate({"left": "-" + width}, 300, "swing", function() {
+			$(".olControlZoom").animate({"left": "10px"}, 200);
+			$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 				$.resize_forms_mask();
 				$(this).removeClass("visible");
 				
@@ -152,18 +157,19 @@ $.left_panel = function(subject, width, callback) {
 					callback.call(this);
 				}
 			});
-			$("#content-head, #content-body").animate({"padding-left": "35px"}, 300, function() {
-				$("#left_panel .folder_menu").animate({"right": "-258px"}, 300);
+			$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb").animate({"padding-left": "35px"}, 200);
+			$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
+				$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
 			});
 		} else {
 			$.left_panel("close");
 		}
 	} else {
 		if(subject !== "close") {
-			$("#left_panel .folder_menu").animate({"right": "258px"}, 300, function() {
-			$("#content").animate({"left": "0"}, 300);
-				$(".olControlZoom").animate({"left": width}, 300);
-				$("#left_panel").animate({"left": "0"}, 300, "easeOutExpo", function() {
+			$("#left_panel .folder_menu").animate({"right": "258px"}, 200, function() {
+				$("#forms").animate({"left": "0"}, 200);
+				$(".olControlZoom").animate({"left": width}, 200);
+				$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
 					$.resize_forms_mask();
 					$(this).addClass("visible");
 					
@@ -174,7 +180,8 @@ $.left_panel = function(subject, width, callback) {
 					}
 				});
 			});
-			$("#content-head, #content-body").delay(300).animate({"padding-left": (movement+15) + "px"}, 250);
+			$("#breadcrumb").delay(200).animate({"padding-left": width}, 150).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
+			$(".panel_content-head, .panel_content-body").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
 		}
 	}
 };
