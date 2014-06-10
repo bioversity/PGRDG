@@ -355,11 +355,44 @@ $.show_help = function() {
 		$("#map_toolbox_help").modal("show");
 	}
 }
+$.manage_url = function(hash) {
+	var active_li = 0,
+	visible_div = 0;
+	
+	if(hash == undefined || hash == null || hash == "") {
+		var hash = (window.location.hash.length > 0) ? window.location.hash.replace("#", "") : "";
+	}
+	$.each($("#contents > div:not(:hidden)"), function() {
+		visible_div++;
+	});
+	if(visible_div == 0 && hash.length > 0) {
+		document.location.hash = "";
+	} else {
+		document.location.hash = hash;
+	}
+	
+	$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
+		if($.trim($(this).text()) !== hash) {
+			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + ' <a href="javascript:void(0);" onclick="$.manage_url(\'' + $.trim($(this).text()) + '\');" title="Return to ' + $.trim($(this).text()).toLowerCase() + ' panel">' + $.trim($(this).text()) + '</a>');
+			$(this).find("a").tooltip({container: "body"});
+		} else {
+			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + " " + hash).closest("li").addClass("active");
+		}
+	});
+	if(hash.length > 0) {
+		$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
+		$("#contents #" + hash.toLowerCase()).fadeIn(300);
+	}
+};
 
 $(document).ready(function() {
 	if(!$.browser_cookie_status()) {
 		apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
 	} else {
+		$.manage_url();
+		window.onhashchange = function() {
+			$.manage_url();
+		}
 		// Use bootstrap apprise instead javascript's alert
 		window.alert = function(string, args, callback) {
 			if(args == undefined) {

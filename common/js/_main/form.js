@@ -466,6 +466,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		source: remoteAutocomplete.ttAdapter()
 	}).on("typeahead:selected", function(){
 		// Autocomplete
+		$.manage_url("Forms");
+		
 		var kAPI = new Object;
 		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 		kAPI["parameters"] = new Object;
@@ -511,6 +513,8 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		// User input
 		if($("#" + options.id).val().length >= 3) { 
 			if(!is_autocompleted) {
+				$.manage_url("Forms");
+				
 				var kAPI = new Object;
 				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 				kAPI["parameters"] = new Object;
@@ -665,15 +669,16 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 							}
 						}, function(res) {
 							console.log(res);
-							$("#breadcrumb #goto_form_btn").html('<span class="text-muted fa fa-tasks"></span> <a href="javascript: void(0);" title="Return to forms panel" data-toggle="tooltip" data-container="body" onclick="$.content_panel(\'forms\');">Forms</a></li>').fadeIn(300);
+							$.manage_url("Summary");
+							$("#breadcrumb #goto_form_btn").html('<span class="text-muted fa fa-tasks"></span> <a href="javascript:void(0);" onclick="$.manage_url(\'Forms\');" title="Return to forms panel" data-toggle="tooltip" data-container="body">Forms</a></li>').fadeIn(300);
 							$("#breadcrumb #goto_summary_btn").fadeIn(300);
 							$("#forms").fadeOut(300);
 							
 							$("#summary-head .content-title").html("Research summary");
-							$("#summary-body .content-body").html('<div class="list-group"></div>');
+							$("#summary-body .content-body").html('<div class="panel panel-success"></div>');
 							$.each(res.results, function(tag, values) {
 								console.log(values);
-								$("#summary-body .content-body > .list-group").append('<a href="#" class="list-group-item"><span class="badge">' + values.count + '</span><h4 class="list-group-item-heading">' + values[30] + '</h4><p class="list-group-item-text">' + values[31] + '</p></a>');
+								$("#summary-body .content-body > .panel.panel-success").append('<div class="panel-heading"><a href="#" class=""><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></a></div><div class="panel-body"><span class="pull-right"><button class="btn btn-xs btn-default" data-toggle="tooltip" data-container="body" title="View on map"><span class="ionicons ion-map"></span></button></span>' + values[kTAG_DEFINITION] + '</div>');
 							});
 							$("#summary").fadeIn(300);
 						});
