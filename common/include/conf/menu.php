@@ -20,6 +20,7 @@ $menu["menu"]["top"] = array(
 		),
 		"attributes" => array(
 			"href" => "/Map"
+			//"href" => "#Map"
 		)
 	),
 	"Data" => array(

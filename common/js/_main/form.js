@@ -657,31 +657,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 						});
 						form_data.form = selected_forms;
 						
-						$.ask_to_service({
-							op: kAPI_OP_MATCH_UNITS,
-							parameters: {
-								lang: lang,
-								param: {
-									limit: 300,
-									criteria: active_forms,
-									grouping: []
-								}
-							}
-						}, function(res) {
-							console.log(res);
-							$.manage_url("Summary");
-							$("#breadcrumb #goto_form_btn").html('<span class="text-muted fa fa-tasks"></span> <a href="javascript:void(0);" onclick="$.manage_url(\'Forms\');" title="Return to forms panel" data-toggle="tooltip" data-container="body">Forms</a></li>').fadeIn(300);
-							$("#breadcrumb #goto_summary_btn").fadeIn(300);
-							$("#forms").fadeOut(300);
-							
-							$("#summary-head .content-title").html("Research summary");
-							$("#summary-body .content-body").html('<div class="panel panel-success"></div>');
-							$.each(res.results, function(tag, values) {
-								console.log(values);
-								$("#summary-body .content-body > .panel.panel-success").append('<div class="panel-heading"><a href="#" class=""><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></a></div><div class="panel-body"><span class="pull-right"><button class="btn btn-xs btn-default" data-toggle="tooltip" data-container="body" title="View on map"><span class="ionicons ion-map"></span></button></span>' + values[kTAG_DEFINITION] + '</div>');
-							});
-							$("#summary").fadeIn(300);
-						});
+						$.show_summary(active_forms);
 						//console.log(operators);
 						//console.log(JSON.stringify(form_data));
 					});
@@ -696,6 +672,49 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 			}
 		}
 	});
+};
+$.activate_panel = function(type, res) {
+	$.manage_url($.ucfirst(type));
+	$("#" + type).prev().fadeOut(300);
+	
+	$("#" + type + "-head .content-title").html("Research " + type.toLowerCase());
+	$("#" + type + "-body .content-body").html('<div class="panel panel-success"></div>');
+	$.each(res.results, function(tag, values) {
+		$("#" + type + "-body .content-body > .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_data(\'' + res.id + '\', \'' + values + '\')">View raw data <span class="fa fa-th"></span></a><a href="Map#' + res.id + '" class="btn btn-default">View on map <span class="fa fa-map-marker"></a></div>' + values[kTAG_DEFINITION] + '</div>');
+	});
+	$("#" + type + "").fadeIn(300);
+};
+$.show_summary = function(active_forms) {
+	$.ask_to_service({
+		op: kAPI_OP_MATCH_UNITS,
+		parameters: {
+			lang: lang,
+			param: {
+				limit: 300,
+				criteria: active_forms,
+				grouping: []
+			}
+		}
+	}, function(res) {
+		$.activate_panel("summary", res);
+	});
+};
+$.show_data = function(id, data) {
+	/*$.ask_to_service({
+		op: kAPI_OP_MATCH_UNITS,
+		parameters: {
+			lang: lang,
+			param: {
+				limit: 300,
+				criteria: active_forms,
+				grouping: []
+			}
+		}
+	}, function(res) {
+		$.activate_panel("results", res);
+	});
+	*/
+		$.activate_panel("results", data);
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 

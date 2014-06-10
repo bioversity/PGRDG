@@ -8,6 +8,8 @@
 <!-- Jcryption & MD5 -->
 <script type="text/javascript" src="common/js/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="common/js/jquery-md5/jquery.md5.js"></script>
+<!-- Purl (A JavaScript URL parser) -->
+<script type="text/javascript" src="common/js/purl/purl.js"></script>
 <!-- Jquery Choosen -->
 <link rel="stylesheet" href="common/js/chosen/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="common/js/chosen/chosen.jquery.js"></script>

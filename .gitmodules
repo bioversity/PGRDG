@@ -25,3 +25,6 @@
 [submodule "API/Service"]
 	path = API/Service
 	url = git@github.com:milko/OntologyWrapper.git
+[submodule "common/js/purl"]
+	path = common/js/purl
+	url = git@github.com:allmarkedup/purl.git

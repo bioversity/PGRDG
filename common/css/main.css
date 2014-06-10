@@ -48,7 +48,7 @@ header .container {
 header.map .container {
 	padding-left: 5px !important;
 }
-header.map #logo {
+header.map #logo, #logo.map {
 	padding-left: 10px;
 }
 #nav {
@@ -57,7 +57,7 @@ header.map #logo {
     top: 80px;
 	display: table;
 }
-#nav.map {
+#nav.map, header.map #nav {
     top: 45px;
 }
 #nav .fa {
@@ -81,7 +81,7 @@ header.map #logo {
 	margin-top: 15px;
 	padding-right: 15px;
 }
-#logo.map p {
+header.map #logo p, #logo.map p {
 	height: 65px;
 }
 
@@ -99,6 +99,7 @@ section.container {
 	width: 100%;
 	z-index: 2;
 }
+
 #breadcrumb .breadcrumb {
 	background-color: #fff;
 	background-image: linear-gradient(to top, #e0e0e0, rgba(255, 255, 255, 0) 10px, #e0e0e0);
@@ -525,7 +526,7 @@ section.container {
 	width: 50px;
 	z-index: 100;
 }
-#map_toolbox > ul, #map_sub_toolbox > ul {
+#map_toolbox > ul {
 	margin: 0;
 }
 #map_toolbox > ul li, #map_sub_toolbox > ul li {
@@ -601,7 +602,7 @@ section.container {
 #map_sub_toolbox > div {
 	position: fixed;
 	right: 50px;
-	bottom: auto;
+	top: 76px;
 	min-width: 50px;
 	width: auto;
 	z-index: 100;
@@ -612,16 +613,19 @@ section.container {
 	border-right: #333 1px dotted;
 }
 #map_sub_toolbox > div.level0 {
-	margin-top: 76px;
+	/*margin-top: 76px;*/
 }
 #map_sub_toolbox > div.level1 {
-	margin-top: 113px;
+	/*margin-top: 113px;*/
+	margin-top: 37px;
 }
 #map_sub_toolbox > div.level2 {
-	margin-top: 151px;
+	/*margin-top: 151px;*/
+	margin-top: 72px;
 }
 #map_sub_toolbox > div.level3 {
-	margin-top: 184px;
+	/*margin-top: 184px;*/
+	margin-top: 108px;
 }
 #map_sub_toolbox div > ul {
 	margin: 0 0 0 20px;

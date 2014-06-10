@@ -2,7 +2,8 @@
 	<ol class="breadcrumb">
 		<li id="goto_form_btn"><span class="text-muted fa fa-tasks"></span> Forms</li>
 		<li id="goto_summary_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> Summary</li>
-		<li id="goto_resuts_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> Results</li>
+		<li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> Results</li>
+		<li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> Map</li>
 	</ol>
 </div>
 <div id="contents">
@@ -26,5 +27,12 @@
 			<div class="content-body"></div>
 		</div>
 	</div>
-	<div id="results" class="panel_content"></div>
+	<div id="results" class="panel_content">
+		<div id="results-head" class="left panel_content-head container-fluid">
+			<h1 class="content-title"></h1>
+		</div>
+		<div id="results-body" class="left panel_content-body container-fluid">
+			<div class="content-body"></div>
+		</div>
+	</div>
 </div>

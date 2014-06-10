@@ -16,7 +16,10 @@ system_constants,
 operators = [],
 password = $.makeid(),
 auth = false,
-storage = $.localStorage;
+storage = $.localStorage,
+url = $.url().attr(),
+url_paths = url.path.split("/"),
+current_path = url_paths[url_paths.length - 1];
 /*
 -----------------------------------------------------------------------
 */
@@ -180,7 +183,7 @@ $.left_panel = function(subject, width, callback) {
 					}
 				});
 			});
-			$("#breadcrumb").delay(200).animate({"padding-left": width}, 150).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
+			$("#breadcrumb").delay(200).animate({"padding-left": width}, 250).find(".breadcrumb").animate({"padding-left": "15px"}, 250);
 			$(".panel_content-head, .panel_content-body").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
 		}
 	}
@@ -365,23 +368,53 @@ $.manage_url = function(hash) {
 	$.each($("#contents > div:not(:hidden)"), function() {
 		visible_div++;
 	});
-	if(visible_div == 0 && hash.length > 0) {
+	/*
+	if(visible_div == 0 && hash.length > 0 && hash !== "Map") {
 		document.location.hash = "";
 	} else {
+		console.log("97e070da6433b360fd33fac3a1400ba4");
+	*/
 		document.location.hash = hash;
+	/*
+	}
+	*/
+	if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
+		$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
+	}
+	if(hash == "Map") {
+		$("header.main, section.container, #left_panel").addClass("map");
+		$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
+		if($("#breadcrumb").css("top") == "110px") {
+			$("#breadcrumb").css("top", "75px");
+		}
+	} else {
+		if(visible_div > 0 && hash.length > 0) {
+			$("header.main, section.container, #left_panel").removeClass("map");
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
+			if($("#breadcrumb").css("top") == "75px") {
+				$("#breadcrumb").css("top", "110px");
+			}
+		}
 	}
 	
 	$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
 		if($.trim($(this).text()) !== hash) {
 			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + ' <a href="javascript:void(0);" onclick="$.manage_url(\'' + $.trim($(this).text()) + '\');" title="Return to ' + $.trim($(this).text()).toLowerCase() + ' panel">' + $.trim($(this).text()) + '</a>');
-			$(this).find("a").tooltip({container: "body"});
 		} else {
 			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + " " + hash).closest("li").addClass("active");
 		}
 	});
-	if(hash.length > 0) {
-		$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
-		$("#contents #" + hash.toLowerCase()).fadeIn(300);
+	
+	if(hash == "Map") {
+		$("#contents").hide();
+		$.left_panel("close");
+	} else {
+		if(current_path !== "Map") {
+			if(visible_div > 0 && hash.length > 0) {
+				$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
+				$("#contents #" + hash.toLowerCase()).fadeIn(300);
+			}
+		}
 	}
 };
 
@@ -389,10 +422,6 @@ $(document).ready(function() {
 	if(!$.browser_cookie_status()) {
 		apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
 	} else {
-		$.manage_url();
-		window.onhashchange = function() {
-			$.manage_url();
-		}
 		// Use bootstrap apprise instead javascript's alert
 		window.alert = function(string, args, callback) {
 			if(args == undefined) {
@@ -431,5 +460,10 @@ $(document).ready(function() {
 			$("#login-username").focus();
 			if (!data) return e.preventDefault()
 		});
+		
+		window.onhashchange = function() {
+			$.manage_url();
+		}
+		$.manage_url();
 	}
 });
