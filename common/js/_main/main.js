@@ -368,16 +368,13 @@ $.manage_url = function(hash) {
 	$.each($("#contents > div:not(:hidden)"), function() {
 		visible_div++;
 	});
-	/*
-	if(visible_div == 0 && hash.length > 0 && hash !== "Map") {
-		document.location.hash = "";
-	} else {
-		console.log("97e070da6433b360fd33fac3a1400ba4");
-	*/
-		document.location.hash = hash;
-	/*
-	}
-	*/
+		// Redirect if url is not valid
+		if(visible_div == 0 && hash.length > 0) {
+			//document.location.hash = "";
+		} else {
+			document.location.hash = hash;
+		}
+	
 	if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
 		$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
 	}

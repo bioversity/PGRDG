@@ -680,7 +680,7 @@ $.activate_panel = function(type, res) {
 	$("#" + type + "-head .content-title").html("Research " + type.toLowerCase());
 	$("#" + type + "-body .content-body").html('<div class="panel panel-success"></div>');
 	$.each(res.results, function(tag, values) {
-		$("#" + type + "-body .content-body > .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_data(\'' + res.id + '\', \'' + values + '\')">View raw data <span class="fa fa-th"></span></a><a href="Map#' + res.id + '" class="btn btn-default">View on map <span class="fa fa-map-marker"></a></div>' + values[kTAG_DEFINITION] + '</div>');
+		$("#" + type + "-body .content-body > .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_data(\'table\', \'' + res.id + '\', \'' + values + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data(\'map\', \'' + res.id + '\', \'' + values + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div>');
 	});
 	$("#" + type + "").fadeIn(300);
 };
@@ -699,7 +699,7 @@ $.show_summary = function(active_forms) {
 		$.activate_panel("summary", res);
 	});
 };
-$.show_data = function(id, data) {
+$.show_data = function(type, id, data) {
 	/*$.ask_to_service({
 		op: kAPI_OP_MATCH_UNITS,
 		parameters: {
@@ -714,7 +714,11 @@ $.show_data = function(id, data) {
 		$.activate_panel("results", res);
 	});
 	*/
+	if(type == "map") {
+		$.activate_panel("map", data);
+	} else {
 		$.activate_panel("results", data);
+	}
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
