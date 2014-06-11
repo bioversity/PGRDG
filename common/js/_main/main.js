@@ -47,15 +47,17 @@ $.ask_to_service = function(options, callback) {
 			}
 		}
 	}, options);
-	var param, param_nob64, verbose_param;
+	var param, param_nob64, verbose_param, object_param = {};
 	if(typeof(options) == "string") {
-		param = "address=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-		param_nob64 = "address=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-		verbose_param = "address= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		param = "op=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		param_nob64 = "op=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		verbose_param = "op= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		object_param = {op: options, lang: lang, params: {}};
 	} else {
-		param = "address=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
-		param_nob64 = "address=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
-		verbose_param = "address= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
+		param = "op=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
+		param_nob64 = "op=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
+		verbose_param = "op= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
+		object_param = {op: opt[kAPI_REQUEST_OPERATION], lang: opt.parameters[kAPI_REQUEST_LANGUAGE], params: opt.parameters.param};
 	}
 	if(!storage.isEmpty("pgrdg_cache.ask") && storage.isSet("pgrdg_cache.ask." + $.md5(param))) {
 		var response = storage.get("pgrdg_cache.ask." + $.md5(param) + ".response");
@@ -69,6 +71,7 @@ $.ask_to_service = function(options, callback) {
 				console.warn(param);
 				console.warn(param_nob64);
 				console.warn(verbose_param);
+				console.warn(object_param);
 				console.dir(response);
 				console.groupEnd();
 			
@@ -103,7 +106,7 @@ $.ask_to_service = function(options, callback) {
 					type: "ask_service"
 				},
 				success: function(response) {
-					storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "verbose": verbose_param}, "response": response});
+					storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "verbose": verbose_param, "obj": object_param}, "response": response});
 					response.id = $.md5(param);
 					if(response.status.state == "ok") {
 						if(typeof(opt.loaderType) == "string") {
@@ -120,6 +123,7 @@ $.ask_to_service = function(options, callback) {
 							console.warn(param);
 							console.warn(param_nob64);
 							console.warn(verbose_param);
+							console.warn(object_param);
 							console.dir(response);
 							console.groupEnd();
 					}
@@ -149,23 +153,29 @@ $.left_panel = function(subject, width, callback) {
 	});
 	var content_witdth = $("#forms-body").css("width");
 	if($("#left_panel").hasClass("visible") && subject !== "open") {
-		if(subject == "close") {
-			$(".olControlZoom").animate({"left": "10px"}, 200);
-			$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
-				$.resize_forms_mask();
-				$(this).removeClass("visible");
-				
-				// Callback
-				if (typeof callback == "function") {
-					callback.call(this);
-				}
-			});
-			$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb").animate({"padding-left": "35px"}, 200);
-			$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
-				$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
-			});
-		} else {
-			$.left_panel("close");
+		switch(subject) {
+			case "close":
+				$(".olControlZoom").animate({"left": "10px"}, 200);
+				$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
+					$.resize_forms_mask();
+					$(this).removeClass("visible");
+					
+					// Callback
+					if (typeof callback == "function") {
+						callback.call(this);
+					}
+				});
+				$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb").animate({"padding-left": "35px"}, 200);
+				$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
+					$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
+				});
+				break;
+			case "is_closed":
+				return ($("#left_panel").css("left") !== "0px") ? true : false;
+				break;
+			default:
+				$.left_panel("close");
+				break;
 		}
 	} else {
 		if(subject !== "close") {
@@ -363,21 +373,23 @@ $.manage_url = function(hash) {
 	visible_div = 0;
 	
 	if(hash == undefined || hash == null || hash == "") {
-		var hash = (window.location.hash.length > 0) ? window.location.hash.replace("#", "") : "";
+		var hash = ($.trim(url["fragment"]).length > 0) ? $.trim(url["fragment"]) : "";
 	}
+	var has_vars = (hash.split("~").length > 1) ? true : false;
 	$.each($("#contents > div:not(:hidden)"), function() {
 		visible_div++;
 	});
 		// Redirect if url is not valid
-		if(visible_div == 0 && hash.length > 0) {
+		if(visible_div == 0 && hash.length > 0 && !has_vars) {
 			//document.location.hash = "";
 		} else {
-			document.location.hash = hash;
+			//document.location.hash = hash;
 		}
 	
 	if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
 		$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
 	}
+	/*
 	if(hash == "Map") {
 		$("header.main, section.container, #left_panel").addClass("map");
 		$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
@@ -385,6 +397,7 @@ $.manage_url = function(hash) {
 			$("#breadcrumb").css("top", "75px");
 		}
 	} else {
+	*/
 		if(visible_div > 0 && hash.length > 0) {
 			$("header.main, section.container, #left_panel").removeClass("map");
 			$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
@@ -392,20 +405,22 @@ $.manage_url = function(hash) {
 				$("#breadcrumb").css("top", "110px");
 			}
 		}
-	}
+	//}
 	
 	$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
 		if($.trim($(this).text()) !== hash) {
-			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + ' <a href="javascript:void(0);" onclick="$.manage_url(\'' + $.trim($(this).text()) + '\');" title="Return to ' + $.trim($(this).text()).toLowerCase() + ' panel">' + $.trim($(this).text()) + '</a>');
+			$(this).html('<span class="' + $(this).find("span.text-muted").closest("li").find("span").attr("class") + '"></span> <a href="javascript:void(0);" onclick="$.manage_url(\'' + $.trim($(this).text()) + '\');" title="Return to ' + $.trim($(this).text()).toLowerCase() + ' panel">' + $.trim($(this).text()) + '</a>');
 		} else {
-			$(this).html($(this).find("span.text-muted").clone().wrap('<div>').parent().html() + " " + hash).closest("li").addClass("active");
+			$(this).html('<span class="' + $(this).find("span.text-muted").closest("li").find("span").attr("class") + '"></span> ' + hash).closest("li").addClass("active");
 		}
 	});
 	
 	if(hash == "Map") {
-		$("#contents").hide();
 		$.left_panel("close");
 	} else {
+		if($.left_panel("is_closed")) {
+			$.left_panel("open");
+		}
 		if(current_path !== "Map") {
 			if(visible_div > 0 && hash.length > 0) {
 				$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();

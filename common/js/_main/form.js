@@ -177,7 +177,7 @@ $.create_form = function(response) {
 				//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
-				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + term + '" />';
+				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
 				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
 			});
 		});
@@ -677,10 +677,10 @@ $.activate_panel = function(type, res) {
 	$.manage_url($.ucfirst(type));
 	$("#" + type).prev().fadeOut(300);
 	
-	$("#" + type + "-head .content-title").html("Research " + type.toLowerCase());
+	$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
 	$("#" + type + "-body .content-body").html('<div class="panel panel-success"></div>');
-	$.each(res.results, function(tag, values) {
-		$("#" + type + "-body .content-body > .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values.count + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_data(\'table\', \'' + res.id + '\', \'' + values + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data(\'map\', \'' + res.id + '\', \'' + values + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div>');
+	$.each(res.results, function(domain, values) {
+		$("#" + type + "-body .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div>');
 	});
 	$("#" + type + "").fadeIn(300);
 };
@@ -699,7 +699,8 @@ $.show_summary = function(active_forms) {
 		$.activate_panel("summary", res);
 	});
 };
-$.show_data = function(type, id, data) {
+$.show_raw_data = function(type, id, data) {
+	var decrypted_data = jQuery.parseJSON($.b64_to_utf8(data));
 	/*$.ask_to_service({
 		op: kAPI_OP_MATCH_UNITS,
 		parameters: {
@@ -715,10 +716,37 @@ $.show_data = function(type, id, data) {
 	});
 	*/
 	if(type == "map") {
-		$.activate_panel("map", data);
+		$.activate_panel("map", decrypted_data);
 	} else {
-		$.activate_panel("results", data);
+		$.activate_panel("results", decrypted_data);
 	}
+};
+$.show_data_on_map = function(id, domain) {
+	var summaries_data = storage.get("pgrdg_cache.ask." + id),
+	geometry = [],
+	arr = [[13, 48.5], [13, 45.5], [17, 45.5], [17, 48.5], [13, 48.5]];
+	geometry.push(arr);
+	var objp = new Object;
+		objp[kAPI_PAGING_LIMIT] = 300;
+		objp[kAPI_PARAM_LOG_REQUEST] = "true";
+		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
+		objp[kAPI_PARAM_DOMAIN] = domain;
+		objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
+		objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+		objp[kAPI_PARAM_SHAPE] = new Object;
+		objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
+		objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
+	console.log(objp);
+	$.ask_to_service({
+		op: kAPI_OP_MATCH_UNITS,
+		parameters: {
+			lang: lang,
+			param: objp
+		}
+	}, function(res) {
+		console.log(res);
+		//$.activate_panel("results", res);
+	});
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
