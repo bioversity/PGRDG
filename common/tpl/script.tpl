@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="common/js/typeahead/typeahead.css" type="text/css" />
 <script type="text/javascript" src="common/js/typeahead/typeahead.bundle.js"></script>
 
-<?php if(strtolower($page) == "map") { ?>
+<?php //if(strtolower($page) == "map") { ?>
 	<!-- OpenLayers2 -->
 		<!--
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
@@ -31,7 +31,7 @@
 	<script src="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/build/ol.js" type="text/javascript"></script>
 	
 	<script type="text/javascript" src="common/js/_main/map3.js"></script>
-<?php } ?>
+<?php //} ?>
 <script type="text/javascript" src="common/js/_main/main.js"></script>
 <script type="text/javascript" src="common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="common/js/_main/form.js"></script>

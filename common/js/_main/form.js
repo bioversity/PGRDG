@@ -675,14 +675,16 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 };
 $.activate_panel = function(type, res) {
 	$.manage_url($.ucfirst(type));
-	$("#" + type).prev().fadeOut(300);
-	
-	$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
-	$("#" + type + "-body .content-body").html('<div class="panel panel-success"></div>');
-	$.each(res.results, function(domain, values) {
-		$("#" + type + "-body .panel.panel-success").append('<div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div>');
-	});
-	$("#" + type + "").fadeIn(300);
+
+	console.log(type);
+	if(type !== "map") {
+		$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
+		console.log(res.results);
+		$.each(res.results, function(domain, values) {
+			$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
+		});
+	}
+	$("#contents #" + type + "").fadeIn(300);
 };
 $.show_summary = function(active_forms) {
 	$.ask_to_service({
@@ -736,7 +738,6 @@ $.show_data_on_map = function(id, domain) {
 		objp[kAPI_PARAM_SHAPE] = new Object;
 		objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
 		objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
-	console.log(objp);
 	$.ask_to_service({
 		op: kAPI_OP_MATCH_UNITS,
 		parameters: {
@@ -744,8 +745,18 @@ $.show_data_on_map = function(id, domain) {
 			param: objp
 		}
 	}, function(res) {
-		console.log(res);
-		//$.activate_panel("results", res);
+		if(res.paging.affected > 0) {
+			var map_data = [];
+			
+			console.log(res.results);
+			$.each(res.results, function(i, k) {
+				map_data.push(k);
+			});
+			console.log(map_data);
+			$.activate_panel("map", map_data);
+		} else {
+			alert("No results");
+		}
 	});
 };
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

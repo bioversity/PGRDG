@@ -49,14 +49,14 @@ $.ask_to_service = function(options, callback) {
 	}, options);
 	var param, param_nob64, verbose_param, object_param = {};
 	if(typeof(options) == "string") {
-		param = "op=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-		param_nob64 = "op=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-		verbose_param = "op= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		param = "address=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		param_nob64 = "address=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+		verbose_param = "address= BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 		object_param = {op: options, lang: lang, params: {}};
 	} else {
-		param = "op=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
-		param_nob64 = "op=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
-		verbose_param = "op= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
+		param = "address=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
+		param_nob64 = "address=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
+		verbose_param = "address= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
 		object_param = {op: opt[kAPI_REQUEST_OPERATION], lang: opt.parameters[kAPI_REQUEST_LANGUAGE], params: opt.parameters.param};
 	}
 	if(!storage.isEmpty("pgrdg_cache.ask") && storage.isSet("pgrdg_cache.ask." + $.md5(param))) {
@@ -106,7 +106,7 @@ $.ask_to_service = function(options, callback) {
 					type: "ask_service"
 				},
 				success: function(response) {
-					storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "verbose": verbose_param, "obj": object_param}, "response": response});
+					storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 					response.id = $.md5(param);
 					if(response.status.state == "ok") {
 						if(typeof(opt.loaderType) == "string") {
@@ -372,24 +372,31 @@ $.manage_url = function(hash) {
 	var active_li = 0,
 	visible_div = 0;
 	
+	console.log(hash);
 	if(hash == undefined || hash == null || hash == "") {
-		var hash = ($.trim(url["fragment"]).length > 0) ? $.trim(url["fragment"]) : "";
+		var hash = "";
 	}
 	var has_vars = (hash.split("~").length > 1) ? true : false;
 	$.each($("#contents > div:not(:hidden)"), function() {
 		visible_div++;
 	});
+	console.log(visible_div, hash, hash.length);
 		// Redirect if url is not valid
-		if(visible_div == 0 && hash.length > 0 && !has_vars) {
-			//document.location.hash = "";
+		/*
+		if(visible_div == 0 && hash.length > 0/* && !has_vars* /) {
+			document.location.hash = hash;
 		} else {
-			//document.location.hash = hash;
+			document.location.hash = "";
+		}
+		*/
+		if(hash.length > 0) {
+			document.location.hash = hash;
 		}
 	
 	if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
 		$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
 	}
-	/*
+	$("#contents .panel_content").fadeOut(300);
 	if(hash == "Map") {
 		$("header.main, section.container, #left_panel").addClass("map");
 		$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
@@ -397,15 +404,13 @@ $.manage_url = function(hash) {
 			$("#breadcrumb").css("top", "75px");
 		}
 	} else {
-	*/
-		if(visible_div > 0 && hash.length > 0) {
-			$("header.main, section.container, #left_panel").removeClass("map");
-			$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
-			if($("#breadcrumb").css("top") == "75px") {
-				$("#breadcrumb").css("top", "110px");
-			}
+		$("header.main, section.container, #left_panel").removeClass("map");
+		$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
+		if($("#breadcrumb").css("top") == "75px") {
+			$("#breadcrumb").css("top", "110px");
 		}
-	//}
+	}
+	$("#" + hash.toLowerCase()).fadeIn(300);
 	
 	$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
 		if($.trim($(this).text()) !== hash) {

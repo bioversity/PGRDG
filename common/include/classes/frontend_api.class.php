@@ -121,7 +121,7 @@ class frontend_api {
 	/* PUBLIC FUNCTIONS */
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 	
-	public function get_definitions($type, $keep_update, $response_type = "all") {
+	public function get_definitions($type, $keep_update, $response_type = "string") {
 		switch(strtolower($type)) {
 			case "api":			$def_file = "Api.inc.php";				break;
 			case "domains":		$def_file = "Domains.inc.php";			break;
