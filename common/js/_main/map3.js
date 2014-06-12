@@ -74,7 +74,6 @@ overlayStyle = (function() {
 	};
 	/* jshint +W069 */
 })();
-
 exampleNS.getRendererFromQueryString = function() {
 	var obj = {}, queryString = location.search.slice(1), re = /([^&=]+)=([^&]*)/g, m;
 	
@@ -261,6 +260,31 @@ $.init_map = function() {
 		var pixel = map.getEventPixel(evt.originalEvent);
 		displayFeatureInfo(pixel);
 	});
+	
+	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
+		if(!$("#pgrdg_map").hasClass("locked")) {
+			$("#pgrdg_map").on("mousedown touchstart", function(em) {
+				var startX = em.clientX,
+				startY = em.clientY;
+				$("#pgrdg_map").mousemove(function(emm) {
+					console.log(startX, startY, "dragging...");
+					if(Math.abs(startX - emm.clientX) > 1 && Math.abs(startY - emm.clientY) > 1) {
+						$("#pgrdg_map").addClass("grabbing");
+					} else {
+						$(this).removeClass("grabbing");
+					}
+				});
+			}).on("mouseup touchend", function() {
+				$("#pgrdg_map").unbind("mousemove");
+				$(this).removeClass("grabbing");
+			});
+			$.contextMenu(true);
+		} else {
+			$.contextMenu(false);
+		}
+		$("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
+		$.render_layers_on_menu();
+		$(".popover a[title]").tooltip();
 };
 
 /**
@@ -521,11 +545,13 @@ $.toggle_lock_view = function() {
 		$.reset_map_toolbox();
 		$.disable_map_toolbox();
 		$("#selected_zone").text("Map locked").show();
+		$("#goto_map_btn").append('<sup class="lock"> <span class="fa fa-lock text-danger"></span></sup>');
 	} else {
 		$("#pgrdg_map").removeClass("locked");
 		$("#lock_view_btn").removeClass("pulse");
 		$.enable_map_toolbox();
 		$("#selected_zone").text("Map unlocked").show().delay(2000).fadeOut(600);
+		$("#goto_map_btn").find("sup.lock").remove();
 	}
 };
 $.show_guides = function() {
@@ -759,6 +785,7 @@ $.add_marker = function(options) {
 		uuid: $.uuid(),
 		name: "",
 		title: "",
+		cloud: true,
 		marker_class: "primary",
 		content: "Sample text",
 		callback: function() {}	
@@ -777,7 +804,7 @@ $.add_marker = function(options) {
 	var marker = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
-		element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+		element: (options.cloud) ? $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
 					cursor: "pointer"
 				}).popover({
 					html: true,
@@ -787,7 +814,7 @@ $.add_marker = function(options) {
 					trigger: "click"
 				}).bind("click", function() {
 					console.log(options.lon, options.lat);
-				}),
+				}) : $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>'),
 		stopEvent: false
 	});
 	map.addOverlay(marker);
@@ -1017,29 +1044,4 @@ $.contextMenu = function() {
 }
 
 $(document).ready(function() {
-	$.init_map();
-	$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
-	if(!$("#pgrdg_map").hasClass("locked")) {
-		$("#pgrdg_map").on("mousedown touchstart", function(em) {
-			var startX = em.clientX,
-			startY = em.clientY;
-			$("#pgrdg_map").mousemove(function(emm) {
-				console.log(startX, startY, "dragging...");
-				if(Math.abs(startX - emm.clientX) > 1 && Math.abs(startY - emm.clientY) > 1) {
-					$("#pgrdg_map").addClass("grabbing");
-				} else {
-					$(this).removeClass("grabbing");
-				}
-			});
-		}).on("mouseup touchend", function() {
-			$("#pgrdg_map").unbind("mousemove");
-			$(this).removeClass("grabbing");
-		});
-		$.contextMenu(true);
-	} else {
-		$.contextMenu(false);
-	}
-	$("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
-	$.render_layers_on_menu();
-	$(".popover a[title]").tooltip();
 });

@@ -1,9 +1,9 @@
 <div id="breadcrumb">
 	<ol class="breadcrumb">
-		<li id="goto_form_btn"><span class="text-muted fa fa-tasks"></span> Forms</li>
-		<li id="goto_summary_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> Summary</li>
-		<li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> Results</li>
-		<li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> Map</li>
+		<li id="goto_forms_btn"><span class="text-muted fa fa-tasks"></span> <span class="txt">Forms</span></li>
+		<li id="goto_summary_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
+		<li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>
+		<li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> <span class="txt">Map<span></li>
 	</ol>
 </div>
 <div id="contents">
@@ -39,7 +39,7 @@
 		<?php require_once("common/tpl/map_toolbox.tpl"); ?>
 		
 		<div id="map_hidden_elements" style="display: none;"></div>
-		<div id="pgrdg_map"></div>
-		<script src="common/js/polyfills.js"></script>
+		<!--script src="common/js/polyfills.js"></script-->
 	</div>
+	<div id="pgrdg_map"></div>
 </div>

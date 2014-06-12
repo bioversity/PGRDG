@@ -92,16 +92,16 @@ section.container {
 }
 
 #breadcrumb {
-	background-color: #FFFFFF;
+	background-color: transparent;
 	padding-left: 488px;
 	position: fixed;
-	top: 75px;
+	top: 70px;
 	width: 100%;
 	z-index: 2;
 }
 
 #breadcrumb .breadcrumb {
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.85);
 	background-image: linear-gradient(to top, #e0e0e0, rgba(255, 255, 255, 0) 10px, #e0e0e0);
 	background-image: -moz-linear-gradient(to top, #e0e0e0, rgba(255, 255, 255, 0) 10px, #e0e0e0);
 	background-image: webkit-linear-gradient(to top, #e0e0e0, rgba(255, 255, 255, 0) 10px, #e0e0e0);
@@ -109,6 +109,8 @@ section.container {
 	background-image: -ms-linear-gradient(to top, #e0e0e0, rgba(255, 255, 255, 0) 10px, #e0e0e0);
 	border-radius: 0;
 	margin: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .panel_content {
@@ -430,6 +432,8 @@ section.container {
 }
 
 #pgrdg_map {
+	display: none;
+	background-color: #000;
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -494,8 +498,9 @@ section.container {
 	font-family: "HelveticaNeueW01-45Ligh";
 	text-shadow: 0 0 3px #333;
 	font-size: 0.9em;
-	bottom: 30px;
-	left: 7.5px;
+	bottom: 40px;
+	/*left: 40px;*/
+	left: 20px;
 	position: absolute;
 	text-align: left;
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
@@ -780,7 +785,8 @@ section.container {
 	background-color: rgba(255, 255, 255, 0.85) !important;
 }
 .ol-zoom {
-	top: 90px !important;
+	top: 120px !important;
+	/*top: 170px !important;*/
 	padding: 1px !important;
 }
 .ol-zoom-extent {
@@ -818,6 +824,7 @@ section.container {
 }
 .ol-scale-line {
 	background-color: rgba(0, 0, 0, 0.7) !important;
+	margin-left: 10px;
 }
 .ol-full-screen {
 	

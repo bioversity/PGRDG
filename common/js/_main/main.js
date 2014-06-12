@@ -165,9 +165,14 @@ $.left_panel = function(subject, width, callback) {
 						callback.call(this);
 					}
 				});
-				$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb").animate({"padding-left": "35px"}, 200);
+				$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb");
+				if(document.location.hash !== "#Map") {
+					$("#breadcrumb").animate({"padding-left": "35px"}, 200);
+				}
 				$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
-					$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
+					if(document.location.hash !== "#Map") {
+						$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
+					}
 				});
 				break;
 			case "is_closed":
@@ -355,12 +360,11 @@ $.shortcuts = function() {
 		}
 	});
 	
-	if($("header").hasClass("map")) {
-		$("#find_location input").bind("keydown", "return", function() {
-			$.sub_toolbox("find_location");
-			$.search_location($(this).val());
-		});
-	}
+	$("header.map #find_location input").bind("keydown", "return", function() {
+		alert("ok");
+		$.sub_toolbox("find_location");
+		$.search_location($(this).val());
+	});
 };
 $.show_help = function() {
 	if($("header").hasClass("map")) {
@@ -372,64 +376,64 @@ $.manage_url = function(hash) {
 	var active_li = 0,
 	visible_div = 0;
 	
-	console.log(hash);
 	if(hash == undefined || hash == null || hash == "") {
 		var hash = "";
 	}
-	var has_vars = (hash.split("~").length > 1) ? true : false;
 	$.each($("#contents > div:not(:hidden)"), function() {
 		visible_div++;
 	});
-	console.log(visible_div, hash, hash.length);
-		// Redirect if url is not valid
-		/*
-		if(visible_div == 0 && hash.length > 0/* && !has_vars* /) {
-			document.location.hash = hash;
+	if(hash.length > 0) {
+		document.location.hash = hash;
+	
+		if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
+			$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
+		}
+		if(hash == "Map") {
+			$("header.main, section.container, #left_panel").addClass("map");
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
+			if($("#breadcrumb").css("top") == "110px") {
+				$("#breadcrumb").css("top", "75px");
+			}
+			$("#pgrdg_map").fadeIn(600);
 		} else {
-			document.location.hash = "";
+			$("header.main, section.container, #left_panel").removeClass("map");
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
+			if($("#breadcrumb").css("top") == "75px") {
+				$("#breadcrumb").css("top", "110px");
+			}
 		}
-		*/
-		if(hash.length > 0) {
-			document.location.hash = hash;
-		}
-	
-	if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
-		$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
-	}
-	$("#contents .panel_content").fadeOut(300);
-	if(hash == "Map") {
-		$("header.main, section.container, #left_panel").addClass("map");
-		$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
-		if($("#breadcrumb").css("top") == "110px") {
-			$("#breadcrumb").css("top", "75px");
-		}
-	} else {
-		$("header.main, section.container, #left_panel").removeClass("map");
-		$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
-		if($("#breadcrumb").css("top") == "75px") {
-			$("#breadcrumb").css("top", "110px");
-		}
-	}
-	$("#" + hash.toLowerCase()).fadeIn(300);
-	
-	$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
-		if($.trim($(this).text()) !== hash) {
-			$(this).html('<span class="' + $(this).find("span.text-muted").closest("li").find("span").attr("class") + '"></span> <a href="javascript:void(0);" onclick="$.manage_url(\'' + $.trim($(this).text()) + '\');" title="Return to ' + $.trim($(this).text()).toLowerCase() + ' panel">' + $.trim($(this).text()) + '</a>');
+		// Show the content in page
+		$("#" + hash.toLowerCase()).fadeIn(300);
+		
+		$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
+			var item_id = $(this).attr("id"),
+			ttext = item_id.replace("goto_", "").replace("_btn", "");
+			
+			if(hash.length > 0) {
+				if($.trim($("#" + item_id).text()) !== hash) {
+					var blink_title = "Return to " + ttext + " panel";
+					
+					$(this).find("span.txt").html('<a href="javascript:void(0);" onclick="$.manage_url(\'' + $.ucfirst(ttext) + '\');" title="' + blink_title + '">' + $.ucfirst(ttext) + '</a>').closest("li").removeClass("active");
+				} else {
+					$(this).find("span.txt").text(hash).closest("li").addClass("active");
+				}
+				$("#breadcrumb a").tooltip({container: "body"});
+				$("#breadcrumb a").bind("click mousedown", function() { $(this).tooltip("hide"); });
+			}
+			
+		});
+		
+		if(hash == "Map") {
+			$.left_panel("close");
 		} else {
-			$(this).html('<span class="' + $(this).find("span.text-muted").closest("li").find("span").attr("class") + '"></span> ' + hash).closest("li").addClass("active");
-		}
-	});
-	
-	if(hash == "Map") {
-		$.left_panel("close");
-	} else {
-		if($.left_panel("is_closed")) {
-			$.left_panel("open");
-		}
-		if(current_path !== "Map") {
-			if(visible_div > 0 && hash.length > 0) {
-				$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
-				$("#contents #" + hash.toLowerCase()).fadeIn(300);
+			if($.left_panel("is_closed")) {
+				$.left_panel("open");
+			}
+			if(current_path !== "Map") {
+				if(hash.length > 0) {
+					$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
+					$("#contents #" + hash.toLowerCase()).fadeIn(300);
+				}
 			}
 		}
 	}
@@ -478,6 +482,7 @@ $(document).ready(function() {
 			if (!data) return e.preventDefault()
 		});
 		
+		document.location.hash = "";
 		window.onhashchange = function() {
 			$.manage_url();
 		}

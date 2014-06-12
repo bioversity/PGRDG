@@ -673,18 +673,38 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 		}
 	});
 };
-$.activate_panel = function(type, res) {
+$.activate_panel = function(type, options) {
+	var options = $.extend({
+		res: ""
+	}, options)
+	
 	$.manage_url($.ucfirst(type));
 
-	console.log(type);
+	//console.log(type);
 	if(type !== "map") {
 		$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
-		console.log(res.results);
-		$.each(res.results, function(domain, values) {
-			$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
+		
+		$.each(options.res.results, function(domain, values) {
+			$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
+		});
+		$("#contents #" + type + "").fadeIn(300);
+	} else {
+		if($("#pgrdg_map").children().length == 0) {
+			$.init_map();
+		}
+		$("#pgrdg_map").fadeIn(600);
+		$.each(options.res, function(k, v) {
+			console.log(v);
+			if(v[options.shape].type == "Point") {
+				$.add_marker({
+					uuid: $.md5(v["_id"]),
+					lon: v[options.shape].coordinates[0],
+					lat: v[options.shape].coordinates[1],
+					cloud: false
+				});
+			}
 		});
 	}
-	$("#contents #" + type + "").fadeIn(300);
 };
 $.show_summary = function(active_forms) {
 	$.ask_to_service({
@@ -698,7 +718,7 @@ $.show_summary = function(active_forms) {
 			}
 		}
 	}, function(res) {
-		$.activate_panel("summary", res);
+		$.activate_panel("summary", {res: res});
 	});
 };
 $.show_raw_data = function(type, id, data) {
@@ -714,13 +734,13 @@ $.show_raw_data = function(type, id, data) {
 			}
 		}
 	}, function(res) {
-		$.activate_panel("results", res);
+		$.activate_panel("results", {res: res});
 	});
 	*/
 	if(type == "map") {
-		$.activate_panel("map", decrypted_data);
+		$.activate_panel("map", {res: decrypted_data});
 	} else {
-		$.activate_panel("results", decrypted_data);
+		$.activate_panel("results", {res: decrypted_data});
 	}
 };
 $.show_data_on_map = function(id, domain) {
@@ -745,6 +765,7 @@ $.show_data_on_map = function(id, domain) {
 			param: objp
 		}
 	}, function(res) {
+			console.log(res);
 		if(res.paging.affected > 0) {
 			var map_data = [];
 			
@@ -752,8 +773,7 @@ $.show_data_on_map = function(id, domain) {
 			$.each(res.results, function(i, k) {
 				map_data.push(k);
 			});
-			console.log(map_data);
-			$.activate_panel("map", map_data);
+			$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
 		} else {
 			alert("No results");
 		}
