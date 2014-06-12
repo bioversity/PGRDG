@@ -178,7 +178,7 @@ $.create_form = function(response) {
 				
 				var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
 				secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
-				html_form += '<div class="' + form_size + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
+				html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
 			});
 		});
 		
@@ -199,7 +199,7 @@ $.create_form = function(response) {
 /**
 /* Change behavior depending if form is checked
 */
-$.toggle_form_item = function(item, enumeration) {
+$.toggle_form_item = function(item, tag) {
 	var $this = item,
 	data = [];
 	if($this.hasClass("panel-mask")) {
@@ -210,6 +210,10 @@ $.toggle_form_item = function(item, enumeration) {
 		$panel_mask = $panel.prev(".panel-mask");
 	}
 	if($panel.find("a.pull-left span, a.pull-right span").hasClass("fa-square-o")) {
+		// Disable other items with same tag
+		$("." + $.md5(tag) + " > div.panel-mask").addClass("unselectable").attr("noclick", $("." + $.md5(tag) + " > div.panel-mask").attr("onclick")).attr("onclick", "");
+		$this.closest("vcenter").removeClass("unselectable").attr("onclick", $("." + $.md5(tag) + " > div.panel-mask").attr("noclick")).attr("noclick", "");
+		
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Disable this item").tooltip("hide").find("span").removeClass("fa-square-o").addClass("fa-check-square-o");
 		$panel.removeClass("disabled").attr("data-original-title", "").tooltip("destroy").find(".panel-heading h3 > span, .panel-body").removeClass("disabled");
 		$panel.find("input").attr("disabled", false).closest(".panel").find("input:not([type=hidden])").first().focus();
@@ -224,7 +228,7 @@ $.toggle_form_item = function(item, enumeration) {
 			var treeselect_id = $panel.find("a.treeselect").attr("id");
 			var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
 			
-			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: enumeration}}}, function(res) {
+			$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: tag}}}, function(res) {
 				$panel.find("a.treeselect").removeClass("disabled");
 				$.each(res.results, function(k, v) {
 					treeselect_content += $.create_tree(v, $panel);
@@ -296,6 +300,9 @@ $.toggle_form_item = function(item, enumeration) {
 		$panel_mask.fadeOut(300);
 		$(".save_btn").removeClass("disabled");
 	} else {
+		// Anable all items with same tag
+		$("." + $.md5(tag) + " > div.panel-mask").removeClass("unselectable").attr("onclick", $("." + $.md5(tag) + " > div.panel-mask").attr("noclick")).attr("noclick", "");
+		
 		var forms_count = 0;
 		$panel_mask.fadeIn(300);
 		$panel.find("a.pull-left, a.pull-right").attr("data-original-title", "Enable this item").tooltip("hide").find("span").removeClass("fa-check-square-o").addClass("fa-square-o");
@@ -431,7 +438,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		remote: {
 			url: service_url + "%QUERY",
 			replace: function(url, query) {
-				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+				var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 				return url.replace("%QUERY", state);
 			},
@@ -475,7 +482,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-		//kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 		kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
 		$.execTraitAutocomplete(kAPI, function(response) {
@@ -522,7 +529,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS] = new Object;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-				//kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 				kAPI["parameters"][kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
 				
@@ -646,11 +653,28 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 							$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
 								var af_obj = $(this).find("form").serializeObject();
 								
-								if(af_obj["input-type"] == "input-enum") {
-									var rt = {};
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-									active_forms[af_obj.tags] = rt;
+								switch(af_obj["input-type"]) {
+									case kAPI_PARAM_INPUT_ENUM:
+										var rt = {};
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+										active_forms[af_obj.tags] = rt;
+										break;
+									case kAPI_PARAM_INPUT_RANGE:
+										var rt = {};
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
+										rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
+										rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+										active_forms[af_obj.tags] = rt;
+										break;
+									case kAPI_PARAM_INPUT_STRING:
+										var rt = {};
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+										rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+										active_forms[af_obj.tags] = rt;
+										break;
 								}
 								selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
 							});
@@ -684,6 +708,7 @@ $.activate_panel = function(type, options) {
 	if(type !== "map") {
 		$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
 		
+		$("#" + type + "-body .content-body").html("");
 		$.each(options.res.results, function(domain, values) {
 			$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
 		});
@@ -694,14 +719,18 @@ $.activate_panel = function(type, options) {
 		}
 		$("#pgrdg_map").fadeIn(600);
 		$.each(options.res, function(k, v) {
-			console.log(v);
 			if(v[options.shape].type == "Point") {
+				//console.warn(options.res);
+				/*
 				$.add_marker({
 					uuid: $.md5(v["_id"]),
+					type: "marker",
+					size: "0.75em",
 					lon: v[options.shape].coordinates[0],
 					lat: v[options.shape].coordinates[1],
 					cloud: false
 				});
+				*/
 			}
 		});
 	}
@@ -744,12 +773,14 @@ $.show_raw_data = function(type, id, data) {
 	}
 };
 $.show_data_on_map = function(id, domain) {
+	console.log(id, domain);
 	var summaries_data = storage.get("pgrdg_cache.ask." + id),
 	geometry = [],
-	arr = [[13, 48.5], [13, 45.5], [17, 45.5], [17, 48.5], [13, 48.5]];
+	arr = $.get_current_bbox_pgrdg(default_bbox);
+	console.log(arr);
 	geometry.push(arr);
 	var objp = new Object;
-		objp[kAPI_PAGING_LIMIT] = 300;
+		objp[kAPI_PAGING_LIMIT] = 10000;
 		objp[kAPI_PARAM_LOG_REQUEST] = "true";
 		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
 		objp[kAPI_PARAM_DOMAIN] = domain;
@@ -769,7 +800,7 @@ $.show_data_on_map = function(id, domain) {
 		if(res.paging.affected > 0) {
 			var map_data = [];
 			
-			console.log(res.results);
+			//console.log(res.results);
 			$.each(res.results, function(i, k) {
 				map_data.push(k);
 			});
@@ -836,7 +867,7 @@ $.add_input = function(options) {
 			}
 		}
 	});
-	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_STRING + '" /><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
+	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_STRING + '" /><input id="' + options.id + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
 };
 
 /**

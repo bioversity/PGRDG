@@ -848,12 +848,14 @@ section.container {
 	background-color: #0ff;
 }
 .cluster.primary {
-	background-color: #ff0000;
-	box-shadow: 0 0 12px 12px #ff0000;
+  background-color: rgba(255, 0, 0, 0.5);
+  border-radius: 1em;
+  box-shadow: 0 0 6px 6px rgba(255, 0, 0, 0.5);
 }
 .cluster.secondary {
-	background-color: #0ff;
-	box-shadow: 0 0 12px 12px #0ff;
+  background-color: rgba(0, 255, 255, 0.5);
+  border-radius: 1em;
+  box-shadow: 0 0 6px 6px rgba(0, 255, 255, 0.5);
 }
 .popover {
 	z-index: auto;

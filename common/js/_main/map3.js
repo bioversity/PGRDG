@@ -6,6 +6,7 @@ OpenLayers 3 based map
 var lon = 12,
 lat = 55,
 zoom = 4,
+default_bbox = [-31, 30, 65, 72],
 map, view,
 vector_measurement, source_measurement, draw,
 select, modify,
@@ -267,7 +268,6 @@ $.init_map = function() {
 				var startX = em.clientX,
 				startY = em.clientY;
 				$("#pgrdg_map").mousemove(function(emm) {
-					console.log(startX, startY, "dragging...");
 					if(Math.abs(startX - emm.clientX) > 1 && Math.abs(startY - emm.clientY) > 1) {
 						$("#pgrdg_map").addClass("grabbing");
 					} else {
@@ -275,6 +275,7 @@ $.init_map = function() {
 					}
 				});
 			}).on("mouseup touchend", function() {
+					console.log($.get_current_bbox_pgrdg($.get_current_bbox_epsg()));
 				$("#pgrdg_map").unbind("mousemove");
 				$(this).removeClass("grabbing");
 			});
@@ -292,6 +293,10 @@ Position functions
 */
 $.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); }
 $.get_current_bbox = function() { return map.getView().getView2D().calculateExtent(map.getSize()); }
+$.get_current_bbox_epsg = function() { return ol.proj.transform(map.getView().getView2D().calculateExtent(map.getSize()), "EPSG:3857", "EPSG:4326"); }
+$.get_current_bbox_pgrdg = function(default_bbox) {
+	return [[default_bbox[0], default_bbox[3]], [default_bbox[2], default_bbox[3]], [default_bbox[2], default_bbox[1]], [default_bbox[0], default_bbox[1]], [default_bbox[0], default_bbox[3]]];
+}
 
 $.set_lonlat = function(lon, lat) { return ol.proj.transform([parseFloat(lon), parseFloat(lat)], "EPSG:4326", "EPSG:3857"); };
 $.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([parseFloat(a), parseFloat(b), parseFloat(c), parseFloat(d)], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
@@ -783,9 +788,11 @@ $.add_marker = function(options) {
 		lon: 0,
 		lat: 0,
 		uuid: $.uuid(),
+		type: "marker",
 		name: "",
 		title: "",
 		cloud: true,
+		size: "1.5em",
 		marker_class: "primary",
 		content: "Sample text",
 		callback: function() {}	
@@ -804,7 +811,7 @@ $.add_marker = function(options) {
 	var marker = new ol.Overlay({
 		position: $.set_lonlat(options.lon, options.lat),
 		positioning: "center-center",
-		element: (options.cloud) ? $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+		element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
 					cursor: "pointer"
 				}).popover({
 					html: true,
@@ -814,7 +821,7 @@ $.add_marker = function(options) {
 					trigger: "click"
 				}).bind("click", function() {
 					console.log(options.lon, options.lat);
-				}) : $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>'),
+				}) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
 		stopEvent: false
 	});
 	map.addOverlay(marker);
