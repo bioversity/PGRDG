@@ -20,7 +20,6 @@ header > div.container {
 	padding: 0 5px;
 }
 header {
-	position: fixed;
 	width: 100%;
 	z-index: 3;
 	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
@@ -60,7 +59,7 @@ header.map #logo, #logo.map {
 #nav.map, header.map #nav {
     top: 45px;
 }
-#nav .fa {
+#nav .fa, #nav .ionicons {
 	color: #666;
 }
 #nav li > a {
@@ -88,14 +87,15 @@ header.map #logo p, #logo.map p {
 section.container {
 	max-width: 100%;
     width: 100%;
-	padding: 110px 0 0 0;
+	padding: 39px 0 0 0;
 }
 
 #breadcrumb {
+	display: none;
 	background-color: transparent;
-	padding-left: 488px;
+	padding-left: 0;
 	position: fixed;
-	top: 70px;
+	top: 111px;
 	width: 100%;
 	z-index: 2;
 }
@@ -441,6 +441,7 @@ section.container {
 	right: 0;
 	bottom: 0;
 	left: 0;
+	margin-top: 75px;
 	z-index: 1;
 	cursor: hand;
 	cursor: grab;
@@ -645,7 +646,7 @@ section.container {
 	padding: 0;
 	margin: 7.5px 0;
 }
-#map_sub_toolbox span.fa {
+#map_sub_toolbox span.fa, #map_sub_toolbox span.ionicons {
 	color: #dedede;
 }
 #map_sub_toolbox span.fa-circle-o {
@@ -733,8 +734,9 @@ section.container {
 /* Adjustements */
 .navbar .divider-vertical, .navbar .vertical-divider {
 	height: 29px;
-	border-left: 1px solid #eee;
+	border-left: 1px solid #e0e0e0;
 	border-right: 1px solid #ffffff;
+	margin: 0 5px !important;
 }
 /* OpenLayers 2 */
 	.olControlPanZoomBar, .olControlZoom {
@@ -785,7 +787,7 @@ section.container {
 	background-color: rgba(255, 255, 255, 0.85) !important;
 }
 .ol-zoom {
-	top: 120px !important;
+	top: 65px !important;
 	/*top: 170px !important;*/
 	padding: 1px !important;
 }
@@ -800,6 +802,7 @@ section.container {
 	bottom: 10px !important;
 	background-color: rgba(255, 255, 255, 0.6) !important;
 	border-radius: 20px;
+	position: fixed !important;
 }
 .ol-attribution.open {
 	border-top-left-radius: 12px;
@@ -825,6 +828,15 @@ section.container {
 .ol-scale-line {
 	background-color: rgba(0, 0, 0, 0.7) !important;
 	margin-left: 10px;
+	position: fixed;
+}
+.custom-mouse-position {
+	color: #fff;
+	font-size: 9px;
+	position: fixed !important;
+	left: 8px;
+	text-align: left;
+	top: 122px;
 }
 .ol-full-screen {
 	

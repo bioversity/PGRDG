@@ -1,18 +1,80 @@
 <?php
 $menu["menu"]["top"] = array(
-	"Filter" => array(
+	"Left panel" => array(
+		"show_on_page" => "Search",
 		// Here you are defining the <a> tag
 		"content" => array(
 			// You can see all available icons here => http://fortawesome.github.io/Font-Awesome/icons/
 			"icon" => "fa fa-search",
-			"text" => "Filter"
+			"text" => "Left panel",
+			"title" => "Open/close left panel"
 		),
 		"attributes" => array(
 			"onclick" => "$.left_panel('filter');",
 			"href" => "javascript:void(0);",
 			"title" => "Open/close left panel"
+		),
+		"divider" => "vertical-divider"
+	),
+	"Home" => array(
+		"content" => array(
+			"icon" => "fa fa-home",
+			"text" => "Home"
+		),
+		"attributes" => array(
+			"href" => "/",
+			"title" => "Go to Main Page"
 		)
 	),
+	"About us" => array(
+		"content" => array(
+			"icon" => "fa fa-leaf",
+			"text" => "About us"
+		),
+		"attributes" => array(
+			"href" => "/About_us"
+		)
+	),
+	"National Inventories" => array(
+		"content" => array(
+			"icon" => "fa fa-sitemap",
+			"text" => "National Inventories"
+		),
+		"attributes" => array(
+			"href" => "/National_Inventories"
+		),
+		"childs" => array(
+			"National Checklists" => array(
+				"content" => array(
+					"icon" => "fa fa-list",
+					"text" => "National Checklists"
+				),
+				"attributes" => array(
+					"href" => "/National_Checklists"
+				)
+			),
+			"Conservation Strategies" => array(
+				"content" => array(
+					"icon" => "ionicons ion-fork-repo",
+					"text" => "Conservation Strategies"
+				),
+				"attributes" => array(
+					"href" => "/Conservation_Strategies"
+				)
+			)
+		)
+	),
+	"Search" => array(
+		"content" => array(
+			"icon" => "fa fa-search",
+			"text" => "Search"
+		),
+		"attributes" => array(
+			"href" => "/Search"
+		),
+		"divider" => "vertical-divider"
+	),
+	/*
 	"Map" => array(
 		"content" => array(
 			"icon" => "fa fa-globe",
@@ -42,6 +104,7 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
+	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",

@@ -624,6 +624,9 @@ $.reset_all_searches = function(ask) {
 	}
 };
 $.execTraitAutocomplete = function(kAPI, callback) {
+	if($("#breadcrumb").css("display") == "none") {
+		$("#breadcrumb").fadeIn(200);
+	}
 	$.ask_to_service(kAPI, function(response) {
 		if (typeof callback == "function") {
 			if(response.paging.affected > 0) {
@@ -633,7 +636,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 						$.reset_all_searches();
 					});
 				});
-				$("section.container").animate({"padding-top": "145px"});
+				$("section.container").animate({"padding-top": "39px"});
 				$("#breadcrumb").animate({"top": "110px"});
 				if($("#forms-head .btn-group a.save_btn").length == 0) {
 					$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
@@ -709,9 +712,82 @@ $.activate_panel = function(type, options) {
 		$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
 		
 		$("#" + type + "-body .content-body").html("");
-		$.each(options.res.results, function(domain, values) {
-			$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
-		});
+		if(type !== "results") {
+			$.each(options.res.results, function(domain, values) {
+				$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
+			});
+		} else {
+			console.log(options.res);
+			var collection = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_COLLECTION],
+			dictionary = options.res[kAPI_RESULTS_DICTIONARY];
+			$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
+				var cols, cells, tag_codes = [], column = [];
+				
+				////////////////////////////////////////////////////////////////////////////// CREATE SERVICE DATA MANAGEMENT FUNCTION
+				$.each(dictionary[kAPI_DICTIONARY_LIST_COLS], function(c, tag_code) {
+					var tag_id = dictionary[kAPI_DICTIONARY_TAGS][tag_code];
+					tag_codes.push(tag_code);
+					column.push({
+						label: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL],
+						description: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DESCRIPTION],
+						type: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DATA_TYPE]
+					});
+					// Fare le popover per le description
+					cols += '<th>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL] + '</th>';
+				});
+				
+				$("table#" + options.res.id).html('<thead><tr>' + cols + '</tr></thead><tbody></tbody>');
+					console.dir(column);
+				$.each(dictionary[kAPI_DICTIONARY_IDS], function(c, id) {
+					cells = "";
+					$.each(tag_codes, function(i, tag_c) {
+						//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], tag_c);
+						var type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]][kTAG_DATA_TYPE];
+						if(type == kTYPE_ENUM || type == kTYPE_SET) {
+							cells +=  '<td>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_LABEL] + '</td>';
+						} else {
+							cells +=  '<td>' + options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c] + '</td>';
+						}
+					});
+					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
+				});
+				
+				
+				var actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
+				affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
+				limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
+				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP],
+				
+				////////////////////////////////////////////////////////////////////////////// CREATE PAGING FUNCTION
+				page_count = Math.ceil(affected / limit),
+				current_page = Math.ceil(page_count - (affected / ((skipped + 1) * limit))),
+				first_page = 0,
+				previous_page = ((skipped - limit) > 0) ? skipped - limit : 0,
+				next_page = skipped + limit,
+				previous_skip = skipped - limit,
+				next_skip = skipped + limit,
+				last_skip = (page_count - 1) * limit,
+				last_page = page_count * limit;
+				
+				page_btns = '<div class="form-group">';
+					page_btns += '<a href="javascript:void(0);" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
+				page_btns += '</div>&nbsp;';
+				page_btns += '<div class="form-group">';
+					page_btns += '<div class="input-group">';
+						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
+						page_btns += '<span class="input-group-addon">Page</span>';
+						page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
+						page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
+						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+					page_btns += '</div>';
+				page_btns += '</div>&nbsp;';
+				page_btns += '<div class="btn-group">';
+					page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
+				page_btns += '</div>';
+				//////////////////////////////////////////////////////////////////////////////
+				
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="4"><form class="form-inline text-center" role="form">' + page_btns + '</form></td></tr></tfoot>');
+		}
 		$("#contents #" + type + "").fadeIn(300);
 	} else {
 		if($("#pgrdg_map").children().length == 0) {
@@ -721,7 +797,6 @@ $.activate_panel = function(type, options) {
 		$.each(options.res, function(k, v) {
 			if(v[options.shape].type == "Point") {
 				//console.warn(options.res);
-				/*
 				$.add_marker({
 					uuid: $.md5(v["_id"]),
 					type: "marker",
@@ -730,7 +805,6 @@ $.activate_panel = function(type, options) {
 					lat: v[options.shape].coordinates[1],
 					cloud: false
 				});
-				*/
 			}
 		});
 	}
@@ -750,37 +824,43 @@ $.show_summary = function(active_forms) {
 		$.activate_panel("summary", {res: res});
 	});
 };
-$.show_raw_data = function(type, id, data) {
-	var decrypted_data = jQuery.parseJSON($.b64_to_utf8(data));
-	/*$.ask_to_service({
+$.show_raw_data = function(id, domain, skip, limit) {
+	if(skip == undefined || skip == null || skip == "") { var skip = 0; }
+	if(limit == undefined || limit == null || limit == "") { var limit = 50; }
+	
+	var summaries_data = storage.get("pgrdg_cache.ask." + id),
+	objp = new Object;
+		objp[kAPI_PAGING_LIMIT] = limit;
+		objp[kAPI_PAGING_SKIP] = skip;
+		objp[kAPI_PARAM_LOG_REQUEST] = "true";
+		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
+		objp[kAPI_PARAM_DOMAIN] = domain;
+		objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_RECORD;
+	$.ask_to_service({
 		op: kAPI_OP_MATCH_UNITS,
 		parameters: {
 			lang: lang,
-			param: {
-				limit: 300,
-				criteria: active_forms,
-				grouping: []
-			}
+			param: objp
 		}
 	}, function(res) {
-		$.activate_panel("results", {res: res});
+		$.activate_panel("results", {domain: domain, res: res});
 	});
-	*/
+	/*
 	if(type == "map") {
 		$.activate_panel("map", {res: decrypted_data});
 	} else {
 		$.activate_panel("results", {res: decrypted_data});
 	}
+	*/
 };
 $.show_data_on_map = function(id, domain) {
-	console.log(id, domain);
+	//console.log(id, domain);
 	var summaries_data = storage.get("pgrdg_cache.ask." + id),
 	geometry = [],
 	arr = $.get_current_bbox_pgrdg(default_bbox);
-	console.log(arr);
-	geometry.push(arr);
-	var objp = new Object;
-		objp[kAPI_PAGING_LIMIT] = 10000;
+	geometry.push(arr),
+	objp = new Object;
+		objp[kAPI_PAGING_LIMIT] = 1000;
 		objp[kAPI_PARAM_LOG_REQUEST] = "true";
 		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
 		objp[kAPI_PARAM_DOMAIN] = domain;

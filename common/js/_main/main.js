@@ -167,7 +167,8 @@ $.left_panel = function(subject, width, callback) {
 				});
 				$("#breadcrumb").animate({"padding-left": "0px"}, 200).find(".breadcrumb");
 				if(document.location.hash !== "#Map") {
-					$("#breadcrumb").animate({"padding-left": "35px"}, 200);
+					$("#breadcrumb").animate({"padding-left": "0px"}, 200);
+					$("#breadcrumb .breadcrumb").animate({"padding-left": "40px"}, 200);
 				}
 				$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
 					if(document.location.hash !== "#Map") {
@@ -197,8 +198,8 @@ $.left_panel = function(subject, width, callback) {
 						callback.call(this);
 					}
 				});
+				$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 			});
-			$("#breadcrumb").delay(200).animate({"padding-left": width}, 250).find(".breadcrumb").animate({"padding-left": "15px"}, 250);
 			$(".panel_content-head, .panel_content-body").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
 		}
 	}
@@ -425,6 +426,7 @@ $.manage_url = function(hash) {
 		
 		if(hash == "Map") {
 			$.left_panel("close");
+			$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 		} else {
 			if($.left_panel("is_closed")) {
 				$.left_panel("open");
@@ -453,7 +455,6 @@ $(document).ready(function() {
 			return apprise(string, args, callback);
 		};
 		$("#loginform").jCryption();
-		$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
 		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
 			$(this).tooltip("hide");
@@ -482,10 +483,12 @@ $(document).ready(function() {
 			if (!data) return e.preventDefault()
 		});
 		
-		document.location.hash = "";
-		window.onhashchange = function() {
+		if(current_path == "Search") {
+			document.location.hash = "";
+			window.onhashchange = function() {
+				$.manage_url();
+			}
 			$.manage_url();
 		}
-		$.manage_url();
 	}
 });
