@@ -700,6 +700,58 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 		}
 	});
 };
+$.paging_btns = function(options, actual, affected, limit, skipped) {
+	var page_count = Math.ceil(affected / limit),
+	current_page = (page_count - Math.ceil(affected / (skipped + limit))) + 1,
+	first_page = 0,
+	previous_page = ((skipped - limit) > 0) ? skipped - limit : 0,
+	next_page = skipped + limit,
+	last_page = page_count * limit,
+	previous_skip = skipped - limit,
+	next_skip = skipped + limit,
+	last_skip = (page_count - 1) * limit;
+		/*
+		console.group();
+			console.log("PASSED DATA");
+			console.log(options);
+		console.groupEnd();
+		console.group();
+			console.log("PAGE NUMBERING");
+			console.log("Page count", page_count);
+			console.log("Current page", current_page);
+			console.log("First page", first_page);
+			console.log("Previous page", previous_page);
+			console.log("Last page", last_page);
+		console.groupEnd();
+		console.group();
+			console.log("SKIPPING VALUES");
+			console.log("Previous skip", previous_skip);
+			console.log("Next skip", next_skip);
+			console.log("Last skip", last_skip);
+			console.log("Previous skip", previous_skip);
+		console.groupEnd();
+		*/
+	$form_group = $('<div class="form-group">');
+		$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
+		
+	page_btns = '<div class="form-group">';
+		page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
+	page_btns += '</div>&nbsp;';
+	page_btns += '<div class="form-group">';
+		page_btns += '<div class="input-group">';
+			page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
+			page_btns += '<span class="input-group-addon">Page</span>';
+			page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
+			page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
+			page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+		page_btns += '</div>';
+	page_btns += '</div>&nbsp;';
+	page_btns += '<div class="btn-group">';
+		page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
+	page_btns += '</div>';
+	
+	return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
+};
 $.activate_panel = function(type, options) {
 	var options = $.extend({
 		res: ""
@@ -757,48 +809,10 @@ $.activate_panel = function(type, options) {
 				var actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
 				affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
 				limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
-				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP],
+				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
 				
-				////////////////////////////////////////////////////////////////////////////// CREATE PAGING FUNCTION
-				page_count = Math.ceil(affected / limit),
-				current_page = Math.ceil(page_count - (affected / ((skipped + 1) * limit))),
-				first_page = 0,
-				previous_page = ((skipped - limit) > 0) ? skipped - limit : 0,
-				next_page = skipped + limit,
-				previous_skip = skipped - limit,
-				next_skip = skipped + limit,
-				last_skip = (page_count - 1) * limit,
-				last_page = page_count * limit;
-					console.log("Page numbering");
-					console.log("Page count", page_count);
-					console.log("Current page", current_page);
-					console.log("First page", first_page);
-					console.log("Previous page", previous_page);
-					console.log("Last page", last_page);
-					console.log("Skip");
-					console.log("Previous skip", previous_skip);
-					console.log("Next skip", next_skip);
-					console.log("Last skip", last_skip);
-					console.log("Previous skip", previous_skip);
-				
-				page_btns = '<div class="form-group">';
-					page_btns += '<a href="javascript:void(0);" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
-				page_btns += '</div>&nbsp;';
-				page_btns += '<div class="form-group">';
-					page_btns += '<div class="input-group">';
-						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
-						page_btns += '<span class="input-group-addon">Page</span>';
-						page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
-						page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
-						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
-					page_btns += '</div>';
-				page_btns += '</div>&nbsp;';
-				page_btns += '<div class="btn-group">';
-					page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
-				page_btns += '</div>';
-				//////////////////////////////////////////////////////////////////////////////
-				
-				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '"><form class="form-inline text-center" role="form">' + page_btns + '</form></td></tr></tfoot>');
+				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr>');
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
 		}
 		$("#contents #" + type + "").fadeIn(300);
 	} else {
