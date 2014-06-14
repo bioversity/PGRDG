@@ -5,7 +5,7 @@ $menu["menu"]["top"] = array(
 		// Here you are defining the <a> tag
 		"content" => array(
 			// You can see all available icons here => http://fortawesome.github.io/Font-Awesome/icons/
-			"icon" => "fa fa-search",
+			"icon" => "fa fa-sort fa-rotate-90",
 			"text" => "Left panel",
 			"title" => "Open/close left panel"
 		),

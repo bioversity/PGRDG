@@ -1,4 +1,10 @@
-<footer class="container footer clearfix">
+<footer>
+	<ul class="csc-menu csc-menu-def">
+		<li><a href="/Terms_and_conditions_of_Use">Terms and Conditions of Use</a></li>
+		<li><a href="/Terms_and_conditions">&copy; 2014 Bioversity International</a></li>
+	</ul>
+</footer>
+<!--footer class="container footer clearfix">
 	<div class="line1 col col1" style="height: 122.2px;">
 		<div class="record" id="c23">
 			<ul class="csc-menu csc-menu-def">
@@ -76,4 +82,4 @@
 			<p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" rel="license">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</p>
 		</div>
 	</div>
-</footer>	
+</footer-->	

@@ -752,6 +752,40 @@ $.paging_btns = function(options, actual, affected, limit, skipped) {
 	
 	return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
 };
+$.expand_row = function(id) {
+	var row_state,
+	$icon = $("#" + id).prev("tr").find("td:first-child a > span");
+	console.log($icon.attr("class"));
+	
+	if($icon.hasClass("fa-rotate-90")) {
+		$("#" + id).slideUp(300)
+		$icon.removeClass("fa-rotate-90");
+		row_state = "closed";
+	} else {
+		$("#" + id).slideDown(300)
+		$icon.addClass("fa-rotate-90");
+		row_state = "open";
+	}
+};
+$.cycle_row_data = function(row_obj) {
+	//console.log(row_obj);
+	var content = "";
+	$.each(row_obj, function(tag, value) {
+		switch(typeof(value)) {
+			case "object":
+				content += tag + ": Object<br />&emsp;" + $.cycle_row_data(value) + "<br />";
+				break;
+			case "array":
+				content += tag + ": Array<br />&nbsp;&nbsp;&nbsp;" + value.join(", ") + "<br />";
+				break;
+			default:
+				content += tag + ": " + (value.length > 0) ? value + "<br />" : "";
+				break;
+		}
+		//content += tag + ": " + typeof(value) + '<br />';
+	});
+	return content;
+};
 $.activate_panel = function(type, options) {
 	var options = $.extend({
 		res: ""
@@ -792,26 +826,36 @@ $.activate_panel = function(type, options) {
 					cols += '<td><b>' + th_label + '</b><a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(th_description) + '"><span class="fa fa-question-circle"></span></a></td>';
 				});
 				
-				$("table#" + options.res.id).html('<thead><tr>' + cols + '</tr></thead><tbody></tbody>');
-				$("table#" + options.res.id + " thead td a").popover({container: "body", placement: "top", html: "true"});
+				$("table#" + options.res.id).html('<thead><tr><td></td>' + cols + '</tr></thead><tbody></tbody>');
+				$("table#" + options.res.id + " thead td a").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+				
+				// Cycle rows
 				$.each(dictionary[kAPI_DICTIONARY_IDS], function(c, id) {
-					cells = "";
+					var row_obj = options.res[kAPI_RESPONSE_RESULTS][collection][id];
+					cells = '<td align="center"><a href="javascript:void(0);" onclick="$.expand_row(\'' + $.md5(id) + '\');" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>';
 					$.each(tag_codes, function(i, tag_c) {
-						console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]]);
-						var td_description = (options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]] !== undefined && options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]] !== null) ? options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_DESCRIPTION] : " ",
+						if(row_obj[tag_c] !== undefined) {
+							var row_col_data = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]];
+						} else {
+							var row_col_data = "";
+						}
+						//console.log(row_col_data);
+						var td_description = "",//(row_col_data !== "") ? row_col_data[kTAG_DESCRIPTION] : "", ###################### CELLS DESCRIPTIONS DISABLED, YET
 						td_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]][kTAG_DATA_TYPE];
-						console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_DESCRIPTION]);
+						
+						//console.log(td_description);
 						switch(td_type) {
 							case kTYPE_ENUM:
 							case kTYPE_SET:
-								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_LABEL] + '</td>';
+								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][row_obj[tag_c]][kTAG_LABEL] + '</td>';
 								break;
 							default:
-								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c] + '</td>';
+								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + row_obj[tag_c] + '</td>';
 								break;
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data(row_obj) + '</td></tr>');
 					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				
@@ -821,9 +865,9 @@ $.activate_panel = function(type, options) {
 				limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
 				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
 				
-				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
-				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
-				$("table#" + options.res.id + " form a").tooltip({container: "body", placement: "top", html: "true"});
+				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
+				$("table#" + options.res.id + " form a");
 		}
 		$("#contents #" + type + "").fadeIn(300);
 	} else {
