@@ -743,11 +743,11 @@ $.paging_btns = function(options, actual, affected, limit, skipped) {
 			page_btns += '<span class="input-group-addon">Page</span>';
 			page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
 			page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
-			page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+			page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
 		page_btns += '</div>';
 	page_btns += '</div>&nbsp;';
 	page_btns += '<div class="btn-group">';
-		page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((last_page == 1) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
+		page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
 	page_btns += '</div>';
 	
 	return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
@@ -778,31 +778,41 @@ $.activate_panel = function(type, options) {
 				////////////////////////////////////////////////////////////////////////////// CREATE SERVICE DATA MANAGEMENT FUNCTION
 				$.each(dictionary[kAPI_DICTIONARY_LIST_COLS], function(c, tag_code) {
 					c_count++;
-					var tag_id = dictionary[kAPI_DICTIONARY_TAGS][tag_code];
+					var tag_id = dictionary[kAPI_DICTIONARY_TAGS][tag_code],
+					th_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL],
+					th_description = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DESCRIPTION],
+					th_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DATA_TYPE];
 					tag_codes.push(tag_code);
 					column.push({
-						label: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL],
-						description: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DESCRIPTION],
-						type: options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DATA_TYPE]
+						label: th_label,
+						description: th_description,
+						type: th_type
 					});
 					// Fare le popover per le description
-					cols += '<th>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL] + '</th>';
+					cols += '<td><b>' + th_label + '</b><a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(th_description) + '"><span class="fa fa-question-circle"></span></a></td>';
 				});
 				
 				$("table#" + options.res.id).html('<thead><tr>' + cols + '</tr></thead><tbody></tbody>');
-					console.dir(column);
+				$("table#" + options.res.id + " thead td a").popover({container: "body", placement: "top", html: "true"});
 				$.each(dictionary[kAPI_DICTIONARY_IDS], function(c, id) {
 					cells = "";
 					$.each(tag_codes, function(i, tag_c) {
-						//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], tag_c);
-						var type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]][kTAG_DATA_TYPE];
-						if(type == kTYPE_ENUM || type == kTYPE_SET) {
-							cells +=  '<td>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_LABEL] + '</td>';
-						} else {
-							cells +=  '<td>' + options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c] + '</td>';
+						console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]]);
+						var td_description = (options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]] !== undefined && options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]] !== null) ? options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_DESCRIPTION] : " ",
+						td_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]][kTAG_DATA_TYPE];
+						console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_DESCRIPTION]);
+						switch(td_type) {
+							case kTYPE_ENUM:
+							case kTYPE_SET:
+								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c]][kTAG_LABEL] + '</td>';
+								break;
+							default:
+								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][collection][id][tag_c] + '</td>';
+								break;
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
+					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				
 				
@@ -811,8 +821,9 @@ $.activate_panel = function(type, options) {
 				limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
 				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
 				
-				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr>');
-				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
+				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + c_count + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
+				$("table#" + options.res.id + " form a").tooltip({container: "body", placement: "top", html: "true"});
 		}
 		$("#contents #" + type + "").fadeIn(300);
 	} else {

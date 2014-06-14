@@ -98,7 +98,7 @@ section.container {
 	position: fixed;
 	top: 111px;
 	width: 100%;
-	z-index: 2;
+	z-index: 3;
 }
 
 #breadcrumb .breadcrumb {
