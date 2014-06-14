@@ -636,7 +636,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 						$.reset_all_searches();
 					});
 				});
-				$("section.container").animate({"padding-top": "39px"});
+				$("section.container").animate({"padding-top": "149px"});
 				$("#breadcrumb").animate({"top": "110px"});
 				if($("#forms-head .btn-group a.save_btn").length == 0) {
 					$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
@@ -721,10 +721,11 @@ $.activate_panel = function(type, options) {
 			var collection = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_COLLECTION],
 			dictionary = options.res[kAPI_RESULTS_DICTIONARY];
 			$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
-				var cols, cells, tag_codes = [], column = [];
+				var c_count = 0, cols, cells, tag_codes = [], column = [];
 				
 				////////////////////////////////////////////////////////////////////////////// CREATE SERVICE DATA MANAGEMENT FUNCTION
 				$.each(dictionary[kAPI_DICTIONARY_LIST_COLS], function(c, tag_code) {
+					c_count++;
 					var tag_id = dictionary[kAPI_DICTIONARY_TAGS][tag_code];
 					tag_codes.push(tag_code);
 					column.push({
@@ -768,6 +769,17 @@ $.activate_panel = function(type, options) {
 				next_skip = skipped + limit,
 				last_skip = (page_count - 1) * limit,
 				last_page = page_count * limit;
+					console.log("Page numbering");
+					console.log("Page count", page_count);
+					console.log("Current page", current_page);
+					console.log("First page", first_page);
+					console.log("Previous page", previous_page);
+					console.log("Last page", last_page);
+					console.log("Skip");
+					console.log("Previous skip", previous_skip);
+					console.log("Next skip", next_skip);
+					console.log("Last skip", last_skip);
+					console.log("Previous skip", previous_skip);
 				
 				page_btns = '<div class="form-group">';
 					page_btns += '<a href="javascript:void(0);" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
@@ -786,7 +798,7 @@ $.activate_panel = function(type, options) {
 				page_btns += '</div>';
 				//////////////////////////////////////////////////////////////////////////////
 				
-				$("table#" + options.res.id).append('<tfoot><tr><td colspan="4"><form class="form-inline text-center" role="form">' + page_btns + '</form></td></tr></tfoot>');
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + c_count + '"><form class="form-inline text-center" role="form">' + page_btns + '</form></td></tr></tfoot>');
 		}
 		$("#contents #" + type + "").fadeIn(300);
 	} else {

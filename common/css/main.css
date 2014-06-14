@@ -20,6 +20,7 @@ header > div.container {
 	padding: 0 5px;
 }
 header {
+	position: fixed;
 	width: 100%;
 	z-index: 3;
 	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
