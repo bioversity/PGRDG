@@ -755,7 +755,6 @@ $.paging_btns = function(options, actual, affected, limit, skipped) {
 $.expand_row = function(id) {
 	var row_state,
 	$icon = $("#" + id).prev("tr").find("td:first-child a > span");
-	console.log($icon.attr("class"));
 	
 	if($icon.hasClass("fa-rotate-90")) {
 		$("#" + id).slideUp(300)
@@ -767,19 +766,30 @@ $.expand_row = function(id) {
 		row_state = "open";
 	}
 };
-$.cycle_row_data = function(row_obj) {
-	//console.log(row_obj);
+$.cycle_row_data = function(options) {
+	var options = $.extend({
+		res: {},
+		row_obj: {}
+	}, options);
+	
 	var content = "";
-	$.each(row_obj, function(tag, value) {
+	$.each(options.row_obj, function(tag, value) {
+		var id = $.makeid();
+		if(!jQuery.isEmptyObject(options.res)) {
+			var tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+		} else {
+			var tag_label = tag;
+		}
 		switch(typeof(value)) {
 			case "object":
-				content += tag + ": Object<br />&emsp;" + $.cycle_row_data(value) + "<br />";
+			console.log(tag_label, value);
+				content += '<span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + tag_label + '</a><div id="accordion_' + $.md5(id) + '"><div id="res_' + $.md5(id) + '" class="detail panel-collapse collapse">' + $.cycle_row_data({row_obj: value}) + "</div></div>";
 				break;
 			case "array":
-				content += tag + ": Array<br />&nbsp;&nbsp;&nbsp;" + value.join(", ") + "<br />";
+				content += "<b>" + tag_label + "</b>: " + value.split(", ") + "<br />";
 				break;
 			default:
-				content += tag + ": " + (value.length > 0) ? value + "<br />" : "";
+				content += "<b>" + tag_label + "</b>: " + value + "<br />";
 				break;
 		}
 		//content += tag + ": " + typeof(value) + '<br />';
@@ -850,12 +860,12 @@ $.activate_panel = function(type, options) {
 								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][row_obj[tag_c]][kTAG_LABEL] + '</td>';
 								break;
 							default:
-								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + row_obj[tag_c] + '</td>';
+								cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + ((row_obj[tag_c] !== undefined) ? row_obj[tag_c] : "") + '</td>';
 								break;
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
-					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data(row_obj) + '</td></tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data({res: options.res, row_obj: row_obj}) + '</td></tr>');
 					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				

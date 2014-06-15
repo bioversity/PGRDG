@@ -52,6 +52,7 @@ header.map #logo, #logo.map {
 	padding-left: 10px;
 }
 footer {
+	display: none;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
@@ -460,6 +461,9 @@ a.text-info {
 tr.detail {
 	display: none;
 	box-shadow: 0 0 23px #ccc inset;
+}
+div.detail {
+	margin: 5px 0 5px 25px;
 }
 /* --- */
 
