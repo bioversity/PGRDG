@@ -774,22 +774,47 @@ $.cycle_row_data = function(options) {
 	
 	var content = "";
 	$.each(options.row_obj, function(tag, value) {
-		var id = $.makeid();
+		var id = $.makeid(),
+		label, tag_label, tag_type;
 		if(!jQuery.isEmptyObject(options.res)) {
-			var tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+			tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+			tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
+			//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
 		} else {
-			var tag_label = tag;
+			tag_label = tag;
 		}
+				console.log(value, typeof(value), Array.isArray(value));
 		switch(typeof(value)) {
 			case "object":
-			console.log(tag_label, value);
-				content += '<span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + tag_label + '</a><div id="accordion_' + $.md5(id) + '"><div id="res_' + $.md5(id) + '" class="detail panel-collapse collapse">' + $.cycle_row_data({row_obj: value}) + "</div></div>";
+				if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
+					if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
+						label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+					} else {
+						label = tag_label;
+					}
+				} else {
+					label = tag_label;
+				}
+				content += '<span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + label + '</a><div id="accordion_' + $.md5(id) + '"><div id="res_' + $.md5(id) + '" class="detail panel-collapse collapse">' + $.cycle_row_data({row_obj: value}) + "</div></div>";
 				break;
 			case "array":
 				content += "<b>" + tag_label + "</b>: " + value.split(", ") + "<br />";
 				break;
 			default:
-				content += "<b>" + tag_label + "</b>: " + value + "<br />";
+				if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
+					if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
+						label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+					} else {
+						if(tag_label == "Domain") {
+							label = options.title;
+						} else {
+							label = tag_label;
+						}
+					}
+				} else {
+					var label = value;
+				}
+				content += "<b>" + tag_label + "</b>: " + label + " - " + tag_type + "<br />";
 				break;
 		}
 		//content += tag + ": " + typeof(value) + '<br />';
@@ -798,7 +823,8 @@ $.cycle_row_data = function(options) {
 };
 $.activate_panel = function(type, options) {
 	var options = $.extend({
-		res: ""
+		res: "",
+		label: ""
 	}, options)
 	
 	$.manage_url($.ucfirst(type));
@@ -810,7 +836,7 @@ $.activate_panel = function(type, options) {
 		$("#" + type + "-body .content-body").html("");
 		if(type !== "results") {
 			$.each(options.res.results, function(domain, values) {
-				$("#" + type + "-body .content-body").append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading">' + values[kTAG_LABEL] + ' <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
+				$("#" + type + "-body .content-body").attr("id", options.res.id).append('<div class="panel panel-success"><div class="panel-heading"><h4 class="list-group-item-heading"><span class="title">' + $.trim(values[kTAG_LABEL]) + '</span> <span class="badge pull-right">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</span></h4></div><div class="panel-body"><div class="btn-group pull-right"><a class="btn btn-default-white" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')">View raw data <span class="fa fa-th"></span></a><a onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" class="btn btn-default">View on map <span class="ionicons ion-map"></a></div>' + values[kTAG_DEFINITION] + '</div></div>');
 			});
 		} else {
 			console.log(options.res);
@@ -865,7 +891,7 @@ $.activate_panel = function(type, options) {
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
-					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data({res: options.res, row_obj: row_obj}) + '</td></tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data({title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</td></tr>');
 					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				
@@ -934,7 +960,7 @@ $.show_raw_data = function(id, domain, skip, limit) {
 			param: objp
 		}
 	}, function(res) {
-		$.activate_panel("results", {domain: domain, res: res});
+		$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
 	});
 	/*
 	if(type == "map") {
