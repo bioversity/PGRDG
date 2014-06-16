@@ -173,7 +173,7 @@ $.left_panel = function(subject, width, callback) {
 					$("#breadcrumb").animate({"padding-left": "0px"}, 200);
 					$("#breadcrumb .breadcrumb").animate({"padding-left": "40px"}, 200);
 				}
-				$(".panel_content-head, .panel_content-body").animate({"padding-left": "35px"}, 200, function() {
+				$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "35px"}, 200, function() {
 					if(document.location.hash !== "#Map") {
 						$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
 					}
@@ -203,7 +203,7 @@ $.left_panel = function(subject, width, callback) {
 				});
 				$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 			});
-			$(".panel_content-head, .panel_content-body").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
+			$(".panel_content-head, .panel_content-body, #start h1").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
 		}
 	}
 };

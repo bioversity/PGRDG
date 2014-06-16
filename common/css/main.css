@@ -244,6 +244,25 @@ a.text-info {
 	cursor: help;
 }
 
+#start {
+	display: block;
+	padding-left: 35px;
+}
+#start h1 {
+	color: #d0d0d0;
+	font-family: "HelveticaNeueW01-45Ligh";
+	font-size: 35px;
+	margin-top: 80px;
+	margin-left: -35px;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+	cursor: default;
+}
 
 #forms-body .row .panel-heading a {
 	/*background-color: #fff;*/

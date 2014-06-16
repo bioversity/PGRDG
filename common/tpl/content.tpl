@@ -42,4 +42,10 @@
 		<!--script src="common/js/polyfills.js"></script-->
 	</div>
 	<div id="pgrdg_map"></div>
+	<div id="start" class="panel_content">
+		<h1 unselectable="on">&lsaquo; Start typing in the search box</h1>
+	</div>
+	<div id="content" class="panel-content">
+		
+	</div>
 </div>
