@@ -28,6 +28,7 @@ header {
 	background-image: webkit-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -o-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	overflow: visible !important;
 }
 header.main {
 	height: 111px;
@@ -51,6 +52,7 @@ header.map .container {
 header.map #logo, #logo.map {
 	padding-left: 10px;
 }
+/*
 footer {
 	display: none;
 	position: absolute;
@@ -59,6 +61,18 @@ footer {
 	padding: 5px 5px 10px 5px;
 	font-size: 11px;
 	text-align: center;
+}
+*/
+footer {
+	border-top: 1px solid #ccc;
+	bottom: 0;
+	font-size: 13px;
+	margin: auto;
+	max-width: 900px;
+	padding: 5px 0 10px;
+	position: static;
+	text-align: center;
+	width: 100%;
 }
 footer ul {
 	margin: 0;
@@ -120,7 +134,7 @@ section.container {
 	position: fixed;
 	top: 111px;
 	width: 100%;
-	z-index: 3;
+	z-index: 2;
 }
 
 #breadcrumb .breadcrumb {
@@ -244,26 +258,6 @@ a.text-info {
 	cursor: help;
 }
 
-#start {
-	display: block;
-	padding-left: 35px;
-}
-#start h1 {
-	color: #d0d0d0;
-	font-family: "HelveticaNeueW01-45Ligh";
-	font-size: 35px;
-	margin-top: 80px;
-	margin-left: -35px;
-	-webkit-user-select: none; /* Chrome/Safari */        
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* IE10+ */
-
-	/* Rules below not implemented in browsers yet */
-	-o-user-select: none;
-	user-select: none;
-	cursor: default;
-}
-
 #forms-body .row .panel-heading a {
 	/*background-color: #fff;*/
 	box-shadow: 0 0 19px #fff inset;
@@ -293,6 +287,51 @@ a.text-info {
     padding: 0;
 	line-height: 0;
 	margin-top: 10px;
+}
+
+#start {
+	display: block;
+	padding-left: 35px;
+}
+#start h1 {
+	color: #d0d0d0;
+	font-family: "HelveticaNeueW01-45Ligh";
+	font-size: 35px;
+	margin-top: 80px;
+	margin-left: -35px;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+section.container > #contents #content {
+	padding-top: 71px;
+	margin: auto;
+	width: 100%;
+	max-width: 900px;
+}
+section.container > #contents .carousel-indicators {
+	margin: 0 20px;
+	right: 0;
+	left: none;
+	text-align: right;
+	bottom: 10px;
+	width: auto;
+}
+section.container > #contents .carousel-indicators li {
+	box-shadow; 0 0 3px #000;
+	border-color: rgba(255, 255, 255, 0.5);
+}
+section.container > #contents .carousel-indicators li.active {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+section.container > #contents .carousel-inner {
+	max-height: 500px;
+    overflow: hidden;
 }
 
 #left_panel {
