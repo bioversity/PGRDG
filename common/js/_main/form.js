@@ -807,7 +807,7 @@ $.cycle_row_data = function(options) {
 							value = n;
 						});
 					}
-					content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + label + '</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
+					content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(value + id) + '">' + label + '</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(value + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
 				}
 				break;
 			case "array":
@@ -821,29 +821,29 @@ $.cycle_row_data = function(options) {
 								//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
 							}
 						});
-						label = lab.join(", ");
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
 						break;
 					case kTYPE_STRUCT:
 						if($.obj_len(value) == 1) {
 							$.each(value, function(key, val) {
 								if($.obj_len(val) > 1) {
-									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">View</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(val + id) + '">View</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(val + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
 								} else {
-									console.warn(key, value.key);
-									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span> <b>' + tag_label + "</b>: " + value[0] + "</li>";
+									$.each(val, function(k, v) {
+										content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
+									});
 								}
 							});
 						} else {
 							$.each(value, function(key, val) {
-								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">View</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(val + id) + '">View</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(val + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
 							});
 						}
 						break;
 					default:
-						label = value.join(", ");
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + value.join(", ") + "</li>";
 						break;
 				}
-				content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + label + "</li>";
 				break;
 			default:
 				switch(tag_type) {
@@ -855,12 +855,12 @@ $.cycle_row_data = function(options) {
 							value = $.get_enum_label_from_string(options.res, value);
 						}
 						console.log(tag_label);
-						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + value + "</li>";
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
 						break;
 					case kTYPE_STRUCT:
 						break;
 					default:
-						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
 						break;
 				}
 				break;
