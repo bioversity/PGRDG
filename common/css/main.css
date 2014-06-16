@@ -465,6 +465,14 @@ tr.detail {
 div.detail {
 	margin: 5px 0 5px 25px;
 }
+ul.list-group.transparent li {
+	background-color: transparent;
+	border: 0px none;
+	padding: 6px 0;
+}
+ul.list-group.transparent ul {
+	margin-bottom: 0;
+}
 /* --- */
 
 #pgrdg_map {

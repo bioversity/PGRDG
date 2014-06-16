@@ -8,6 +8,7 @@ $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str
 $.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
 $.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; for(var i = 0; i <= 16; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); } return text; };
 $.fn.serializeObject = function() { var o = {}; var a = this.serializeArray(); $.each(a, function() { if (o[this.name] !== undefined) { if (!o[this.name].push) { o[this.name] = [o[this.name]]; } o[this.name].push(this.value || ''); } else { o[this.name] = this.value || ''; }}); return o; };
+$.obj_len = function(a) { var count = 0, i; for (i in a) { if (a.hasOwnProperty(i)) { count++; }} return count };
 
 /**
 * Global vars

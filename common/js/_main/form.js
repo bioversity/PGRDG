@@ -379,7 +379,7 @@ $.fn.addCollapsible = function(options, callback) {
 	});
 	$("select.multiselect").multiselect("disable");
 	*/
-	if (typeof callback == "function") {
+	if (jQuery.type(callback) == "function") {
 		callback.call(this);
 	}
 };
@@ -574,7 +574,7 @@ $.fn.addTraitAutocomplete = function(options, data, callback) {
 		return false;
 	});
 	
-	if (typeof callback == "function") {
+	if (jQuery.type(callback) == "function") {
 		callback.call(this);
 	}
 };
@@ -628,7 +628,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 		$("#breadcrumb").fadeIn(200);
 	}
 	$.ask_to_service(kAPI, function(response) {
-		if (typeof callback == "function") {
+		if (jQuery.type(callback) == "function") {
 			if(response.paging.affected > 0) {
 				var selected_forms = {}, form_data = {};
 				$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
@@ -767,59 +767,132 @@ $.expand_row = function(id) {
 	}
 };
 $.cycle_row_data = function(options) {
-	var options = $.extend({
-		res: {},
-		row_obj: {}
-	}, options);
-	
 	var content = "";
 	$.each(options.row_obj, function(tag, value) {
 		var id = $.makeid(),
 		label, tag_label, tag_type;
 		if(!jQuery.isEmptyObject(options.res)) {
-			tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
-			tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
-			//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
+			if($.isNumeric(tag)) {
+				tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+				tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
+				//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
+			}
 		} else {
 			tag_label = tag;
 		}
-				console.log(value, typeof(value), Array.isArray(value));
-		switch(typeof(value)) {
+		switch(jQuery.type(value)) {
 			case "object":
-				if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
-					if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
-						label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+				if(jQuery.isArray(value)) {
+					$.each(value, function(key, val) {
+						var val_type = jQuery.type(val);
+					});
+					/*if(val_type == "object") {
+						content += "~";//$.cycle_row_data({row_obj: value});
 					} else {
-						label = tag_label;
-					}
+						*/content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + value.join(", ") + "</li>";
+					//}
 				} else {
-					label = tag_label;
-				}
-				content += '<span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + label + '</a><div id="accordion_' + $.md5(id) + '"><div id="res_' + $.md5(id) + '" class="detail panel-collapse collapse">' + $.cycle_row_data({row_obj: value}) + "</div></div>";
-				break;
-			case "array":
-				content += "<b>" + tag_label + "</b>: " + value.split(", ") + "<br />";
-				break;
-			default:
-				if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
-					if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
-						label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
-					} else {
-						if(tag_label == "Domain") {
-							label = options.title;
+					if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
+						if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
+							label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
 						} else {
 							label = tag_label;
 						}
+					} else {
+						label = tag_label;
 					}
-				} else {
-					var label = value;
+					if($.obj_len(value) == 1) {
+						$.each(value, function(i, n) {
+							label = i;
+							value = n;
+						});
+					}
+					content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">' + label + '</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
 				}
-				content += "<b>" + tag_label + "</b>: " + label + " - " + tag_type + "<br />";
+				break;
+			case "array":
+				switch(tag_type) {
+					case kTYPE_ENUM:
+					case kTYPE_SET:
+						var lab = [];
+						$.each(value, function(key, val) {
+							if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
+								lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
+								//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
+							}
+						});
+						label = lab.join(", ");
+						break;
+					case kTYPE_STRUCT:
+						if($.obj_len(value) == 1) {
+							$.each(value, function(key, val) {
+								if($.obj_len(val) > 1) {
+									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">View</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+								} else {
+									console.warn(key, value.key);
+									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span> <b>' + tag_label + "</b>: " + value[0] + "</li>";
+								}
+							});
+						} else {
+							$.each(value, function(key, val) {
+								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(id) + '" href="#res_' + $.md5(id) + '">View</a><div id="accordion_' + $.md5(id) + '"><ul id="res_' + $.md5(id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+							});
+						}
+						break;
+					default:
+						label = value.join(", ");
+						break;
+				}
+				content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + label + "</li>";
+				break;
+			default:
+				switch(tag_type) {
+					case kTYPE_ENUM:
+					case kTYPE_SET:
+						if(tag_label == "Domain") {
+							value = options.title;
+						} else {
+							value = $.get_enum_label_from_string(options.res, value);
+						}
+						console.log(tag_label);
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + value + "</li>";
+						break;
+					case kTYPE_STRUCT:
+						break;
+					default:
+						content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+						break;
+				}
 				break;
 		}
-		//content += tag + ": " + typeof(value) + '<br />';
+		//content += tag + ": " + jQuery.type(value) + '<br />';
 	});
 	return content;
+};
+$.get_enum_label_from_string = function(res, string) {
+	if(!jQuery.isEmptyObject(res)) {
+		if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
+		//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
+			label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
+		} else {
+			label = string;
+		}
+		return label;
+	}
+};
+$.get_tag_label_from_string = function(res, string) {
+	if(!jQuery.isEmptyObject(res)) {
+		if(jQuery.isNumeric(string)) {
+			var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
+			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
+				return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
+			}
+		} else {
+			return string;
+		}
+	} else {
+		return string;
+	}
 };
 $.activate_panel = function(type, options) {
 	var options = $.extend({
@@ -891,7 +964,7 @@ $.activate_panel = function(type, options) {
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
-					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '">' + $.cycle_row_data({title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</td></tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + $.cycle_row_data({title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</ul></td></tr>');
 					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				
@@ -1251,7 +1324,7 @@ $.add_multiselect = function(options, callback) {
 	//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
 	//var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
 	var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect disabled" data-toggle="popover" id="' + options.id + '"><span>' + options.placeholder + '</span> <span class="caret"></a>';
-	if (typeof callback == "function") {
+	if (jQuery.type(callback) == "function") {
 		callback.call(this);
 	}
 	return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input type="hidden" id="' + options.id + '_label" value="" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
@@ -1331,7 +1404,7 @@ $.fn.addChosen = function(options, content, callback) {
 		allow_single_deselect: options.allow_single_deselect,
 		no_results_text: options.no_results_text
 	}).on("change", function(evt, params) {
-		if (typeof callback == "function") {
+		if (jQuery.type(callback) == "function") {
 			callback.call(this);
 		}
 	});
@@ -1340,7 +1413,7 @@ $.fn.addChosen = function(options, content, callback) {
 
 
 $.get_operators_list = function(system_constants) {
-	if(typeof(system_constants) == "string") {
+	if(jQuery.type(system_constants) == "string") {
 		system_constants = jQuery.parseJSON(system_constants);
 	}
 	
@@ -1372,7 +1445,7 @@ $.get_operators_list = function(system_constants) {
 }
 
 $.check_storage = function(cname, callback) {
-	if(typeof(cname) == "string") {
+	if(jQuery.type(cname) == "string") {
 		cname = new Array(cname);
 	}
 	for(var q = 0; q < cname.length; q++) {
@@ -1385,13 +1458,13 @@ $.check_storage = function(cname, callback) {
 					storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": $.utf8_to_b64(JSON.stringify(system_constants))});
 					$.get_operators_list(system_constants);
 					
-					if (typeof callback == "function") {
+					if (jQuery.type(callback) == "function") {
 						callback.call(this);
 					}
 				});
 			} else {
 				$.get_operators_list($.b64_to_utf8(storage.get("pgrdg_cache.take." + $.md5(name) + ".response")));
-				if (typeof callback == "function") {
+				if (jQuery.type(callback) == "function") {
 					callback.call(this);
 				}
 			}
@@ -1414,7 +1487,7 @@ $(document).ready(function() {
 	});
 	/*
 	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
-		if (typeof callback == "function") {
+		if (jQuery.type(callback) == "function") {
 			callback.call(this);
 		}
 	});
