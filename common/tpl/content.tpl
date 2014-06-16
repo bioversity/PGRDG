@@ -6,7 +6,7 @@
 <div id="contents">
 	<div id="content" class="panel-content">
 		<?php
-		print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
+		print (is_home()) ? "" : "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
 		require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
 		?>
 	</div>

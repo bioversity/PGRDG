@@ -5,6 +5,9 @@ $site_config = new parse_json_config();
 $map_config = new parse_json_config("common/include/conf/map.json");
 //print_r($site_config->menu("map_toolbox", "menu"));
 //exit();
+function is_home() {
+	return ($_GET["p"] == "" || strtolower($_GET["p"]) == "home") ? true : false;
+}
 if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 	$page = $_GET["p"];
 	if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {

@@ -44,13 +44,13 @@ $menu["menu"]["top"] = array(
 			"href" => "/National_Inventories"
 		),
 		"childs" => array(
-			"National Checklists" => array(
+			"National Inventories" => array(
 				"content" => array(
 					"icon" => "fa fa-list",
-					"text" => "National Checklists"
+					"text" => "National Inventories"
 				),
 				"attributes" => array(
-					"href" => "/National_Checklists"
+					"href" => "/National_Inventories"
 				)
 			),
 			"Conservation Strategies" => array(
