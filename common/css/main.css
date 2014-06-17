@@ -67,7 +67,7 @@ footer {
 	border-top: 1px solid #ccc;
 	bottom: 0;
 	font-size: 13px;
-	margin: auto;
+	margin: 100px auto 0 auto;
 	max-width: 900px;
 	padding: 5px 0 10px;
 	position: static;

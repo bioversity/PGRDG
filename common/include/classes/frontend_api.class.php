@@ -205,6 +205,26 @@ class frontend_api {
 			return $this->browse($url);
 		}
 	}
+	
+	public function force_download($file) {
+		if (!file_exists($file)) {
+			print "No file";
+		} else {
+			$splinfo = new SplFileInfo($file);
+			
+			header("Pragma: public"); // required
+			header("Expires: 0"); // no cache
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Last-Modified: " . gmdate("D, d M Y H:i:s", $splinfo->getMTime()) . " GMT");
+			header("Cache-Control: private", false);
+			header("Content-Type: " . mime_content_type($file));
+			header("Content-disposition: attachment; filename=\"" . basename($splinfo->getFilename()) . "\"");
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Length: " . $splinfo->getSize()); // provide file size
+			header("Connection: close");
+			readfile($file);
+		}
+	}
 }
 
 ?>

@@ -28,6 +28,9 @@ if(isset($_GET["definitions"]) && trim($_GET["definitions"]) !== "") {
 	
 	$api->get_definitions($_GET["definitions"], (($_GET["keep_update"] == "true") ? true : false));
 }
+if(isset($_GET["download"]) && trim($_GET["download"]) !== "") {
+	$api->force_download("../common/media/" . $_GET["download"]);
+}
 if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 	require_once("../common/include/lib/jcryption.php");
 	require_once("../common/include/funcs/_ajax/_decrypt.php");

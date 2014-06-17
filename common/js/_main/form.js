@@ -807,7 +807,7 @@ $.cycle_row_data = function(options) {
 							value = n;
 						});
 					}
-					content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(value + id) + '">' + label + '</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(value + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
+					content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
 				}
 				break;
 			case "array":
@@ -827,7 +827,7 @@ $.cycle_row_data = function(options) {
 						if($.obj_len(value) == 1) {
 							$.each(value, function(key, val) {
 								if($.obj_len(val) > 1) {
-									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(val + id) + '">View</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(val + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
 								} else {
 									$.each(val, function(k, v) {
 										content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
@@ -836,7 +836,7 @@ $.cycle_row_data = function(options) {
 							});
 						} else {
 							$.each(value, function(key, val) {
-								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a data-toggle="collapse" data-parent="#accordion_' + $.md5(label) + '" href="#res_' + $.md5(val + id) + '">View</a><div id="accordion_' + $.md5(label) + '"><ul id="res_' + $.md5(val + id) + '" class="list-group panel-collapse collapse">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
 							});
 						}
 						break;
@@ -964,7 +964,7 @@ $.activate_panel = function(type, options) {
 						}
 					});
 					$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
-					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + $.cycle_row_data({title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</ul></td></tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + $.cycle_row_data({row_id: $.md5(id), title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</ul></td></tr>');
 					$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
 				});
 				

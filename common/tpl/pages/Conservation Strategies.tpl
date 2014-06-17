@@ -36,7 +36,7 @@ $files = array_diff(scandir($dir), array("..", "."));
 						
 						foreach($subfiles as $subfile) {
 							if(!is_dir($subdir . "/" . $subfile)) {
-								print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="" title="Click to download" class="text-warning">' . str_replace("_", " ", $subfile) . '</a></li>';
+								print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="/API/?download=' . str_replace("common/media/", "", $subdir) . '/' . $subfile . '" title="Click to download" class="text-warning">' . str_replace("_", " ", $subfile) . '</a></li>';
 							}
 						}
 						?>
@@ -50,7 +50,7 @@ $files = array_diff(scandir($dir), array("..", "."));
 							<?php
 							foreach($subfiles_old as $subfile_old) {
 								if(!is_dir($subdir_old . "/" . $subfile_old)) {
-									print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a href="" title="Click to download" class="text-muted">' . str_replace("_", " ", $subfile_old) . '</a></li>';
+									print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a href="/API/?download=' . str_replace("common/media/", "", $subdir_old) . '/' . $subfile_old . '" title="Click to download" class="text-muted">' . str_replace("_", " ", $subfile_old) . '</a></li>';
 								}
 							}
 							?>
@@ -69,7 +69,7 @@ $files = array_diff(scandir($dir), array("..", "."));
 		<ul class="list-group fa-ul">
 			<?php
 			foreach($f as $file) {
-				print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="" title="Click to download" class="text-warning">' . str_replace("_", " ", $file) . '</a></li>';
+				print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="/API/?download=' . str_replace("common/media/", "", $dir) . '/' . $file . '" title="Click to download" class="text-warning">' . str_replace("_", " ", $file) . '</a></li>';
 			}
 			?>
 		</ul>
