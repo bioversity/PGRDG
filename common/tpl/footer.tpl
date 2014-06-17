@@ -3,8 +3,8 @@ if($page !== "Search") {
 	?>
 	<footer>
 		<ul class="csc-menu csc-menu-def">
-			<li><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Terms and Conditions of Use</a></li>
-			<li><a href="/Terms_and_conditions">&copy; 2014 Bioversity International</a></li>
+			<li><a href="/Terms and Conditions of Use">Terms and Conditions of Use</a></li>
+			<li><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</li>
 		</ul>
 	</footer>
 	<?php

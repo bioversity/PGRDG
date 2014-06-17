@@ -79,13 +79,15 @@ footer ul {
 	padding: 0;
 }
 footer ul li {
-	display: inline;
+	display: block;
 	margin: 0 5px;
 }
+/*
 footer ul li + li:before {
 	content: "-";
 	margin-right: 15px;
 }
+*/
 
 #nav {
     margin: 0;
@@ -312,7 +314,7 @@ section.container > #contents #content {
 	padding-top: 71px;
 	margin: auto;
 	width: 100%;
-	max-width: 900px;
+	max-width: 925px;
 }
 section.container > #contents .carousel-indicators {
 	margin: 0 20px;
