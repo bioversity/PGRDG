@@ -747,7 +747,7 @@
 		}
 		var next = false;
 
-		console.log($("#accordion > div.panel"));
+		//console.log($("#accordion > div.panel"));
 		if(ask) {
 			if($("#apprise.reset-all").length > 0) {
 				$("#apprise.reset-all").modal("show");
@@ -1168,7 +1168,7 @@
 							} else {
 								value = $.get_enum_label_from_string(options.res, value);
 							}
-							console.log(tag_label);
+							//console.log(tag_label);
 							content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
 							break;
 						case kTYPE_STRUCT:

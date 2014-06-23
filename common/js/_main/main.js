@@ -231,6 +231,10 @@
 						type: "ask_service"
 					},
 					success: function(response) {
+						console.group("Storage saved");
+							console.warn("id: ", $.md5(param));
+							console.groupEnd();
+						
 						storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 						response.id = $.md5(param);
 						if(response.status.state == "ok") {
