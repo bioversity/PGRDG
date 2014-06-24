@@ -77,19 +77,7 @@
 			$.each(cluster, function(term, id_arr) {
 				$.each(id_arr, function(idk, idv) {
 					// Creates an object with all the forms
-					//forms[idk] = get_form_data(idk, response.results[collection][idv]);
-
 					forms = get_form_data(idk, response.results[collection][idv]);
-
-					/* DEPRECATED
-					if(forms.type == kTYPE_ENUM || forms.type == kTYPE_SET) {
-						var url = {op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}};
-						//console.log("LA URL", url);
-						$.ask_to_service({op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: idv}}}, function(res) {
-							console.log("OKAY", lang);
-						});
-					}
-					*/
 					forms.size = "single";
 
 					if(is_kind_quantitative()) {
@@ -178,6 +166,13 @@
 								break;
 						}
 					}
+
+					// Set the size of form boxes
+					// REMINDER LEGEND:
+					// 	Full with is 12, 6 is middle screen and 3 is quarter
+					// 	'col-lg' -> Large displays
+					// 	'col-md' -> Medium displays (eg. Tablet)
+					// 	'col-sm' -> Small displays (eg. Smartphones)
 					switch(forms.size) {
 						case "double":
 							form_size = "col-lg-6 col-md-9 col-sm-12";
@@ -221,6 +216,7 @@
 		var $this = item,
 		data = [],
 		$panel, $panel_mask;
+
 		if($this.hasClass("panel-mask")) {
 			$panel = $this.next(".panel");
 			$panel_mask = $this;
@@ -406,7 +402,7 @@
 	};
 
 	/**
-	* Check if local storage are allowed
+	* Check if local storage is allowed
 	*/
 	$.check_storage = function(cname, callback) {
 		if(jQuery.type(cname) == "string") {
@@ -442,8 +438,11 @@
 *======================================================================================*/
 
 	/**
-	/* Add the main trait autocomplete form
-	*/
+	 * Add the main trait autocomplete form
+	 * @param {object}   options  Autocomplete html attributes (id, class, placeholder)
+	 * @param {string}   data     type of query
+	 * @param {Function} callback
+	 */
 	$.fn.addTraitAutocomplete = function(options, data, callback) {
 		options = $.extend({
 			id: "",
@@ -1640,13 +1639,22 @@
 	};
 
 
+/*======================================================================================*/
+
 $(document).ready(function() {
-	$(window).resize(function () {
-		$.resize_forms_mask();
-	});
+	if(current_path == "Search") {
+		$(window).resize(function () {
+			// Resize the forms when window is resized
+			$.resize_forms_mask();
+		});
+	}
+	/*
+	// Disabled for now
 	$.check_storage("list-constants", function() {
-		//$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
+		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
+	*/
+	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {
 			$(this).closest(".input-group").removeClass("open");
@@ -1654,12 +1662,4 @@ $(document).ready(function() {
 			$(this).closest(".input-group").addClass("open");
 		}
 	});
-	/*
-	$(this).find(".chosen-select").chosen({}).on("change", function(evt, params) {
-		if (jQuery.type(callback) == "function") {
-			callback.call(this);
-		}
-	});
-	$.update_chosen();
-	*/
 });
