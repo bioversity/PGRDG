@@ -11,16 +11,16 @@
 *======================================================================================*/
 
 	/**
-	 * PHP ported
-	 */
+	* PHP ported
+	*/
 		/**
-		 * Convert all applicable characters to HTML entities
-		 *
-		 * This function is a porting of php's htmlentities()
-		 *
-		 * @param  {string} 	The html string to encode
-		 * @return {string}         The string encoded
-		 */
+		* Convert all applicable characters to HTML entities
+		*
+		* This function is a porting of php's htmlentities()
+		*
+		* @param  {string} 	The html string to encode
+		* @return {string}         The string encoded
+		*/
 		$.html_encode = function(str){ return $("<div/>").text(str).html(); };
 
 		/**
@@ -74,13 +74,13 @@
 		$.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
 
 		/**
-		 * Make a string's first character uppercase
-		 *
-		 * This function is a porting of php's ucfirst()
-		 *
-		 * @param  {string}      The string to manipulate
-		 * @return {[type]}      Ucase converted string
-		 */
+		* Make a string's first character uppercase
+		*
+		* This function is a porting of php's ucfirst()
+		*
+		* @param  {string}      The string to manipulate
+		* @return {[type]}      Ucase converted string
+		*/
 		$.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
 
 	/**
@@ -103,16 +103,16 @@
 	$.uuid = function() { return Math.round(new Date().getTime() + (Math.random() * 100)); };
 
 	/**
-	 * Like $.serializeArray(), serialize a form as object
-	 * @return {object}     Forms data
-	 */
+	* Like $.serializeArray(), serialize a form as object
+	* @return {object}     Forms data
+	*/
 	$.fn.serializeObject = function() { var o = {}; var a = this.serializeArray(); $.each(a, function() { if (o[this.name] !== undefined) { if (!o[this.name].push) { o[this.name] = [o[this.name]]; } o[this.name].push(this.value || ''); } else { o[this.name] = this.value || ''; }}); return o; };
 
 	/**
-	 * Determine the length of an object
-	 * @param  {object}  The object to analize
-	 * @return {int}     The object length
-	 */
+	* Determine the length of an object
+	* @param  {object}  The object to analize
+	* @return {int}     The object length
+	*/
 	$.obj_len = function(obj) { var count = 0, i; for(i in obj) { if (obj.hasOwnProperty(i)) { count++; }} return count; };
 
 
@@ -136,13 +136,13 @@
 *======================================================================================*/
 
 	/**
-	 * Encrypt asynchronous requests with jCryption
-	 *
-	 * Usage: call $.cryptAjax instead of simple $.ajax function
-	 *
-	 * @param {string} url     The request target
-	 * @param {object} options Request params
-	 */
+	* Encrypt asynchronous requests with jCryption
+	*
+	* Usage: call $.cryptAjax instead of simple $.ajax function
+	*
+	* @param {string} url     The request target
+	* @param {object} options Request params
+	*/
 	$.cryptAjax = function(url, options) {
 		if(!auth) {
 			$.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
@@ -155,10 +155,10 @@
 	};
 
 	/**
-	 * Creates and send the request to Service
-	 * @param  {void}  options  String or object of the request to Service
-	 * @param  {Function} callback
-	 */
+	* Creates and send the request to Service
+	* @param  {void}  options  String or object of the request to Service
+	* @param  {Function} callback
+	*/
 	$.ask_to_service = function(options, callback) {
 		var opt = $.extend({
 			loaderType: "external",
@@ -273,11 +273,11 @@
 	};
 
 	/**
-	 * Manage the left panel
-	 * @param  {string}   subject  Direct action to execute (open|close)
-	 * @param  {int}      width    The size in pixel of the panel. Default is 488px
-	 * @param  {Function} callback
-	 */
+	* Manage the left panel
+	* @param  {string}   subject  Direct action to execute (open|close)
+	* @param  {int}      width    The size in pixel of the panel. Default is 488px
+	* @param  {Function} callback
+	*/
 	$.left_panel = function(subject, width, callback) {
 		if(width === "" || width === undefined) {
 			width = 488;
@@ -341,14 +341,14 @@
 	};
 
 	/**
-	 * Dinamically adjust forms mask depending the document size
-	 */
+	* Dinamically adjust forms mask depending the document size
+	*/
 	$.resize_forms_mask = function() { $.each($(".panel-mask"), function(i, d) { $(this).css("width", (parseInt($(this).closest(".vcenter").find(".panel").css("width")) - 1) + "px"); }); };
 
 	/**
-	 * Manage hash part of querystring
-	 * @param  {string} hash The hash to manage
-	 */
+	* Manage hash part of querystring
+	* @param  {string} hash The hash to manage
+	*/
 	$.manage_url = function(hash) {
 		var active_li = 0,
 		visible_div = 0;

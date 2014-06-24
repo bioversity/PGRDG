@@ -1,10 +1,10 @@
 /**
- * Form functions
- *
- * @author Alessandro Gubitosi <gubi.ale@iod.io>
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
- * @link https://github.com/bioversity/PGRDG/
- */
+* Form functions
+*
+* @author Alessandro Gubitosi <gubi.ale@iod.io>
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/bioversity/PGRDG/
+*/
 
 
 /*=======================================================================================
@@ -438,11 +438,11 @@
 *======================================================================================*/
 
 	/**
-	 * Add the main trait autocomplete form
-	 * @param {object}   options  Autocomplete html attributes (id, class, placeholder)
-	 * @param {string}   data     type of query
-	 * @param {Function} callback
-	 */
+	* Add the main trait autocomplete form
+	* @param {object}   options  Autocomplete html attributes (id, class, placeholder)
+	* @param {string}   data     type of query
+	* @param {Function} callback
+	*/
 	$.fn.addTraitAutocomplete = function(options, data, callback) {
 		options = $.extend({
 			id: "",
@@ -635,10 +635,10 @@
 	};
 
 	/**
-	 * Execute autocomplete (or simple user's input) search
-	 * @param {object}   kAPI
-	 * @param {Function} callback
-	 */
+	* Execute autocomplete (or simple user's input) search
+	* @param {object}   kAPI
+	* @param {Function} callback
+	*/
 	$.execTraitAutocomplete = function(kAPI, callback) {
 		if($("#breadcrumb").css("display") == "none") {
 			$("#breadcrumb").fadeIn(200);
@@ -716,9 +716,9 @@
 	};
 
 	/**
-	 * Remove a single search forms
-	 * @param  {object} search The form group to remove (html object)
-	 */
+	* Remove a single search forms
+	* @param  {object} search The form group to remove (html object)
+	*/
 	$.remove_search = function(search) {
 		var $this = search,
 		search_id = $this.closest(".panel").attr("id");
@@ -737,9 +737,9 @@
 	};
 
 	/**
-	 * Reset all searches
-	 * @param {bool} ask Ask confirm
-	 */
+	* Reset all searches
+	* @param {bool} ask Ask confirm
+	*/
 	$.reset_all_searches = function(ask) {
 		if(ask === undefined) {
 			ask = true;
@@ -771,14 +771,14 @@
 	};
 
 	/**
-	 * Show paging buttons
-	 * @param  {object} options  The entire (raw data) object
-	 * @param  {int}    actual   The "actual" data passed from Service
-	 * @param  {int}    affected The "affected" data passed from Service
-	 * @param  {int}    limit    The "limit" data passed from Service
-	 * @param  {int}    skipped  The "skipped" data passed from Service
-	 * @return {string}          Html div with paging buttons
-	 */
+	* Show paging buttons
+	* @param  {object} options  The entire (raw data) object
+	* @param  {int}    actual   The "actual" data passed from Service
+	* @param  {int}    affected The "affected" data passed from Service
+	* @param  {int}    limit    The "limit" data passed from Service
+	* @param  {int}    skipped  The "skipped" data passed from Service
+	* @return {string}          Html div with paging buttons
+	*/
 	$.paging_btns = function(options, actual, affected, limit, skipped) {
 		var page_count = Math.ceil(affected / limit),
 		current_page = (skipped/limit) + 1,
@@ -836,10 +836,10 @@
 *======================================================================================*/
 
 	/**
-	 * Activate content pane
-	 * @param  {string} type    The panel to activate
-	 * @param  {object} options (res, label)
-	 */
+	* Activate content pane
+	* @param  {string} type    The panel to activate
+	* @param  {object} options (res, label)
+	*/
 	$.activate_panel = function(type, options) {
 		options = $.extend({
 			res: "",
@@ -947,9 +947,9 @@
 	};
 
 	/**
-	 * Show summary content pane
-	 * @param  {object} active_forms
-	 */
+	* Show summary content pane
+	* @param  {object} active_forms
+	*/
 	$.show_summary = function(active_forms) {
 		$.ask_to_service({
 			op: kAPI_OP_MATCH_UNITS,
@@ -967,12 +967,12 @@
 	};
 
 	/**
-	 * Show row data table
-	 * @param  {string} id     Storage id
-	 * @param  {string} domain Domain
-	 * @param  {int}    skip   Skip
-	 * @param  {int}    limit  Limit
-	 */
+	* Show row data table
+	* @param  {string} id     Storage id
+	* @param  {string} domain Domain
+	* @param  {int}    skip   Skip
+	* @param  {int}    limit  Limit
+	*/
 	$.show_raw_data = function(id, domain, skip, limit) {
 		if(skip === undefined || skip === null || skip === "") { skip = 0; }
 		if(limit === undefined || limit === null || limit === "") { limit = 50; }
@@ -1265,9 +1265,9 @@
 	};
 
 	/**
-	 * Add simple input form
-	 * @param {object} options (id, class, placeholder, type, disabled)
-	 */
+	* Add simple input form
+	* @param {object} options (id, class, placeholder, type, disabled)
+	*/
 	$.add_simple_input = function(options) {
 		options = $.extend({
 			id: $.makeid(),
@@ -1281,9 +1281,9 @@
 	};
 
 	/**
-	 * Add range input group form
-	 * @param {object} options (id, class, placeholder, min, max, type, disabled)
-	 */
+	* Add range input group form
+	* @param {object} options (id, class, placeholder, min, max, type, disabled)
+	*/
 	$.add_range = function(options) {
 		options = $.extend({
 			id: [$.makeid(), $.makeid()],
@@ -1330,10 +1330,10 @@
 	* Chosen
 	*/
 		/**
-		 * Add Chosen autocomplete
-		 * @param {object} options (id, class, placeholder, no_results_text, multiple, allow_single_deselect, max_select, tree_checkbox, rtl, btn_menu, disabled)
-		 * @param {object} content ...
-		 */
+		* Add Chosen autocomplete
+		* @param {object} options (id, class, placeholder, no_results_text, multiple, allow_single_deselect, max_select, tree_checkbox, rtl, btn_menu, disabled)
+		* @param {object} content ...
+		*/
 		$.add_chosen = function(options, content) {
 			if(content === undefined || content === "") {
 				content = [{text: "Test", value: "ok"}, {text: "Test", value: "jkhsdgf"}]; // <----------------------------------- Waiting right data from Milko's Service...
@@ -1390,8 +1390,8 @@
 	* Multiselect
 	*/
 		/**
-		 * Add Multiselect autocomplete
-		 */
+		* Add Multiselect autocomplete
+		*/
 		$.create_tree = function(v, item) {
 			$.get_node = function(node) {
 				$param = item;
@@ -1435,8 +1435,8 @@
 		};
 
 		/**
-		 * Manage checkbox tree
-		 */
+		* Manage checkbox tree
+		*/
 		$.manage_tree_checkbox = function(term, label, item) {
 			var selected_enums = [],
 			selected_enums_terms = [],
@@ -1460,9 +1460,9 @@
 		};
 
 		/**
-		 * Recursive check checkboxes in a treeselect
-		 * @param  {object} item Html object
-		 */
+		* Recursive check checkboxes in a treeselect
+		* @param  {object} item Html object
+		*/
 		$.check_treeselect = function(item) {
 			var $panel = item,
 			selected_checkboxes = $("#" + $panel.find("a.treeselect").attr("id") + "_term").val();
@@ -1475,9 +1475,9 @@
 		};
 
 		/**
-		 * Create multiselect form
-		 * @param {object}   options  (id, class, placeholder, no_results_text, multiple, allow_single_deselect, max_select, tree_checkbox, rtl, btn_menu, disabled)
-		 */
+		* Create multiselect form
+		* @param {object}   options  (id, class, placeholder, no_results_text, multiple, allow_single_deselect, max_select, tree_checkbox, rtl, btn_menu, disabled)
+		*/
 		$.add_multiselect = function(options, callback) {
 			options = $.extend({
 				id: $.makeid(),
@@ -1563,8 +1563,8 @@
 
 
 	/**
-	 * Add generic autocomplete form, like Trait Autocomplete
-	 */
+	* Add generic autocomplete form, like Trait Autocomplete
+	*/
 	$.fn.addAutocomplete = function(options, data, callback) {
 		options = $.extend({
 			id: "",
@@ -1605,8 +1605,8 @@
 	};
 
 	/**
-	 * Add Chosen form (select with search engine)
-	 */
+	* Add Chosen form (select with search engine)
+	*/
 	$.fn.addChosen = function(options, content, callback) {
 		options = $.extend({
 			id: $.makeid(),
