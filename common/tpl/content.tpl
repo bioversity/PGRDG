@@ -7,7 +7,11 @@
 	<div id="content" class="panel-content">
 		<?php
 		print (is_home()) ? "" : "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
-		require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
+		if($page !== "Map") {
+			require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
+		} else {
+			require_once("common/tpl/map.tpl");
+		}
 		?>
 	</div>
 </div>

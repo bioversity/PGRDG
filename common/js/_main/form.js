@@ -782,33 +782,31 @@
 	 */
 	$.paging_btns = function(options, actual, affected, limit, skipped) {
 		var page_count = Math.ceil(affected / limit),
-		current_page = (page_count - Math.ceil(affected / (skipped + limit))) + 1,
-		first_page = 0,
-		previous_page = ((skipped - limit) > 0) ? skipped - limit : 0,
-		next_page = skipped + limit,
-		last_page = page_count * limit,
+		current_page = (skipped/limit) + 1,
+		first_page = 1,
+		previous_page = current_page - 1,
+		next_page = current_page + 1,
+		last_page = page_count,
 		previous_skip = skipped - limit,
 		next_skip = skipped + limit,
 		last_skip = (page_count - 1) * limit;
+
 			/*
-			console.group();
-				console.log("PASSED DATA");
+			console.group("PASSED DATA");
 				console.log(options);
 			console.groupEnd();
-			console.group();
-				console.log("PAGE NUMBERING");
+			console.group("PAGE NUMBERING");
 				console.log("Page count", page_count);
-				console.log("Current page", current_page);
 				console.log("First page", first_page);
 				console.log("Previous page", previous_page);
+				console.log("Next page", next_page);
+				console.log("Current page", current_page);
 				console.log("Last page", last_page);
 			console.groupEnd();
-			console.group();
-				console.log("SKIPPING VALUES");
+			console.group("SKIPPING VALUES");
 				console.log("Previous skip", previous_skip);
 				console.log("Next skip", next_skip);
 				console.log("Last skip", last_skip);
-				console.log("Previous skip", previous_skip);
 			console.groupEnd();
 			*/
 		$form_group = $('<div class="form-group">');

@@ -29,7 +29,7 @@
 	<!-- OpenLayers 3 -->
 	<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/css/ol.css" type="text/css" />
 	<script src="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/build/ol.js" type="text/javascript"></script>
-	
+
 	<script type="text/javascript" src="common/js/_main/map3.js"></script>
 <?php //} ?>
 <script type="text/javascript" src="common/js/_main/main.js"></script>

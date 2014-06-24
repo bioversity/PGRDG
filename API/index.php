@@ -19,13 +19,16 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 				print $api->ask_service($_GET["address"], true);
 			}
 			break;
+		default:
+			print file_get_contents($_GET["address"]);
+			break;
 	}
-	
+
 	exit();
 }
 if(isset($_GET["definitions"]) && trim($_GET["definitions"]) !== "") {
 	$api->set_content_type("text");
-	
+
 	$api->get_definitions($_GET["definitions"], (($_GET["keep_update"] == "true") ? true : false));
 }
 if(isset($_GET["download"]) && trim($_GET["download"]) !== "") {
@@ -37,7 +40,7 @@ if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 	/*
 	if($_GET["type"] == "post") {
 		header("Content-type: " . $_GET["header"]);
-		$fields_string = "";	
+		$fields_string = "";
 		if(isset($_GET["params"]) && trim($_GET["params"]) !== "") {
 			foreach($_GET["params"] as $key=>$value) {
 				$fields_string .= $key . "=" . $value . "&";
@@ -57,14 +60,14 @@ if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 		//close connection
 		curl_close($ch);
 	} else {
-		$fields_string = "";	
+		$fields_string = "";
 		foreach($_GET["params"] as $key=>$value) {
 			$fields_string .= $key . "=" . $value . "&";
 		}
 		if($_GET["debug"] == "true") {
 			print $_GET["address"] . "?" . $fields_string . "\n\n";
 		}
-		
+
 		print file_get_contents($_GET["address"] . "?" . $fields_string);
 	}
 	*/

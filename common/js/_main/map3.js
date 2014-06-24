@@ -15,9 +15,10 @@
 	lat = 55,
 	zoom = 4,
 	default_bbox = [-31, 30, 65, 72],
-	map, view, select, modify, layers,
+	map, view, select, modify, layers, /*clusters,*/
 	vector_measurement, source_measurement, draw,
 	exampleNS = {},
+	//clusterSource = new ol.source.Vector();
 	overlayStyle = (function() {
 		var styles = {};
 		styles.Polygon = [
@@ -176,11 +177,31 @@
 				})
 			})
 		],
+		/*
+		clusters = new ol.layer.Vector({
+			source: clusterSource,
+			style: new ol.style.Style({
+				fill: new ol.style.Fill({
+					color: 'rgba(255, 255, 255, 0.2)'
+				}),
+				stroke: new ol.style.Stroke({
+					color: 'green',
+					width: 2
+				}),
+				image: new ol.style.Circle({
+					radius: 12,
+					fill: new ol.style.Fill({
+						color: 'green'
+					})
+				})
+			})
+		}),
+		*/
 		map = new ol.Map({
 			// Taken from http://ol3js.org/en/master/examples/modify-test.html
 			interactions: ol.interaction.defaults().extend([select, modify]),
 			target: "pgrdg_map",
-			layers: layers,
+			layers: layers, //[layers, clusters],
 			view: view,
 			controls: ol.control.defaults().extend([
 				new ol.control.MousePosition({
@@ -255,12 +276,29 @@
 				highlight = feature;
 			}
 		};
-
+		/*
+		var data = [];
+		for(var i = 0; i < 30; i++) {
+			var x = Math.round(Math.random() * (90 - 0) + 0);
+			var y = Math.round(Math.random() * (180 - 0) + 0);
+			var coords = /** @type {ol.geom.RawPoint} * / ([x * resolution, y * resolution]);
+			var geom = new ol.geom.Point(coords);
+			var feature = new ol.Feature(geom);
+			data.push(feature);
+		}
+		var clusterOptions = {
+			'data': data
+		};
 		$(map.getViewport()).on("mousemove", function(evt) {
 			var pixel = map.getEventPixel(evt.originalEvent);
 			displayFeatureInfo(pixel);
 		});
-
+		var cluster = new ol.Cluster(clusterOptions);
+		cluster.cluster(extent, resolution);
+		console.log(cluster.clusters);
+		console.log(cluster.features);
+		clusterSource.addFeatures(cluster.features);
+		*/
 		$(".ol-attribution").append('<a class="info" href="javascript: void(0);" onclick="$(\'.ol-attribution ul\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 		if(!$("#pgrdg_map").hasClass("locked")) {
 			$("#pgrdg_map").on("mousedown touchstart", function(em) {
@@ -499,10 +537,10 @@
 	 * Switch displayed layer
 	 */
 	$.change_map_layer = function(selected_layer) {
-		var parent_layer, label;
+		var parent_layer, label, pls;
 
 		for(var i = 0, ii = layers.length; i < ii; ++i) {
-			label = layers[i].get("style"),
+			label = layers[i].get("style");
 			pls = layers[i].get("parentLayer");
 
 			if(layers[i].getVisible() == 1) {
@@ -838,6 +876,36 @@
 	/**
 	 * Markers, clusters and popup
 	 */
+		$.add_heatmap = function(options) {
+			options = $.extend({
+				radius: 30,
+				opacity: 40,
+				gradient: {
+					0.45: "rgb(0, 0, 255)",
+					0.55: "rgb(0, 255, 255)",
+					0.65: "rgb(0, 255, 0)",
+					0.95: "yellow",
+					1.0: "rgb(255, 0, 0)"
+				}
+			});
+			var vector = new ol.layer.Heatmap({
+				source: new ol.source.KML({
+					projection: 'EPSG:3857',
+					url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
+				}),
+				radius: options.radius
+			});
+			vector.getSource().on('addfeature', function(event) {
+				// 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+				// standards-violating <magnitude> tag in each Placemark.  We extract it from
+				// the Placemark's name instead.
+				var name = event.feature.get('name');
+				var magnitude = parseFloat(name.substr(2));
+				event.feature.set('weight', magnitude - 5);
+			});
+			map.addOverlay(vector);
+		};
+
 		/**
 		* Add marker on map
 		* @param {object} options (lon, lat, uuid, type, name, title, cloud, size, marker_class, content, callback{function})
@@ -1050,6 +1118,7 @@
 			$.reset_map_toolbox();
 			$("#map_toolbox_help").modal("show");
 		}
+		//$.add_heatmap();
 	};
 
 	/*
@@ -1250,4 +1319,5 @@
 
 
 $(document).ready(function() {
+
 });
