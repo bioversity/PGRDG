@@ -7,6 +7,9 @@
 [submodule "common/js/OpenLayers/ol3js"]
 	path = common/js/OpenLayers/ol3js
 	url = git@github.com:openlayers/ol3.git
+[submodule "common/js/OpenLayers/OpenLayers3_kenny"]
+	path = common/js/OpenLayers/OpenLayers3_kenny
+	url = git@github.com:Kenny806/ol3.git
 [submodule "common/js/jquery.hotkeys"]
 	path = common/js/jquery.hotkeys
 	url = git@github.com:jeresig/jquery.hotkeys.git
@@ -28,12 +31,3 @@
 [submodule "common/js/purl"]
 	path = common/js/purl
 	url = git@github.com:allmarkedup/purl.git
-[submodule "common/js/OpenLayers/ol3js_kenny"]
-	path = common/js/OpenLayers/ol3js_kenny
-	url = git@github.com:Kenny806/ol3.git
-[submodule "common/js/OpenLayers/OpenLayers3_kenny"]
-	path = common/js/OpenLayers/OpenLayers3_kenny
-	url = git@github.com:Kenny806/ol3.git
-[submodule "common/js/OpenLayers/OpenLayers4_kenny"]
-	path = common/js/OpenLayers/OpenLayers4_kenny
-	url = git@github.com:Kenny806/ol3.git
