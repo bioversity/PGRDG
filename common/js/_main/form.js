@@ -222,10 +222,10 @@
 		data = [],
 		$panel, $panel_mask;
 		if($this.hasClass("panel-mask")) {
-			$panel = $this.next(".panel"),
+			$panel = $this.next(".panel");
 			$panel_mask = $this;
 		} else {
-			$panel = $this.closest(".panel"),
+			$panel = $this.closest(".panel");
 			$panel_mask = $panel.prev(".panel-mask");
 		}
 		if($panel.find("a.pull-left span, a.pull-right span").hasClass("fa-square-o")) {
@@ -295,8 +295,8 @@
 								}
 							});
 							//all tr elements are hidden
-							if(tableRowsClass.children(":visible").length == 0) {
-								if(tableBody.find(".search-sf").length == 0) {
+							if(tableRowsClass.children(":visible").length === 0) {
+								if(tableBody.find(".search-sf").length === 0) {
 									tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
 								}
 							}
@@ -505,7 +505,7 @@
 							if(respType == "results") {
 								for (i = 0; i < parsedResponse.paging.affected; i++) {
 									var re = [];
-									re["value"] = v[i];
+									re.value = v[i];
 									res.push(re);
 								}
 							}
@@ -721,7 +721,7 @@
 	 * @param  {object} search The form group to remove (html object)
 	 */
 	$.remove_search = function(search) {
-		$this = search,
+		var $this = search,
 		search_id = $this.closest(".panel").attr("id");
 
 		apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
