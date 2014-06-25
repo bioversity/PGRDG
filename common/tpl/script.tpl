@@ -17,30 +17,30 @@
 <!-- Typeahead -->
 <link rel="stylesheet" href="common/js/typeahead/typeahead.css" type="text/css" />
 <script type="text/javascript" src="common/js/typeahead/typeahead.bundle.js"></script>
-
-<?php //if(strtolower($page) == "map") { ?>
-	<!-- OpenLayers2 -->
-		<!--
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-		<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers-2.13/theme/default/style.css" type="text/css">
-		<script type="text/javascript" src="common/js/OpenLayers/OpenLayers-2.13/OpenLayers.js"></script>
-		<script type="text/javascript" src="common/js/main.map.js"></script>
-		-->
-	<!-- OpenLayers 3 -->
-	<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/css/ol.css" type="text/css" />
-	<script src="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/build/ol.js" type="text/javascript"></script>
-
-	<script type="text/javascript" src="common/js/_main/map3.js"></script>
-<?php //} ?>
-<script type="text/javascript" src="common/js/_main/main.js"></script>
+<!-- Jquery hotkeys -->
 <script type="text/javascript" src="common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
-<?php
-if($_GET["p"] == "Search") {
-	?>
-	<script type="text/javascript" src="common/js/_main/form.js"></script>
+
+	<!-- Core scripts -->
+	<script type="text/javascript" src="common/js/_main/main.js"></script>
 	<?php
-}
-?>
-<script type="text/javascript" src="API/?definitions=api&keep_update=true"></script>
-<script type="text/javascript" src="API/?definitions=tags&keep_update=true"></script>
-<script type="text/javascript" src="API/?definitions=types&keep_update=true"></script>
+	if(strtolower($page) == "search") {
+		?>
+		<!-- OpenLayers2 -->
+			<!--
+			<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+			<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers-2.13/theme/default/style.css" type="text/css">
+			<script type="text/javascript" src="common/js/OpenLayers/OpenLayers-2.13/OpenLayers.js"></script>
+			<script type="text/javascript" src="common/js/main.map.js"></script>
+			-->
+		<!-- OpenLayers 3 -->
+		<link rel="stylesheet" href="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/css/ol.css" type="text/css" />
+		<script src="common/js/OpenLayers/OpenLayers3/v3.0.0-beta.5/build/ol.js" type="text/javascript"></script>
+
+		<script type="text/javascript" src="common/js/_main/map3.js"></script>
+		<script type="text/javascript" src="common/js/_main/form.js"></script>
+		<?php
+	}
+	?>
+	<script type="text/javascript" src="API/?definitions=api&keep_update=true"></script>
+	<script type="text/javascript" src="API/?definitions=tags&keep_update=true"></script>
+	<script type="text/javascript" src="API/?definitions=types&keep_update=true"></script>

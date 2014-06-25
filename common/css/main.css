@@ -301,14 +301,30 @@ a.text-info {
 	font-size: 35px;
 	margin-top: 80px;
 	margin-left: -35px;
-	-webkit-user-select: none; /* Chrome/Safari */        
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* IE10+ */
+	padding-left: 10px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
 	user-select: none;
 	cursor: default;
+}
+#start h1:hover > span {
+	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+@keyframes blinker {
+	from {
+		margin-left: 2.5px;
+		margin-right: -2.5px;
+		color: #d0d0d0;
+	}
+	to {
+		margin-left: -5px;
+		margin-right: 5px;
+		color: #da680b;
+	}
 }
 section.container > #contents #content {
 	padding-top: 71px;
@@ -611,7 +627,7 @@ ul.list-group.transparent ul {
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
 	width: 18%;
 	z-index: 2;
-	
+
 }
 #information_zone td {
 	padding-left: 10px;
@@ -943,7 +959,7 @@ ul.list-group.transparent ul {
 	top: 122px;
 }
 .ol-full-screen {
-	
+
 }
 .ol-logo {
 	display: none;
@@ -1285,7 +1301,7 @@ label.checkbox {
 	padding: 30px 25px !important;
 }
 .cn-wrapper li > span:hover {
-	
+
 }
 .vcenter {
     display: inline-block;

@@ -37,12 +37,12 @@
 	</div>
 	<div id="map" class="panel_content">
 		<?php require_once("common/tpl/map_toolbox.tpl"); ?>
-		
+
 		<div id="map_hidden_elements" style="display: none;"></div>
 		<!--script src="common/js/polyfills.js"></script-->
 	</div>
 	<div id="pgrdg_map"></div>
 	<div id="start" class="panel_content">
-		<h1 unselectable="on">&lsaquo; Start typing in the search box</h1>
+		<h1 unselectable="on"><span>&lsaquo;</span> Start typing in the search box</h1>
 	</div>
 </div>

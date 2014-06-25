@@ -648,7 +648,6 @@ $(document).ready(function() {
 				});
 			});
 			$("#login-username").focus();
-			if (!data) return e.preventDefault();
 		});
 
 		if(current_path == "Search") {

@@ -1648,12 +1648,10 @@ $(document).ready(function() {
 			$.resize_forms_mask();
 		});
 	}
-	/*
-	// Disabled for now
+	// Check the presence of constants on storage
 	$.check_storage("list-constants", function() {
 		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
-	*/
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {
