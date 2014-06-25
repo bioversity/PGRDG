@@ -191,7 +191,7 @@
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
 					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
-					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body"><p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p><form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
+					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
 				});
 			});
 
