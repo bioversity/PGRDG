@@ -28,3 +28,6 @@
 [submodule "common/js/purl"]
 	path = common/js/purl
 	url = git@github.com:allmarkedup/purl.git
+[submodule "common/js/OpenLayers/ol3js"]
+	path = common/js/OpenLayers/ol3js
+	url = git@github.com:openlayers/ol3.git
