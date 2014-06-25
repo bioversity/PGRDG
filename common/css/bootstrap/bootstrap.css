@@ -2053,7 +2053,7 @@ fieldset[disabled] .btn {
 	/**
 	/* PERSONALIZATIONS
 	*/
-
+	
 	/* BTN GREEN-BIOVERSITY */
 	.btn-default {
 	  color: #333;
@@ -2096,7 +2096,7 @@ fieldset[disabled] .btn {
 	  color: #c1d82f;
 	  background-color: #333;
 	}
-
+	
 	/* BTN WHITE */
 	.btn-default-white {
 	  color: #333;
@@ -2139,7 +2139,7 @@ fieldset[disabled] .btn {
 	  color: #fff;
 	  background-color: #333;
 	}
-
+	
 	/* BTN GREY */
 	.btn-default-grey {
 	  color: #333;
@@ -2182,7 +2182,7 @@ fieldset[disabled] .btn {
 	  color: #fff;
 	  background-color: #333;
 	}
-
+	
 	/* BTN ORANGE */
 	.btn-orange {
 	  color: #fff;
@@ -3481,7 +3481,7 @@ input[type="button"].btn-block {
 }
 .input-group .form-control {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   float: left;
   width: 100%;
   margin-bottom: 0;

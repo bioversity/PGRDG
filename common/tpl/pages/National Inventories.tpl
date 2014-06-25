@@ -11,5 +11,5 @@
 
 <ul>
 <li><a href="http://www.iao.florence.it/ojs/index.php/JAEID/article/view/27">Italy</a></li>
-<li><a href="http://www.sasa.gov.uk/content/landrace-inventory-uk">United Kigdom</a></li>
+<li><a href="http://www.sasa.gov.uk/content/landrace-inventory-uk">United Kingdom</a></li>
 </ul>

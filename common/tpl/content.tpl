@@ -6,12 +6,8 @@
 <div id="contents">
 	<div id="content" class="panel-content">
 		<?php
-		print (is_home()) ? "" : "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
-		if($page !== "Map") {
-			require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
-		} else {
-			require_once("common/tpl/map.tpl");
-		}
+		print (is_home()) ? '<h1>Plant Genetic Resources Diversity Gateway<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small></h1>' : "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
+		require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
 		?>
 	</div>
 </div>

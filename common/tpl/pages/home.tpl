@@ -36,6 +36,8 @@ $i = -1;
 
 <p>The Plant Genetic Resource Diversity Gateway includes inventories and trait information on crop wild relatives and landraces from various sources, including data generated within the “PGR Secure project”. <a href="http://www.pgrsecure.org/">PGR Secure</a> is the short name given to a collaborative project funded under the EU Seventh Framework Programme, ‘Characterization of biodiversity resources for wild crop relatives to improve crops by breeding’. </p>
 
-<p>The data can be searched or browsed from any data type, word or domain besides offering three different entry points—traits, crop wild relative and landrace inventories, and generic search-allowing the user to retrieve information without having to choose a domain beforehand. The system is set up so that the user can use it as a gateway into other existing sources of information.</p>
+<p>The data can be searched or browsed from any data type, word or domain besides offering three different entry points — national inventories and conservation strategies, and generic search-allowing the user to retrieve information without having to choose a domain beforehand. The system is set up so that the user can use it as a gateway into other existing sources of information.</p>
 
 <p>The main target of the Plant Genetic Resource Diversity Gateway is to promote and facilitate the use of crop wild relatives and landraces in breeding and crop improvement. At the same time, it provides a system to manage conservation data about these important resources, which can be used as a decision-making support tool for policymakers.</p>
+
+<p>PGR Secure has received funding from the European Union’s Seventh Framework Programme for research, technological development and demonstration under grant agreement no 266394</p>

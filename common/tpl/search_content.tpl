@@ -43,6 +43,6 @@
 	</div>
 	<div id="pgrdg_map"></div>
 	<div id="start" class="panel_content">
-		<h1 unselectable="on">&lsaquo; Start typing in the search box</h1>
+		<h1 unselectable="on">&lsaquo; Start typing the name on a field you want to search</h1>
 	</div>
 </div>

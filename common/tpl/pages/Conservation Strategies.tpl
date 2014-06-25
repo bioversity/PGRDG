@@ -17,7 +17,7 @@ $files = array_diff(scandir($dir), array("..", "."));
 		<div class="panel panel-success">
 			<div class="panel-heading">
 				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#<?php print md5($file); ?>">
+					<a data-toggle="collapse" data-parent="#accordion" href="javascript:void(0);" data-target="#<?php print md5($file); ?>">
 						<?php print $file; ?>
 					</a>
 				</h4>
@@ -36,7 +36,11 @@ $files = array_diff(scandir($dir), array("..", "."));
 						
 						foreach($subfiles as $subfile) {
 							if(!is_dir($subdir . "/" . $subfile)) {
-								print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="/API/?download=' . str_replace("common/media/", "", $subdir) . '/' . $subfile . '" title="Click to download" class="text-warning">' . str_replace("_", " ", $subfile) . '</a></li>';
+								$pos = strrpos($subfile, "_title");
+                                                                if ($pos === false) {
+                                                                	$title = file_get_contents($subdir . "/" . str_replace(".pdf", "_title", $subfile));
+									print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $subdir) . '/' . $subfile) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile)) . '</a></li>';
+								}
 							}
 						}
 						?>
@@ -50,7 +54,11 @@ $files = array_diff(scandir($dir), array("..", "."));
 							<?php
 							foreach($subfiles_old as $subfile_old) {
 								if(!is_dir($subdir_old . "/" . $subfile_old)) {
-									print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a href="/API/?download=' . str_replace("common/media/", "", $subdir_old) . '/' . $subfile_old . '" title="Click to download" class="text-muted">' . str_replace("_", " ", $subfile_old) . '</a></li>';
+									$pos = strrpos($subfile_old, "_title");
+					                                if ($pos === false) {
+										$title = file_get_contents($subdir_old . "/" . str_replace(".pdf", "_title", $subfile_old));
+										print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $subdir_old) . '/' . $subfile_old) . '" title="Click to download" class="text-muted">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile_old)) . '</a></li>';
+									}
 								}
 							}
 							?>
@@ -69,7 +77,11 @@ $files = array_diff(scandir($dir), array("..", "."));
 		<ul class="list-group fa-ul">
 			<?php
 			foreach($f as $file) {
-				print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a href="/API/?download=' . str_replace("common/media/", "", $dir) . '/' . $file . '" title="Click to download" class="text-warning">' . str_replace("_", " ", $file) . '</a></li>';
+				 $pos = strrpos($file, "_title");
+                                 if ($pos === false) {
+                                 	$title = file_get_contents($dir . "/" . str_replace(".pdf", "_title", $file));
+					print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $dir) . '/' . $file) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $file)) . '</a></li>';
+				}
 			}
 			?>
 		</ul>

@@ -2,10 +2,13 @@
 if($page !== "Search") {
 	?>
 	<footer>
-		<ul class="csc-menu csc-menu-def">
-			<li><a href="/Terms and Conditions of Use">Terms and Conditions of Use</a></li>
-			<li><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a> This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</li>
-		</ul>
+		<div class="pull-left"><img src="http://www.pgrsecure.bham.ac.uk/sites/default/files/acquia_marina_logo.jpg" style="height: 100px;"></div>
+		<div class="pull-right" style="padding-top: 55px; border-top: 1px solid rgb(221, 221, 221);">
+			<ul class="csc-menu csc-menu-def">
+				<li><a href="/Terms and Conditions of Use">Terms and Conditions of Use</a></li>
+				<li><a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" rel="license"><img src="http://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" style="border-width:0" alt="Creative Commons License"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" rel="license">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</li>
+			</ul>
+		</div>
 	</footer>
 	<?php
 }
