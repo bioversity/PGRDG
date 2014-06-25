@@ -4,9 +4,6 @@
 [submodule "common/js/jQuery-Knob"]
 	path = common/js/jQuery-Knob
 	url = git@github.com:aterrien/jQuery-Knob.git
-[submodule "common/js/OpenLayers/ol3js"]
-	path = common/js/OpenLayers/ol3js
-	url = git@github.com:openlayers/ol3.git
 [submodule "common/js/OpenLayers/OpenLayers3_kenny"]
 	path = common/js/OpenLayers/OpenLayers3_kenny
 	url = git@github.com:Kenny806/ol3.git
