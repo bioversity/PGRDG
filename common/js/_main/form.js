@@ -238,18 +238,56 @@
 				$panel.find(".chosen-select").prop("disabled", false).trigger("chosen:updated");
 			}
 			// Treeselect
+			//
 			if($panel.find("a.treeselect").length > 0){
-				$panel.find("a.treeselect").addClass("disabled");
-				var treeselect_id = $panel.find("a.treeselect").attr("id");
-				var treeselect_content = '<div style="overflow-y: auto; overflow-x: hidden; height: 200px; margin: 0 -10px;"><ul class="list-unstyled">';
+				var $item = $panel.find("a.treeselect"),
+				$form = $item.closest("form"),
+				treeselect_id = $panel.find("a.treeselect").attr("id"),
+				treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
+				treeselect_content = '<div class="dropdown-content"><ul>';
 
+				$item.addClass("disabled");
 				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: tag}}}, function(res) {
-					$panel.find("a.treeselect").removeClass("disabled");
+					$item.removeClass("disabled");
 					$.each(res.results, function(k, v) {
 						treeselect_content += $.create_tree(v, $panel);
 					});
 					treeselect_content += '</ul>';
 				});
+				$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
+				$form.find(".dropdown-menu > *").click(function(e) {
+					e.stopPropagation();
+				});
+				$form.on("shown.bs.dropdown", function () {
+					$form.find(".dropdown-menu .dropdown-header input.form-control").focus();
+					$form.find(".dropdown-menu .dropdown-header input.form-control").keyup(function() {
+						var that = this;
+						// affect all table rows on in systems table
+						var tableBody = $form.find(".dropdown-menu .dropdown-content > ul");
+						var tableRowsClass = $form.find(".dropdown-menu .dropdown-content > ul li");
+
+						tableRowsClass.each(function(i, val) {
+							//Lower text for case insensitive
+							var rowText = $(val).text().toLowerCase();
+							var inputText = $(that).val().toLowerCase();
+
+							if(rowText.indexOf( inputText ) == -1) {
+								//hide rows
+								tableRowsClass.eq(i).hide();
+							} else {
+								$(".search-sf").remove();
+								tableRowsClass.eq(i).show();
+							}
+						});
+						//all tr elements are hidden
+						if(tableRowsClass.children(":visible").length === 0) {
+							if(tableBody.find(".search-sf").length === 0) {
+								tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+							}
+						}
+					});
+				});
+				/*
 				if($("body > .popover").length > 0) {
 					console.log("exists");
 					if(!$("body > .popover").hasClass("in")) {
@@ -311,6 +349,7 @@
 						});
 					});
 				}
+				*/
 			}
 			$panel_mask.fadeOut(300);
 			$(".save_btn").removeClass("disabled");
@@ -373,32 +412,33 @@
 		if(jQuery.type(system_constants) == "string") {
 			system_constants = jQuery.parseJSON(system_constants);
 		}
-
-		$.ask_to_service(system_constants.results.kAPI_OP_LIST_OPERATORS, function(oprts) {
-			$.each(oprts.results, function(rx, rv) {
-				if(rv.label !== undefined) {
-					operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
-				} else {
-					if(rx == "label") {
-						operators.push({"label": rv});
-					} else if(rx == "title") {
-						operators.push({"title": rv});
+		if(system_constants.results.kAPI_OP_LIST_OPERATORS !== undefined) {
+			$.ask_to_service(system_constants.results.kAPI_OP_LIST_OPERATORS, function(oprts) {
+				$.each(oprts.results, function(rx, rv) {
+					if(rv.label !== undefined) {
+						operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
+					} else {
+						if(rx == "label") {
+							operators.push({"label": rv});
+						} else if(rx == "title") {
+							operators.push({"title": rv});
+						}
 					}
-				}
+				});
+				$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
+					id: "main_search",
+					class: "",
+					placeholder:  oprts.results.placeholder,
+					op: operators
+				}, "remote", function() {
+					operators = operators;
+				});
+				$.left_panel("open", "", function() {
+					$("#forms-body").fadeIn(300);
+				});
 			});
-			$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
-			$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
-				id: "main_search",
-				class: "",
-				placeholder:  oprts.results.placeholder,
-				op: operators
-			}, "remote", function() {
-				operators = operators;
-			});
-			$.left_panel("open", "", function() {
-				$("#forms-body").fadeIn(300);
-			});
-		});
+		}
 	};
 
 	/**
@@ -415,17 +455,17 @@
 				if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
 					// http://pgrdg.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
-						storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": $.utf8_to_b64(JSON.stringify(system_constants))});
+						storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": system_constants});
 						$.get_operators_list(system_constants);
 
 						if (jQuery.type(callback) == "function") {
-							callback.call(this);
+							callback.call(system_constants);
 						}
 					});
 				} else {
-					$.get_operators_list($.b64_to_utf8(storage.get("pgrdg_cache.take." + $.md5(name) + ".response")));
+					$.get_operators_list(storage.get("pgrdg_cache.take." + $.md5(name) + ".response"));
 					if (jQuery.type(callback) == "function") {
-						callback.call(this);
+						callback.call(cname);
 					}
 				}
 			}
@@ -1422,12 +1462,12 @@
 			var $panel = item,
 			panel_input_term_id = $panel.find('input[name="term"]').attr("id"),
 			content = "",
-			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\');" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
+			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
 			checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 			checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
-				content += '<li class="list-group-item-heading">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul>';
+				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul></li>';
 			} else {
 				content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
 			}
@@ -1493,9 +1533,11 @@
 				disabled: true
 			}, options);
 
-			//var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
-			//var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
-			var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect disabled" data-toggle="popover" id="' + options.id + '"><span>' + options.placeholder + '</span> <span class="caret"></a>';
+			/*
+			var select = '<select id="' + options.id + '" class="multiselect form-control' + ((options.rtl) ? " rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '" ' + '></select>';
+			var select = '<ul class="nav nav-pills"><li id="' + options.id + '" class="dropdown"><a data-toggle="dropdown" href="#">' + options.placeholder + '</a><ul class="dropdown-menu multiselect" role="menu" aria-labelledby="dLabel"></ul></li></ul>';
+			*/
+			var select = '<a href="javascript: void(0);" class="btn btn-default-white form-control treeselect dropdown-toggle disabled" data-toggle="dropdown" id="' + options.id + '"><span>' + options.placeholder + '</span> <span class="caret"></a><div class="dropdown-menu"></div>';
 			if (jQuery.type(callback) == "function") {
 				callback.call(this);
 			}
@@ -1649,7 +1691,7 @@ $(document).ready(function() {
 		});
 	}
 	// Check the presence of constants on storage
-	$.check_storage("list-constants", function() {
+	$.check_storage(kAPI_OP_LIST_CONSTANTS, function(data) {
 		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
 	// Adjust dropdown buttons visualization

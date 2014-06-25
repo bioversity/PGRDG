@@ -203,7 +203,7 @@ section.container {
 	border-radius: 4px;
 	color: transparent;
 	text-align: center;
-	z-index: 5;
+	z-index: 1;
 }
 #forms-body .panel-mask:not(.unselectable):hover {
 	background-color: rgba(0, 0, 0, 0.55);
@@ -1031,7 +1031,7 @@ label.checkbox {
 	padding: 0;
 	border: 0px none;
 }
-#accordion .list-group-item-heading, .popover .list-group-item-heading {
+#accordion .list-group-item-heading, {
 	border-bottom: 1px solid #ddd;
 	color: #999;
 	padding: 0 0 10px;
@@ -1076,6 +1076,20 @@ label.checkbox {
 }
 .multiselect-container > .input-group {
 	padding: 5px;
+}
+
+.treeselect + .dropdown-menu > .dropdown-header {
+	padding: 10px;
+}
+.treeselect + .dropdown-menu > .dropdown-content {
+  margin: 0 10px 10px 10px;
+  max-height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.treeselect + .dropdown-menu > .dropdown-content ul:first-child {
+	margin: 0;
+	padding: 0;
 }
 
 #knob {
