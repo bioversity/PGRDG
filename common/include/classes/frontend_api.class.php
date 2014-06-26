@@ -12,13 +12,13 @@ class frontend_api {
 	function __construct($input = array()) {
 		$this->input = $input;
 		$this->debug = false;
-		
+
 		$this->check_rsa();
 	}
-	
+
 	/* PRIVATE FUNCTIONS */
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-	
+
 	private function check_rsa() {
 		// Generates RSA keys if don't exits
 		// See my gist for further documentation: https://gist.github.com/gubi/7532110
@@ -35,7 +35,7 @@ class frontend_api {
 		$this->input["agent"] = ($this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
 		// Set the request type as "GET" if not exists
 		$this->input["type"] = ($this->input["type"] == "" || $this->input["type"] == null) ? "GET" : $this->input["type"];
-		
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		if(strtolower($this->input["type"]) == "post") {
@@ -48,10 +48,10 @@ class frontend_api {
 		curl_setopt($ch, CURLOPT_VERBOSE, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, $this->input["agent"]);
-		
+
 		$result = curl_exec($ch);
 		curl_close($ch);
-		
+
 		return $result;
 	}
 	private function compose_url($params_array, $urlencode_value = "", $urlencode = true) {
@@ -80,6 +80,7 @@ class frontend_api {
 		if(base64_decode($base64_url, true)) {
 			$service_conf = parse_ini_file("../common/include/conf/service.ini");
 			$service_url = $service_conf["url"] . "/Service.php";
+			// $service_url = "../pgrdg.grinfo.private/Service.php";
 			$url = str_replace("{SERVICE_URL}", $service_url, base64_decode(rawurldecode($base64_url)));
 		} else {
 			$url = $base64_url;
@@ -115,12 +116,12 @@ class frontend_api {
 	private function getUserDefinedConstants() {
 		// Taken from http://stackoverflow.com/a/7538100
 		$constants = get_defined_constants(true);
-		return (isset($constants["user"]) ? $constants["user"] : array());  
+		return (isset($constants["user"]) ? $constants["user"] : array());
 	}
-	
+
 	/* PUBLIC FUNCTIONS */
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-	
+
 	public function get_definitions($type, $keep_update, $response_type = "string") {
 		switch(strtolower($type)) {
 			case "api":			$def_file = "Api.inc.php";				break;
@@ -139,7 +140,7 @@ class frontend_api {
 			$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
 			$milko_script = $this->browse($definitions_url);
 			preg_match_all("/\"([^\s+].*)\".*,.*\t([^\s].*)\s\)\;.*$/msU", $milko_script, $matches);
-			
+
 			for($i = 0; $i <= count($matches[0]); $i++) {
 				$defined_constants[$matches[1][$i]] = trim($matches[2][$i], "'");
 			}
@@ -178,16 +179,16 @@ class frontend_api {
 				break;
 		}
 	}
-	
+
 	public function debug() {
 		$this->set_content_type("text");
 		$this->debug = true;
 	}
-	
+
 	public function ask_service($address) {
 		$this->set_content_type("json");
 		$url = $this->build_url_for_service($address);
-		
+
 		if($this->debug) {
 			/**
 			* Screen output
@@ -205,13 +206,13 @@ class frontend_api {
 			return $this->browse($url);
 		}
 	}
-	
+
 	public function force_download($file) {
 		if (!file_exists($file)) {
 			print "No file";
 		} else {
 			$splinfo = new SplFileInfo($file);
-			
+
 			header("Pragma: public"); // required
 			header("Expires: 0"); // no cache
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -219,6 +220,25 @@ class frontend_api {
 			header("Cache-Control: private", false);
 			header("Content-Type: " . mime_content_type($file));
 			header("Content-disposition: attachment; filename=\"" . basename($splinfo->getFilename()) . "\"");
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Length: " . $splinfo->getSize()); // provide file size
+			header("Connection: close");
+			readfile($file);
+		}
+	}
+	public function force_view($file) {
+		if (!file_exists($file)) {
+			print "No file";
+		} else {
+			$splinfo = new SplFileInfo($file);
+
+			header("Pragma: public"); // required
+			header("Expires: 0"); // no cache
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Last-Modified: " . gmdate("D, d M Y H:i:s", $splinfo->getMTime()) . " GMT");
+			header("Cache-Control: private", false);
+			header("Content-Type: " . mime_content_type($file));
+			//header("Content-disposition: attachment; filename=\"" . basename($splinfo->getFilename()) . "\"");
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: " . $splinfo->getSize()); // provide file size
 			header("Connection: close");

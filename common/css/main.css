@@ -64,12 +64,11 @@ footer {
 }
 */
 footer {
-	border-top: 1px solid #ccc;
 	bottom: 0;
 	font-size: 13px;
 	margin: 100px auto 0 auto;
 	max-width: 900px;
-	padding: 5px 0 10px;
+	padding: 0;
 	position: static;
 	text-align: center;
 	width: 100%;

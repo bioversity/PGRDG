@@ -1,6 +1,6 @@
 <h3 id="what-is-the-plant-genetic-resource-diversity-gateway">What is the Plant Genetic Resource Diversity Gateway?</h3>
 
-<p><strong>Plant Genetic Resource Diversity Gateway</strong> is a system that aims to hold trait information and data from crop wild relatives and landraces. It connects and brings together national inventories, checklists, national conservation strategies, phenotypic and genomic data. This system is being developed and hosted by Bioversity International. It can act also as a communication and information tool for implementing strategies for crop wild relatives and landraces genetic resources.</p>
+<p><strong>Plant Genetic Resource Diversity Gateway</strong> is a system that aims to hold trait information and data from crop wild relatives and landraces. It connects and brings together national inventories, checklists, national conservation strategies, phenotypic and genomic data. This system has been developed during the project PGRSecure, and further developed and hosted by Bioversity International. It can act also as a communication and information tool for implementing strategies for crop wild relatives and landraces genetic resources.</p>
 
 <p>The gateway provides the user with a searchable database of related information, links and communication channel for plant genetic resources. It provides countries and institutions with a means to coordinate the management of their national data and access to them. </p>
 
@@ -15,9 +15,12 @@ Information System on Forest Genetic Resources).  Data generated from the projec
 
 <p>The objectives of the <strong>Gateway</strong> and the network as a whole are to: <br>
  - help institutions, national and international agencies, NGOs, training and research groups throughout the world to share data on crop wild relatives and landraces and coordinate their efforts on policy and management <br>
- - achieve better management, conservation and use of all crop wild relatives and landraces genetic resources for better and more sustainable agricultural production of food in all countries, in accordance with the <a href="http://www.fao.org/monitoringprogress/summit_en.html">World Food Summit Plan of Action</a>, the <a href="http://www.planttreaty.org">International Treaty on Plant Genetic Resources for Food and Agriculture</a> and the <a href="http://www.biodiv.org">UN Convention on Biological Diversity</a>.</p>
+ - achieve better management, conservation and use of all crop wild relatives and landraces genetic resources for better and more sustainable agricultural production of food in all countries, in accordance with the <a href="http://www.fao.org/monitoringprogress/summit_en.html">World Food Summit Plan of Action</a>, the <a href="http://www.planttreaty.org">International Treaty on Plant Genetic Resources for Food and Agriculture</a> and the <a href="http://www.biodiv.org">UN Convention on Biological Diversity</a>.<br>
+ - Offer plant breeding with more and better information on traits and crops.</p>
 
 <p><strong>Plant Genetic Resource Diversity Gateway</strong> offers (at the moment): <br>
+ - a ready to use platform with a portal and visualization map service <br>
+ - an infrastructure for storing and linking data on crop wild relatives, landraces, traits, QTL, evaluation data, environmental data, inventories, checklists and conservation strategies (more to come) <br>
  - a means to maintain, share and access information and data <br>
  - an advanced communication and information tool to facilitate countries reporting and policymaking decisions <br>
  - an infrastructure for storing and linking data on crop wild relatives, landraces, traits, QTL, evaluation data, environmental data, inventories, checklists and conservation strategies (more to come) <br>
