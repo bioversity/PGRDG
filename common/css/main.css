@@ -255,7 +255,7 @@ section.container {
   position: absolute;
   right: 40px;
 }
-a.text-info {
+a.text-info, span.text-info, span.info {
 	cursor: help;
 }
 

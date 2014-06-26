@@ -20,6 +20,36 @@
 		return ((v.description !== undefined && v.description.length > 0) ? ((v.description !== undefined && v.description.length > 0) ? v.description : "") : ((v.definition !== undefined && v.definition.length > 0) ? v.definition : ""));
 	};
 
+	/**
+	* Check if local storage is allowed
+	*/
+	$.check_storage = function(cname, callback) {
+		if(jQuery.type(cname) == "string") {
+			cname = new Array(cname);
+		}
+		for(var q = 0; q < cname.length; q++) {
+			var name = cname[q];
+
+			if($.browser_cookie_status()) {
+				if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
+					// http://pgrdg.grinfo.private/Service.php?op={name}
+					$.ask_to_service(name, function(system_constants) {
+						storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": system_constants});
+						$.get_operators_list(system_constants);
+
+						if (jQuery.type(callback) == "function") {
+							callback.call(system_constants);
+						}
+					});
+				} else {
+					$.get_operators_list(storage.get("pgrdg_cache.take." + $.md5(name) + ".response"));
+					if (jQuery.type(callback) == "function") {
+						callback.call(cname);
+					}
+				}
+			}
+		}
+	};
 
 /*=======================================================================================
 *	CORE FORM FUNCTIONS
@@ -441,37 +471,6 @@
 		}
 	};
 
-	/**
-	* Check if local storage is allowed
-	*/
-	$.check_storage = function(cname, callback) {
-		if(jQuery.type(cname) == "string") {
-			cname = new Array(cname);
-		}
-		for(var q = 0; q < cname.length; q++) {
-			var name = cname[q];
-
-			if($.browser_cookie_status()) {
-				if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
-					// http://pgrdg.grinfo.private/Service.php?op={name}
-					$.ask_to_service(name, function(system_constants) {
-						storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": system_constants});
-						$.get_operators_list(system_constants);
-
-						if (jQuery.type(callback) == "function") {
-							callback.call(system_constants);
-						}
-					});
-				} else {
-					$.get_operators_list(storage.get("pgrdg_cache.take." + $.md5(name) + ".response"));
-					if (jQuery.type(callback) == "function") {
-						callback.call(cname);
-					}
-				}
-			}
-		}
-	};
-
 
 /*=======================================================================================
 *	SEARCH PAGE ELEMENTS
@@ -810,6 +809,329 @@
 		}
 	};
 
+
+
+/*=======================================================================================
+*	CONTENT INTERFACE
+*======================================================================================*/
+
+	/**
+	* Activate content pane
+	* @param  {string} type    The panel to activate
+	* @param  {object} options (res, label)
+	*/
+	$.activate_panel = function(type, options) {
+		options = $.extend({
+			res: "",
+			label: ""
+		}, options);
+
+		$.manage_url($.ucfirst(type));
+
+		if(type !== "map") {
+			$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
+
+			$("#" + type + "-body .content-body").html("");
+			if(type !== "results") {
+				$.each(options.res.results, function(domain, values) {
+					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\">View raw data <span class=\"fa fa-th\"></span></a><a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn btn-default\">View on map <span class=\"ionicons ion-map\"></a></div>" + values[kTAG_DEFINITION] + "</div></div>");
+				});
+			} else {
+				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
+				rows = options.res[kAPI_RESPONSE_RESULTS];
+				$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
+					/**
+					 * Parse cell content and display helps if present
+					 * @param  {string|object} disp The text or object that will be parsed
+					 * @return {string}      The html string to place iside cell
+					 */
+					$.cycle_disp = function(disp) {
+						if($.type(disp) == "object") {
+							return ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + disp[kAPI_PARAM_RESPONSE_FRMT_DISP];
+						} else {
+							return disp;
+						}
+					};
+
+					/**
+					* Open/close row
+					* @param  {string} id Row id
+					*/
+					$.expand_row = function(res_id, id) {
+						var $icon = $("#" + $.md5(id)).prev("tr").find("td:first-child a > span");
+
+						if($icon.hasClass("fa-rotate-90")) {
+							// Row is closed
+							$("#" + $.md5(id)).slideUp(600);
+							$icon.removeClass("fa-rotate-90");
+						} else {
+							// Row is opened
+							$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Waiting...</center>');
+							$.show_raw_row_content(res_id, id);
+							$("#" + $.md5(id)).slideDown(600);
+							$icon.addClass("fa-rotate-90");
+						}
+					};
+					var c_count = $.obj_len(cols),
+					column = "",
+					general_column = "",
+					actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
+					affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
+					limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
+					skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
+
+					// Create table header
+					$.each(cols, function(col_id, col_data) {
+						column += '<td>' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '<b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b></td>';
+						general_column += '<td class="col_' + col_id + '"></td>';
+					});
+
+					$("table#" + options.res.id).html('<thead><tr><td></td>' + column + '</tr></thead><tbody></tbody>');
+					$.each(rows, function(row_id, row_data) {
+						// Create empty rows
+						$("table#" + options.res.id + " tbody").append('<tr id="tr_' + $.md5(row_id) + '"><td align="center"><a href="javascript:void(0);" onclick="$.expand_row(\'' + options.res.id + '\', \'' + row_id + '\');" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>' + general_column + '</tr>');
+						$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(row_id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + '</ul></td></tr>');
+
+						// Place contents in each table cell
+						$.each(row_data, function(row_col_id, cell_data) {
+							$("tr#tr_" + $.md5(row_id) + ' td.col_' + row_col_id).html($.cycle_disp(cell_data[kAPI_PARAM_RESPONSE_FRMT_DISP]));
+						});
+					});
+					$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
+					$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
+					$("table#" + options.res.id + " td a:not(.btn-default-white)").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+					$("table#" + options.res.id + " td a.btn-default-white").tooltip();
+					// $("table#" + options.res.id + " form a");
+			}
+			$("#contents #" + type + "").fadeIn(300);
+		} else {
+			if($("#pgrdg_map").children().length === 0) {
+				$.init_map();
+			}
+			$("#pgrdg_map").fadeIn(600);
+			$.each(options.res, function(k, v) {
+				if(v[options.shape].type == "Point") {
+					//console.warn(options.res);
+					$.add_marker({
+						uuid: $.md5(v._id),
+						type: "marker",
+						size: "0.75em",
+						lon: v[options.shape].coordinates[0],
+						lat: v[options.shape].coordinates[1],
+						cloud: false
+					});
+				}
+			});
+		}
+
+	};
+
+	/**
+	* Show summary content pane
+	* @param  {object} active_forms
+	*/
+	$.show_summary = function(active_forms) {
+		$.ask_to_service({
+			op: kAPI_OP_MATCH_UNITS,
+			parameters: {
+				lang: lang,
+				param: {
+					limit: 300,
+					criteria: active_forms,
+					grouping: []
+				}
+			}
+		}, function(res) {
+			$.activate_panel("summary", {res: res});
+		});
+
+	};
+
+	/**
+	* Show row data table
+	* @param  {string} id     Storage id
+	* @param  {string} domain Domain
+	* @param  {int}    skip   Skip
+	* @param  {int}    limit  Limit
+	*/
+	$.show_raw_data = function(id, domain, skip, limit) {
+		if(skip === undefined || skip === null || skip === "") { skip = 0; }
+		if(limit === undefined || limit === null || limit === "") { limit = 50; }
+
+		var summaries_data = storage.get("pgrdg_cache.ask." + id),
+		objp = {};
+			objp[kAPI_PAGING_LIMIT] = limit;
+			objp[kAPI_PAGING_SKIP] = skip;
+			objp[kAPI_PARAM_LOG_REQUEST] = "true";
+			objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
+			objp[kAPI_PARAM_DOMAIN] = domain;
+			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
+		$.ask_to_service({
+			op: kAPI_OP_MATCH_UNITS,
+			parameters: {
+				lang: lang,
+				param: objp
+			}
+		}, function(res) {
+			$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
+		});
+		/*
+		if(type == "map") {
+			$.activate_panel("map", {res: decrypted_data});
+		} else {
+			$.activate_panel("results", {res: decrypted_data});
+		}
+		*/
+
+	};
+
+	$.parse_row_content = function(res) {
+		$.cycle_disp = function(disp, what, who) {
+			return ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <span class="' + ((who == "label") ? "info text-muted" : "text-info") + '" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '">' + disp[what] + '</a>' : disp[what]);
+		};
+
+		var r = "",
+		v_type = "",
+		v_list = "";
+
+		$.each(res, function(tag, content) {
+	// console.log(content, $.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP]));
+			if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] == undefined) {
+				switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
+					case "array":
+						$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+							if($.type(v) == "array") {
+								v_type = "array";
+								v_list += $.parse_row_content(v);
+							} else {
+								v_type = "string";
+								v_list = "";
+							}
+						});
+						if(v_type == "string") {
+							r += '<li><b>' + content[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b>: <ul>';
+							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+								r += '<li>' + $.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP) + '</li>';
+							});
+							r += '</ul></li>'
+						} else {
+							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <ul>' + v_list + '</ul></li>';
+						}
+						break;
+					case "string":
+						if(content[kAPI_PARAM_RESPONSE_FRMT_LINK] !== undefined) {
+							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
+						} else {
+							if(content[kAPI_PARAM_RESPONSE_FRMT_DISP] !== undefined) {
+								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
+							}
+						}
+						break;
+				}
+			} else {//triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
+				var is_struct = false;
+				$.each(content[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+					if(v[kAPI_PARAM_RESPONSE_FRMT_DOCU] !== undefined) {
+						is_struct = true;
+					} else {
+						is_struct = false;
+					}
+				});
+				if(is_struct) {
+					r += '<li><b>' + ((content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label")) + '</b>: <span class="fa fa-li fa-fw fa-caret-right"></span>' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</li>';
+				} else {
+					r += '<li><b>' + ((content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label")) + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</li>';
+				}
+			}
+		});
+
+		return '<ul class="list-unstyled fa-ul">' + r + '</ul>';
+	};
+
+	/**
+	* Show row data contents
+	* @param  {string} id     Storage id
+	* @param  {string} domain Domain
+	* @param  {int}    skip   Skip
+	* @param  {int}    limit  Limit
+	*/
+	$.show_raw_row_content = function(id, domain) {
+		var summaries_data = storage.get("pgrdg_cache.ask." + id),
+		objp = {};
+			objp[kAPI_PARAM_LOG_REQUEST] = "true";
+			objp[kAPI_PARAM_ID] = domain;
+			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+		$.ask_to_service({
+			op: kAPI_OP_GET_UNIT,
+			parameters: {
+				lang: lang,
+				param: objp
+			}
+		}, function(row_content) {
+			$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
+			$("tr#" + $.md5(domain) + " span.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+		});
+		/*
+		if(type == "map") {
+			$.activate_panel("map", {res: decrypted_data});
+		} else {
+			$.activate_panel("results", {res: decrypted_data});
+		}
+		*/
+
+	};
+
+	/**
+	* Show data on map
+	* @param  {string} id     Storage id
+	* @param  {string} domain Domain
+	*/
+	$.show_data_on_map = function(id, domain) {
+		//console.log(id, domain);
+		var summaries_data = storage.get("pgrdg_cache.ask." + id),
+		geometry = [],
+		arr = $.get_current_bbox_pgrdg(default_bbox);
+
+		geometry.push(arr);
+
+		var objp = {};
+		objp[kAPI_PAGING_LIMIT] = 1000;
+		objp[kAPI_PARAM_LOG_REQUEST] = "true";
+		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
+		objp[kAPI_PARAM_DOMAIN] = domain;
+		objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
+		objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+		objp[kAPI_PARAM_SHAPE] = {};
+		objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
+		objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
+
+		$.ask_to_service({
+			op: kAPI_OP_MATCH_UNITS,
+			parameters: {
+				lang: lang,
+				param: objp
+			}
+		}, function(res) {
+			// console.log(res);
+			if(res.paging.affected > 0) {
+				var map_data = [];
+
+				//console.log(res.results);
+				$.each(res.results, function(i, k) {
+					map_data.push(k);
+				});
+				$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
+			} else {
+				alert("No results");
+			}
+		});
+
+	};
+
+/*=======================================================================================
+*	RAW DATA TABLE
+*======================================================================================*/
+
 	/**
 	* Show paging buttons
 	* @param  {object} options  The entire (raw data) object
@@ -868,249 +1190,6 @@
 		page_btns += '</div>';
 
 		return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
-	};
-
-
-/*=======================================================================================
-*	CONTENT INTERFACE
-*======================================================================================*/
-
-	/**
-	* Activate content pane
-	* @param  {string} type    The panel to activate
-	* @param  {object} options (res, label)
-	*/
-	$.activate_panel = function(type, options) {
-		options = $.extend({
-			res: "",
-			label: ""
-		}, options);
-
-		$.manage_url($.ucfirst(type));
-
-		if(type !== "map") {
-			$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
-
-			$("#" + type + "-body .content-body").html("");
-			if(type !== "results") {
-				$.each(options.res.results, function(domain, values) {
-					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\">View raw data <span class=\"fa fa-th\"></span></a><a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn btn-default\">View on map <span class=\"ionicons ion-map\"></a></div>" + values[kTAG_DEFINITION] + "</div></div>");
-				});
-			} else {
-				//console.log(options.res);
-				var collection = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_COLLECTION],
-				dictionary = options.res[kAPI_RESULTS_DICTIONARY],
-				row_col_data;
-				$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
-					var c_count = 0, cols, cells, tag_codes = [], column = [];
-
-					////////////////////////////////////////////////////////////////////////////// CREATE SERVICE DATA MANAGEMENT FUNCTION
-					$.each(dictionary[kAPI_DICTIONARY_LIST_COLS], function(c, tag_code) {
-						c_count++;
-						var tag_id = dictionary[kAPI_DICTIONARY_TAGS][tag_code],
-						th_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL],
-						th_description = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DESCRIPTION],
-						th_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_DATA_TYPE];
-						tag_codes.push(tag_code);
-						column.push({
-							label: th_label,
-							description: th_description,
-							type: th_type
-						});
-						// Fare le popover per le description
-						cols += '<td><b>' + th_label + '</b><a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(th_description) + '"><span class="fa fa-question-circle"></span></a></td>';
-					});
-
-					$("table#" + options.res.id).html('<thead><tr><td></td>' + cols + '</tr></thead><tbody></tbody>');
-					$("table#" + options.res.id + " thead td a").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
-
-					// Cycle rows
-					$.each(dictionary[kAPI_DICTIONARY_IDS], function(c, id) {
-						var row_obj = options.res[kAPI_RESPONSE_RESULTS][collection][id];
-						cells = '<td align="center"><a href="javascript:void(0);" onclick="$.expand_row(\'' + $.md5(id) + '\');" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>';
-						$.each(tag_codes, function(i, tag_c) {
-							if(row_obj[tag_c] !== undefined) {
-								row_col_data = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]];
-							} else {
-								row_col_data = "";
-							}
-							//console.log(row_col_data);
-							var td_description = "",//(row_col_data !== "") ? row_col_data[kTAG_DESCRIPTION] : "", ###################### CELLS DESCRIPTIONS DISABLED, YET
-							td_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][dictionary[kAPI_DICTIONARY_TAGS][tag_c]][kTAG_DATA_TYPE];
-
-							//console.log(td_description);
-							switch(td_type) {
-								case kTYPE_ENUM:
-								case kTYPE_SET:
-									cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][row_obj[tag_c]][kTAG_LABEL] + '</td>';
-									break;
-								default:
-									cells +=  '<td' + ((td_description.length > 0) ? ' data-toggle="popover" data-content="' + $.html_encode(td_description) + '"' : '') + '>' + ((row_obj[tag_c] !== undefined) ? row_obj[tag_c] : "") + '</td>';
-									break;
-							}
-						});
-						$("table#" + options.res.id + " tbody").append('<tr>' + cells + '</tr>');
-						$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + $.cycle_row_data({row_id: $.md5(id), title: options.title, domain: "", res: options.res, row_obj: row_obj}) + '</ul></td></tr>');
-						$("table#" + options.res.id + " tbody td").popover({container: "body", placement: "top", html: "true", trigger: "hover"});
-					});
-
-
-					var actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
-					affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
-					limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
-					skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
-
-					$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
-					$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
-					$("table#" + options.res.id + " form a");
-			}
-			$("#contents #" + type + "").fadeIn(300);
-		} else {
-			if($("#pgrdg_map").children().length === 0) {
-				$.init_map();
-			}
-			$("#pgrdg_map").fadeIn(600);
-			$.each(options.res, function(k, v) {
-				if(v[options.shape].type == "Point") {
-					//console.warn(options.res);
-					$.add_marker({
-						uuid: $.md5(v._id),
-						type: "marker",
-						size: "0.75em",
-						lon: v[options.shape].coordinates[0],
-						lat: v[options.shape].coordinates[1],
-						cloud: false
-					});
-				}
-			});
-		}
-	};
-
-	/**
-	* Show summary content pane
-	* @param  {object} active_forms
-	*/
-	$.show_summary = function(active_forms) {
-		$.ask_to_service({
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: {
-					limit: 300,
-					criteria: active_forms,
-					grouping: []
-				}
-			}
-		}, function(res) {
-			$.activate_panel("summary", {res: res});
-		});
-	};
-
-	/**
-	* Show row data table
-	* @param  {string} id     Storage id
-	* @param  {string} domain Domain
-	* @param  {int}    skip   Skip
-	* @param  {int}    limit  Limit
-	*/
-	$.show_raw_data = function(id, domain, skip, limit) {
-		if(skip === undefined || skip === null || skip === "") { skip = 0; }
-		if(limit === undefined || limit === null || limit === "") { limit = 50; }
-
-		var summaries_data = storage.get("pgrdg_cache.ask." + id),
-		objp = {};
-			objp[kAPI_PAGING_LIMIT] = limit;
-			objp[kAPI_PAGING_SKIP] = skip;
-			objp[kAPI_PARAM_LOG_REQUEST] = "true";
-			objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
-			objp[kAPI_PARAM_DOMAIN] = domain;
-			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_RECORD;
-		$.ask_to_service({
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: objp
-			}
-		}, function(res) {
-			$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
-		});
-		/*
-		if(type == "map") {
-			$.activate_panel("map", {res: decrypted_data});
-		} else {
-			$.activate_panel("results", {res: decrypted_data});
-		}
-		*/
-	};
-
-	/**
-	* Show data on map
-	* @param  {string} id     Storage id
-	* @param  {string} domain Domain
-	*/
-	$.show_data_on_map = function(id, domain) {
-		//console.log(id, domain);
-		var summaries_data = storage.get("pgrdg_cache.ask." + id),
-		geometry = [],
-		arr = $.get_current_bbox_pgrdg(default_bbox);
-
-		geometry.push(arr);
-
-		var objp = {};
-		objp[kAPI_PAGING_LIMIT] = 1000;
-		objp[kAPI_PARAM_LOG_REQUEST] = "true";
-		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
-		objp[kAPI_PARAM_DOMAIN] = domain;
-		objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
-		objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
-		objp[kAPI_PARAM_SHAPE] = {};
-		objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
-		objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
-
-		$.ask_to_service({
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: objp
-			}
-		}, function(res) {
-			// console.log(res);
-			if(res.paging.affected > 0) {
-				var map_data = [];
-
-				//console.log(res.results);
-				$.each(res.results, function(i, k) {
-					map_data.push(k);
-				});
-				$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
-			} else {
-				alert("No results");
-			}
-		});
-	};
-
-
-/*=======================================================================================
-*	RAW DATA TABLE
-*======================================================================================*/
-
-	/**
-	* Open/close row
-	* @param  {string} id Row id
-	*/
-	$.expand_row = function(id) {
-		var row_state,
-		$icon = $("#" + id).prev("tr").find("td:first-child a > span");
-
-		if($icon.hasClass("fa-rotate-90")) {
-			$("#" + id).slideUp(300);
-			$icon.removeClass("fa-rotate-90");
-			row_state = "closed";
-		} else {
-			$("#" + id).slideDown(300);
-			$icon.addClass("fa-rotate-90");
-			row_state = "open";
-		}
 	};
 
 	/**
@@ -1227,18 +1306,18 @@
 	* @param  {string} string Enum string
 	* @return {string}        Enum label
 	*/
-	$.get_enum_label_from_string = function(res, string) {
-		if(!jQuery.isEmptyObject(res)) {
-			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
-			//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
-				label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
-			} else {
-				label = string;
-			}
-			return label;
-		}
-	};
 
+	// $.get_enum_label_from_string = function(res, string) {
+	// 	if(!jQuery.isEmptyObject(res)) {
+	// 		if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
+	// 		//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
+	// 			label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
+	// 		} else {
+	// 			label = string;
+	// 		}
+	// 		return label;
+	// 	}
+	// };
 
 	/**
 	* Convert a tag code to its label
@@ -1246,20 +1325,21 @@
 	* @param  {int} string    Tag string
 	* @return {string}        Tag label
 	*/
-	$.get_tag_label_from_string = function(res, string) {
-		if(!jQuery.isEmptyObject(res)) {
-			if(jQuery.isNumeric(string)) {
-				var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
-				if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
-					return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
-				}
-			} else {
-				return string;
-			}
-		} else {
-			return string;
-		}
-	};
+
+	// $.get_tag_label_from_string = function(res, string) {
+	// 	if(!jQuery.isEmptyObject(res)) {
+	// 		if(jQuery.isNumeric(string)) {
+	// 			var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
+	// 			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
+	// 				return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
+	// 			}
+	// 		} else {
+	// 			return string;
+	// 		}
+	// 	} else {
+	// 		return string;
+	// 	}
+	// };
 
 
 /*=======================================================================================
