@@ -1,4 +1,4 @@
-# Plant Genetic Resource Diversity Gateway
+## Plant Genetic Resource Diversity Gateway
 
 This is the System Interface for users that wants to explore PGRDG data.
 
