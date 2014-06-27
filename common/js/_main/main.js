@@ -210,7 +210,7 @@
 				//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
 				if(typeof(opt.loaderType) == "string") {
 					if($("#apprise.ask_service").length === 0) {
-						apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-spinner fa-spin", progress: true, allowExit: false});
+						apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
 					} else {
 						if($("#apprise.ask_service").css("display") == "none") {
 							$("#apprise.ask_service").modal("show");
@@ -256,7 +256,15 @@
 								console.groupEnd();
 						}
 					},
-					error: function() {
+					error: function(response) {
+						console.group("The Service has returned an error");
+							console.error(response.status.message);
+							console.warn(param);
+							console.warn(param_nob64);
+							console.warn(verbose_param);
+							console.warn(object_param);
+							console.dir(response);
+							console.groupEnd();
 						$("#apprise.ask_service").modal("destroy");
 						if($("#apprise.service_coffee").length === 0) {
 							apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});

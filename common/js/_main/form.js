@@ -434,7 +434,6 @@
 		$("#" + id).focus();
 	};
 
-
 	/**
 	* Get the list of Service operators
 	*/
@@ -912,6 +911,7 @@
 				$.init_map();
 			}
 			$("#pgrdg_map").fadeIn(600);
+			$.reset_all_markers();
 			$.each(options.res, function(k, v) {
 				if(v[options.shape].type == "Point") {
 					//console.warn(options.res);
@@ -988,6 +988,10 @@
 
 	};
 
+	/**
+	 * Recursive parse of contents in expanded row
+	 * @param  {object} res The content to parse
+	 */
 	$.parse_row_content = function(res) {
 		$.cycle_disp = function(disp, what, who) {
 			return disp[what] + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : '');
@@ -1000,7 +1004,6 @@
 		id;
 
 		$.each(res, function(tag, content) {
-	// console.log(content, $.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP]));
 			if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
 				switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 					case "array":
@@ -1129,6 +1132,10 @@
 					map_data.push(k);
 				});
 				$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
+				if(res.paging.affected > 1000) {
+					var alert_title = "Displayed 1000 of " + res.paging.affected + " markers";
+					apprise("The map cannot currently display more than 1000 points.<br />This means that it contains only the first 1000 points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+				}
 			} else {
 				alert("No results");
 			}

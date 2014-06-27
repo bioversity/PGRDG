@@ -82,8 +82,13 @@
 		};
 	})();
 	exampleNS.getRendererFromQueryString = function() {
-		var obj = {}, queryString = location.search.slice(1), re = /([^&=]+)=([^&]*)/g, m;
-		while (m = re.exec(queryString)) { obj[decodeURIComponent(m[1])] = decodeURIComponent(m[2]); }
+		var obj = {},
+		queryString = location.search.slice(1),
+		re = /([^&=]+)=([^&]*)/g,
+		m;
+		while (m = re.exec(queryString)) {
+			obj[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+		}
 		if ("renderers" in obj) { return obj.renderers.split(","); } else if ("renderer" in obj) { return obj.renderer; } else { return undefined; }
 	};
 
@@ -102,14 +107,14 @@
 		view = new ol.View2D({
 			center: $.set_lonlat(lon, lat),
 			zoom: 4
-		}),
+		});
 		select = new ol.interaction.Select({
 			style: overlayStyle
-		}),
+		});
 		modify = new ol.interaction.Modify({
 			features: select.getFeatures(),
 			style: overlayStyle
-		}),
+		});
 		layers = [
 			new ol.layer.Tile({
 				style: "Toner",
@@ -176,7 +181,7 @@
 					})
 				})
 			})
-		],
+		];
 		/*
 		clusters = new ol.layer.Vector({
 			source: clusterSource,
@@ -218,9 +223,9 @@
 					extent: 2
 				})
 				*/
-			]),
-			renderer: exampleNS.getRendererFromQueryString()
-		}),
+			])//,
+		//	renderer: exampleNS.getRendererFromQueryString()
+		});
 		view = map.getView();
 
 		var featureOverlay = new ol.FeatureOverlay({
@@ -316,7 +321,7 @@
 				$("#pgrdg_map").unbind("mousemove");
 				$(this).removeClass("grabbing");
 			});
-			$.contextMenu(true);
+			// $.contextMenu(true);
 		} else {
 			$.contextMenu(false);
 		}
@@ -955,6 +960,12 @@
 			map.addOverlay(marker);
 		};
 
+		$.reset_all_markers = function() {
+			$.each($("#pgrdg_map .marker"), function(k, v) {
+				$(this).parent("div").remove();
+			});
+		};
+
 		/**
 		* Add point on map
 		* @param {object} options (lon, lat, uuid, name, title, marker_class, content, callback{function})
@@ -1132,7 +1143,7 @@
 			$("#pgrdg_map").css("cursor", "crosshair");
 			$("#guides").show();
 
-			if(click_on_start !== null && typeof(click_on_start) == "array") {
+			if(click_on_start !== null && $.type(click_on_start) == "array") {
 				// Add function to preselect starting point
 			}
 		};
@@ -1181,7 +1192,7 @@
 			$("#pgrdg_map").css("cursor", "crosshair");
 			if(!$("#measure_distances_btn").hasClass("selected")) {
 				var sketch,
-				sketchElement;
+				sketchElement,
 				formatLength = function(line) {
 					var length = Math.round(line.getLength() * 100) / 100,
 					edit_btn = '<a href="javascript:void(0);" onclick="" class="btn btn-xs btn-default"><span class="fa fa-edit"></span></a> ',

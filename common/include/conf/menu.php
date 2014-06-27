@@ -158,6 +158,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"title" => "Lock/unlock this view (ALT+L)"
 		)
 	),
+	/*
 	"Tools" => array(
 		"content" => array(
 			"icon" => "ion-settings",
@@ -172,6 +173,7 @@ $menu["menu"]["map_toolbox"] = array(
 		),
 		"divider" => "divider"
 	),
+	*/
 	"Help" => array(
 		"content" => array(
 			"icon" => "ion-help",
@@ -258,7 +260,7 @@ $menu["menu"]["map_knob_contextmenu"] = array(
 
 if(isset($_GET["debug"]) == "true") {
 	header("Content-type: text/plain;");
-	
+
 	switch($_GET["format"]) {
 		case "array":
 			print_r($menu);
