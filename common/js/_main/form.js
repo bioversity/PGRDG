@@ -888,7 +888,7 @@
 						column += '<td><b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b> ' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '</td>';
 						general_column += '<td class="col_' + col_id + '"></td>';
 					});
-					
+
 					$("table#" + options.res.id).html('<thead><tr><td></td>' + column + '</tr></thead><tbody></tbody>');
 					$.each(rows, function(row_id, row_data) {
 						// Create empty rows
@@ -1053,7 +1053,7 @@
 			}
 		});
 
-		return '<ul class="list-unstyled fa-ul">' + r + '</ul>';
+		return '<div><ul class="list-unstyled fa-ul">' + r + '</ul></div>';
 	};
 
 	/**
