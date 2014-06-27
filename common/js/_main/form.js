@@ -556,6 +556,7 @@
 		remoteAutocomplete.clearPrefetchCache();
 		remoteAutocomplete.initialize();
 
+		var form_help_text = "Click on the green rectangle to activate the field: if you press the search button the system will select all data <em>containing</em> the selected field, regardless of its value.<br />To search for specific field values, fill the field search value or select the provided options.";
 		$("#" + options.id).typeahead({
 			hint: true,
 			highlight: true,
@@ -584,6 +585,7 @@
 					var the_title = "";
 					if(response.paging.affected > 0) {
 						$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
+						$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 						$.each(operators, function(ck, cv) {
 							if(cv.key == kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
 								if(cv.main) {
@@ -645,6 +647,7 @@
 								// Create forms
 								var forms = $.create_form(response);
 								$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
+								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 								$("#forms").fadeIn(300);
 								$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 								$("#forms-body .panel").tooltip();
@@ -847,7 +850,7 @@
 					 */
 					$.cycle_disp = function(disp) {
 						if($.type(disp) == "object") {
-							return ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + disp[kAPI_PARAM_RESPONSE_FRMT_DISP];
+							return disp[kAPI_PARAM_RESPONSE_FRMT_DISP] + " " + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "");
 						} else {
 							return disp;
 						}
@@ -882,15 +885,15 @@
 
 					// Create table header
 					$.each(cols, function(col_id, col_data) {
-						column += '<td>' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '<b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b></td>';
+						column += '<td><b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b> ' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '</td>';
 						general_column += '<td class="col_' + col_id + '"></td>';
 					});
-
+					
 					$("table#" + options.res.id).html('<thead><tr><td></td>' + column + '</tr></thead><tbody></tbody>');
 					$.each(rows, function(row_id, row_data) {
 						// Create empty rows
-						$("table#" + options.res.id + " tbody").append('<tr id="tr_' + $.md5(row_id) + '"><td align="center"><a href="javascript:void(0);" onclick="$.expand_row(\'' + options.res.id + '\', \'' + row_id + '\');" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>' + general_column + '</tr>');
-						$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(row_id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><ul class="list-group transparent">' + '</ul></td></tr>');
+						$("table#" + options.res.id + " tbody").append('<tr id="tr_' + $.md5(row_id) + '" class="expandable" onclick="$.expand_row(\'' + options.res.id + '\', \'' + row_id + '\');"><td align="center"><a href="javascript:void(0);" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>' + general_column + '</tr>');
+						$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(row_id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><div><ul class="list-group transparent">' + '</ul></div></td></tr>');
 
 						// Place contents in each table cell
 						$.each(row_data, function(row_col_id, cell_data) {
@@ -987,13 +990,14 @@
 
 	$.parse_row_content = function(res) {
 		$.cycle_disp = function(disp, what, who) {
-			return ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <span class="' + ((who == "label") ? "info text-muted" : "text-info") + '" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '">' + disp[what] + '</a>' : disp[what]);
+			return disp[what] + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : '');
 		};
 
 		var r = "",
 		v_type = "",
 		v_list = "",
-		is_struct = false;
+		is_struct = false,
+		id;
 
 		$.each(res, function(tag, content) {
 	// console.log(content, $.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP]));
@@ -1038,11 +1042,13 @@
 					}
 				});
 				if(is_struct) {
-					var id = $.makeid();
+					id = $.makeid();
 					label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
-					r += '<li><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '"><span class="fa fa-fw fa-caret-right"></span></a> <b>' + label + '</b>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
+					r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
 				} else {
-					r += '<li><b>' + ((content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label")) + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</li>';
+					id = $.makeid();
+					label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
+					r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
 				}
 			}
 		});
@@ -1071,7 +1077,7 @@
 			}
 		}, function(row_content) {
 			$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
-			$("tr#" + $.md5(domain) + " span.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+			$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
 		});
 		/*
 		if(type == "map") {

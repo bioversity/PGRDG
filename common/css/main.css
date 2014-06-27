@@ -255,6 +255,13 @@ section.container {
   position: absolute;
   right: 40px;
 }
+span.info {
+	color: #829ea5;
+	text-decoration: underline;
+}
+span.info:hover {
+	text-decoration: none;
+}
 a.text-info, span.text-info, span.info {
 	cursor: help;
 }
@@ -533,9 +540,21 @@ section.container > #contents .carousel-inner {
 }
 
 /* RESULTS */
+tr.expandable:hover {
+	border: #c1d82f 1px solid;
+	cursor: pointer;
+}
 tr.detail {
 	display: none;
 	box-shadow: 0 0 23px #ccc inset;
+}
+tr.detail td {
+  	padding: 4px !important;
+}
+tr.detail td > div {
+	padding: 4px;
+	max-height: 45em;
+	overflow-y: auto;
 }
 div.detail {
 	margin: 5px 0 5px 25px;
