@@ -914,14 +914,36 @@
 			$.reset_all_markers();
 			$.each(options.res, function(k, v) {
 				if(v[options.shape].type == "Point") {
-					//console.warn(options.res);
+					var marker_id = $.md5(v._id);
 					$.add_marker({
-						uuid: $.md5(v._id),
+						uuid: marker_id,
 						type: "marker",
 						size: "0.75em",
 						lon: v[options.shape].coordinates[0],
 						lat: v[options.shape].coordinates[1],
 						cloud: false
+						/*
+						cloud: true,
+						buttons: false,
+						title: v.name,
+						content: '<span class="fa fa-refresh fa-spin"></span> Retriving marker data...',
+						dynamic_content: function() {
+							var objm = {};
+							objm[kAPI_PARAM_ID] = v._id;
+							objm[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+
+							$.ask_to_service({
+								op: kAPI_OP_GET_UNIT,
+								parameters: {
+									lang: lang,
+									param: objm
+								}
+							}, function(marker_data) {
+								console.log($.parse_row_content(marker_data.results[v._id]));
+								$("#" + marker_id).next(".popover").find(".popover-content").css("margin-top", "200px;").html('<div class="detailed_cloud">' + $.parse_row_content(marker_data.results[v._id]) + '</div>');
+							});
+						}
+						*/
 					});
 				}
 			});

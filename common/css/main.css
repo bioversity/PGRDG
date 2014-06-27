@@ -559,6 +559,11 @@ tr.detail td > div {
 div.detail {
 	margin: 5px 0 5px 25px;
 }
+div.detailed_cloud {
+	padding: 4px;
+	max-height: 200px;
+	overflow-y: auto;
+}
 ul.list-group.transparent li {
 	background-color: transparent;
 	border: 0px none;

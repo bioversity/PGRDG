@@ -916,7 +916,7 @@
 		* @param {object} options (lon, lat, uuid, type, name, title, cloud, size, marker_class, content, callback{function})
 		* @return {Function} callback Called function
 		*/
-		$.add_marker = function(options) {
+		$.add_marker = function(options, callback) {
 			options = $.extend({
 				lon: 0,
 				lat: 0,
@@ -928,11 +928,10 @@
 				size: "1.5em",
 				marker_class: "primary",
 				content: "Sample text",
-				callback: function() {}
+				dynamic_content: "",
+				buttons: true
 			}, options);
-			if (typeof(callback) == "function") {
-				callback.call(this);
-			}
+
 			//$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
 			if($("#" + options.uuid).length > 0) {
 				$("#" + options.uuid).remove();
@@ -944,16 +943,16 @@
 			var marker = new ol.Overlay({
 				position: $.set_lonlat(options.lon, options.lat),
 				positioning: "center-center",
-				element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+				element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>').css({
 							cursor: "pointer"
 						}).popover({
 							html: true,
 							title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-							content: options.content + '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>',
+							content: ((typeof(options.content) == "function") ? options.content() : options.content) + ((options.buttons) ? '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>' : ""),
 							placement: "top",
 							trigger: "click"
 						}).bind("click", function() {
-							console.log(options.lon, options.lat);
+							$("#" + options.uuid).next(".popover").find(".popover-content").html(((typeof(options.dynamic_content) == "function") ? options.dynamic_content() : options.dynamic_content));
 						}) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
 				stopEvent: false
 			});
