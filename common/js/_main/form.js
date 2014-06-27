@@ -992,11 +992,12 @@
 
 		var r = "",
 		v_type = "",
-		v_list = "";
+		v_list = "",
+		is_struct = false;
 
 		$.each(res, function(tag, content) {
 	// console.log(content, $.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP]));
-			if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] == undefined) {
+			if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
 				switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 					case "array":
 						$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
@@ -1013,7 +1014,7 @@
 							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
 								r += '<li>' + $.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP) + '</li>';
 							});
-							r += '</ul></li>'
+							r += '</ul></li>';
 						} else {
 							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <ul>' + v_list + '</ul></li>';
 						}
@@ -1023,13 +1024,12 @@
 							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
 						} else {
 							if(content[kAPI_PARAM_RESPONSE_FRMT_DISP] !== undefined) {
-								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
+								r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
 							}
 						}
 						break;
 				}
-			} else {//triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-				var is_struct = false;
+			} else {
 				$.each(content[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
 					if(v[kAPI_PARAM_RESPONSE_FRMT_DOCU] !== undefined) {
 						is_struct = true;
@@ -1038,7 +1038,9 @@
 					}
 				});
 				if(is_struct) {
-					r += '<li><b>' + ((content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label")) + '</b>: <span class="fa fa-li fa-fw fa-caret-right"></span>' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</li>';
+					var id = $.makeid();
+					label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
+					r += '<li><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '"><span class="fa fa-fw fa-caret-right"></span></a> <b>' + label + '</b>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
 				} else {
 					r += '<li><b>' + ((content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label")) + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</li>';
 				}
