@@ -274,17 +274,29 @@
 				$form = $item.closest("form"),
 				treeselect_id = $panel.find("a.treeselect").attr("id"),
 				treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
-				treeselect_content = '<div class="dropdown-content"><ul>';
+				//treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
+				treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
 
 				$item.addClass("disabled");
-				$.ask_to_service({storage_group: "forms", loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: tag}}}, function(res) {
-					$item.removeClass("disabled");
-					$.each(res.results, function(k, v) {
-						treeselect_content += $.create_tree(v, $panel);
-					});
-					treeselect_content += '</ul>';
-				});
 				$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
+				$.ask_to_service({
+					storage_group: "forms",
+					loaderType: $panel.find("a.pull-left, a.pull-right"),
+					op: kAPI_OP_GET_TAG_ENUMERATIONS,
+					parameters: {
+						lang: lang,
+						param: {
+							limit: 300,
+							tag: tag
+						}
+					}
+				}, function(res) {
+					$.each(res.results, function(k, v) {
+						$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $panel));
+					});
+					$item.removeClass("disabled");
+				});
+
 				$form.find(".dropdown-menu > *").click(function(e) {
 					e.stopPropagation();
 				});
@@ -766,6 +778,11 @@
 		});
 	};
 
+
+/*=======================================================================================
+*	CONTENT INTERFACE
+*======================================================================================*/
+
 	/**
 	* Remove a single search forms
 	* @param  {object} search The form group to remove (html object)
@@ -845,11 +862,6 @@
 			});
 		});
 	};
-
-
-/*=======================================================================================
-*	CONTENT INTERFACE
-*======================================================================================*/
 
 	/**
 	* Activate content pane
