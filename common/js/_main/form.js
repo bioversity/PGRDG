@@ -31,10 +31,10 @@
 			var name = cname[q];
 
 			if($.browser_cookie_status()) {
-				if(storage.isEmpty("pgrdg_cache.take." + $.md5(name))) {
+				if(storage.isEmpty("pgrdg_cache.local." + $.md5(name))) {
 					// http://pgrdg.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
-						storage.set("pgrdg_cache.take." + $.md5(name), {"query": name, "response": system_constants});
+						storage.set("pgrdg_cache.local." + $.md5(name), {"query": name, "response": system_constants});
 						$.get_operators_list(system_constants);
 
 						if (jQuery.type(callback) == "function") {
@@ -42,7 +42,7 @@
 						}
 					});
 				} else {
-					$.get_operators_list(storage.get("pgrdg_cache.take." + $.md5(name) + ".response"));
+					$.get_operators_list(storage.get("pgrdg_cache.local." + $.md5(name) + ".response"));
 					if (jQuery.type(callback) == "function") {
 						callback.call(cname);
 					}
@@ -277,7 +277,7 @@
 				treeselect_content = '<div class="dropdown-content"><ul>';
 
 				$item.addClass("disabled");
-				$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: tag}}}, function(res) {
+				$.ask_to_service({storage_group: "forms", loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_TAG_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, tag: tag}}}, function(res) {
 					$item.removeClass("disabled");
 					$.each(res.results, function(k, v) {
 						treeselect_content += $.create_tree(v, $panel);
@@ -570,6 +570,7 @@
 			$.manage_url("Forms");
 
 			var kAPI = {};
+			kAPI.storage_group = "forms",
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -584,7 +585,9 @@
 					var the_title = "";
 					if(response.paging.affected > 0) {
 						$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-						$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+						if($("#forms-head").length === 0) {
+							$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+						}
 						$.each(operators, function(ck, cv) {
 							if(cv.key == kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
 								if(cv.main) {
@@ -618,6 +621,7 @@
 					$.manage_url("Forms");
 
 					var kAPI = {};
+					kAPI.storage_group = "forms",
 					kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 					kAPI.parameters = {};
 					kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -646,7 +650,9 @@
 								// Create forms
 								var forms = $.create_form(response);
 								$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+								if($("#forms-head").length === 0) {
+									$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+								}
 								$("#forms").fadeIn(300);
 								$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 								$("#forms-body .panel").tooltip();
@@ -702,11 +708,11 @@
 					$("#forms-head .btn-group a.save_btn").fadeIn(300, function() {
 						var active_forms = {};
 						$(this).on("click", function() {
-							form_data.history = storage.get("pgrdg_cache.ask");
+							form_data.history = storage.get("pgrdg_cache.forms");
 							$.each($("#accordion > div.panel-default"), function(k, v) {
 								frm_keys = $(this).attr("id");
 								selected_forms[frm_keys] = {};
-								selected_forms[frm_keys].request = storage.get("pgrdg_cache.ask." + frm_keys);
+								selected_forms[frm_keys].request = storage.get("pgrdg_cache.forms." + frm_keys);
 								selected_forms[frm_keys].key = $(this).attr("id");
 								selected_forms[frm_keys].forms = [];
 
@@ -738,6 +744,10 @@
 								});
 							});
 							form_data.form = selected_forms;
+							$("#goto_results_btn, #goto_map_btn").hide();
+							storage.remove("pgrdg_cache.summary");
+							storage.remove("pgrdg_cache.results");
+							storage.remove("pgrdg_cache.map");
 
 							$.show_summary(active_forms);
 							//console.log(operators);
@@ -767,9 +777,10 @@
 		apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				$($this).parents(".panel").fadeOut(300, function() {
-					storage.remove("pgrdg_cache.ask." + search_id);
+					storage.remove("pgrdg_cache.forms." + search_id);
 					$(this).remove(); $("#main_search").focus();
 					if($("#accordion .panel").length === 0) {
+						storage.remove("pgrdg_cache.forms." + search_id);
 						$.reset_all_searches(false);
 					}
 				});
@@ -786,6 +797,25 @@
 			ask = true;
 		}
 		var next = false;
+		$.reset = function(){
+			$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
+				$("#forms-head .content-title").text("");
+				$("#forms-body .content-body").html("");
+				$("section.container").animate({"padding-top": "39px"});
+					// Reset breadcrumb and panels
+					$.reset_breadcrumb();
+					$.reset_contents("forms");
+					$.reset_contents("summary");
+					$.reset_contents("results");
+					$.reset_contents("map");
+					storage.remove("pgrdg_cache.forms");
+					storage.remove("pgrdg_cache.summary");
+					storage.remove("pgrdg_cache.results");
+					storage.remove("pgrdg_cache.map");
+				$("#contents #start").fadeIn(300);
+				$("input.typeahead.tt-input").val("").focus();
+			});
+		};
 
 		//console.log($("#accordion > div.panel"));
 		if(ask) {
@@ -794,23 +824,27 @@
 			} else {
 				apprise("Are you sure?", {title: "Warning", icon: "warning", class: "reset-all", confirm: true}, function(r) {
 					if(r) {
-						$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
-							$("#forms-head .content-title").text("");
-							$("#forms-body .content-body").html("");
-							$("input.typeahead.tt-input").val("").focus();
-						});
+						$.reset();
 					}
 				});
 			}
 		} else {
 			$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
-				$("#forms-head .content-title").text("Output");
-				$("#forms-body .content-body").html("");
-				$("input.typeahead.tt-input").val("").focus();
+				$.reset();
 			});
 		}
 	};
 
+	/**
+	 * Reset the breadcrumbs
+	 */
+	$.reset_breadcrumb = function() {
+		$("#breadcrumb").fadeOut(300, function() {
+			$.each($(this).find("ol li"), function(i,v) {
+				$(this).hide();
+			});
+		});
+	};
 
 
 /*=======================================================================================
@@ -933,6 +967,7 @@
 							objm[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
 
 							$.ask_to_service({
+								storage_group: "map",
 								op: kAPI_OP_GET_UNIT,
 								parameters: {
 									lang: lang,
@@ -951,12 +986,33 @@
 
 	};
 
+
+	/**
+	* Reset selected content pane
+	* @param {string} content The HTML id of content pane to reset
+	*/
+	$.reset_contents = function(content) {
+		$("#contents #" + content).fadeOut(300, function(){
+			if(content == "map") {
+				$.init_map();
+			} else {
+				if(content == "forms") {
+					$(this).find("#" + content + "-head").html('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div><div class="clearfix"></div>');
+				} else {
+					$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
+				}
+				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
+			}
+		});
+	};
+
 	/**
 	* Show summary content pane
 	* @param  {object} active_forms
 	*/
 	$.show_summary = function(active_forms) {
 		$.ask_to_service({
+			storage_group: "summary",
 			op: kAPI_OP_MATCH_UNITS,
 			parameters: {
 				lang: lang,
@@ -972,411 +1028,418 @@
 
 	};
 
-	/**
-	* Show row data table
-	* @param  {string} id     Storage id
-	* @param  {string} domain Domain
-	* @param  {int}    skip   Skip
-	* @param  {int}    limit  Limit
-	*/
-	$.show_raw_data = function(id, domain, skip, limit) {
-		if(skip === undefined || skip === null || skip === "") { skip = 0; }
-		if(limit === undefined || limit === null || limit === "") { limit = 50; }
+	/*=======================================================================================
+	*	RAW DATA
+	*======================================================================================*/
 
-		var summaries_data = storage.get("pgrdg_cache.ask." + id),
-		objp = {};
-			objp[kAPI_PAGING_LIMIT] = limit;
-			objp[kAPI_PAGING_SKIP] = skip;
+		/**
+		* Show row data table
+		* @param  {string} id     Storage id
+		* @param  {string} domain Domain
+		* @param  {int}    skip   Skip
+		* @param  {int}    limit  Limit
+		*/
+		$.show_raw_data = function(id, domain, skip, limit) {
+			if(skip === undefined || skip === null || skip === "") { skip = 0; }
+			if(limit === undefined || limit === null || limit === "") { limit = 50; }
+			console.log(id);
+			var summaries_data = storage.get("pgrdg_cache.summary." + id),
+			objp = {};
+				objp[kAPI_PAGING_LIMIT] = limit;
+				objp[kAPI_PAGING_SKIP] = skip;
+				objp[kAPI_PARAM_LOG_REQUEST] = "true";
+				objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
+				objp[kAPI_PARAM_DOMAIN] = domain;
+				objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
+			$.ask_to_service({
+				storage_group: "summary",
+				op: kAPI_OP_MATCH_UNITS,
+				parameters: {
+					lang: lang,
+					param: objp
+				}
+			}, function(res) {
+				$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
+			});
+			/*
+			if(type == "map") {
+				$.activate_panel("map", {res: decrypted_data});
+			} else {
+				$.activate_panel("results", {res: decrypted_data});
+			}
+			*/
+
+		};
+
+		/**
+		 * Recursive parse of contents in expanded row
+		 * @param  {object} res The content to parse
+		 */
+		$.parse_row_content = function(res) {
+			$.cycle_disp = function(disp, what, who) {
+				return disp[what] + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : '');
+			};
+
+			var r = "",
+			v_type = "",
+			v_list = "",
+			is_struct = false,
+			id;
+
+			$.each(res, function(tag, content) {
+				if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
+					switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
+						case "array":
+							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+								if($.type(v) == "array") {
+									v_type = "array";
+									v_list += $.parse_row_content(v);
+								} else {
+									v_type = "string";
+									v_list = "";
+								}
+							});
+							if(v_type == "string") {
+								r += '<li><b>' + content[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b>: <ul>';
+								$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+									r += '<li>' + $.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP) + '</li>';
+								});
+								r += '</ul></li>';
+							} else {
+								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <ul>' + v_list + '</ul></li>';
+							}
+							break;
+						case "string":
+							if(content[kAPI_PARAM_RESPONSE_FRMT_LINK] !== undefined) {
+								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
+							} else {
+								if(content[kAPI_PARAM_RESPONSE_FRMT_DISP] !== undefined) {
+									r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
+								}
+							}
+							break;
+					}
+				} else {
+					$.each(content[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+						if(v[kAPI_PARAM_RESPONSE_FRMT_DOCU] !== undefined) {
+							is_struct = true;
+						} else {
+							is_struct = false;
+						}
+					});
+					if(is_struct) {
+						id = $.makeid();
+						label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
+						r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
+					} else {
+						id = $.makeid();
+						label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
+						r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
+					}
+				}
+			});
+
+			return '<div><ul class="list-unstyled fa-ul">' + r + '</ul></div>';
+		};
+
+		/**
+		* Show row data contents
+		* @param  {string} id     Storage id
+		* @param  {string} domain Domain
+		* @param  {int}    skip   Skip
+		* @param  {int}    limit  Limit
+		*/
+		$.show_raw_row_content = function(id, domain) {
+			var summaries_data = storage.get("pgrdg_cache.summary." + id),
+			objp = {};
+				objp[kAPI_PARAM_LOG_REQUEST] = "true";
+				objp[kAPI_PARAM_ID] = domain;
+				objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+			$.ask_to_service({
+				storage_group: "results",
+				op: kAPI_OP_GET_UNIT,
+				parameters: {
+					lang: lang,
+					param: objp
+				}
+			}, function(row_content) {
+				$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
+				$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+			});
+			/*
+			if(type == "map") {
+				$.activate_panel("map", {res: decrypted_data});
+			} else {
+				$.activate_panel("results", {res: decrypted_data});
+			}
+			*/
+
+		};
+
+		/**
+		* Show data on map
+		* @param  {string} id     Storage id
+		* @param  {string} domain Domain
+		*/
+		$.show_data_on_map = function(id, domain) {
+			//console.log(id, domain);
+			var summaries_data = storage.get("pgrdg_cache.summary." + id),
+			geometry = [],
+			arr = $.get_current_bbox_pgrdg(default_bbox);
+
+			geometry.push(arr);
+
+			var objp = {};
+			objp[kAPI_PAGING_LIMIT] = 1000;
 			objp[kAPI_PARAM_LOG_REQUEST] = "true";
 			objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
 			objp[kAPI_PARAM_DOMAIN] = domain;
-			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
-		$.ask_to_service({
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: objp
-			}
-		}, function(res) {
-			$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
-		});
-		/*
-		if(type == "map") {
-			$.activate_panel("map", {res: decrypted_data});
-		} else {
-			$.activate_panel("results", {res: decrypted_data});
-		}
-		*/
+			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
+			objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+			objp[kAPI_PARAM_SHAPE] = {};
+			objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
+			objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
 
-	};
+			$.ask_to_service({
+				storage_group: "map",
+				op: kAPI_OP_MATCH_UNITS,
+				parameters: {
+					lang: lang,
+					param: objp
+				}
+			}, function(res) {
+				// console.log(res);
+				if(res.paging.affected > 0) {
+					var map_data = [];
 
-	/**
-	 * Recursive parse of contents in expanded row
-	 * @param  {object} res The content to parse
-	 */
-	$.parse_row_content = function(res) {
-		$.cycle_disp = function(disp, what, who) {
-			return disp[what] + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? ' <a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : '');
+					//console.log(res.results);
+					$.each(res.results, function(i, k) {
+						map_data.push(k);
+					});
+					$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
+					if(res.paging.affected > 1000) {
+						var alert_title = "Displayed 1000 of " + res.paging.affected + " markers";
+						apprise("The map cannot currently display more than 1000 points.<br />This means that it contains only the first 1000 points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+					}
+				} else {
+					alert("No results");
+				}
+			});
+
 		};
 
-		var r = "",
-		v_type = "",
-		v_list = "",
-		is_struct = false,
-		id;
+	/*=======================================================================================
+	*	RAW DATA TABLE
+	*======================================================================================*/
 
-		$.each(res, function(tag, content) {
-			if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
-				switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
-					case "array":
-						$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-							if($.type(v) == "array") {
-								v_type = "array";
-								v_list += $.parse_row_content(v);
-							} else {
-								v_type = "string";
-								v_list = "";
-							}
-						});
-						if(v_type == "string") {
-							r += '<li><b>' + content[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b>: <ul>';
-							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-								r += '<li>' + $.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP) + '</li>';
-							});
-							r += '</ul></li>';
-						} else {
-							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <ul>' + v_list + '</ul></li>';
-						}
-						break;
-					case "string":
-						if(content[kAPI_PARAM_RESPONSE_FRMT_LINK] !== undefined) {
-							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
-						} else {
-							if(content[kAPI_PARAM_RESPONSE_FRMT_DISP] !== undefined) {
-								r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
-							}
-						}
-						break;
-				}
-			} else {
-				$.each(content[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
-					if(v[kAPI_PARAM_RESPONSE_FRMT_DOCU] !== undefined) {
-						is_struct = true;
-					} else {
-						is_struct = false;
-					}
-				});
-				if(is_struct) {
-					id = $.makeid();
-					label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
-					r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
-				} else {
-					id = $.makeid();
-					label = (content[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) ? $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") : $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP, "label");
-					r += '<li><span class="fa fa-fw fa-caret-right"></span> <a href="javascript:void(0);" data-toggle="collapse" data-target="#' + id + '" onclick="$(this).prev(\'span\').toggleClass(\'fa-caret-right fa-caret-down\');">' + label + '</a>: <div id="' + id + '" class="collapse">' + /*$.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_DISP)*/ $.parse_row_content(content[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</div></li>';
-				}
-			}
-		});
-
-		return '<div><ul class="list-unstyled fa-ul">' + r + '</ul></div>';
-	};
-
-	/**
-	* Show row data contents
-	* @param  {string} id     Storage id
-	* @param  {string} domain Domain
-	* @param  {int}    skip   Skip
-	* @param  {int}    limit  Limit
-	*/
-	$.show_raw_row_content = function(id, domain) {
-		var summaries_data = storage.get("pgrdg_cache.ask." + id),
-		objp = {};
-			objp[kAPI_PARAM_LOG_REQUEST] = "true";
-			objp[kAPI_PARAM_ID] = domain;
-			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-		$.ask_to_service({
-			op: kAPI_OP_GET_UNIT,
-			parameters: {
-				lang: lang,
-				param: objp
-			}
-		}, function(row_content) {
-			$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
-			$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
-		});
-		/*
-		if(type == "map") {
-			$.activate_panel("map", {res: decrypted_data});
-		} else {
-			$.activate_panel("results", {res: decrypted_data});
-		}
+		/**
+		* Show paging buttons
+		* @param  {object} options  The entire (raw data) object
+		* @param  {int}    actual   The "actual" data passed from Service
+		* @param  {int}    affected The "affected" data passed from Service
+		* @param  {int}    limit    The "limit" data passed from Service
+		* @param  {int}    skipped  The "skipped" data passed from Service
+		* @return {string}          Html div with paging buttons
 		*/
+		$.paging_btns = function(options, actual, affected, limit, skipped) {
+			var page_count = Math.ceil(affected / limit),
+			current_page = (skipped/limit) + 1,
+			first_page = 1,
+			previous_page = current_page - 1,
+			next_page = current_page + 1,
+			last_page = page_count,
+			previous_skip = skipped - limit,
+			next_skip = skipped + limit,
+			last_skip = (page_count - 1) * limit;
 
-	};
+				/*
+				console.group("PASSED DATA");
+					console.log(options);
+				console.groupEnd();
+				console.group("PAGE NUMBERING");
+					console.log("Page count", page_count);
+					console.log("First page", first_page);
+					console.log("Previous page", previous_page);
+					console.log("Next page", next_page);
+					console.log("Current page", current_page);
+					console.log("Last page", last_page);
+				console.groupEnd();
+				console.group("SKIPPING VALUES");
+					console.log("Previous skip", previous_skip);
+					console.log("Next skip", next_skip);
+					console.log("Last skip", last_skip);
+				console.groupEnd();
+				*/
+			$form_group = $('<div class="form-group">');
+				$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
 
-	/**
-	* Show data on map
-	* @param  {string} id     Storage id
-	* @param  {string} domain Domain
-	*/
-	$.show_data_on_map = function(id, domain) {
-		//console.log(id, domain);
-		var summaries_data = storage.get("pgrdg_cache.ask." + id),
-		geometry = [],
-		arr = $.get_current_bbox_pgrdg(default_bbox);
-
-		geometry.push(arr);
-
-		var objp = {};
-		objp[kAPI_PAGING_LIMIT] = 1000;
-		objp[kAPI_PARAM_LOG_REQUEST] = "true";
-		objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
-		objp[kAPI_PARAM_DOMAIN] = domain;
-		objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
-		objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
-		objp[kAPI_PARAM_SHAPE] = {};
-		objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
-		objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
-
-		$.ask_to_service({
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: objp
-			}
-		}, function(res) {
-			// console.log(res);
-			if(res.paging.affected > 0) {
-				var map_data = [];
-
-				//console.log(res.results);
-				$.each(res.results, function(i, k) {
-					map_data.push(k);
-				});
-				$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
-				if(res.paging.affected > 1000) {
-					var alert_title = "Displayed 1000 of " + res.paging.affected + " markers";
-					apprise("The map cannot currently display more than 1000 points.<br />This means that it contains only the first 1000 points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
-				}
-			} else {
-				alert("No results");
-			}
-		});
-
-	};
-
-/*=======================================================================================
-*	RAW DATA TABLE
-*======================================================================================*/
-
-	/**
-	* Show paging buttons
-	* @param  {object} options  The entire (raw data) object
-	* @param  {int}    actual   The "actual" data passed from Service
-	* @param  {int}    affected The "affected" data passed from Service
-	* @param  {int}    limit    The "limit" data passed from Service
-	* @param  {int}    skipped  The "skipped" data passed from Service
-	* @return {string}          Html div with paging buttons
-	*/
-	$.paging_btns = function(options, actual, affected, limit, skipped) {
-		var page_count = Math.ceil(affected / limit),
-		current_page = (skipped/limit) + 1,
-		first_page = 1,
-		previous_page = current_page - 1,
-		next_page = current_page + 1,
-		last_page = page_count,
-		previous_skip = skipped - limit,
-		next_skip = skipped + limit,
-		last_skip = (page_count - 1) * limit;
-
-			/*
-			console.group("PASSED DATA");
-				console.log(options);
-			console.groupEnd();
-			console.group("PAGE NUMBERING");
-				console.log("Page count", page_count);
-				console.log("First page", first_page);
-				console.log("Previous page", previous_page);
-				console.log("Next page", next_page);
-				console.log("Current page", current_page);
-				console.log("Last page", last_page);
-			console.groupEnd();
-			console.group("SKIPPING VALUES");
-				console.log("Previous skip", previous_skip);
-				console.log("Next skip", next_skip);
-				console.log("Last skip", last_skip);
-			console.groupEnd();
-			*/
-		$form_group = $('<div class="form-group">');
-			$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
-
-		page_btns = '<div class="form-group">';
-			page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
-		page_btns += '</div>&nbsp;';
-		page_btns += '<div class="form-group">';
-			page_btns += '<div class="input-group">';
-				page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
-				page_btns += '<span class="input-group-addon">Page</span>';
-				page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
-				page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
-				page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+			page_btns = '<div class="form-group">';
+				page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
+			page_btns += '</div>&nbsp;';
+			page_btns += '<div class="form-group">';
+				page_btns += '<div class="input-group">';
+					page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
+					page_btns += '<span class="input-group-addon">Page</span>';
+					page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
+					page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
+					page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+				page_btns += '</div>';
+			page_btns += '</div>&nbsp;';
+			page_btns += '<div class="btn-group">';
+				page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
 			page_btns += '</div>';
-		page_btns += '</div>&nbsp;';
-		page_btns += '<div class="btn-group">';
-			page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
-		page_btns += '</div>';
 
-		return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
-	};
+			return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
+		};
 
-	/**
-	* Parse recursive Service data and show in a row tree
-	* @param  {object} options The entire Service object
-	*/
-	$.cycle_row_data = function(options) {
-		var content = "";
-		$.each(options.row_obj, function(tag, value) {
-			var id = $.makeid(),
-			label, tag_label, tag_type;
-			if(!jQuery.isEmptyObject(options.res)) {
-				if($.isNumeric(tag)) {
-					tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
-					tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
-					//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
+		/**
+		* Parse recursive Service data and show in a row tree
+		* @param  {object} options The entire Service object
+		*/
+		$.cycle_row_data = function(options) {
+			var content = "";
+			$.each(options.row_obj, function(tag, value) {
+				var id = $.makeid(),
+				label, tag_label, tag_type;
+				if(!jQuery.isEmptyObject(options.res)) {
+					if($.isNumeric(tag)) {
+						tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+						tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
+						//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
+					}
+				} else {
+					tag_label = tag;
 				}
-			} else {
-				tag_label = tag;
-			}
-			switch(jQuery.type(value)) {
-				case "object":
-					if(jQuery.isArray(value)) {
-						$.each(value, function(key, val) {
-							var val_type = jQuery.type(val);
-						});
-						/*if(val_type == "object") {
-							content += "~";//$.cycle_row_data({row_obj: value});
+				switch(jQuery.type(value)) {
+					case "object":
+						if(jQuery.isArray(value)) {
+							$.each(value, function(key, val) {
+								var val_type = jQuery.type(val);
+							});
+							/*if(val_type == "object") {
+								content += "~";//$.cycle_row_data({row_obj: value});
+							} else {
+								*/content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + value.join(", ") + "</li>";
+							//}
 						} else {
-							*/content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + value.join(", ") + "</li>";
-						//}
-					} else {
-						if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
-							if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
-								label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+							if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
+								if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
+									label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+								} else {
+									label = tag_label;
+								}
 							} else {
 								label = tag_label;
 							}
-						} else {
-							label = tag_label;
-						}
-						if($.obj_len(value) == 1) {
-							$.each(value, function(i, n) {
-								label = i;
-								value = n;
-							});
-						}
-						content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
-					}
-					break;
-				case "array":
-					switch(tag_type) {
-						case kTYPE_ENUM:
-						case kTYPE_SET:
-							var lab = [];
-							$.each(value, function(key, val) {
-								if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
-									lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
-									//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
-								}
-							});
-							content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
-							break;
-						case kTYPE_STRUCT:
 							if($.obj_len(value) == 1) {
+								$.each(value, function(i, n) {
+									label = i;
+									value = n;
+								});
+							}
+							content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
+						}
+						break;
+					case "array":
+						switch(tag_type) {
+							case kTYPE_ENUM:
+							case kTYPE_SET:
+								var lab = [];
 								$.each(value, function(key, val) {
-									if($.obj_len(val) > 1) {
-										content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
-									} else {
-										$.each(val, function(k, v) {
-											content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
-										});
+									if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
+										lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
+										//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
 									}
 								});
-							} else {
-								$.each(value, function(key, val) {
-									content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
-								});
-							}
-							break;
-						default:
-							content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + value.join(", ") + "</li>";
-							break;
-					}
-					break;
-				default:
-					switch(tag_type) {
-						case kTYPE_ENUM:
-						case kTYPE_SET:
-							if(tag_label == "Domain") {
-								value = options.title;
-							} else {
-								value = $.get_enum_label_from_string(options.res, value);
-							}
-							//console.log(tag_label);
-							content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
-							break;
-						case kTYPE_STRUCT:
-							break;
-						default:
-							content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
-							break;
-					}
-					break;
-			}
-			//content += tag + ": " + jQuery.type(value) + '<br />';
-		});
-		return content;
-	};
+								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
+								break;
+							case kTYPE_STRUCT:
+								if($.obj_len(value) == 1) {
+									$.each(value, function(key, val) {
+										if($.obj_len(val) > 1) {
+											content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+										} else {
+											$.each(val, function(k, v) {
+												content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
+											});
+										}
+									});
+								} else {
+									$.each(value, function(key, val) {
+										content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+									});
+								}
+								break;
+							default:
+								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + value.join(", ") + "</li>";
+								break;
+						}
+						break;
+					default:
+						switch(tag_type) {
+							case kTYPE_ENUM:
+							case kTYPE_SET:
+								if(tag_label == "Domain") {
+									value = options.title;
+								} else {
+									value = $.get_enum_label_from_string(options.res, value);
+								}
+								//console.log(tag_label);
+								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+								break;
+							case kTYPE_STRUCT:
+								break;
+							default:
+								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+								break;
+						}
+						break;
+				}
+				//content += tag + ": " + jQuery.type(value) + '<br />';
+			});
+			return content;
+		};
 
-	/**
-	* Convert an enum string to its label
-	* @param  {object} res    The entire Service object
-	* @param  {string} string Enum string
-	* @return {string}        Enum label
-	*/
+		/**
+		* Convert an enum string to its label
+		* @param  {object} res    The entire Service object
+		* @param  {string} string Enum string
+		* @return {string}        Enum label
+		*/
 
-	// $.get_enum_label_from_string = function(res, string) {
-	// 	if(!jQuery.isEmptyObject(res)) {
-	// 		if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
-	// 		//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
-	// 			label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
-	// 		} else {
-	// 			label = string;
-	// 		}
-	// 		return label;
-	// 	}
-	// };
+		// $.get_enum_label_from_string = function(res, string) {
+		// 	if(!jQuery.isEmptyObject(res)) {
+		// 		if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
+		// 		//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
+		// 			label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
+		// 		} else {
+		// 			label = string;
+		// 		}
+		// 		return label;
+		// 	}
+		// };
 
-	/**
-	* Convert a tag code to its label
-	* @param  {object} res    The entire Service object
-	* @param  {int} string    Tag string
-	* @return {string}        Tag label
-	*/
+		/**
+		* Convert a tag code to its label
+		* @param  {object} res    The entire Service object
+		* @param  {int} string    Tag string
+		* @return {string}        Tag label
+		*/
 
-	// $.get_tag_label_from_string = function(res, string) {
-	// 	if(!jQuery.isEmptyObject(res)) {
-	// 		if(jQuery.isNumeric(string)) {
-	// 			var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
-	// 			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
-	// 				return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
-	// 			}
-	// 		} else {
-	// 			return string;
-	// 		}
-	// 	} else {
-	// 		return string;
-	// 	}
-	// };
+		// $.get_tag_label_from_string = function(res, string) {
+		// 	if(!jQuery.isEmptyObject(res)) {
+		// 		if(jQuery.isNumeric(string)) {
+		// 			var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
+		// 			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
+		// 				return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
+		// 			}
+		// 		} else {
+		// 			return string;
+		// 		}
+		// 	} else {
+		// 		return string;
+		// 	}
+		// };
 
 
 /*=======================================================================================
@@ -1557,7 +1620,7 @@
 
 					if($("#node_" + node).html() === "") {
 						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Retriving data...');
-						$.ask_to_service({loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {
+						$.ask_to_service({storage_group: "forms", loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {
 							//$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
 							$("#node_" + node).html("").css("display", "none");
 							$.each(res.results, function(k, v) {
@@ -1819,4 +1882,12 @@ $(document).ready(function() {
 			$(this).closest(".input-group").addClass("open");
 		}
 	});
+	// Restore the previous content of Search page
+	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
+		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
+	}*/
 });
+// Save the current page if user change
+/*window.onbeforeunload = function() {
+	storage.set("pgrdg_cache.html", $.utf8_to_b64($("body").html()));
+};*/

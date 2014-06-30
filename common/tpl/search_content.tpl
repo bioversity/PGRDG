@@ -7,6 +7,9 @@
 	</ol>
 </div>
 <div id="contents">
+	<?php
+	// IMPORTANT: Do not change the following structure, might not work nothing!
+	?>
 	<div id="forms" class="panel_content">
 		<div id="forms-head" class="left panel_content-head container-fluid">
 			<h1 class="pull-left content-title"></h1>

@@ -161,6 +161,7 @@
 	*/
 	$.ask_to_service = function(options, callback) {
 		var opt = $.extend({
+			storage_group: "ask",
 			loaderType: "external",
 			kAPI_REQUEST_OPERATION: "",
 			parameters: {
@@ -184,8 +185,8 @@
 			verbose_param = "address= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
 			object_param = {op: opt[kAPI_REQUEST_OPERATION], lang: opt.parameters[kAPI_REQUEST_LANGUAGE], params: opt.parameters.param};
 		}
-		if(!storage.isEmpty("pgrdg_cache.ask") && storage.isSet("pgrdg_cache.ask." + $.md5(param))) {
-			var response = storage.get("pgrdg_cache.ask." + $.md5(param) + ".response");
+		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param))) {
+			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response.status.state == "ok") {
 				response.id = $.md5(param);
 				callback(response);
@@ -221,7 +222,7 @@
 					element_data = $element.html();
 					$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
 				}
-				console.group("Storage saved...");
+				console.group("Storage \"" + opt.storage_group + "\" saved...");
 				console.warn("id: ", $.md5(param));
 				$.cryptAjax({
 					url: "API/",
@@ -234,7 +235,7 @@
 					},
 					success: function(response) {
 
-						storage.set("pgrdg_cache.ask." + $.md5(param), {"query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
+						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 						response.id = $.md5(param);
 						if(response.status.state == "ok") {
 							if(typeof(opt.loaderType) == "string") {
