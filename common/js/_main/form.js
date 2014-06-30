@@ -34,7 +34,7 @@
 				if(storage.isEmpty("pgrdg_cache.local." + $.md5(name))) {
 					// http://pgrdg.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
-						storage.set("pgrdg_cache.local." + $.md5(name), {"query": name, "response": system_constants});
+						storage.set("pgrdg_cache.local." + $.md5(name), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": name, "response": system_constants});
 						$.get_operators_list(system_constants);
 
 						if (jQuery.type(callback) == "function") {

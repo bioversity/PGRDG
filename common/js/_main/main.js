@@ -234,8 +234,7 @@
 						type: "ask_service"
 					},
 					success: function(response) {
-
-						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
+						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 						response.id = $.md5(param);
 						if(response.status.state == "ok") {
 							if(typeof(opt.loaderType) == "string") {
