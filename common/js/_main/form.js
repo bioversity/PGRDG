@@ -1197,7 +1197,7 @@
 			//console.log(id, domain);
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
 			geometry = [],
-			arr = $.get_current_bbox_pgrdg(default_bbox);
+			arr = $.get_current_bbox_pgrdg();
 
 			geometry.push(arr);
 

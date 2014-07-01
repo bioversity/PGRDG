@@ -1,10 +1,13 @@
 <section class="container">
 	<?php
-	if(strtolower($page) == "search") {
-		require_once("common/tpl/left_panel.tpl");
-		require_once("common/tpl/search_content.tpl");
-	} else {
-		require_once("common/tpl/content.tpl");
+	switch(strtolower($page)) {
+		case "search":
+			require_once("common/tpl/left_panel.tpl");
+			require_once("common/tpl/search_content.tpl");
+			break;
+		default:
+			require_once("common/tpl/content.tpl");
+			break;
 	}
 	?>
 </section>
