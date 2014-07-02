@@ -794,7 +794,7 @@ ul.list-group.transparent ul {
 #map_sub_toolbox span.fa, #map_sub_toolbox span.ionicons {
 	color: #dedede;
 }
-#map_sub_toolbox span.fa-circle-o {
+#map_sub_toolbox span.fa-circle-o, #map_sub_toolbox span.fa-square-o {
 	color: #666;
 }
 #map_sub_toolbox a.btn {
@@ -816,9 +816,10 @@ ul.list-group.transparent ul {
 #map_sub_toolbox li:hover {
 	background-color: #333;
 	/*border-left: 1px solid #ccc;*/
-    /*border-right: 1px solid #ccc;*/
-    border-radius: 0;
-    color: #fff;
+	/*border-right: 1px solid #ccc;*/
+	border-radius: 0;
+	color: #fff;
+	cursor: pointer;
 }
 #map_sub_toolbox li:first-child.selected,
 #map_sub_toolbox li:first-child a.selected,

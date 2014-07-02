@@ -11,12 +11,13 @@
  *	CORE ENGINE
  *======================================================================================*/
 
-        var lon, lat, zoom, default_bbox = [], map, layers = [], defaultLayer, baseLayers, overlayLayers;
+        var lon, lat, zoom, default_bbox = [], map, control, current_layer, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers;
 
         /**
          * Generate map
          */
         $.init_map = function() {
+                var zindex = 0;
                 $.cryptAjax({
                         url: "common/include/conf/_map.json",
                         dataType: "json",
@@ -44,27 +45,51 @@
                                 baseLayers = map_data.map.layers.baseLayers;
                                 overlayLayers = map_data.map.layers.overlayLayers;
 
-
                                 $("#change_map").append('<ul class="list-unstyled">');
-                                $.each(map_data.map.layers.baseLayers, function(k, v) {
-                                        if(v == map_data.map.layers.defaultLayer) {
-                                                $("#change_map ul").append('<li class="selected"><a title="Change layer" onclick="$.change_map_layer(\'' + v + '\')" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;' + v.replace(".", " ") + '</a>');
-                                        } else {
-                                                $("#change_map ul").append('<li><a title="Change layer" onclick="$.change_map_layer(\'' + v + '\')" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;' + v.replace(".", " ") + '</a>');
-                                        }
-                                        layers.push(v);
-                                });
-                                $("#change_map ul").append('<li class="divider"></li>');
-                                $.each(map_data.map.layers.overlayLayers, function(k, v) {
-                                        $("#change_map ul").append('<li><a title="Change layer" onclick="$.change_map_layer(\'' + v + '\')" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;' + v.replace(".", " ") + '</a>');
-                                        layers.push(v);
-                                });
+                                var i = 0, h = 0;
+                                $.each(map_data.map.layers.baseLayers, function(group, layers_list) {
+                                        zindex = 1;
 
-                                var control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true}).addTo(map);
+                                        h++;
+                                        $.each(layers_list, function(k, v) {
+                                                if(v == map_data.map.layers.defaultLayer) {
+                                                        $("#change_map ul").append('<li class="selected" onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
+                                                } else {
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
+                                                }
+                                                layers.push(v);
+                                        });
+                                        if(h < $.obj_len(map_data.map.layers.baseLayers)) {
+                                                $("#change_map ul").append('<li class="divider"></li>');
+                                        }
+                                });
+                                $.each(map_data.map.layers.overlayLayers, function(group, layers_list) {
+                                        zindex = 25;
+
+                                        i++;
+                                        $.each(layers_list, function(k, v) {
+                                                if(v !== undefined && v !== null && v !== "") {
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
+                                                        layers.push(v);
+                                                }
+                                        });
+                                        if(i < $.obj_len(map_data.map.layers.overlayLayers)) {
+                                                $("#change_map ul").append('<li class="divider"></li>');
+                                        }
+                                });
+                                current_layer = map_data.map.layers.defaultLayer;
+                                //control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true});//.addTo(map);
                                 map.invalidateSize();
                                 map.setMaxBounds([[85, -190], [-190, 190]]);
 
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
+
+                                var geoJsonData = {
+                                        "type": "FeatureCollection",
+                                        "features": [
+                                                { "type": "Feature", "id":"1", "properties": { "address": "2"   }, "geometry": { "type": "Polygon", "coordinates": [[[12.8199, 42.8422], [12.8207,42.8158], [12.8699,42.8166], [12.8678,42.8398], [12.8199,42.8422]]] } }
+                                        ]
+                                };
                         }
                 });
                 if(!$("#pgrdg_map").hasClass("locked")) {
@@ -90,7 +115,7 @@
          * Wrap longitude or latitude value
          * @param {[type]} value) { return value - (Math.floor((value + 180) / 360) * 360 [description]
          */
-        $.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); };
+//        $.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); };
 
         /**
          * Return current boundingbox
@@ -100,7 +125,7 @@
         /**
          * Return current boundingbox in EPSG 43826
          */
-        $.get_current_bbox_epsg = function() { return ol.proj.transform(map.getView().getView2D().calculateExtent(map.getSize()), "EPSG:3857", "EPSG:4326"); };
+//        $.get_current_bbox_epsg = function() { return ol.proj.transform(map.getView().getView2D().calculateExtent(map.getSize()), "EPSG:3857", "EPSG:4326"); };
 
         /**
          * Explode a boundingbox and returns an array for PGRDG Service
@@ -116,24 +141,24 @@
          * @param {string} lon              Longitude
          * @param {string} lat              Latitude
          */
-        $.set_lonlat = function(lon, lat) { return ol.proj.transform([parseFloat(lon), parseFloat(lat)], "EPSG:4326", "EPSG:3857"); };
+//        $.set_lonlat = function(lon, lat) { return ol.proj.transform([parseFloat(lon), parseFloat(lat)], "EPSG:4326", "EPSG:3857"); };
 
         /**
          * Set coordinates giving boundingbox axis
          */
-        $.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([parseFloat(a), parseFloat(b), parseFloat(c), parseFloat(d)], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
+//        $.set_lonlat_bbox = function(a, b, c, d) { return ol.extent.transform([parseFloat(a), parseFloat(b), parseFloat(c), parseFloat(d)], ol.proj.getTransform("EPSG:4326", "EPSG:3857")); };
 
         /**
          * Center map on given coordinates
          * @param {string} lon  Longitude
          * @param {string} lat  Latitude
          */
-        $.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
+//        $.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
 
         /**
          * Center map on given boundingbox
          */
-        $.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
+//        $.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
 
         /**
         * Center map on a defined place
@@ -242,75 +267,52 @@
  *======================================================================================*/
 
         /**
+         * Return the current layer
+         */
+        $.current_layer = function() { return current_layer; };
+
+        /**
          * Show selected layer
          */
-        $.show_layer = function(selected_layer) {
-                for (var i = 0, ii = layers.length; i < ii; ++i) {
-                        var style = layers[i].get("style");
-                        if(style == selected_layer) {
-                                layers[i].setVisible(1);
-                                //$("#change_map a." + selected_layer.replace(" ", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
-                        }
-                }
+        $.show_layer = function(selected_layer, zindex) {
+                l[selected_layer] = L.tileLayer.provider(selected_layer);
+                map.addLayer(l[selected_layer]);
+                l[selected_layer].setZIndex(zindex);
         };
 
         /**
          * Hide selected layer
          */
         $.hide_layer = function(selected_layer) {
-                for (var i = 0, ii = layers.length; i < ii; ++i) {
-                        var style = layers[i].get("style");
-                        //$("#change_map a." + style.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
-                        if(style == selected_layer) {
-                                layers[i].setVisible(0);
-                        }
-                }
+                map.removeLayer(l[selected_layer]);
         };
 
         /**
          * Switch displayed layer
          */
-        $.change_map_layer = function(selected_layer) {
-                console.log(map._layers);
-        //        map.addLayer(baseLayers, selected_layer.replace(".", " "), 1);
-
-                /*
-                var parent_layer, label, pls;
-
-                for(var i = 0, ii = layers.length; i < ii; ++i) {
-                        label = layers[i].get("style");
-                        pls = layers[i].get("parentLayer");
-
-                        if(layers[i].getVisible() == 1) {
-                                $.hide_layer(layers[i].get("style"));
-                                if(label !== undefined) {
-                                        $("#change_map a." + label.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
-                                }
-                                layers[i].setVisible(0);
-                        }
-                        if(label == selected_layer) {
-                                if(label == "Labels") {
-                                        if(pls !== undefined) {
-                                                // Check if the previous selected layer is able to support Labels layer
-                                                if(jQuery.inArray($("#previous_selected_layer").text(), pls) !== -1) {
-                                                        $.show_layer($("#previous_selected_layer").text());
-                                                        $("#change_map a." + $("#previous_selected_layer").text()).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
-                                                } else {
-                                                        $.hide_layer($("#previous_selected_layer").text());
-                                                        $("#change_map a." + label.replace(" ", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
-
-                                                        $.show_layer("Satellite");
-                                                        $("#change_map a.Satellite").parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
-                                                }
-                                        }
+        $.change_map_layer = function(selected_layer, zindex) {
+                console.log(zindex);
+                var $this = $("#change_map a." + selected_layer.replace(".", "_")).find("span");
+                if(selected_layer !== $.current_layer) {
+                        if($this.hasClass("fa-circle-o") || $this.hasClass("fa-check-circle")) {
+                                //L.tileLayer.provider(selected_layer);
+                                $.show_layer(selected_layer, zindex);
+                                $("#change_map li").find("span.fa-check-circle").closest("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+                        } else {
+                                if($this.hasClass("fa-square-o")) {
+                                        //L.tileLayer.provider(selected_layer);
+                                        $.show_layer(selected_layer, zindex);
+                                        $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-square-o").addClass("fa-check-square");
                                 } else {
-                                        $("#previous_selected_layer").text(label);
+                                        //var this_layer = L.tileLayer.provider(selected_layer);
+                                        $.hide_layer(selected_layer);
+                                        $("#change_map a." + selected_layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
                                 }
-                                $.show_layer(selected_layer);
-                                $("#change_map a." + selected_layer.replace(" ", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
                         }
+                        current_layer = selected_layer;
                 }
-                */
+                $.sub_toolbox('change_map');
         };
 
 
@@ -434,6 +436,7 @@
                         console.log(current_view);
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $(".leaflet-control-zoom").animate({"left": "-50px"}, 300);
+                                $(".leaflet-control-attribution").animate({"margin-right": "-120px"}, 300);
                                 $("#pgrdg_map").removeClass("grabbing");
                                 $("#pgrdg_map").addClass("locked");
                                 $("#lock_view_btn").addClass("pulse");
@@ -451,6 +454,7 @@
                                 if (map.tap) map.tap.disable();
                         } else {
                                 $(".leaflet-control-zoom").animate({"left": "0"}, 300);
+                                $(".leaflet-control-attribution").animate({"margin-right": "0"}, 300);
                                 $("#pgrdg_map").removeClass("locked");
                                 $("#lock_view_btn").removeClass("pulse");
                                 $.enable_map_toolbox();
@@ -634,174 +638,189 @@
          /**
           * Markers, clusters and popup
           */
-                 $.add_heatmap = function(options) {
-                         options = $.extend({
-                                 radius: 30,
-                                 opacity: 40,
-                                 gradient: {
-                                         0.45: "rgb(0, 0, 255)",
-                                         0.55: "rgb(0, 255, 255)",
-                                         0.65: "rgb(0, 255, 0)",
-                                         0.95: "yellow",
-                                         1.0: "rgb(255, 0, 0)"
-                                 }
-                         });
-                         var vector = new ol.layer.Heatmap({
-                                 source: new ol.source.KML({
-                                         projection: 'EPSG:3857',
-                                         url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
-                                 }),
-                                 radius: options.radius
-                         });
-                         vector.getSource().on('addfeature', function(event) {
-                                 // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
-                                 // standards-violating <magnitude> tag in each Placemark.  We extract it from
-                                 // the Placemark's name instead.
-                                 var name = event.feature.get('name');
-                                 var magnitude = parseFloat(name.substr(2));
-                                 event.feature.set('weight', magnitude - 5);
-                         });
-                         map.addOverlay(vector);
-                 };
-
-                 /**
-                 * Add marker on map
-                 * @param {object} options (lon, lat, uuid, type, name, title, cloud, size, marker_class, content, callback{function})
-                 * @return {Function} callback Called function
-                 */
-                 $.add_marker = function(options, callback) {
-                         options = $.extend({
-                                 lon: 0,
-                                 lat: 0,
-                                 uuid: $.uuid(),
-                                 type: "marker",
-                                 name: "",
-                                 title: "",
-                                 cloud: true,
-                                 size: "1.5em",
-                                 marker_class: "primary",
-                                 content: "Sample text",
-                                 dynamic_content: "",
-                                 buttons: true
-                         }, options);
-
-                         //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
-                         if($("#" + options.uuid).length > 0) {
-                                 $("#" + options.uuid).remove();
+                $.add_heatmap = function(options) {
+                 options = $.extend({
+                         radius: 30,
+                         opacity: 40,
+                         gradient: {
+                                 0.45: "rgb(0, 0, 255)",
+                                 0.55: "rgb(0, 255, 255)",
+                                 0.65: "rgb(0, 255, 0)",
+                                 0.95: "yellow",
+                                 1.0: "rgb(255, 0, 0)"
                          }
-                         var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                         var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                         var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-                         var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
-                         var circle = L.circle([51.508, -0.11], 500, {
-                                color: 'red',
-                                fillColor: '#f03',
-                                fillOpacity: 0.5
-                         }).addTo(map);
-                         circle.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-                         /*
-                         var marker = new ol.Overlay({
-                                 position: $.set_lonlat(options.lon, options.lat),
-                                 positioning: "center-center",
-                                 element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>').css({
-                                                         cursor: "pointer"
-                                                 }).popover({
-                                                         html: true,
-                                                         title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-                                                         content: ((typeof(options.content) == "function") ? options.content() : options.content) + ((options.buttons) ? '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>' : ""),
-                                                         placement: "top",
-                                                         trigger: "click"
-                                                 }).bind("click", function() {
-                                                         $("#" + options.uuid).next(".popover").find(".popover-content").html(((typeof(options.dynamic_content) == "function") ? options.dynamic_content() : options.dynamic_content));
-                                                 }) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
-                                 stopEvent: false
-                         });
-                         map.addOverlay(marker);
-                         */
-                 };
+                 });
+                 var vector = new ol.layer.Heatmap({
+                         source: new ol.source.KML({
+                                 projection: 'EPSG:3857',
+                                 url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
+                         }),
+                         radius: options.radius
+                 });
+                 vector.getSource().on('addfeature', function(event) {
+                         // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+                         // standards-violating <magnitude> tag in each Placemark.  We extract it from
+                         // the Placemark's name instead.
+                         var name = event.feature.get('name');
+                         var magnitude = parseFloat(name.substr(2));
+                         event.feature.set('weight', magnitude - 5);
+                 });
+                 map.addOverlay(vector);
+                };
 
-                 $.reset_all_markers = function() {
-                         $.each($("#pgrdg_map .marker"), function(k, v) {
-                                 $(this).parent("div").remove();
-                         });
-                 };
+                /**
+                * Add marker on map
+                * @param {object} options (lon, lat, uuid, type, name, title, cloud, size, marker_class, content, callback{function})
+                * @return {Function} callback Called function
+                */
+                $.add_marker = function(options, callback) {
+                 options = $.extend({
+                         lon: 0,
+                         lat: 0,
+                         uuid: $.uuid(),
+                         type: "marker",
+                         name: "",
+                         title: "",
+                         cloud: true,
+                         size: "1.5em",
+                         marker_class: "primary",
+                         content: "Sample text",
+                         dynamic_content: "",
+                         buttons: true
+                 }, options);
 
-                 /**
-                 * Add point on map
-                 * @param {object} options (lon, lat, uuid, name, title, marker_class, content, callback{function})
-                 * @return {Function} callback Called function
+                 //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+                 if($("#" + options.uuid).length > 0) {
+                         $("#" + options.uuid).remove();
+                 }
+                 var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+                 var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+                 var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+                 var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
+                 var circle = L.circle([51.508, -0.11], 500, {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.5
+                 }).addTo(map);
+                 circle.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                 /*
+                 var marker = new ol.Overlay({
+                         position: $.set_lonlat(options.lon, options.lat),
+                         positioning: "center-center",
+                         element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>').css({
+                                                 cursor: "pointer"
+                                         }).popover({
+                                                 html: true,
+                                                 title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+                                                 content: ((typeof(options.content) == "function") ? options.content() : options.content) + ((options.buttons) ? '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>' : ""),
+                                                 placement: "top",
+                                                 trigger: "click"
+                                         }).bind("click", function() {
+                                                 $("#" + options.uuid).next(".popover").find(".popover-content").html(((typeof(options.dynamic_content) == "function") ? options.dynamic_content() : options.dynamic_content));
+                                         }) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
+                         stopEvent: false
+                 });
+                 map.addOverlay(marker);
                  */
-                 $.add_point = function(options) {
-                         options = $.extend({
-                                 lon: 0,
-                                 lat: 0,
-                                 uuid: $.uuid(),
-                                 name: "",
-                                 title: "",
-                                 marker_class: "primary",
-                                 content: "Sample text",
-                                 callback: function() {}
-                         }, options);
-                         if (typeof(callback) == "function") {
-                                 callback.call(this);
-                         }
-                         //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
-                         if($("#" + options.uuid).length > 0) {
-                                 $("#" + options.uuid).remove();
-                         }
-                         var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                         var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                         var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-                         var point = new ol.Overlay({
-                                 position: $.set_lonlat(options.lon, options.lat),
-                                 positioning: "center-center",
-                                 element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
-                                                         cursor: "pointer"
-                                                 }).bind("click", function() {
-                                                         console.log(options.lon, options.lat);
-                                                 }),
-                                 stopEvent: false
-                         });
-                         map.addOverlay(point);
-                 };
+                };
 
-                 /**
-                 * Move point on map
-                 * @param  {string} uuid Point uuid
-                 */
-                 $.move_point = function(uuid) {
-                         $("#" + uuid).addClass("draggable");
-                         $("#" + uuid).next().find(".popover-content .content").html('<span class="fa fa-refresh fa-spin"></span>');
-                         $("#pgrdg_map").on("mousemove", function(e) {
-                                 if($("#" + uuid).hasClass("draggable")) {
-                                         var $selected = $("#" + uuid).parent("div");
-                                         $("#" + uuid).css({ cursor: "move" });
-                                         $selected.css({
-                                                 top: parseInt(e.clientY - 9) + "px",
-                                                 left: parseInt(e.clientX - 9) + "px"
-                                         });
-                                 }
-                         }).on("mouseup", function(e) {
-                                 // Stop dragging
-                                 $("#" + uuid).removeClass("draggable");
-                                 var clicked_coords = map.getCoordinateFromPixel([e.clientX, e.clientY]),
-                                 hdms = ol.proj.transform(clicked_coords, "EPSG:3857", "EPSG:4326");
+                $.reset_all_markers = function() {
+                 $.each($("#pgrdg_map .marker"), function(k, v) {
+                         $(this).parent("div").remove();
+                 });
+                };
 
-                                 $.find_location({
-                                         lon: hdms[0],
-                                         lat: hdms[1],
-                                         addressdetails: 1,
-                                         error: function(data) {
-                                                 alert("An error occurred while communicating with the OpenLS service. Please try again.");
-                                         },
-                                         success: function(data) {
-                                                 datap = $.parseJSON(data);
-                                                 console.log(datap);
-                                                 $("#" + uuid).next().find(".popover-content .content").html(datap.display_name + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([hdms[0], hdms[1]]) + '</code>');
-                                         }
+                /**
+                * Add point on map
+                * @param {object} options (lon, lat, uuid, name, title, marker_class, content, callback{function})
+                * @return {Function} callback Called function
+                */
+                $.add_point = function(options) {
+                 options = $.extend({
+                         lon: 0,
+                         lat: 0,
+                         uuid: $.uuid(),
+                         name: "",
+                         title: "",
+                         marker_class: "primary",
+                         content: "Sample text",
+                         callback: function() {}
+                 }, options);
+                 if (typeof(callback) == "function") {
+                         callback.call(this);
+                 }
+                 //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+                 if($("#" + options.uuid).length > 0) {
+                         $("#" + options.uuid).remove();
+                 }
+                 var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+                 var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+                 var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+                 var point = new ol.Overlay({
+                         position: $.set_lonlat(options.lon, options.lat),
+                         positioning: "center-center",
+                         element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+                                                 cursor: "pointer"
+                                         }).bind("click", function() {
+                                                 console.log(options.lon, options.lat);
+                                         }),
+                         stopEvent: false
+                 });
+                 map.addOverlay(point);
+                };
+
+                /**
+                * Move point on map
+                * @param  {string} uuid Point uuid
+                */
+                /*
+                $.move_point = function(uuid) {
+                 $("#" + uuid).addClass("draggable");
+                 $("#" + uuid).next().find(".popover-content .content").html('<span class="fa fa-refresh fa-spin"></span>');
+                 $("#pgrdg_map").on("mousemove", function(e) {
+                         if($("#" + uuid).hasClass("draggable")) {
+                                 var $selected = $("#" + uuid).parent("div");
+                                 $("#" + uuid).css({ cursor: "move" });
+                                 $selected.css({
+                                         top: parseInt(e.clientY - 9) + "px",
+                                         left: parseInt(e.clientX - 9) + "px"
                                  });
+                         }
+                 }).on("mouseup", function(e) {
+                         // Stop dragging
+                         $("#" + uuid).removeClass("draggable");
+                         var clicked_coords = map.getCoordinateFromPixel([e.clientX, e.clientY]),
+                         hdms = ol.proj.transform(clicked_coords, "EPSG:3857", "EPSG:4326");
+
+                         $.find_location({
+                                 lon: hdms[0],
+                                 lat: hdms[1],
+                                 addressdetails: 1,
+                                 error: function(data) {
+                                         alert("An error occurred while communicating with the OpenLS service. Please try again.");
+                                 },
+                                 success: function(data) {
+                                         datap = $.parseJSON(data);
+                                         console.log(datap);
+                                         $("#" + uuid).next().find(".popover-content .content").html(datap.display_name + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([hdms[0], hdms[1]]) + '</code>');
+                                 }
                          });
-                 };
+                 });
+                };
+                */
+
+                $.add_geojson_cluster = function(geojson) {
+                        var markers = L.markerClusterGroup();
+                        var geoJsonLayer = L.geoJson(data, {
+        			onEachFeature: function (feature, layer) {
+        				layer.bindPopup(feature.properties.address);
+        			}
+        		});
+        		markers.addLayer(geoJsonLayer);
+
+        		map.addLayer(markers);
+        		//map.fitBounds(markers.getBounds());
+                };
 
                  /**
                  * Add popup on map

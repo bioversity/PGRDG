@@ -736,6 +736,7 @@
 										case kAPI_PARAM_INPUT_ENUM:
 											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
 											rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+											rt[kAPI_PARAM_GROUP] = [kTAG_DOMAIN];
 											active_forms[af_obj.tags] = rt;
 											break;
 										case kAPI_PARAM_INPUT_RANGE:
@@ -755,6 +756,7 @@
 									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
 								});
 							});
+							console.log(selected_forms);
 							form_data.form = selected_forms;
 							$("#goto_results_btn, #goto_map_btn").hide();
 							storage.remove("pgrdg_cache.summary");
@@ -959,16 +961,18 @@
 			$("#pgrdg_map").fadeIn(600);
 			$.reset_all_markers();
 			$.each(options.res, function(k, v) {
+				console.log(k, v);
 				if(v[options.shape].type == "Point") {
 					var marker_id = $.md5(v._id);
-					$.add_marker({
+					$.add_geojson_cluster(
+					/*
+						{
 						uuid: marker_id,
 						type: "marker",
 						size: "0.75em",
 						lon: v[options.shape].coordinates[0],
 						lat: v[options.shape].coordinates[1],
 						cloud: false
-						/*
 						cloud: true,
 						buttons: false,
 						title: v.name,
@@ -990,8 +994,9 @@
 								$("#" + marker_id).next(".popover").find(".popover-content").css("margin-top", "200px;").html('<div class="detailed_cloud">' + $.parse_row_content(marker_data.results[v._id]) + '</div>');
 							});
 						}
-						*/
-					});
+					}
+					*/
+					);
 				}
 			});
 		}
