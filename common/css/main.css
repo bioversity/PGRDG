@@ -932,8 +932,8 @@ ul.list-group.transparent ul {
 .ol-zoom button:hover, .ol-zoom button:focus, .ol-zoom-extent button:hover, .ol-zoom-extent button:focus, .ol-full-screen button:hover, .ol-full-screen button:focus {
 	background-color: rgba(255, 255, 255, 0.85) !important;
 }
-.ol-zoom {
-	top: 65px !important;
+.ol-zoom, .leaflet-control-zoom {
+	top: 40px !important;
 	/*top: 170px !important;*/
 	padding: 1px !important;
 }

@@ -97,7 +97,9 @@ class frontend_api {
 		$url_exploded = parse_url($url);
 		$url_first_part = str_replace($url_exploded["query"], "", $url);
 		parse_str($url_exploded["query"], $parsed_query);
-		$url_query = $this->compose_url($parsed_query, "param", true);
+		$definitions = $this->get_definitions("api", true, "obj");
+
+		$url_query = $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], true);
 		/**
 		* Screen output
 		*/
@@ -107,8 +109,8 @@ class frontend_api {
 			print "URL EXPLODED QUERY:\n";
 			print_r($url_exploded);
 			print "\n\n";
-			print "BUILDED QUERY (UNENCODED):	" . $url_first_part . $this->compose_url($parsed_query, "param", false) . "\n";
-			print "BUILDED QUERY (ENCODED):	" . $url_first_part . $this->compose_url($parsed_query, "param", true) . "\n";
+			print "BUILDED QUERY (UNENCODED):	" . $url_first_part . $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], false) . "\n";
+			print "BUILDED QUERY (ENCODED):	" . $url_first_part . $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], true) . "\n";
 			print "\n\n";
 		}
 		return $url_first_part . $url_query;
@@ -119,22 +121,32 @@ class frontend_api {
 		return (isset($constants["user"]) ? $constants["user"] : array());
 	}
 
-	/* PUBLIC FUNCTIONS */
-	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-
-	public function get_definitions($type, $keep_update, $response_type = "string") {
+	private function get_definition_file($type) {
 		switch(strtolower($type)) {
-			case "api":			$def_file = "Api.inc.php";				break;
-			case "domains":		$def_file = "Domains.inc.php";			break;
+			case "api":			$def_file = "Api.inc.php";			break;
+			case "domains":			$def_file = "Domains.inc.php";			break;
 			case "flags":			$def_file = "Flags.inc.php";			break;
-			case "operators":		$def_file = "Operators.inc.php";			break;
+			case "operators":		$def_file = "Operators.inc.php";		break;
 			case "predicates":		$def_file = "Predicates.inc.php";		break;
 			case "query":			$def_file = "Query.inc.php";			break;
 			case "session":			$def_file = "Session.inc.php";			break;
-			case "tags":			$def_file = "Tags.inc.php";				break;
+			case "tags":			$def_file = "Tags.inc.php";			break;
 			case "tokens":			$def_file = "Tokens.inc.php";			break;
 			case "types":			$def_file = "Types.inc.php";			break;
 		}
+		return $def_file;
+	}
+	/* PUBLIC FUNCTIONS */
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+	public function get_github_service_definitions($type) {
+		$def_file = $this->get_definition_file($type);
+		$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
+		return $this->browse($definitions_url);
+	}
+
+	public function get_definitions($type, $keep_update, $response_type = "string") {
+		$def_file = $this->get_definition_file($type);
 		$global_constants = $this->getUserDefinedConstants();
 		if($keep_update) {
 			$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
@@ -165,8 +177,12 @@ class frontend_api {
 				$js .= '__["' . $define . '"] = "' . $value . '";' . "\n";
 			}
 		}
-		print $js;
-		exit();
+		if($response_type == "obj" || $response_type == "object") {
+			return $script_constants;
+		} else {
+			print $js;
+			exit();
+		}
 	}
 	public function set_content_type($content_type) {
 		switch($content_type) {

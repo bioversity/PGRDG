@@ -275,6 +275,7 @@
                 l[selected_layer] = L.tileLayer.provider(selected_layer);
                 map.addLayer(l[selected_layer]);
                 l[selected_layer].setZIndex(zindex);
+                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
         };
 
         /**
@@ -288,21 +289,17 @@
          * Switch displayed layer
          */
         $.change_map_layer = function(selected_layer, zindex) {
-                console.log(zindex);
                 var $this = $("#change_map a." + selected_layer.replace(".", "_")).find("span");
                 if(selected_layer !== $.current_layer) {
                         if($this.hasClass("fa-circle-o") || $this.hasClass("fa-check-circle")) {
-                                //L.tileLayer.provider(selected_layer);
                                 $.show_layer(selected_layer, zindex);
                                 $("#change_map li").find("span.fa-check-circle").closest("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
                                 $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
                         } else {
                                 if($this.hasClass("fa-square-o")) {
-                                        //L.tileLayer.provider(selected_layer);
                                         $.show_layer(selected_layer, zindex);
                                         $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-square-o").addClass("fa-check-square");
                                 } else {
-                                        //var this_layer = L.tileLayer.provider(selected_layer);
                                         $.hide_layer(selected_layer);
                                         $("#change_map a." + selected_layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
                                 }
@@ -358,6 +355,13 @@
                                                                         var li = $("#change_map li");
                                                                         var liSelected;
 
+                                                                        $("html").click(function(e) {
+                                                                                if($(e.target).attr("id") == "change_map_btn" || $(e.target).hasClass("ion-social-buffer")) {
+                                                                                        return false;
+                                                                                } else {
+                                                                                        $.sub_toolbox("close");
+                                                                                }
+                                                                        });
                                                                         $(window).bind("keydown", "down", function(e) {
                                                                                 e.preventDefault();
                                                                                 $.each(li, function(item, value) {
@@ -430,7 +434,6 @@
                  */
                 $.toggle_lock_view = function() {
                         var current_view = $.get_current_bbox();
-                        console.log(current_view);
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $(".leaflet-control-zoom").animate({"left": "-50px"}, 300);
                                 $(".leaflet-control-attribution").animate({"margin-right": "-120px"}, 300);
@@ -721,10 +724,11 @@
                  */
                 };
 
+                /**
+                 * Cancel all markers (and clusters) in map
+                 */
                 $.reset_all_markers = function() {
-                 $.each($("#pgrdg_map .marker"), function(k, v) {
-                         $(this).parent("div").remove();
-                 });
+                        $("#pgrdg_map .leaflet-marker-pane").html("");
                 };
 
                 /**
