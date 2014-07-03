@@ -1,0 +1,3 @@
+[submodule "API/Service"]
+	path = API/Service
+	url = git@github.com:milko/OntologyWrapper.git
