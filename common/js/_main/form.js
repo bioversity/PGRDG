@@ -279,18 +279,18 @@
 
 				$item.addClass("disabled");
 				$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
-				$.ask_to_service({
-					storage_group: "forms",
-					loaderType: $panel.find("a.pull-left, a.pull-right"),
-					op: kAPI_OP_GET_TAG_ENUMERATIONS,
-					parameters: {
-						lang: lang,
-						param: {
-							limit: 300,
-							tag: tag
-						}
-					}
-				}, function(res) {
+
+				var kapi_obj = {};
+				kapi_obj.storage_group = "forms";
+				kapi_obj.loaderType = $panel.find("a.pull-left, a.pull-right");
+				kapi_obj[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_TAG_ENUMERATIONS;
+				kapi_obj.parameters = {};
+				kapi_obj.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG] = tag;
+
+				$.ask_to_service(kapi_obj, function(res) {
 					$.each(res.results, function(k, v) {
 						$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $panel));
 					});
@@ -543,7 +543,9 @@
 			remote: {
 				url: service_url + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state2 = "true&query=" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + '{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}';
+					console.log(state2);
 					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
@@ -956,49 +958,13 @@
 			$("#contents #" + type + "").fadeIn(300);
 		} else {
 			if($("#pgrdg_map").children().length === 0) {
-				$.init_map();
+				map = $.init_map(function(map) {
+					//$.reset_all_markers();
+					console.log(options.res);
+					$.add_geojson_cluster(options.res);
+				});
 			}
 			$("#pgrdg_map").fadeIn(600);
-			$.reset_all_markers();
-			$.each(options.res, function(k, v) {
-				console.log(k, v);
-				if(v[options.shape].type == "Point") {
-					var marker_id = $.md5(v._id);
-					$.add_geojson_cluster(
-					/*
-						{
-						uuid: marker_id,
-						type: "marker",
-						size: "0.75em",
-						lon: v[options.shape].coordinates[0],
-						lat: v[options.shape].coordinates[1],
-						cloud: false
-						cloud: true,
-						buttons: false,
-						title: v.name,
-						content: '<span class="fa fa-refresh fa-spin"></span> Retriving marker data...',
-						dynamic_content: function() {
-							var objm = {};
-							objm[kAPI_PARAM_ID] = v._id;
-							objm[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-
-							$.ask_to_service({
-								storage_group: "map",
-								op: kAPI_OP_GET_UNIT,
-								parameters: {
-									lang: lang,
-									param: objm
-								}
-							}, function(marker_data) {
-								console.log($.parse_row_content(marker_data.results[v._id]));
-								$("#" + marker_id).next(".popover").find(".popover-content").css("margin-top", "200px;").html('<div class="detailed_cloud">' + $.parse_row_content(marker_data.results[v._id]) + '</div>');
-							});
-						}
-					}
-					*/
-					);
-				}
-			});
 		}
 
 	};
@@ -1028,18 +994,17 @@
 	* @param  {object} active_forms
 	*/
 	$.show_summary = function(active_forms) {
-		$.ask_to_service({
-			storage_group: "summary",
-			op: kAPI_OP_MATCH_UNITS,
-			parameters: {
-				lang: lang,
-				param: {
-					limit: 300,
-					criteria: active_forms,
-					grouping: []
-				}
-			}
-		}, function(res) {
+		var kAPI = {};
+		kAPI.storage_group = "summary";
+		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		kAPI.parameters = {};
+		kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = active_forms;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
+
+		$.ask_to_service(kAPI, function(res) {
 			$.activate_panel("summary", {res: res});
 		});
 
@@ -1059,23 +1024,20 @@
 		$.show_raw_data = function(id, domain, skip, limit) {
 			if(skip === undefined || skip === null || skip === "") { skip = 0; }
 			if(limit === undefined || limit === null || limit === "") { limit = 50; }
-			console.log(id);
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
 			objp = {};
-				objp[kAPI_PAGING_LIMIT] = limit;
-				objp[kAPI_PAGING_SKIP] = skip;
-				objp[kAPI_PARAM_LOG_REQUEST] = "true";
-				objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
-				objp[kAPI_PARAM_DOMAIN] = domain;
-				objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
-			$.ask_to_service({
-				storage_group: "summary",
-				op: kAPI_OP_MATCH_UNITS,
-				parameters: {
-					lang: lang,
-					param: objp
-				}
-			}, function(res) {
+				objp.storage_group = "summary";
+				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+				objp.parameters = {};
+				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = limit;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_SKIP] = skip;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA];
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
+			$.ask_to_service(objp, function(res) {
 				$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
 			});
 			/*
@@ -1169,17 +1131,15 @@
 		$.show_raw_row_content = function(id, domain) {
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
 			objp = {};
-				objp[kAPI_PARAM_LOG_REQUEST] = "true";
-				objp[kAPI_PARAM_ID] = domain;
-				objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-			$.ask_to_service({
-				storage_group: "results",
-				op: kAPI_OP_GET_UNIT,
-				parameters: {
-					lang: lang,
-					param: objp
-				}
-			}, function(row_content) {
+				objp.storage_group = "results";
+				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+				objp.parameters = {};
+				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = domain;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+			$.ask_to_service(objp, function(row_content) {
 				$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
 				$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
 			});
@@ -1207,34 +1167,26 @@
 			geometry.push(arr);
 
 			var objp = {};
-			objp[kAPI_PAGING_LIMIT] = 1000;
-			objp[kAPI_PARAM_LOG_REQUEST] = "true";
-			objp[kAPI_PARAM_CRITERIA] = summaries_data.query.obj.params.criteria;
-			objp[kAPI_PARAM_DOMAIN] = domain;
-			objp[kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
-			objp[kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
-			objp[kAPI_PARAM_SHAPE] = {};
-			objp[kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
-			objp[kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
+				objp.storage_group = "map";
+				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+				objp.parameters = {};
+				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 10000;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA];
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+				//objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE] = {};
+				//objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE][kTAG_TYPE] = "Polygon";
+				//objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE][kTAG_GEOMETRY] = geometry;
 
-			$.ask_to_service({
-				storage_group: "map",
-				op: kAPI_OP_MATCH_UNITS,
-				parameters: {
-					lang: lang,
-					param: objp
-				}
-			}, function(res) {
+			$.ask_to_service(objp, function(res) {
 				// console.log(res);
 				if(res.paging.affected > 0) {
-					var map_data = [];
-
-					//console.log(res.results);
-					$.each(res.results, function(i, k) {
-						map_data.push(k);
-					});
-					$.activate_panel("map", {res: map_data, shape: kTAG_GEO_SHAPE});
-					if(res.paging.affected > 1000) {
+					$.activate_panel("map", {res: res.results, shape: kTAG_GEO_SHAPE});
+					if(res.paging.affected > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
 						var alert_title = "Displayed 1000 of " + res.paging.affected + " markers";
 						apprise("The map cannot currently display more than 1000 points.<br />This means that it contains only the first 1000 points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
 					}

@@ -14,9 +14,9 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 	switch($_GET["type"]) {
 		case "service":
 			if($_GET["debug"] == "true") {
-				print_r($api->ask_service($_GET["address"], true));
+				print_r($api->ask_service($_GET["query"], true));
 			} else {
-				print $api->ask_service($_GET["address"], true);
+				print $api->ask_service($_GET["query"], true);
 			}
 			break;
 		default:

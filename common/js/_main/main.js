@@ -178,12 +178,18 @@
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 			param_nob64 = kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 			verbose_param = kAPI_REQUEST_OPERATION + " BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-			object_param = {kAPI_REQUEST_OPERATION: options, lang: lang, params: {}};
+
+			object_param[kAPI_REQUEST_OPERATION] = options;
+			object_param[kAPI_REQUEST_LANGUAGE] = lang;
+			object_param[kAPI_REQUEST_PARAMETERS] = {};
 		} else {
-			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters.param));
-			param_nob64 = kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters.param));
-			verbose_param = kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters.param) + "))";
-			object_param = {kAPI_REQUEST_OPERATION: opt[kAPI_REQUEST_OPERATION], lang: opt.parameters[kAPI_REQUEST_LANGUAGE], params: opt.parameters.param};
+			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
+			param_nob64 = kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
+			verbose_param = kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]) + "))";
+
+			object_param[kAPI_REQUEST_OPERATION] = opt[kAPI_REQUEST_OPERATION];
+			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
+			object_param[kAPI_REQUEST_PARAMETERS] = opt.parameters[kAPI_REQUEST_PARAMETERS];
 		}
 		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param))) {
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
@@ -191,7 +197,6 @@
 				response.id = $.md5(param);
 				callback(response);
 			} else {
-			console.warn("!!!", param_nob64);
 				alert("There's an error in the response:<br />See the console for more informations");
 				console.group("The Service has returned an error");
 					console.error(response.status.message);
@@ -235,9 +240,9 @@
 						type: "ask_service"
 					},
 					success: function(response) {
-						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 						response.id = $.md5(param);
 						if(response.status.state == "ok") {
+							storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
 							if(typeof(opt.loaderType) == "string") {
 								$("#apprise.ask_service").modal("hide");
 								callback(response);
@@ -246,6 +251,7 @@
 								callback(response);
 							}
 						} else {
+							console.warn("!!!", param_nob64, response);
 							alert("There's an error in the response:<br />See the console for more informations");
 							console.group("The Service has returned an error");
 								console.error(response.status.message);
@@ -258,6 +264,7 @@
 						}
 					},
 					error: function(response) {
+					console.warn("!!!", response);
 						console.group("The Service has returned an error");
 							console.error(response.status.message);
 							console.warn(param);

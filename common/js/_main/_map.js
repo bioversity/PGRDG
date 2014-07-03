@@ -16,7 +16,7 @@
         /**
          * Generate map
          */
-        $.init_map = function() {
+        $.init_map = function(callback) {
                 var zindex = 0;
                 $.cryptAjax({
                         url: "common/include/conf/_map.json",
@@ -84,12 +84,9 @@
 
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 
-                                var geoJsonData = {
-                                        "type": "FeatureCollection",
-                                        "features": [
-                                                { "type": "Feature", "id":"1", "properties": { "address": "2"   }, "geometry": { "type": "Polygon", "coordinates": [[[12.8199, 42.8422], [12.8207,42.8158], [12.8699,42.8166], [12.8678,42.8398], [12.8199,42.8422]]] } }
-                                        ]
-                                };
+                                if (callback) {
+                                        callback(map);
+                                }
                         }
                 });
                 if(!$("#pgrdg_map").hasClass("locked")) {
@@ -811,7 +808,8 @@
 
                 $.add_geojson_cluster = function(geojson) {
                         var markers = L.markerClusterGroup();
-                        var geoJsonLayer = L.geoJson(data, {
+                        console.log(geojson);
+                        var geoJsonLayer = L.geoJson(geojson, {
         			onEachFeature: function (feature, layer) {
         				layer.bindPopup(feature.properties.address);
         			}
