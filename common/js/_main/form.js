@@ -221,7 +221,7 @@
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
 					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
-					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="false">' + secret_input + form + '</form></div></div></div>';
+					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + '</form></div></div></div>';
 				});
 			});
 
@@ -291,7 +291,7 @@
 				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG] = tag;
 
 				$.ask_to_service(kapi_obj, function(res) {
-					$.each(res.results, function(k, v) {
+					$.each(res[kAPI_RESPONSE_RESULTS], function(k, v) {
 						$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $panel));
 					});
 					$item.removeClass("disabled");
@@ -453,8 +453,8 @@
 		if(jQuery.type(system_constants) == "string") {
 			system_constants = jQuery.parseJSON(system_constants);
 		}
-		if(system_constants.results.kAPI_OP_LIST_OPERATORS !== undefined) {
-			$.ask_to_service(system_constants.results.kAPI_OP_LIST_OPERATORS, function(oprts) {
+		if(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS !== undefined) {
+			$.ask_to_service(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS, function(oprts) {
 				$.each(oprts.results, function(rx, rv) {
 					if(rv.label !== undefined) {
 						operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
@@ -550,9 +550,9 @@
 				filter: function (parsedResponse) {
 					var res = [];
 					$.each(parsedResponse, function(respType, v) {
-						if(parsedResponse.status.state == "ok" && parsedResponse.paging.affected > 0) {
+						if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 							if(respType == "results") {
-								for (i = 0; i < parsedResponse.paging.affected; i++) {
+								for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
 									var re = [];
 									re.value = v[i];
 									res.push(re);
@@ -582,7 +582,7 @@
 			$.manage_url("Forms");
 
 			var kAPI = {};
-			kAPI.storage_group = "forms",
+			kAPI.storage_group = "forms";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -595,9 +595,9 @@
 			$.execTraitAutocomplete(kAPI, function(response) {
 				if($("#accordion > #" + response.id).length === 0) {
 					var the_title = "";
-					if(response.paging.affected > 0) {
+					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 						$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-						if($("#forms-head").length === 0) {
+						if($("#forms-head").length === 1) {
 							$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 						}
 						$.each(operators, function(ck, cv) {
@@ -633,7 +633,7 @@
 					$.manage_url("Forms");
 
 					var kAPI = {};
-					kAPI.storage_group = "forms",
+					kAPI.storage_group = "forms";
 					kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 					kAPI.parameters = {};
 					kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -647,7 +647,7 @@
 					$.execTraitAutocomplete(kAPI, function(response) {
 						if($("#accordion > #" + response.id).length === 0) {
 							var the_title = "";
-							if(response.paging.affected > 0) {
+							if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 								$.each(operators, function(ck, cv) {
 									$.each(kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
 										if(ccv == cv.key) {
@@ -662,7 +662,7 @@
 								// Create forms
 								var forms = $.create_form(response);
 								$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-								if($("#forms-head").length === 0) {
+								if($("#forms-head").length === 1) {
 									$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 								}
 								$("#forms").fadeIn(300);
@@ -704,11 +704,11 @@
 		}
 		$.ask_to_service(kAPI, function(response) {
 			if (jQuery.type(callback) == "function") {
-				if(response.paging.affected > 0) {
+				if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 					var selected_forms = {}, form_data = {};
 					$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
 						$("#forms-head #right_btn").on("click", function() {
-							$.reset_all_searches();
+							$.reset_all_searches(true);
 						});
 					});
 					$("section.container").animate({"padding-top": "149px"});
@@ -820,17 +820,14 @@
 			$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
 				$("#forms-head .content-title").text("");
 				$("#forms-body .content-body").html("");
-				$("section.container").animate({"padding-top": "39px"});
+				$("section.container").animate({"padding-top": "39px"}, 300, function(){
 					// Reset breadcrumb and panels
 					$.reset_breadcrumb();
-					$.reset_contents("forms");
-					$.reset_contents("summary");
-					$.reset_contents("results");
-					$.reset_contents("map");
-					storage.remove("pgrdg_cache.forms");
-					storage.remove("pgrdg_cache.summary");
-					storage.remove("pgrdg_cache.results");
-					storage.remove("pgrdg_cache.map");
+					$.reset_contents("forms", true);
+					$.reset_contents("summary", true);
+					$.reset_contents("results", true);
+					$.reset_contents("map", true);
+				});
 				$("#contents #start").fadeIn(300);
 				$("input.typeahead.tt-input").val("").focus();
 			});
@@ -863,6 +860,33 @@
 				$(this).hide();
 			});
 		});
+	};
+
+	/**
+	* Reset selected content pane
+	* @param {string} content The HTML id of content pane to reset
+	*/
+	$.reset_contents = function(content, storage_also) {
+		if(storage_also === undefined || storage_also === null) {
+			sorage_also = false;
+		}
+		$("#contents #" + content).fadeOut(300, function(){
+			if(content == "map") {
+				$.reset_map();
+			} else {
+				if(content == "forms") {
+					$(this).find("#" + content + "-head").html('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div><div class="clearfix"></div>');
+				} else {
+					$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
+				}
+				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
+			}
+		});
+		if(storage_also) {
+			if(storage.isSet("pgrdg_cache." + content)) {
+				storage.remove("pgrdg_cache." + content);
+			}
+		}
 	};
 
 	/**
@@ -966,25 +990,6 @@
 
 	};
 
-
-	/**
-	* Reset selected content pane
-	* @param {string} content The HTML id of content pane to reset
-	*/
-	$.reset_contents = function(content) {
-		$("#contents #" + content).fadeOut(300, function(){
-			if(content == "map") {
-				$.init_map();
-			} else {
-				if(content == "forms") {
-					$(this).find("#" + content + "-head").html('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div><div class="clearfix"></div>');
-				} else {
-					$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
-				}
-				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
-			}
-		});
-	};
 
 	/**
 	* Show summary content pane
@@ -1181,10 +1186,10 @@
 
 			$.ask_to_service(objp, function(res) {
 				// console.log(res);
-				if(res.paging.affected > 0) {
+				if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 					$.activate_panel("map", {res: res.results, shape: kTAG_GEO_SHAPE});
-					if(res.paging.affected > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
-						var alert_title = "Displayed 1000 of " + res.paging.affected + " markers";
+					if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
+						var alert_title = "Displayed 1000 of " + res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] + " markers";
 						apprise("The map cannot currently display more than 1000 points.<br />This means that it contains only the first 1000 points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
 					}
 				} else {
@@ -1423,12 +1428,13 @@
 			type: "text",
 			disabled: true
 		}, options);
-		var op_btn_list = "";
+		var op_btn_list = "",
+		selected_label_key = "";
 
 		$.each(operators, function(k, v) {
 			if(!v.main) {
 				if(v.label !== undefined) {
-					checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id[0] + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" name="case_sensitive" value="" /> ' + v.label + '</label></div>';
+					checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '" onclick="$(\'#' + options.id[0] + '_operator_' + v.key.replace("$", "") + '\').val(($(\'#' + options.id[0] + '_operator_' + v.key.replace("$", "") + '\').is(\':checked\') ? \'' + v.key + '\' : \'\'))"><input type="checkbox" id="' + options.id[0] + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" name="case_sensitive" value="' + v.key + '" /> ' + v.label + '</label></div>';
 				}
 			} else {
 				checkbox = "";

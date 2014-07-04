@@ -102,7 +102,12 @@
                 $("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
         };
 
-
+        $.reset_map = function() {
+                $("#pgrdg_map").html();
+                $("#pgrdg_map").remove();
+                $('<div id="pgrdg_map" style="display: none;">').insertAfter("#map");
+        //        $.init_map();
+        };
 
 /*=======================================================================================
  *	POSITIONING AND CENTERING

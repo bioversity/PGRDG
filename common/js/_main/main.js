@@ -193,13 +193,13 @@
 		}
 		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param))) {
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
-			if(response.status.state == "ok") {
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
 				callback(response);
 			} else {
 				alert("There's an error in the response:<br />See the console for more informations");
 				console.group("The Service has returned an error");
-					console.error(response.status.message);
+					console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 					console.warn(param);
 					console.warn(param_nob64);
 					console.warn(verbose_param);
@@ -213,58 +213,44 @@
 				});
 			}
 		} else {
-			//if(options != __["kAPI_OP_LIST_CONSTANTS"]) {
-				//console.log("address=" + opt.op + "&lang=" +opt.parameters.lang + "&param=" + JSON.stringify(opt.parameters.param));
-				if(typeof(opt.loaderType) == "string") {
-					if($("#apprise.ask_service").length === 0) {
-						apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
-					} else {
-						if($("#apprise.ask_service").css("display") == "none") {
-							$("#apprise.ask_service").modal("show");
-						}
-					}
+			if(typeof(opt.loaderType) == "string") {
+				if($("#apprise.ask_service").length === 0) {
+					apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
 				} else {
-					var $element = opt.loaderType,
-					element_data = $element.html();
-					$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
+					if($("#apprise.ask_service").css("display") == "none") {
+						$("#apprise.ask_service").modal("show");
+					}
 				}
-				console.group("Storage \"" + opt.storage_group + "\" saved...");
-				console.warn("id: ", $.md5(param));
-				$.cryptAjax({
-					url: "API/",
-					dataType: "json",
-					type: "POST",
-					timeout: 30000,
-					data: {
-						jCryption: $.jCryption.encrypt(param, password),
-						type: "ask_service"
-					},
-					success: function(response) {
-						response.id = $.md5(param);
-						if(response.status.state == "ok") {
-							storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
-							if(typeof(opt.loaderType) == "string") {
-								$("#apprise.ask_service").modal("hide");
-								callback(response);
-							} else {
-								$element.html(element_data);
-								callback(response);
-							}
+			} else {
+				var $element = opt.loaderType,
+				element_data = $element.html();
+				$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
+			}
+			console.group("Storage \"" + opt.storage_group + "\" saved...");
+			console.warn("id: ", $.md5(param));
+			$.cryptAjax({
+				url: "API/",
+				dataType: "json",
+				type: "POST",
+				timeout: 30000,
+				data: {
+					jCryption: $.jCryption.encrypt(param, password),
+					type: "ask_service"
+				},
+				success: function(response) {
+					response.id = $.md5(param);
+					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
+						if(typeof(opt.loaderType) == "string") {
+							$("#apprise.ask_service").modal("hide");
+							callback(response);
 						} else {
-							console.warn("!!!", param_nob64, response);
-							alert("There's an error in the response:<br />See the console for more informations");
-							console.group("The Service has returned an error");
-								console.error(response.status.message);
-								console.warn(param);
-								console.warn(param_nob64);
-								console.warn(verbose_param);
-								console.warn(object_param);
-								console.dir(response);
-								console.groupEnd();
+							$element.html(element_data);
+							callback(response);
 						}
-					},
-					error: function(response) {
-					console.warn("!!!", response);
+					} else {
+						console.warn("!!!", param_nob64, response);
+						alert("There's an error in the response:<br />See the console for more informations");
 						console.group("The Service has returned an error");
 							console.error(response.status.message);
 							console.warn(param);
@@ -273,18 +259,28 @@
 							console.warn(object_param);
 							console.dir(response);
 							console.groupEnd();
-						$("#apprise.ask_service").modal("destroy");
-						if($("#apprise.service_coffee").length === 0) {
-							apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
-						}
-						setTimeout(function() {
-							$.ask_to_service(options, callback);
-						}, 3000);
 					}
-				});
-				console.groupEnd();
-
-			//}
+				},
+				error: function(response) {
+				console.warn("!!!", response);
+					console.group("The Service has returned an error");
+						console.error(response.status.message);
+						console.warn(param);
+						console.warn(param_nob64);
+						console.warn(verbose_param);
+						console.warn(object_param);
+						console.dir(response);
+						console.groupEnd();
+					$("#apprise.ask_service").modal("destroy");
+					if($("#apprise.service_coffee").length === 0) {
+						apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
+					}
+					setTimeout(function() {
+						$.ask_to_service(options, callback);
+					}, 3000);
+				}
+			});
+			console.groupEnd();
 		}
 	};
 
