@@ -84,6 +84,11 @@
 
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 
+                                map.on("load", function() {
+                                        console.log("Map loaded");
+
+                                });
+
                                 if (callback) {
                                         callback(map);
                                 }
@@ -644,33 +649,33 @@
           * Markers, clusters and popup
           */
                 $.add_heatmap = function(options) {
-                 options = $.extend({
-                         radius: 30,
-                         opacity: 40,
-                         gradient: {
-                                 0.45: "rgb(0, 0, 255)",
-                                 0.55: "rgb(0, 255, 255)",
-                                 0.65: "rgb(0, 255, 0)",
-                                 0.95: "yellow",
-                                 1.0: "rgb(255, 0, 0)"
-                         }
-                 });
-                 var vector = new ol.layer.Heatmap({
-                         source: new ol.source.KML({
-                                 projection: 'EPSG:3857',
-                                 url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
-                         }),
-                         radius: options.radius
-                 });
-                 vector.getSource().on('addfeature', function(event) {
-                         // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
-                         // standards-violating <magnitude> tag in each Placemark.  We extract it from
-                         // the Placemark's name instead.
-                         var name = event.feature.get('name');
-                         var magnitude = parseFloat(name.substr(2));
-                         event.feature.set('weight', magnitude - 5);
-                 });
-                 map.addOverlay(vector);
+                        options = $.extend({
+                                radius: 30,
+                                opacity: 40,
+                                gradient: {
+                                        0.45: "rgb(0, 0, 255)",
+                                        0.55: "rgb(0, 255, 255)",
+                                        0.65: "rgb(0, 255, 0)",
+                                        0.95: "yellow",
+                                        1.0: "rgb(255, 0, 0)"
+                                }
+                        });
+                        var vector = new ol.layer.Heatmap({
+                                source: new ol.source.KML({
+                                        projection: 'EPSG:3857',
+                                        url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
+                                }),
+                                radius: options.radius
+                        });
+                        vector.getSource().on('addfeature', function(event) {
+                                // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+                                // standards-violating <magnitude> tag in each Placemark.  We extract it from
+                                // the Placemark's name instead.
+                                var name = event.feature.get('name');
+                                var magnitude = parseFloat(name.substr(2));
+                                event.feature.set('weight', magnitude - 5);
+                        });
+                        map.addOverlay(vector);
                 };
 
                 /**
@@ -679,61 +684,65 @@
                 * @return {Function} callback Called function
                 */
                 $.add_marker = function(options, callback) {
-                 options = $.extend({
-                         lon: 0,
-                         lat: 0,
-                         uuid: $.uuid(),
-                         type: "marker",
-                         name: "",
-                         title: "",
-                         cloud: true,
-                         size: "1.5em",
-                         marker_class: "primary",
-                         content: "Sample text",
-                         dynamic_content: "",
-                         buttons: true
-                 }, options);
+                        options = $.extend({
+                                lon: 0,
+                                lat: 0,
+                                uuid: $.uuid(),
+                                type: "marker",
+                                name: "",
+                                title: "",
+                                cloud: true,
+                                size: "1.5em",
+                                marker_class: "primary",
+                                content: "Sample text",
+                                dynamic_content: "",
+                                buttons: true
+                        }, options);
 
-                 //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
-                 if($("#" + options.uuid).length > 0) {
-                         $("#" + options.uuid).remove();
-                 }
-                 var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                 var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                 var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-                 var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
-                 var circle = L.circle([51.508, -0.11], 500, {
+                        //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+                        if($("#" + options.uuid).length > 0) {
+                                $("#" + options.uuid).remove();
+                        }
+                        var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+                        var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+                        var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+                        var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
+                        var circle = L.circle([51.508, -0.11], 500, {
                         color: 'red',
                         fillColor: '#f03',
                         fillOpacity: 0.5
-                 }).addTo(map);
-                 circle.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-                 /*
-                 var marker = new ol.Overlay({
-                         position: $.set_lonlat(options.lon, options.lat),
-                         positioning: "center-center",
-                         element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>').css({
-                                                 cursor: "pointer"
-                                         }).popover({
-                                                 html: true,
-                                                 title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-                                                 content: ((typeof(options.content) == "function") ? options.content() : options.content) + ((options.buttons) ? '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>' : ""),
-                                                 placement: "top",
-                                                 trigger: "click"
-                                         }).bind("click", function() {
-                                                 $("#" + options.uuid).next(".popover").find(".popover-content").html(((typeof(options.dynamic_content) == "function") ? options.dynamic_content() : options.dynamic_content));
-                                         }) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
-                         stopEvent: false
-                 });
-                 map.addOverlay(marker);
-                 */
+                        }).addTo(map);
+                        circle.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                        /*
+                        var marker = new ol.Overlay({
+                                position: $.set_lonlat(options.lon, options.lat),
+                                positioning: "center-center",
+                                element: (options.cloud) ? $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>').css({
+                                        cursor: "pointer"
+                                }).popover({
+                                        html: true,
+                                        title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+                                        content: ((typeof(options.content) == "function") ? options.content() : options.content) + ((options.buttons) ? '<br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-group">' + set_center_btn + set_zoom_btn + remove_point_btn + measure_distance_btn + '</div></div>' : ""),
+                                        placement: "top",
+                                        trigger: "click"
+                                }).bind("click", function() {
+                                        $("#" + options.uuid).next(".popover").find(".popover-content").html(((typeof(options.dynamic_content) == "function") ? options.dynamic_content() : options.dynamic_content));
+                                }) : $('<div class="' + options.type + ' ' + options.marker_class + '" style="width:' + options.size + '; height: ' + options.size + '" id="' + options.uuid + '"></div>'),
+                                stopEvent: false
+                        });
+                        map.addOverlay(marker);
+                        */
                 };
 
                 /**
                  * Cancel all markers (and clusters) in map
                  */
-                $.reset_all_markers = function() {
-                        $("#pgrdg_map .leaflet-marker-pane").html("");
+                $.reset_all_markers = function(map, markers) {
+                        if(map === undefined || markers === undefined) {
+                                $("#pgrdg_map .leaflet-marker-pane").html("");
+                        } else {
+                                map.removeLayer(markers);
+                        }
                 };
 
                 /**
@@ -817,16 +826,54 @@
 
                 $.add_geojson_cluster = function(geojson) {
                         var markers = L.markerClusterGroup();
-                        console.log(geojson);
-                        var geoJsonLayer = L.geoJson(geojson, {
-        			onEachFeature: function (feature, layer) {
-        				layer.bindPopup(feature.properties.address);
-        			}
+                        //console.log(geojson);
+                         var geoJsonLayer = L.geoJson(geojson, {
+        		// 	onEachFeature: function (feature, layer) {
+        		// 		//layer.bindPopup(feature.properties.address);
+                        //                 markers.on('click', function (d) {
+                        //                         // objp = {};
+                        //                         // objp.storage_group = "results";
+                        //                         // objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                        //                         // objp.parameters = {};
+                        //                         // objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = feature.properties.id;
+                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = feature.properties.domain;
+                        //                         // $.ask_to_service(objp, function(marker_content) {
+                        //                         //         //layer.bindPopup("hello!");
+                        //                         //         console.log(marker_content);
+                        //                         // });
+                        //                         //console.warn(d);
+                        //                 });
+        		// 	}
         		});
+
+                        markers.on("click", function(m) {
+                                objp = {};
+                                objp.storage_group = "results";
+                                objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                                objp.parameters = {};
+                                objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                                objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
+                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
+                                $.ask_to_service(objp, function(marker_content) {
+                                        console.log(marker_content);
+                                        $.each(marker_content.results, function(domain, rows) {
+                                                $("#marker_content").find(".modal-body").html($.parse_row_content(rows))
+                                        });
+                                        $("#marker_content").modal("show");
+                                });
+                        });
+
         		markers.addLayer(geoJsonLayer);
 
         		map.addLayer(markers);
-        		//map.fitBounds(markers.getBounds());
+        	        map.fitBounds(markers.getBounds());
                 };
 
                  /**

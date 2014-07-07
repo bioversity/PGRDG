@@ -163,6 +163,12 @@ section.container {
 #forms-head h6 {
 	margin: 15px 0;
 }
+div.back_indent {
+	margin-left: -21px;
+}
+div.back_indent a {
+	text-decoration: none;
+}
 .panel_content-head {
 	background-color: #fff;
 	box-shadow: 6px 0 6px #d0d0d0;
