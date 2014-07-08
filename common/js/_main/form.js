@@ -1838,6 +1838,7 @@ $(document).ready(function() {
 			$(this).closest(".input-group").addClass("open");
 		}
 	});
+	$(".panel-body form").attr("onsubmit", "return false");
 	// Restore the previous content of Search page
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
