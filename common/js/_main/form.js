@@ -597,7 +597,7 @@
 					var the_title = "";
 					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 						$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-						if($("#forms-head").length === 1) {
+						if($("#forms-head div.clearfix + .help-block").length === 0) {
 							$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 						}
 						$.each(operators, function(ck, cv) {
@@ -662,7 +662,7 @@
 								// Create forms
 								var forms = $.create_form(response);
 								$("#forms-head .content-title").html('Output for "' + $("#" + options.id).val() + '"');
-								if($("#forms-head").length === 1) {
+								if($("#forms-head div.clearfix + .help-block").length === 0) {
 									$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 								}
 								$("#forms").fadeIn(300);
