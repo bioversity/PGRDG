@@ -30,6 +30,7 @@
                                         center: [lat, lon],
                                         zoom: zoom,
                                                 minZoom: map_data.map.default.zoom.min_zoom,
+                                                maxZoom: map_data.map.default.zoom.max_zoom,
 
                                         inertia: true,
                                         zoomControl: true,
@@ -84,11 +85,6 @@
 
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 
-                                map.on("load", function() {
-                                        console.log("Map loaded");
-
-                                });
-
                                 if (callback) {
                                         callback(map);
                                 }
@@ -108,9 +104,10 @@
         };
 
         $.reset_map = function() {
-                $("#pgrdg_map").html();
+                //$("#pgrdg_map").html("");
                 $("#pgrdg_map").remove();
                 $('<div id="pgrdg_map" style="display: none;">').insertAfter("#map");
+
         //        $.init_map();
         };
 
@@ -823,30 +820,7 @@
                  */
                 $.add_geojson_cluster = function(geojson) {
                         var markers = L.markerClusterGroup(),
-                        geoJsonLayer = L.geoJson(geojson, {
-        			/*
-                                onEachFeature: function (feature, layer) {
-        				//layer.bindPopup(feature.properties.address);
-                                        markers.on('click', function (d) {
-                                                // objp = {};
-                                                // objp.storage_group = "results";
-                                                // objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-                                                // objp.parameters = {};
-                                                // objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-                                                // objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = feature.properties.id;
-                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = feature.properties.domain;
-                                                // $.ask_to_service(objp, function(marker_content) {
-                                                //         //layer.bindPopup("hello!");
-                                                //         console.log(marker_content);
-                                                // });
-                                                //console.warn(d);
-                                        });
-        			}
-                                */
-        		});
+                        geoJsonLayer = L.geoJson(geojson);
 
                         markers.on("click", function(m) {
                                 objp = {};

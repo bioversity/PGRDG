@@ -753,6 +753,10 @@
 											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
 											active_forms[af_obj.tags] = rt;
 											break;
+										default:
+											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											active_forms[af_obj.tags] = rt;
+											break;
 									}
 									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
 								});
@@ -1215,7 +1219,7 @@
 				objp.parameters = {};
 				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 10000;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 5000;
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA];
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;

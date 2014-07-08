@@ -8,31 +8,43 @@
 			},
 			"zoom": {
 				"default_zoom": 4,
-				"min_zoom": 3
+				"min_zoom": 3,
+				"max_zoom": 15
 			}
 		},
 		"layers": {
 			"defaultLayer": "Esri.WorldImagery",
 			"baseLayers": {
 				"unlabelled": [
-					"MapQuestOpen.Aerial",
 					"Esri.WorldImagery",
-					"Esri.WorldPhysical",
 					"Esri.WorldTerrain",
-					"Acetate"
+					"Esri.WorldPhysical"
 				],
 				"labelled": [
+					"ThunderForest.OpenCycleMap",
+					"ThunderForest.Outdoors",
+					"OpenStreetMap.Hot",
 					"OpenStreetMap.BlackAndWhite"
 				]
 			},
 			"overlayLayers": {
-				"labels": [],
+				"labels": [
+					"OpenMapSurfer.AdminBounds",
+					"Acetate.roads",
+					"Acetate.labels"
+				],
 				"overlays": [
 					"OpenWeatherMap.Clouds",
+					"OpenWeatherMap.CloudsClassic",
 					"OpenWeatherMap.Precipitation",
+					"OpenWeatherMap.PrecipitationClassic",
+					"OpenWeatherMap.Rain",
+					"OpenWeatherMap.RainClassic",
+					"OpenWeatherMap.Pressure",
 					"OpenWeatherMap.PressureContour",
 					"OpenWeatherMap.Wind",
-					"OpenWeatherMap.Temperature"
+					"OpenWeatherMap.Temperature",
+					"OpenWeatherMap.Snow"
 				]
 			}
 		}
