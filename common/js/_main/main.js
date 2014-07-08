@@ -153,7 +153,8 @@
 	storage = $.localStorage,
 	url = $.url().attr(),
 	url_paths = url.path.split("/"),
-	current_path = url_paths[url_paths.length - 1];
+	current_path = url_paths[url_paths.length - 1],
+	developer_mode = false;
 
 
 /*=======================================================================================
@@ -222,16 +223,17 @@
 				response.id = $.md5(param);
 				callback(response);
 			} else {
-				alert("There's an error in the response:<br />See the console for more informations");
-				console.group("The Service has returned an error");
-					console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
-					console.warn(param);
-					console.warn(param_nob64);
-					console.warn(verbose_param);
-					console.warn(object_param);
-					console.dir(response);
+				if(developer_mode) {
+					alert("There's an error in the response:<br />See the console for more informations");
+					console.group("The Service has returned an error");
+						console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
+						console.warn(param);
+						console.warn(param_nob64);
+						console.warn(verbose_param);
+						console.warn(object_param);
+						console.dir(response);
 					console.groupEnd();
-
+				}
 
 				$("body").bind("keydown", "esc", function(e) {
 					$(".modal").modal("hide");
@@ -251,8 +253,10 @@
 				element_data = $element.html();
 				$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
 			}
-			console.group("Storage \"" + opt.storage_group + "\" saved...");
-			console.warn("id: ", $.md5(param));
+			if(developer_mode) {
+				console.group("Storage \"" + opt.storage_group + "\" saved...");
+				console.warn("id: ", $.md5(param));
+			}
 			$.cryptAjax({
 				url: "API/",
 				dataType: "json",
@@ -274,28 +278,32 @@
 							callback(response);
 						}
 					} else {
-						console.warn("!!!", param_nob64, response);
-						alert("There's an error in the response:<br />See the console for more informations");
+						if(developer_mode) {
+							console.warn("!!!", param_nob64, response);
+							alert("There's an error in the response:<br />See the console for more informations");
+							console.group("The Service has returned an error");
+								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
+								console.warn(param);
+								console.warn(param_nob64);
+								console.warn(verbose_param);
+								console.warn(object_param);
+								console.dir(response);
+							console.groupEnd();
+						}
+					}
+				},
+				error: function(response) {
+					if(developer_mode) {
+						console.warn("!!!", response);
 						console.group("The Service has returned an error");
-							console.error(response.status.message);
+							console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 							console.warn(param);
 							console.warn(param_nob64);
 							console.warn(verbose_param);
 							console.warn(object_param);
 							console.dir(response);
-							console.groupEnd();
-					}
-				},
-				error: function(response) {
-				console.warn("!!!", response);
-					console.group("The Service has returned an error");
-						console.error(response.status.message);
-						console.warn(param);
-						console.warn(param_nob64);
-						console.warn(verbose_param);
-						console.warn(object_param);
-						console.dir(response);
 						console.groupEnd();
+					}
 					$("#apprise.ask_service").modal("destroy");
 					if($("#apprise.service_coffee").length === 0) {
 						apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
@@ -305,7 +313,6 @@
 					}, 3000);
 				}
 			});
-			console.groupEnd();
 		}
 	};
 
@@ -636,9 +643,8 @@
 			}
 		});
 										// ENTER
-		$("header.map #find_location input").bind("keydown", "return", function() {
-			alert("ok");
-			$.sub_toolbox("find_location");
+		$("#find_location input").bind("keydown", "return", function() {
+			//$.sub_toolbox("find_location");
 			$.search_location($(this).val());
 		});
 	};
@@ -680,7 +686,9 @@ $(document).ready(function() {
 						type: "login"
 					},
 					success: function(response) {
-						//console.log(response);
+						if(developer_mode) {
+							//console.log(response);
+						}
 					}
 				});
 			});

@@ -160,7 +160,7 @@
          * @param {string} lon  Longitude
          * @param {string} lat  Latitude
          */
-//        $.set_center = function(lon, lat) { view.setCenter($.set_lonlat(lon, lat)); };
+        $.set_center = function(lon, lat) { map.panTo({lat: lat, lng: lon}); };
 
         /**
          * Center map on given boundingbox
@@ -178,12 +178,12 @@
                                 case "World":
                                         loc_data.lon = 0;
                                         loc_data.lat = 35;
-                                        loc_data.zoom = 2.3;
+                                        loc_data.zoom = 1;
                                         break;
                                 case "Africa":
                                         loc_data.lon = 16;
                                         loc_data.lat = 5;
-                                        loc_data.zoom = 3.7;
+                                        loc_data.zoom = 3;
                                         break;
                                 case "Antarctica":
                                         loc_data.lon = -50;
@@ -595,15 +595,7 @@
                                                 proxy: "true",
                                                 type: "get",
                                                 header: "text/json",
-                                                address: "http://nominatim.openstreetmap.org/search.php",
-                                                params: {
-                                                        q: encodeURIComponent(input),
-                                                        format: "json",
-                                                        addressdetails: 1,
-                                                        bounded: 1,
-                                                        limit: 10,
-                                                        polygon_geojson: 1
-                                                }
+                                                address: "http://nominatim.openstreetmap.org/search.php?q=" + encodeURIComponent(input) + "&format=json&addressdetails=true&bounded=true&limit=10&polygon_geojson=true"
                                         },
                                         error: function(data) {
                                                 alert("An error occurred while communicating with the OpenLS service. Please try again.");
@@ -645,9 +637,9 @@
                 };
 
 
-         /**
-          * Markers, clusters and popup
-          */
+        /**
+         * Markers, clusters and popup
+         */
                 $.add_heatmap = function(options) {
                         options = $.extend({
                                 radius: 30,
@@ -703,16 +695,17 @@
                         if($("#" + options.uuid).length > 0) {
                                 $("#" + options.uuid).remove();
                         }
-                        var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                        var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                        var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-                        var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
-                        var circle = L.circle([51.508, -0.11], 500, {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5
+                        /*var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>',
+                        set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>',
+                        remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>',
+                        measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + '\', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>',
+                        */
+                        var circle = L.circle([options.lat, options.lon], 3000, {
+                                color: 'red',
+                                fillColor: '#f03',
+                                fillOpacity: 0.5
                         }).addTo(map);
-                        circle.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+                        circle.bindPopup('<h4>' + options.title + '</h4>' + ((typeof(options.content) == "function") ? options.content() : options.content)).openPopup();
                         /*
                         var marker = new ol.Overlay({
                                 position: $.set_lonlat(options.lon, options.lat),
@@ -824,30 +817,35 @@
                 };
                 */
 
+                /**
+                 * Add cluster on the map from given geojson
+                 * @param {object} geojson The geojson object with markers and polygons
+                 */
                 $.add_geojson_cluster = function(geojson) {
-                        var markers = L.markerClusterGroup();
-                        //console.log(geojson);
-                         var geoJsonLayer = L.geoJson(geojson, {
-        		// 	onEachFeature: function (feature, layer) {
-        		// 		//layer.bindPopup(feature.properties.address);
-                        //                 markers.on('click', function (d) {
-                        //                         // objp = {};
-                        //                         // objp.storage_group = "results";
-                        //                         // objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-                        //                         // objp.parameters = {};
-                        //                         // objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = feature.properties.id;
-                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-                        //                         // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = feature.properties.domain;
-                        //                         // $.ask_to_service(objp, function(marker_content) {
-                        //                         //         //layer.bindPopup("hello!");
-                        //                         //         console.log(marker_content);
-                        //                         // });
-                        //                         //console.warn(d);
-                        //                 });
-        		// 	}
+                        var markers = L.markerClusterGroup(),
+                        geoJsonLayer = L.geoJson(geojson, {
+        			/*
+                                onEachFeature: function (feature, layer) {
+        				//layer.bindPopup(feature.properties.address);
+                                        markers.on('click', function (d) {
+                                                // objp = {};
+                                                // objp.storage_group = "results";
+                                                // objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                                                // objp.parameters = {};
+                                                // objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                                                // objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = feature.properties.id;
+                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                                                // objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = feature.properties.domain;
+                                                // $.ask_to_service(objp, function(marker_content) {
+                                                //         //layer.bindPopup("hello!");
+                                                //         console.log(marker_content);
+                                                // });
+                                                //console.warn(d);
+                                        });
+        			}
+                                */
         		});
 
                         markers.on("click", function(m) {
@@ -864,7 +862,7 @@
                                 $.ask_to_service(objp, function(marker_content) {
                                         console.log(marker_content);
                                         $.each(marker_content.results, function(domain, rows) {
-                                                $("#marker_content").find(".modal-body").html($.parse_row_content(rows))
+                                                $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
                                         });
                                         $("#marker_content").modal("show");
                                 });
@@ -876,51 +874,51 @@
         	        map.fitBounds(markers.getBounds());
                 };
 
-                 /**
+                /**
                  * Add popup on map
                  * @param {object}   options  (div, lon, lat, uuid, size, name, title, html, callback{function})
                  * @param {Function} callback Called function
                  */
-                 $.add_popup = function(options, callback) {
-                         options = $.extend({
-                                 div: "Popup",
-                                 lon: 0,
-                                 lat: 0,
-                                 uuid: $.uuid(),
-                                 size: {
-                                         width: 200,
-                                         height: 200
-                                 },
-                                 name: "",
-                                 title: "Selected location",
-                                 html: "Sample text",
-                                 callback: function() {}
-                         }, options);
-                         if (typeof(callback) == "function") {
-                                 callback.call(this);
-                         }
-                         var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                         var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                         var edit_point_btn = '<a class="btn btn-default btn-sm" title="Move this point" href="javascript:void(0);" onclick="$.move_point(\'' + options.uuid + '\'); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-arrows"></span></a>';
-                         var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-trash-o"></span></a>';
-                         var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + ', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
-                         var popup = new ol.Overlay({
-                                 position: $.set_lonlat(options.lon, options.lat),
-                                 positioning: "center-center",
-                                 element: $('<div class="marker draggable ' + ((options.marker_class !== undefined) ? options.marker_class : "") + '" id="' + options.uuid + '"></div>').css({
-                                                         cursor: "pointer"
-                                                 }).popover({
-                                                         html: true,
-                                                         title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
-                                                         content: '<div class="content">' + options.content + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([options.lon, options.lat]) + '</code>' + '</div><br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-toolbar"><div class="btn-group">' + set_center_btn + set_zoom_btn + '</div><div class="btn-group right">' + edit_point_btn + remove_point_btn + measure_distance_btn + '</div></div></div>',
-                                                         placement: "top",
-                                                         trigger: "click"
-                                                 }),
-                                 stopEvent: false
-                         });
-                         map.addOverlay(popup);
-                         $("#" + options.uuid).popover("show");
-                 };
+                $.add_popup = function(options, callback) {
+                        options = $.extend({
+                                div: "Popup",
+                                lon: 0,
+                                lat: 0,
+                                uuid: $.uuid(),
+                                size: {
+                                        width: 200,
+                                        height: 200
+                                },
+                                name: "",
+                                title: "Selected location",
+                                html: "Sample text",
+                                callback: function() {}
+                        }, options);
+                        if (typeof(callback) == "function") {
+                                callback.call(this);
+                        }
+                        var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+                        var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12);$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+                        var edit_point_btn = '<a class="btn btn-default btn-sm" title="Move this point" href="javascript:void(0);" onclick="$.move_point(\'' + options.uuid + '\'); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-arrows"></span></a>';
+                        var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-trash-o"></span></a>';
+                        var measure_distance_btn = '<a class="btn btn-default btn-sm right" title="Calculate distance" href="javascript:void(0);" onclick="$.gui_measure_distances(\'point\', {lon: \'' + options.lon + '\', lat:\'' + options.lat + ', title:\'' + options.name + '\'})"><span class="ion-fork-repo"></span></a>';
+                        var popup = new ol.Overlay({
+                                position: $.set_lonlat(options.lon, options.lat),
+                                positioning: "center-center",
+                                element: $('<div class="marker draggable ' + ((options.marker_class !== undefined) ? options.marker_class : "") + '" id="' + options.uuid + '"></div>').css({
+                                        cursor: "pointer"
+                                }).popover({
+                                        html: true,
+                                        title: options.title + '<a href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\');" class="close">&times;</a>',
+                                        content: '<div class="content">' + options.content + '<br /><br />' + '<code>' + ol.coordinate.toStringHDMS([options.lon, options.lat]) + '</code>' + '</div><br /><br />' + '<div class="popup_btns row"><div class="col-sm-12 btn-toolbar"><div class="btn-group">' + set_center_btn + set_zoom_btn + '</div><div class="btn-group right">' + edit_point_btn + remove_point_btn + measure_distance_btn + '</div></div></div>',
+                                        placement: "top",
+                                        trigger: "click"
+                                }),
+                                stopEvent: false
+                        });
+                        map.addOverlay(popup);
+                        $("#" + options.uuid).popover("show");
+                };
 
 
  /*=======================================================================================
@@ -965,6 +963,8 @@
                 //$.add_heatmap();
         };
 
+
+/*======================================================================================*/
 
 $(document).ready(function() {
         if(current_path == "Map") {

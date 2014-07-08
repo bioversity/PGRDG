@@ -756,7 +756,6 @@
 									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
 								});
 							});
-							console.log(selected_forms);
 							form_data.form = selected_forms;
 							$("#goto_results_btn, #goto_map_btn").hide();
 							storage.remove("pgrdg_cache.summary");
@@ -1264,26 +1263,8 @@
 			next_skip = skipped + limit,
 			last_skip = (page_count - 1) * limit;
 
-				/*
-				console.group("PASSED DATA");
-					console.log(options);
-				console.groupEnd();
-				console.group("PAGE NUMBERING");
-					console.log("Page count", page_count);
-					console.log("First page", first_page);
-					console.log("Previous page", previous_page);
-					console.log("Next page", next_page);
-					console.log("Current page", current_page);
-					console.log("Last page", last_page);
-				console.groupEnd();
-				console.group("SKIPPING VALUES");
-					console.log("Previous skip", previous_skip);
-					console.log("Next skip", next_skip);
-					console.log("Last skip", last_skip);
-				console.groupEnd();
-				*/
 			$form_group = $('<div class="form-group">');
-				$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
+			$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
 
 			page_btns = '<div class="form-group">';
 				page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
@@ -1317,7 +1298,6 @@
 					if($.isNumeric(tag)) {
 						tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
 						tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
-						//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTYPE_ENUM])
 					}
 				} else {
 					tag_label = tag;
@@ -1360,7 +1340,6 @@
 								$.each(value, function(key, val) {
 									if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
 										lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
-										//console.log(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
 									}
 								});
 								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
@@ -1396,7 +1375,6 @@
 								} else {
 									value = $.get_enum_label_from_string(options.res, value);
 								}
-								//console.log(tag_label);
 								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
 								break;
 							case kTYPE_STRUCT:
@@ -1412,51 +1390,11 @@
 			return content;
 		};
 
-		/**
-		* Convert an enum string to its label
-		* @param  {object} res    The entire Service object
-		* @param  {string} string Enum string
-		* @return {string}        Enum label
-		*/
-
-		// $.get_enum_label_from_string = function(res, string) {
-		// 	if(!jQuery.isEmptyObject(res)) {
-		// 		if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string] !== undefined) {
-		// 		//console.log(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG], string);
-		// 			label = res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][string][kTAG_LABEL];
-		// 		} else {
-		// 			label = string;
-		// 		}
-		// 		return label;
-		// 	}
-		// };
-
-		/**
-		* Convert a tag code to its label
-		* @param  {object} res    The entire Service object
-		* @param  {int} string    Tag string
-		* @return {string}        Tag label
-		*/
-
-		// $.get_tag_label_from_string = function(res, string) {
-		// 	if(!jQuery.isEmptyObject(res)) {
-		// 		if(jQuery.isNumeric(string)) {
-		// 			var tag_id = res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][string];
-		// 			if(res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id] !== undefined) {
-		// 				return res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][tag_id][kTAG_LABEL];
-		// 			}
-		// 		} else {
-		// 			return string;
-		// 		}
-		// 	} else {
-		// 		return string;
-		// 	}
-		// };
 
 
-/*=======================================================================================
-*	FORM GENERATION
-*======================================================================================*/
+	/*=======================================================================================
+	*	FORM GENERATION
+	*======================================================================================*/
 
 	/**
 	/* Add input form with operators select on its side
@@ -1876,6 +1814,11 @@
 
 /*======================================================================================*/
 
+// Save the current page if user change
+/*window.onbeforeunload = function() {
+	storage.set("pgrdg_cache.html", $.utf8_to_b64($("body").html()));
+};*/
+
 $(document).ready(function() {
 	if(current_path == "Search") {
 		$(window).resize(function () {
@@ -1900,7 +1843,3 @@ $(document).ready(function() {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
 	}*/
 });
-// Save the current page if user change
-/*window.onbeforeunload = function() {
-	storage.set("pgrdg_cache.html", $.utf8_to_b64($("body").html()));
-};*/
