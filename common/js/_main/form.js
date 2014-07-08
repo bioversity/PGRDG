@@ -289,6 +289,7 @@
 				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS] = {};
 				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
 				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG] = tag;
+				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 
 				$.ask_to_service(kapi_obj, function(res) {
 					$.each(res[kAPI_RESPONSE_RESULTS], function(k, v) {
@@ -1571,7 +1572,18 @@
 
 					if($("#node_" + node).html() === "") {
 						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Retriving data...');
-						$.ask_to_service({storage_group: "forms", loaderType: $panel.find("a.pull-left, a.pull-right"), op: kAPI_OP_GET_NODE_ENUMERATIONS, parameters: {lang: lang, param: {limit: 300, node: node}}}, function(res) {
+						var objp = {};
+						objp.storage_group = "forms";
+						objp.loaderType = $panel.find("a.pull-left, a.pull-right");
+						objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_NODE_ENUMERATIONS;
+						objp.parameters = {};
+						objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+						objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_NODE] = node;
+						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+
+						$.ask_to_service(objp, function(res) {
 							//$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
 							$("#node_" + node).html("").css("display", "none");
 							$.each(res.results, function(k, v) {
@@ -1594,7 +1606,7 @@
 			panel_input_term_id = $panel.find('input[name="term"]').attr("id"),
 			content = "",
 			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-			checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+			checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'disabled="disabled"' : '') + ' /> {LABEL}</label></div>';
 			checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
@@ -1838,7 +1850,7 @@ $(document).ready(function() {
 			$(this).closest(".input-group").addClass("open");
 		}
 	});
-	$(".panel-body form").attr("onsubmit", "return false");
+
 	// Restore the previous content of Search page
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
