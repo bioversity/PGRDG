@@ -32,7 +32,10 @@ if(isset($_GET["definitions"]) && trim($_GET["definitions"]) !== "") {
 	$api->get_definitions($_GET["definitions"], (($_GET["keep_update"] == "true") ? true : false));
 }
 if(isset($_GET["download"]) && trim($_GET["download"]) !== "") {
-	$api->force_download("../common/media/" . $_GET["download"]);
+	$api->force_download("../common/media/" . base64_decode($_GET["download"]));
+}
+if(isset($_GET["view"]) && trim($_GET["view"]) !== "") {
+	$api->force_view("../common/media/" . base64_decode($_GET["view"]));
 }
 if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 	require_once("../common/include/lib/jcryption.php");
