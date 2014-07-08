@@ -51,11 +51,12 @@
 		var trainPosition = 0,
 			trainDirection = 'up';
 
-		var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+		var cloudmadeLayer = L.tileLayer('http://{s}.tile.cloudmade.com/{key}/997/256/{z}/{x}/{y}.png', {
 				maxZoom: 18,
-				attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+				attribution: 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade',
+				key: 'BC9A493B41014CAABB98F0471D759707'
 			}),
-			map = new L.Map('map', {zoom: 15, layers: [tiles]}),
+			map = new L.Map('map', {zoom: 15, layers: [cloudmadeLayer]}),
 			markers = new L.MarkerClusterGroup({ spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false });
 
 		var stationGeoJsonLayer = L.geoJson(stationJson, {

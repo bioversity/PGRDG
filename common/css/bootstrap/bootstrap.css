@@ -2096,6 +2096,10 @@ fieldset[disabled] .btn {
 	  color: #c1d82f;
 	  background-color: #333;
 	}
+        .bootstrap-switch-primary {
+                background-color: #c1d82f !important;
+                color: #333 !important;
+        }
 
 	/* BTN WHITE */
 	.btn-default-white {

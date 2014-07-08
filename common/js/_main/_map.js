@@ -823,7 +823,7 @@
                         geoJsonLayer = L.geoJson(geojson);
 
                         markers.on("click", function(m) {
-                                objp = {};
+                                var objp = {};
                                 objp.storage_group = "results";
                                 objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
                                 objp.parameters = {};
@@ -834,11 +834,12 @@
                                 objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
                                 objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
                                 $.ask_to_service(objp, function(marker_content) {
-                                        console.log(marker_content);
                                         $.each(marker_content.results, function(domain, rows) {
+                                                //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
                                                 $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
                                         });
                                         $("#marker_content").modal("show");
+                                        $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
                                 });
                         });
 

@@ -1025,7 +1025,7 @@ ul.list-group.transparent ul {
   box-shadow: 0 0 6px 6px rgba(0, 255, 255, 0.5);
 }
 .popover {
-	z-index: auto;
+	z-index: 2000 !important;
 }
 .popover:not(.in) {
 	z-index: -1;

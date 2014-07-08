@@ -48,6 +48,9 @@
 			<link rel="stylesheet" href="common/js/leaflet/plugin/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
 			<script type="text/javascript" src="common/js/leaflet/plugin/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
 
+			<link href="common/js/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+			<script src="common/js/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+
 		<script type="text/javascript" src="common/js/_main/_map.js"></script>
 		<script type="text/javascript" src="common/js/_main/form.js"></script>
 		<?php

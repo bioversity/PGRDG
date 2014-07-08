@@ -191,6 +191,9 @@
 									*/
 								});
 								break;
+							case kTYPE_BOOLEAN:
+								form = $.add_switch();
+								break;
 							default:
 								form = $.add_simple_input();
 								break;
@@ -224,6 +227,7 @@
 					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false; false;">' + secret_input + form + '</form></div></div></div>';
 				});
 			});
+
 
 			return '<div class="row">' + html_form + '</div>';
 		};
@@ -615,6 +619,7 @@
 						var forms = $.create_form(response);
 
 						$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+						$("input.switch").bootstrapSwitch();
 						$("#forms-body .panel").tooltip();
 						$.resize_forms_mask();
 						$("#autocomplete .typeahead").trigger("blur");
@@ -668,6 +673,7 @@
 								}
 								$("#forms").fadeIn(300);
 								$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
+								$("input.switch").bootstrapSwitch();
 								$("#forms-body .panel").tooltip();
 								$(".tt-dropdown-menu").css("display", "none");
 								$.resize_forms_mask();
@@ -1457,6 +1463,21 @@
 	};
 
 	/**
+	* Add switch input form
+	* @param {object} options (id, class, placeholder, type, disabled)
+	*/
+	$.add_switch = function(options) {
+		options = $.extend({
+			id: $.makeid(),
+			size: "normal",
+			default: "on",
+			on_txt: "True",
+			off_txt: "False"
+		})
+		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><div class="text-center"><input type="checkbox" class="switch"' + ((options.default == "on") ? ' checked="checked"' : '') + 'data-on-text="' + options.on_txt + '" data-off-text="' + options.off_txt + '" data-size="' + options.size + '" name="' + options.id + '" name="' + options.id + '" /></div>';
+	};
+
+	/**
 	* Add range input group form
 	* @param {object} options (id, class, placeholder, min, max, type, disabled)
 	*/
@@ -1854,7 +1875,8 @@ $(document).ready(function() {
 			$(this).closest(".input-group").addClass("open");
 		}
 	});
-
+	$(".panel-body form").submit(false);
+	$(".panel-body :submit").attr("disabled", "disabled");
 	// Restore the previous content of Search page
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
