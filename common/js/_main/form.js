@@ -1883,7 +1883,7 @@ $(document).ready(function() {
 		}
 	});
 	$(".panel-body form").submit(false);
-	$(".panel-body :submit").attr("disabled", "disabled");
+	$(".panel-body form:submit").attr("disabled", "disabled");
 	// Restore the previous content of Search page
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
