@@ -620,6 +620,9 @@
 
 						$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 						$("input.switch").bootstrapSwitch();
+						$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
+							$(this).parent().find("input[type='checkbox']").attr("checked", state);
+						});
 						$("#forms-body .panel").tooltip();
 						$.resize_forms_mask();
 						$("#autocomplete .typeahead").trigger("blur");
@@ -674,6 +677,9 @@
 								$("#forms").fadeIn(300);
 								$("#forms-body .content-body").addCollapsible({id: response.id, title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#" + options.id).val() + '"</span>'), content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms});
 								$("input.switch").bootstrapSwitch();
+								$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
+									$(this).parent().find("input[type='checkbox']").attr("checked", state);
+								});
 								$("#forms-body .panel").tooltip();
 								$(".tt-dropdown-menu").css("display", "none");
 								$.resize_forms_mask();
@@ -761,6 +767,7 @@
 											break;
 										default:
 											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											//rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? "true" : "false";
 											active_forms[af_obj.tags] = rt;
 											break;
 									}
@@ -1473,8 +1480,8 @@
 			default: "on",
 			on_txt: "True",
 			off_txt: "False"
-		})
-		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><div class="text-center"><input type="checkbox" class="switch"' + ((options.default == "on") ? ' checked="checked"' : '') + 'data-on-text="' + options.on_txt + '" data-off-text="' + options.off_txt + '" data-size="' + options.size + '" name="' + options.id + '" name="' + options.id + '" /></div>';
+		});
+		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><div class="text-center"><input type="checkbox" class="switch"' + ((options.default == "on") ? ' checked="checked"' : '') + 'data-on-text="' + options.on_txt + '" data-off-text="' + options.off_txt + '" data-size="' + options.size + '" id="' + options.id + '" name="boolean" /></div>';
 	};
 
 	/**
