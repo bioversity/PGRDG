@@ -154,7 +154,7 @@
 	url = $.url().attr(),
 	url_paths = url.path.split("/"),
 	current_path = url_paths[url_paths.length - 1],
-	developer_mode = true;
+	developer_mode = false;
 
 
 /*=======================================================================================
@@ -335,7 +335,7 @@
 		if($("#left_panel").hasClass("visible") && subject !== "open") {
 			switch(subject) {
 				case "close":
-					$(".olControlZoom").animate({"left": "10px"}, 200);
+					$(".olControlZoom, .leaflet-control-zoom").animate({"left": "0"}, 200);
 					$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 						$.resize_forms_mask();
 						$(this).removeClass("visible");
@@ -366,7 +366,7 @@
 			if(subject !== "close") {
 				$("#left_panel .folder_menu").animate({"right": "258px"}, 200, function() {
 					$("#forms").animate({"left": "0"}, 200);
-					$(".olControlZoom").animate({"left": width}, 200);
+					$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 					$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
 						$.resize_forms_mask();
 						$(this).addClass("visible");
@@ -408,20 +408,6 @@
 
 			if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
 				$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
-			}
-			if(hash == "Map") {
-				$("header.main, section.container, #left_panel").addClass("map");
-				$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
-				if($("#breadcrumb").css("top") == "110px") {
-					$("#breadcrumb").css("top", "75px");
-				}
-				$("#pgrdg_map").fadeIn(600);
-			} else {
-				$("header.main, section.container, #left_panel").removeClass("map");
-				$("#logo img").attr("src", "common/media/svg/bioversity-logo.svg");
-				if($("#breadcrumb").css("top") == "75px") {
-					$("#breadcrumb").css("top", "110px");
-				}
 			}
 			// Show the content in page
 			$("#" + hash.toLowerCase()).fadeIn(300);

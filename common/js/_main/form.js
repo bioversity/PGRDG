@@ -724,8 +724,8 @@
 							$.reset_all_searches(true);
 						});
 					});
-					$("section.container").animate({"padding-top": "149px"});
-					$("#breadcrumb").animate({"top": "110px"});
+					$("section.container").animate({"padding-top": "115px"});
+					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
 						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 					}
@@ -776,7 +776,6 @@
 													break;
 											}
 											active_forms[af_obj.tags] = rt;
-											console.log(af_obj);
 											break;
 									}
 									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());

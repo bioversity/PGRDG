@@ -45,12 +45,16 @@ header .container {
 	display: inline-block;
 	padding-left: 375px !important;
 	padding-right: 0;
+	min-width: 280px !important;
 }
 header.map .container {
 	padding-left: 5px !important;
+	min-width: 280px !important;
 }
 header.map #logo, #logo.map {
 	padding-left: 10px;
+	height: 65px;
+	max-width: 275px;
 }
 /*
 footer {
@@ -108,6 +112,13 @@ footer ul li + li:before {
 #nav li > a:hover {
 	color: #000;
 }
+#nav .container-fluid {
+	padding-right: 0;
+}
+#nav .navbar-collapse.collapse.in {
+	background-color: #fff;
+	box-shadow: 0 0 6px #666;
+}
 
 #logo {
 	padding-bottom: 10px;
@@ -123,9 +134,10 @@ header.map #logo p, #logo.map p {
 }
 
 section.container {
+	min-width: 280px !important;
 	max-width: 100%;
-    width: 100%;
-	padding: 39px 0 0 0;
+	width: 100%;
+	padding: 0;
 }
 
 #breadcrumb {
@@ -133,7 +145,7 @@ section.container {
 	background-color: transparent;
 	padding-left: 0;
 	position: fixed;
-	top: 111px;
+	top: 75px;
 	width: 100%;
 	z-index: 2;
 }
@@ -339,9 +351,10 @@ a.text-info, span.text-info, span.info {
 	}
 }
 section.container > #contents #content {
-	padding-top: 71px;
+	padding: 71px 10px 10px 10px;
 	margin: auto;
 	width: 100%;
+	min-width: 280px !important;
 	max-width: 925px;
 }
 section.container > #contents .carousel-indicators {
@@ -366,7 +379,7 @@ section.container > #contents .carousel-inner {
 
 #left_panel {
 	position: fixed;
-	top: 110px;
+	top: 75px;
 	left: -1000px;
 	height: 100%;
 	background-color: transparent;
