@@ -1619,7 +1619,7 @@
 						objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 						objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
 						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
-						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_NODE] = node;
+						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_NODE] = parseInt(node);
 						objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 
 						$.ask_to_service(objp, function(res) {
@@ -1750,7 +1750,7 @@
 
 		var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),
 			node_heading = $('<div class="panel-heading">'),
-				node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div><div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div></h4>'),
+				node_heading_title = $('<h4 class="panel-title row"><div class="col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="col-lg-6 pull-left"><span class="' + options.icon + '"></span>&nbsp;&nbsp;<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a></div>' + ((developer_mode) ? '<div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div>' : '') + '</h4>'),
 			node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 				node_body = $('<div class="panel-body">' + options.content + '</div>');
 

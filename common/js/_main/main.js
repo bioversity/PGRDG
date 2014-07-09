@@ -154,7 +154,7 @@
 	url = $.url().attr(),
 	url_paths = url.path.split("/"),
 	current_path = url_paths[url_paths.length - 1],
-	developer_mode = false;
+	developer_mode = true;
 
 
 /*=======================================================================================
@@ -324,7 +324,7 @@
 	*/
 	$.left_panel = function(subject, width, callback) {
 		if(width === "" || width === undefined) {
-			width = 488;
+			width = 300;
 		}
 		movement = width;
 		width += "px";
@@ -352,7 +352,7 @@
 					}
 					$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "35px"}, 200, function() {
 						if(document.location.hash !== "#Map") {
-							$("#left_panel .folder_menu").animate({"right": "-258px"}, 200);
+							$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 						}
 					});
 					break;

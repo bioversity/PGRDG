@@ -1,6 +1,6 @@
 <?php
 $menu["menu"]["top"] = array(
-	"Left panel" => array(
+	/*"Left panel" => array(
 		"show_on_page" => "Search",
 		// Here you are defining the <a> tag
 		"content" => array(
@@ -15,7 +15,7 @@ $menu["menu"]["top"] = array(
 			"title" => "Open/close left panel"
 		),
 		"divider" => "vertical-divider"
-	),
+	),*/
 	"Home" => array(
 		"content" => array(
 			"icon" => "fa fa-home",
