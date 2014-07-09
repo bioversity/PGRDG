@@ -154,7 +154,7 @@
 	url = $.url().attr(),
 	url_paths = url.path.split("/"),
 	current_path = url_paths[url_paths.length - 1],
-	developer_mode = false;
+	developer_mode = true;
 
 
 /*=======================================================================================

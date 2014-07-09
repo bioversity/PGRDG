@@ -765,10 +765,18 @@
 											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
 											active_forms[af_obj.tags] = rt;
 											break;
-										default:
+										case kAPI_PARAM_INPUT_SHAPE: break;
+										case kAPI_PARAM_INPUT_DEFAULT:
 											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											//rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? "true" : "false";
+											switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+												case kTYPE_BOOLEAN:
+													rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+													break;
+												default:
+													break;
+											}
 											active_forms[af_obj.tags] = rt;
+											console.log(af_obj);
 											break;
 									}
 									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
