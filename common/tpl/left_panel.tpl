@@ -13,5 +13,10 @@
 			<li><a href="javascript:void(0);" onclick="$.left_panel('filter');" title="Close left panel" class="btn close_panel"><span class="text text-muted">Close</span> <span class="fa fa-caret-square-o-left text-muted"></span></a></li>
 		</ul>
 	</div>
-	<div class="panel-body"></div>
+	<div class="panel-body autocomplete"></div>
+	<div class="panel-body">
+		<div>
+			<?php require_once("common/tpl/predefined_search.tpl"); ?>
+		</div>
+	</div>
 </div>

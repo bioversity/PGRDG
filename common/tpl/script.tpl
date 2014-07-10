@@ -19,6 +19,8 @@
 <script type="text/javascript" src="common/js/typeahead/typeahead.bundle.js"></script>
 <!-- Jquery hotkeys -->
 <script type="text/javascript" src="common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
+<!-- ToucSwipe -->
+<script type="text/javascript" src="common/js/TouchSwipe/jquery.touchSwipe.min.js"></script>
 
 	<!-- Core scripts -->
 	<script type="text/javascript" src="common/js/_main/main.js"></script>

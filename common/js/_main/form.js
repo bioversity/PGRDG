@@ -471,8 +471,8 @@
 						}
 					}
 				});
-				$("#left_panel > .panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
-				$("#left_panel > .panel-body:last-child").addTraitAutocomplete({
+				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				$("#left_panel div.panel-body.autocomplete").addTraitAutocomplete({
 					id: "main_search",
 					class: "",
 					placeholder:  oprts.results.placeholder,
@@ -540,7 +540,7 @@
 				}
 			}
 		});
-		$(this).append('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
+		$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
 
 		remoteAutocomplete = new Bloodhound({
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
@@ -718,6 +718,9 @@
 		$.ask_to_service(kAPI, function(response) {
 			if (jQuery.type(callback) == "function") {
 				if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+					if($(window).width() < 420) {
+						$.left_panel("close");
+					}
 					var selected_forms = {}, form_data = {};
 					$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
 						$("#forms-head #right_btn").on("click", function() {
@@ -972,6 +975,7 @@
 							$icon.addClass("fa-rotate-90");
 						}
 					};
+
 					var c_count = $.obj_len(cols),
 					column = "",
 					general_column = "",

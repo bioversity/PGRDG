@@ -198,6 +198,7 @@ section.container {
 	max-width: 100%;
 	width: 100%;
 	padding: 0;
+	overflow-x: hidden;
 }
 
 #breadcrumb {
@@ -422,6 +423,10 @@ a.text-info, span.text-info, span.info {
 	}
 }
 
+section.container > #contents {
+	position: relative;
+	width: 100%;
+}
 section.container > #contents #content {
 	padding: 71px 10px 10px 10px;
 	margin: auto;
@@ -455,6 +460,7 @@ section.container > #contents .carousel-inner {
 	top: 75px;
 	left: -1000px;
 	height: 100%;
+	overflow-y: hidden;
 	background-color: transparent;
 	background-image: linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -moz-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
@@ -508,6 +514,11 @@ section.container > #contents .carousel-inner {
 #left_panel div.panel-header ul.panel_btns li {
 	display: inline;
 }
+#left_panel div.panel-body.autocomplete:after {
+	border-bottom: #dedede 1px solid;
+	content: "";
+	width: 100%;
+}
 #left_panel div.panel-body {
 	padding: 5px 20px 5px 15px;
 }
@@ -516,11 +527,21 @@ section.container > #contents .carousel-inner {
 	margin: 7px 15px;
 	border-bottom: #eee 1px solid;
 }
-#left_panel > div.panel-body:first-child a {
+#left_panel div.panel-body:first-child a {
 	color: #aaa;
 }
-#left_panel > div.panel-body:first-child a:hover, #left_panel > div.panel-body:first-child a:focus, #left_panel > div.panel-body:first-child a:active {
+#left_panel div.panel-body:first-child a:hover, #left_panel > div.panel-body:first-child a:focus, #left_panel > div.panel-body:first-child a:active {
 	text-decoration: none;
+}
+
+#left_panel div.panel-body:last-child {
+	overflow-y: scroll;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+}
+#left_panel div.panel-body:last-child > div {
+	padding-bottom: 200px;
 }
 /*
 .folder_menu {
@@ -806,7 +827,7 @@ ul.list-group.transparent ul {
 	right: -50px;
 	bottom: 0px;
 	width: 50px;
-	z-index: 1;
+	z-index: 2;
 }
 #map_toolbox > ul {
 	margin: 0;

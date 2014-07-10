@@ -141,6 +141,15 @@
 		return replacedText;
 	};
 
+	/**
+	 * Detect touch device
+	 * @return {Boolean}
+	 */
+	$.is_touch_device = function() {
+		return "ontouchstart" in window || "onmsgesturechange" in window;
+	};
+
+
 /*=======================================================================================
 *	GLOBAL VARIABLES
 *======================================================================================*/
@@ -332,9 +341,52 @@
 			"width": width
 		});
 		var content_witdth = $("#forms-body").css("width");
+
+		//if($.is_touch_device()) {
+			if($(window).width() < 420) {
+				$(window).swipe({
+					swipeStatus:function(event, phase, direction, distance, duration, fingerCount) {
+						if(direction == "left") {
+							if($("#left_panel").hasClass("visible") && distance >= 0 && distance < parseInt(width)) {
+								$("#left_panel").css({"left": "-" + distance + "px"});
+								$("header").css({"left": (parseInt($("#left_panel").css("left")) + parseInt(width)) + "px"});
+							}
+							$("section #contents").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
+						}
+						if(direction == "right") {
+							if(!$("#left_panel").hasClass("visible") && distance >= 0 && distance < parseInt(width)) {
+								$("#left_panel").css({"left": "-" + (parseInt(width) - distance) + "px"});
+								$("header").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
+							}
+							$("section #contents").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
+						}
+					},
+					swipeLeft: function(event, direction, distance, duration, fingerCount) {
+						if(parseInt($("#left_panel").css("left")) <= -(parseInt(width)/2)) {
+							$.left_panel("close");
+						} else {
+							$.left_panel("open");
+						}
+					},
+					swipeRight: function(event, direction, distance, duration, fingerCount) {
+						if(parseInt($("#left_panel").css("left")) >= -(parseInt(width)/2)) {
+							$.left_panel("open");
+						} else {
+							$.left_panel("close");
+						}
+					},
+					treshold: 100
+				});
+			}
+		//}
 		if($("#left_panel").hasClass("visible") && subject !== "open") {
 			switch(subject) {
 				case "close":
+					// Move all document to the left
+					if($(window).width() < 420) {
+						$("section #contents").animate({"left": "0px"}, 200, "swing");
+						$("header").animate({"left": 0});
+					}
 					$(".olControlZoom, .leaflet-control-zoom").animate({"left": "0"}, 200);
 					$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 						$.resize_forms_mask();
@@ -370,12 +422,13 @@
 		} else {
 			switch(subject) {
 				case "check":
+					console.log("check");
 					// Check the last left_panel saved position and restore it
-					var left_panel_status = "open";
+					var left_panel_status;
 					if(storage.isSet("pgrdg_cache.interface")) {
 						left_panel_status = storage.get("pgrdg_cache.interface.left_panel.status");
 					}
-
+					console.log(left_panel_status);
 					if(left_panel_status == "open") {
 						$.left_panel("open");
 					} else {
@@ -383,10 +436,16 @@
 						$.left_panel("close");
 						$("#start h1").animate({"margin-top": "85px"});
 					}
-					//$.left_panel(left_panel_status);
+					$.left_panel(left_panel_status);
 					break;
 				default:
-					$("#left_panel .folder_menu").animate({"right": "258px"}, 200, function() {
+					console.log("open");
+					// Move all document to the right
+					if($(window).width() < 420) {
+						$("section #contents").animate({"left": width}, 200);
+						$("header").animate({"left": width}, 200);
+					}
+					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start h1").css("margin-top").replace("px", "") <= 120) {
 							$("#start h1").animate({"margin-top": "120px"}, 200);
@@ -396,7 +455,12 @@
 							$.resize_forms_mask();
 							$(this).addClass("visible");
 
-							$(this).find("input[type=search]").focus();
+							$(this).find("input[type=search]");
+							if($(window).width() < 420) {
+								$(this).find("input[type=search]");
+							} else {
+								$(this).find("input[type=search]").focus();
+							}
 							// Callback
 							if (typeof callback == "function") {
 								callback.call(this);
