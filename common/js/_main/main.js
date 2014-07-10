@@ -324,7 +324,7 @@
 	*/
 	$.left_panel = function(subject, width, callback) {
 		if(width === "" || width === undefined) {
-			width = 300;
+			width = ($(window).width() > 420) ? 300 : $(window).width();
 		}
 		movement = width;
 		width += "px";
@@ -339,6 +339,9 @@
 					$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 						$.resize_forms_mask();
 						$(this).removeClass("visible");
+						if($("#start h1").css("margin-top").replace("px", "") >= 85) {
+							$("#start h1").animate({"margin-top": "85px"}, 200);
+						}
 
 						// Callback
 						if (typeof callback == "function") {
@@ -362,24 +365,49 @@
 					$.left_panel("close");
 					break;
 			}
+			// Save the left_panel position
+			storage.set("pgrdg_cache.interface.left_panel", {status: "closed"});
 		} else {
-			if(subject !== "close") {
-				$("#left_panel .folder_menu").animate({"right": "258px"}, 200, function() {
-					$("#forms").animate({"left": "0"}, 200);
-					$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
-					$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
-						$.resize_forms_mask();
-						$(this).addClass("visible");
+			switch(subject) {
+				case "check":
+					// Check the last left_panel saved position and restore it
+					var left_panel_status = "open";
+					if(storage.isSet("pgrdg_cache.interface")) {
+						left_panel_status = storage.get("pgrdg_cache.interface.left_panel.status");
+					}
 
-						$(this).find("input[type=search]").focus();
-						// Callback
-						if (typeof callback == "function") {
-							callback.call(this);
+					if(left_panel_status == "open") {
+						$.left_panel("open");
+					} else {
+						$("#left_panel").addClass("visible").css({"left": "-" + width});
+						$.left_panel("close");
+						$("#start h1").animate({"margin-top": "85px"});
+					}
+					//$.left_panel(left_panel_status);
+					break;
+				default:
+					$("#left_panel .folder_menu").animate({"right": "258px"}, 200, function() {
+						$("#forms").animate({"left": "0"}, 200);
+						if($("#start h1").css("margin-top").replace("px", "") <= 120) {
+							$("#start h1").animate({"margin-top": "120px"}, 200);
 						}
+						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
+						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
+							$.resize_forms_mask();
+							$(this).addClass("visible");
+
+							$(this).find("input[type=search]").focus();
+							// Callback
+							if (typeof callback == "function") {
+								callback.call(this);
+							}
+						});
+						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 					});
-					$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
-				});
-				$(".panel_content-head, .panel_content-body, #start h1").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
+					$(".panel_content-head, .panel_content-body, #start h1").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
+					// Save the left_panel position
+					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
+					break;
 			}
 		}
 	};
@@ -435,7 +463,7 @@
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 			} else {
 				if($.left_panel("is_closed")) {
-					$.left_panel("open");
+					$.left_panel("check");
 				}
 				if(current_path !== "Map") {
 					if(hash.length > 0) {

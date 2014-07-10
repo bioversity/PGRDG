@@ -13,6 +13,10 @@ hr {
 	margin-bottom: 15px;
 }
 
+/* -----------------------------------------------------------------------------
+   HEADER
+   -------------------------------------------------------------------------- */
+
 body > div.container {
 	padding: 0;
 }
@@ -169,12 +173,12 @@ footer ul li + li:before {
 	padding-right: 15px;
 }
 p.tagline {
-  color: #5f604b;
-  display: table-cell;
-  font-size: 0.8em;
-  height: 100px;
-  padding: 0 0 0 15px;
-  vertical-align: bottom;
+	color: #5f604b;
+ 	display: table-cell;
+	font-size: 0.8em;
+	height: 100px;
+	padding: 0 0 0 15px;
+	vertical-align: bottom;
 }
 @media only screen and (max-width:420px) {
 	p.tagline {
@@ -184,6 +188,10 @@ p.tagline {
 header.map #logo p, #logo.map p {
 	height: 65px;
 }
+
+/* -----------------------------------------------------------------------------
+   BODY
+   -------------------------------------------------------------------------- */
 
 section.container {
 	min-width: 280px !important;
@@ -388,6 +396,11 @@ a.text-info, span.text-info, span.info {
 	user-select: none;
 	cursor: default;
 }
+@media only screen and (min-width:420px) {
+	#start h1 {
+		margin-top: 120px;
+	}
+}
 #start h1:hover > span {
 	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
@@ -436,6 +449,7 @@ section.container > #contents .carousel-inner {
     overflow: hidden;
 }
 
+/* Left panel */
 #left_panel {
 	position: fixed;
 	top: 75px;
@@ -453,8 +467,13 @@ section.container > #contents .carousel-inner {
 @media only screen and (max-width:420px) {
 	#left_panel {
 		top: 0;
-		max-width: 300px;
+		max-width: 420px;
 		z-index: 3;
+	}
+}
+@media only screen and (min-width:420px) {
+	#left_panel .panel-header.controls a.btn.close span.txt {
+		display: none;
 	}
 }
 #left_panel.map {
@@ -680,7 +699,11 @@ ul.list-group.transparent li {
 ul.list-group.transparent ul {
 	margin-bottom: 0;
 }
-/* --- */
+
+
+/* -----------------------------------------------------------------------------
+   MAP
+   -------------------------------------------------------------------------- */
 
 #pgrdg_map {
 	display: none;
@@ -979,14 +1002,6 @@ ul.list-group.transparent ul {
 }
 
 
-
-
-
-
-
-
-
-
 /* OpenLayers 2 */
 	.olControlPanZoomBar, .olControlZoom {
 		top: 90px !important;
@@ -1027,7 +1042,7 @@ ul.list-group.transparent ul {
 		max-width: auto;
 	}
 
-/* OpenLayers 3 */
+/* OpenLayers 3 - Leaflet */
 .ol-zoom button, .ol-zoom-extent button, .ol-full-screen button {
 	background-color: rgba(255, 255, 255, 0.75) !important;
 	color: #333 !important;
@@ -1121,6 +1136,13 @@ ul.list-group.transparent ul {
   border-radius: 1em;
   box-shadow: 0 0 6px 6px rgba(0, 255, 255, 0.5);
 }
+
+
+/* -----------------------------------------------------------------------------
+   TOOLS
+   -------------------------------------------------------------------------- */
+
+/* Popover */
 .popover {
 	z-index: 2000 !important;
 }
@@ -1156,6 +1178,8 @@ ul.list-group.transparent ul {
 label.checkbox {
 	margin: 0;
 }
+
+/* Accordion */
 #accordion .panel .btn-group, #accordion .panel .multiselect {
 	width: 100%;
 }
@@ -1168,6 +1192,8 @@ label.checkbox {
 	color: #999;
 	padding: 0 0 10px;
 }
+
+/* Popover */
 .popover .nav > li > a {
 	padding: 0;
 	display: inline-block;
@@ -1191,6 +1217,7 @@ label.checkbox {
 	margin-left: 2px;
 }
 
+/* Multiselect */
 .multiselect {
 	text-align: left;
 }
@@ -1210,6 +1237,7 @@ label.checkbox {
 	padding: 5px;
 }
 
+/* Treeselect */
 .treeselect + .dropdown-menu > .dropdown-header {
 	padding: 10px;
 }
@@ -1224,6 +1252,7 @@ label.checkbox {
 	padding: 0;
 }
 
+/* Knob */
 #knob {
 	/*
 	border: 50px solid rgba(255, 255, 255, 0.5);

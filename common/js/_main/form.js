@@ -480,7 +480,7 @@
 				}, "remote", function() {
 					operators = operators;
 				});
-				$.left_panel("open", "", function() {
+				$.left_panel("check", "", function() {
 					$("#forms-body").fadeIn(300);
 				});
 			});
