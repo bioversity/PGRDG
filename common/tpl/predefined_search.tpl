@@ -32,8 +32,6 @@
 </ul>
 <b>Forest gene conservation units:</b>
 <ul>
-        <li>Unit area</li>
-        <li>Unit ownership</li>
         <li>Population status</li>
         <li>Origin of the material</li>
         <li>Predominant silvicultural system</li>

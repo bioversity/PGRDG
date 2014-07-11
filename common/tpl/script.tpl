@@ -23,6 +23,7 @@
 <script type="text/javascript" src="common/js/TouchSwipe/jquery.touchSwipe.min.js"></script>
 
 	<!-- Core scripts -->
+	<script type="text/javascript" src="common/js/_main/params.js"></script>
 	<script type="text/javascript" src="common/js/_main/main.js"></script>
 	<?php
 	if(strtolower($page) == "map" || strtolower($page) == "search") {

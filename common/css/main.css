@@ -460,15 +460,20 @@ section.container > #contents .carousel-inner {
 	top: 75px;
 	left: -1000px;
 	height: 100%;
-	overflow-y: hidden;
+	/*overflow-y: hidden;*/
 	background-color: transparent;
 	background-image: linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -moz-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: webkit-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -o-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -ms-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
-	z-index: 2;
+	z-index: 3;
 	border-radius: 0px;
+}
+#left_panel h5 {
+	color: #999;
+	padding: 0 10px;
+	font-weight: bold;
 }
 @media only screen and (max-width:420px) {
 	#left_panel {

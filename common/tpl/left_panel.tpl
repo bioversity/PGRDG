@@ -14,6 +14,7 @@
 		</ul>
 	</div>
 	<div class="panel-body autocomplete"></div>
+	<h5>These are some of the common field you can use to make your searches</h5>
 	<div class="panel-body">
 		<div>
 			<?php require_once("common/tpl/predefined_search.tpl"); ?>
