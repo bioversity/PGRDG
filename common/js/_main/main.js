@@ -90,11 +90,13 @@
 			}
 		} else {
 			if(typeof(opt.loaderType) == "string") {
-				if($("#apprise.ask_service").length === 0) {
-					apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
-				} else {
-					if($("#apprise.ask_service").css("display") == "none") {
-						$("#apprise.ask_service").modal("show");
+				if(!$("#marker_content").is(":visible")) {
+					if($("#apprise.ask_service").length === 0) {
+						apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
+					} else {
+						if($("#apprise.ask_service").css("display") == "none") {
+							$("#apprise.ask_service").modal("show");
+						}
 					}
 				}
 			} else {
@@ -534,10 +536,10 @@
 			return false;
 										// ESC
 		}).bind("keydown", "esc", function(e) {
-			//e.preventDefault();
+			e.preventDefault();
 			//$.left_panel("close");
 			if($("header").hasClass("map")) {
-				$.stop_measurements();
+				//$.stop_measurements();
 				$.sub_toolbox("close");
 			}
 			return false;

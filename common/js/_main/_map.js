@@ -259,11 +259,11 @@
         /**
          * Increase zoom level
          */
-        $.increase_zoom = function() { map.setZoom((view.getZoom() + 1)); };
+        $.increase_zoom = function() { $.set_zoom(($.get_current_zoom() + 1)); };
         /**
          * Decrease zoom level
          */
-        $.decrease_zoom = function() { map.setZoom((view.getZoom() - 1)); };
+        $.decrease_zoom = function() { $.set_zoom(($.get_current_zoom() - 1)); };
 
 
 /*=======================================================================================
@@ -741,37 +741,37 @@
                 * @return {Function} callback Called function
                 */
                 $.add_point = function(options) {
-                 options = $.extend({
-                         lon: 0,
-                         lat: 0,
-                         uuid: $.uuid(),
-                         name: "",
-                         title: "",
-                         marker_class: "primary",
-                         content: "Sample text",
-                         callback: function() {}
-                 }, options);
-                 if (typeof(callback) == "function") {
-                         callback.call(this);
-                 }
-                 //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
-                 if($("#" + options.uuid).length > 0) {
-                         $("#" + options.uuid).remove();
-                 }
-                 var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
-                 var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
-                 var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
-                 var point = new ol.Overlay({
-                         position: $.set_lonlat(options.lon, options.lat),
-                         positioning: "center-center",
-                         element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
-                                                 cursor: "pointer"
-                                         }).bind("click", function() {
-                                                 console.log(options.lon, options.lat);
-                                         }),
-                         stopEvent: false
-                 });
-                 map.addOverlay(point);
+                        options = $.extend({
+                                lon: 0,
+                                lat: 0,
+                                uuid: $.uuid(),
+                                name: "",
+                                title: "",
+                                marker_class: "primary",
+                                content: "Sample text",
+                                callback: function() {}
+                        }, options);
+                        if (typeof(callback) == "function") {
+                                callback.call(this);
+                        }
+                        //$("#map_hidden_elements").append('<div id="' + options.uuid + '" title="' + options.name + '"></div>');
+                        if($("#" + options.uuid).length > 0) {
+                                $("#" + options.uuid).remove();
+                        }
+                        var set_center_btn = '<a class="btn btn-default btn-sm" title="Center point on the screen" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\');"><span class="fa fa-crosshairs"></span></a>';
+                        var set_zoom_btn = '<a class="btn btn-default btn-sm" title="Zoom here" href="javascript:void(0);" onclick="$.set_center(\'' + options.lon + '\',\'' + options.lat + '\'); $.set_zoom(12); $(\'#' + options.uuid + '\').popover(\'hide\');"><span class="fa fa-search-plus"></span></a>';
+                        var remove_point_btn = '<a class="btn btn-default btn-sm right" title="Remove this point" href="javascript:void(0);" onclick="$(\'#' + options.uuid + '\').popover(\'hide\'); $(\'#' + options.uuid + '\').remove();"><span class="fa fa-trash-o"></span></a>';
+                        var point = new ol.Overlay({
+                                position: $.set_lonlat(options.lon, options.lat),
+                                positioning: "center-center",
+                                element: $('<div class="marker ' + options.marker_class + '" id="' + options.uuid + '"></div>').css({
+                                        cursor: "pointer"
+                                }).bind("click", function() {
+                                        console.log(options.lon, options.lat);
+                                }),
+                                stopEvent: false
+                        });
+                        map.addOverlay(point);
                 };
 
                 /**
@@ -822,26 +822,31 @@
                         var markers = L.markerClusterGroup(),
                         geoJsonLayer = L.geoJson(geojson);
 
-                        // markers.on("click", function(m) {
-                        //         var objp = {};
-                        //         objp.storage_group = "results";
-                        //         objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-                        //         objp.parameters = {};
-                        //         objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-                        //         objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-                        //         objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-                        //         objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
-                        //         objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-                        //         objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
-                        //         $.ask_to_service(objp, function(marker_content) {
-                        //                 $.each(marker_content.results, function(domain, rows) {
-                        //                         //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
-                        //                         $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
-                        //                 });
-                        //                 $("#marker_content").modal("show");
-                        //                 $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
-                        //         });
-                        // });
+                        markers.on("click", function(m) {
+                                var $marker_body = $("#marker_content").find(".modal-body");
+                                $marker_body.html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Extracting data</center>');
+                                $("#marker_content").modal("show").on("shown.bs.modal", function(){
+                                        var objp = {};
+                                        objp.storage_group = "results";
+                                        objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                                        objp.parameters = {};
+                                        objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                                        objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
+                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
+                                        $.ask_to_service(objp, function(marker_content) {
+                                                $marker_body.remove();
+                                                $("#marker_content .modal-content").html('<div class="modal-body"></div>');
+                                                $.each(marker_content.results, function(domain, rows) {
+                                                        //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
+                                                        $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
+                                                });
+                                        });
+                                        $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+                                });
+                        });
 
         		markers.addLayer(geoJsonLayer);
 
