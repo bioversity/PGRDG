@@ -27,11 +27,9 @@ if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 	</head>
 	<body>
 		<?php include("common/tpl/body_header.tpl"); ?>
-		
+
 		<?php include("common/include/get_contents.php"); ?>
-		
-		<?php include("common/tpl/footer.tpl"); ?>
-		
+
 		<?php include("common/tpl/script.tpl"); ?>
 	</body>
 </html>

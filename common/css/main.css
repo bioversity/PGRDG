@@ -82,7 +82,7 @@ footer {
 	margin: 100px auto 0 auto;
 	max-width: 900px;
 	padding: 0;
-	position: static;
+	height: 105px;
 	text-align: center;
 	width: 100%;
 }
@@ -130,7 +130,17 @@ footer ul li + li:before {
 	height: 75px;
 }
 #nav .navbar-toggle {
-	margin: 35px 10px 0 0;
+	margin: 35px 15px 0 0;
+}
+@media only screen and (max-width:320px) {
+	#nav .navbar-toggle {
+		margin: -30px 15px 0 0;
+	}
+}
+@media only screen and (min-width:320px) {
+	#nav .navbar-toggle {
+		margin: 35px 15px 0 0;
+	}
 }
 #nav .navbar-collapse.collapse, #nav .navbar-collapse.collapsing {
 	border-bottom-right-radius: 5px;
@@ -856,6 +866,11 @@ ul.list-group.transparent ul {
 	width: 50px;
 	z-index: 2;
 }
+@media only screen and (max-width:420px) {
+	#map_toolbox {
+		bottom: auto !important;
+	}
+}
 #map_toolbox > ul {
 	margin: 0;
 	padding: 0;
@@ -884,6 +899,10 @@ ul.list-group.transparent ul {
 }
 #map_toolbox a, #map_sub_toolbox a {
 	color: #ccc;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 #map_toolbox a:hover, #map_sub_toolbox a:hover {
 	color: #fff;
@@ -942,6 +961,11 @@ ul.list-group.transparent ul {
 	display: none;
 	border-radius: 6px 0 6px 6px;
 	border-right: #333 1px dotted;
+}
+@media only screen and (max-width:420px) {
+	#map_sub_toolbox > div {
+		max-width: 200px;
+	}
 }
 #map_sub_toolbox > div.level0 {
 	/*margin-top: 76px;*/
@@ -1117,6 +1141,12 @@ ul.list-group.transparent ul {
 	position: fixed !important;
 	height: 25px;
 }
+@media only screen and (max-width:420px) {
+	.ol-attribution, .leaflet-control-attribution {
+		right: 12px !important;
+	}
+}
+
 .ol-attribution.open, .leaflet-control-attribution.open {
 	border-top-left-radius: 12px !important;
 	border-bottom-left-radius: 12px !important;

@@ -192,14 +192,14 @@
 						if(direction == "left") {
 							if($("#left_panel").hasClass("visible") && distance >= 0 && distance < parseInt(width)) {
 								$("#left_panel").css({"left": "-" + distance + "px"});
-								$("header").css({"left": (parseInt($("#left_panel").css("left")) + parseInt(width)) + "px"});
+							//	$("header").css({"left": (parseInt($("#left_panel").css("left")) + parseInt(width)) + "px"});
 							}
 							$("section #contents").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
 						}
 						if(direction == "right") {
 							if(!$("#left_panel").hasClass("visible") && distance >= 0 && distance < parseInt(width)) {
 								$("#left_panel").css({"left": "-" + (parseInt(width) - distance) + "px"});
-								$("header").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
+							//	$("header").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
 							}
 							$("section #contents").css({"left": ((parseInt($("#left_panel").css("left")) + parseInt(width)) + 5) + "px"});
 						}
@@ -280,11 +280,11 @@
 					$.left_panel(left_panel_status);
 					break;
 				default:
-					console.log("open");
+					//console.log("open");
 					// Move all document to the right
 					if($(window).width() < 420) {
 						$("section #contents").animate({"left": width}, 200);
-						$("header").animate({"left": width}, 200);
+					//	$("header").animate({"left": width}, 200);
 					}
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
