@@ -14,10 +14,10 @@
 		</ul>
 	</div>
 	<div class="panel-body autocomplete"></div>
-	<h5>These are some of the common field you can use to make your searches</h5>
-	<div class="panel-body">
+	<h4><i style="text-muted">Fields you can use:</i></h4>
+	<div class="panel-body contents">
 		<div>
-			<?php require_once("common/tpl/predefined_search.tpl"); ?>
+			<div><?php require_once("common/tpl/predefined_search.tpl"); ?></div>
 		</div>
 	</div>
 </div>

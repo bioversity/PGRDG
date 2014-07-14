@@ -474,6 +474,24 @@ section.container > #contents .carousel-inner {
 	z-index: 3;
 	border-radius: 0px;
 }
+#left_panel div.contents {
+	height: 100%;
+	padding: 5px 1px 250px 5px !important;
+}
+@media only screen and (max-width:420px) {
+	#left_panel div.contents {
+		padding-bottom: 175px !important;
+	}
+}
+#left_panel div.contents > div {
+	overflow-y: scroll;
+	height: 100%;
+	padding: 0 10px;
+}
+#left_panel h4 {
+	color: #999;
+	padding: 0 10px;
+}
 #left_panel h5 {
 	color: #999;
 	padding: 0 10px;
@@ -543,14 +561,14 @@ section.container > #contents .carousel-inner {
 	text-decoration: none;
 }
 
-#left_panel div.panel-body:last-child {
-	overflow-y: scroll;
+#left_panel tr:last-child div.panel-body {
+	/*overflow-y: scroll;
 	height: 100%;
 	width: 100%;
-	position: absolute;
+	position: absolute;*/
 }
-#left_panel div.panel-body:last-child > div {
-	padding-bottom: 200px;
+#left_panel tr:last-child div.panel-body > div {
+	/*padding-bottom: 200px;*/
 }
 /*
 .folder_menu {

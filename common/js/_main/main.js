@@ -107,6 +107,7 @@
 			if(developer_mode) {
 				console.group("Storage \"" + opt.storage_group + "\" saved...");
 				console.warn("id: ", $.md5(param));
+				console.groupEnd();
 			}
 			$.cryptAjax({
 				url: "API/",

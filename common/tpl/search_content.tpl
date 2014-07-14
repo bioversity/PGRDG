@@ -46,6 +46,6 @@
 	</div>
 	<div id="pgrdg_map"></div>
 	<div id="start" class="panel_content">
-		<h1 unselectable="on"><span>&lsaquo;</span> Start typing the name on a field you want to search</h1>
+		<h1 unselectable="on"><span>&lsaquo;</span> Start typing the name of a field you want to search</h1>
 	</div>
 </div>
