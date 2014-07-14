@@ -40,27 +40,25 @@
                                         markerZoomAnimation: true
                                 });
                                 L.control.scale().addTo(map);
-
                                 // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
-                                defaultLayer = L.tileLayer.provider(map_data.map.layers.defaultLayer).addTo(map);
+                                defaultLayer = L.tileLayer.provider(map_data.map.layers.defaultLayer.layer).addTo(map);
                                 baseLayers = map_data.map.layers.baseLayers;
                                 overlayLayers = map_data.map.layers.overlayLayers;
-
                                 $("#change_map").append('<ul class="list-unstyled">');
                                 var i = 0, h = 0;
-                                $.each(map_data.map.layers.baseLayers, function(group, layers_list) {
+                                $.each(baseLayers, function(group, layers_list) {
                                         zindex = 1;
 
                                         h++;
                                         $.each(layers_list, function(k, v) {
-                                                if(v == map_data.map.layers.defaultLayer) {
-                                                        $("#change_map ul").append('<li class="selected" onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
+                                                if(v.layer == map_data.map.layers.defaultLayer.layer) {
+                                                        $("#change_map ul").append('<li class="selected" onclick="$.change_map_layer(\'' + v.layer.replace(".", "_") + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                 } else {
-                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v.layer.replace(".", "_") + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                 }
-                                                layers.push(v);
+                                                layers.push(v.layer);
                                         });
-                                        if(h < $.obj_len(map_data.map.layers.baseLayers)) {
+                                        if(h <= $.obj_len(baseLayers)) {
                                                 $("#change_map ul").append('<li class="divider"></li>');
                                         }
                                 });
@@ -69,16 +67,16 @@
 
                                         i++;
                                         $.each(layers_list, function(k, v) {
-                                                if(v !== undefined && v !== null && v !== "") {
-                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v + '\', \'' + zindex + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.replace(".", " ") + '</a>');
-                                                        layers.push(v);
+                                                if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + v.layer.replace(".", "_") + '\', \'' + zindex + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
+                                                        layers.push(v.layer);
                                                 }
                                         });
                                         if(i < $.obj_len(map_data.map.layers.overlayLayers)) {
                                                 $("#change_map ul").append('<li class="divider"></li>');
                                         }
                                 });
-                                current_layer = map_data.map.layers.defaultLayer;
+                                current_layer = map_data.map.layers.defaultLayer.layer.replace(".", "_");
                                 //control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true});//.addTo(map);
                                 map.invalidateSize();
                                 map.setMaxBounds([[85, -190], [-190, 190]]);
@@ -279,9 +277,12 @@
          * Show selected layer
          */
         $.show_layer = function(selected_layer, zindex) {
-                l[selected_layer] = L.tileLayer.provider(selected_layer);
-                map.addLayer(l[selected_layer]);
-                l[selected_layer].setZIndex(zindex);
+                var selected_layer_name = selected_layer;
+                selected_layer = selected_layer.replace("_", ".");
+                l[selected_layer_name] = L.tileLayer.provider(selected_layer);
+
+                map.addLayer(l[selected_layer_name]);
+                l[selected_layer_name].setZIndex(zindex);
                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
         };
 
@@ -297,21 +298,29 @@
          */
         $.change_map_layer = function(selected_layer, zindex) {
                 var $this = $("#change_map a." + selected_layer.replace(".", "_")).find("span");
-                if(selected_layer !== $.current_layer) {
+                if(selected_layer !== $.current_layer()) {
                         if($this.hasClass("fa-circle-o") || $this.hasClass("fa-check-circle")) {
                                 $.show_layer(selected_layer, zindex);
                                 $("#change_map li").find("span.fa-check-circle").closest("li").removeClass("selected").find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
                                 $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
                         } else {
                                 if($this.hasClass("fa-square-o")) {
-                                        $.show_layer(selected_layer, zindex);
                                         $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-square-o").addClass("fa-check-square");
+                                        $.show_layer(selected_layer, zindex);
                                 } else {
-                                        $.hide_layer(selected_layer);
                                         $("#change_map a." + selected_layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
+                                        $.hide_layer(selected_layer);
                                 }
                         }
-                        current_layer = selected_layer;
+                console.log($this);
+                } else {
+                        if($this.hasClass("fa-square-o")) {
+                                $("#change_map a." + selected_layer.replace(".", "_")).parent("li").addClass("selected").find("span").removeClass("fa-square-o").addClass("fa-check-square");
+                                $.show_layer(selected_layer, zindex);
+                        } else {
+                                $("#change_map a." + selected_layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
+                                //$.hide_layer(selected_layer);
+                        }
                 }
                 $.sub_toolbox('change_map');
         };

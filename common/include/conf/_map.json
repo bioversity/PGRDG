@@ -13,38 +13,93 @@
 			}
 		},
 		"layers": {
-			"defaultLayer": "Esri.WorldImagery",
+			"defaultLayer": {
+				"name": "Satellite",
+				"layer": "Esri.WorldImagery"
+			},
 			"baseLayers": {
 				"unlabelled": [
-					"Esri.WorldImagery",
-					"Esri.WorldTerrain",
-					"Esri.WorldPhysical"
+					{
+						"name": "Satellite",
+						"layer": "Esri.WorldImagery"
+
+					},
+					{
+						"name": "Terrain",
+						"layer": "Esri.WorldTerrain"
+					},
+					{
+						"name": "Physical",
+						"layer": "Esri.WorldPhysical"
+					}
 				],
 				"labelled": [
-					"ThunderForest.OpenCycleMap",
-					"ThunderForest.Outdoors",
-					"OpenStreetMap.Hot",
-					"OpenStreetMap.BlackAndWhite"
+					{
+						"name": "Cycle",
+						"layer": "Thunderforest.OpenCycleMap"
+					},
+					{
+						"name": "Outdoors",
+						"layer": "Thunderforest.Outdoors"
+					},
+					{
+						"name": "Streets",
+						"layer": "OpenStreetMap.HOT"
+					},
+					{
+						"name": "Streets (black & white)",
+						"layer": "OpenStreetMap.BlackAndWhite"
+					}
 				]
 			},
 			"overlayLayers": {
 				"labels": [
-					"OpenMapSurfer.AdminBounds",
-					"Acetate.roads",
-					"Acetate.labels"
+					{
+						"name": "Boundaries",
+						"layer": "OpenMapSurfer.AdminBounds"
+					},
+					{
+						"name": "Roads",
+						"layer": "Acetate.roads"
+					},
+					{
+						"name": "Labels",
+						"layer": "Acetate.labels"
+					}
 				],
 				"overlays": [
-					"OpenWeatherMap.Clouds",
-					"OpenWeatherMap.CloudsClassic",
-					"OpenWeatherMap.Precipitation",
-					"OpenWeatherMap.PrecipitationClassic",
-					"OpenWeatherMap.Rain",
-					"OpenWeatherMap.RainClassic",
-					"OpenWeatherMap.Pressure",
-					"OpenWeatherMap.PressureContour",
-					"OpenWeatherMap.Wind",
-					"OpenWeatherMap.Temperature",
-					"OpenWeatherMap.Snow"
+					{
+						"name": "Clouds",
+						"layer": "OpenWeatherMap.CloudsClassic"
+					},
+					{
+						"name": "Precipitation",
+						"layer": "OpenWeatherMap.PrecipitationClassic"
+					},
+					{
+						"name": "Rain",
+						"layer": "OpenWeatherMap.RainClassic"
+					},
+					{
+						"name": "Pressure",
+						"layer": "OpenWeatherMap.Pressure"
+					},
+					{
+						"name": "Pressure (contour)",
+						"layer": "OpenWeatherMap.PressureContour"
+					},
+					{
+						"name": "Wind",
+						"layer": "OpenWeatherMap.Wind"
+					},
+					{
+						"name": "Temperature",
+						"layer": "OpenWeatherMap.Temperature"
+					},
+					{
+						"name": "Snow",
+						"layer": "OpenWeatherMap.Snow"
+					}
 				]
 			}
 		}
