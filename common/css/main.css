@@ -7,6 +7,9 @@ input[type=number] {
 body {
 	background-color: transparent;
 	text-align: left;
+	position: fixed;
+	width: 100%;
+	height: 100%;
 }
 hr {
 	margin-top: 0;
@@ -197,6 +200,7 @@ section.container {
 	min-width: 280px !important;
 	max-width: 100%;
 	width: 100%;
+	height: 100%;
 	padding: 0;
 	overflow-x: hidden;
 }
