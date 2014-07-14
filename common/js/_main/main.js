@@ -351,7 +351,6 @@
 				if(hash.length > 0) {
 					if($.trim($("#" + item_id).text()) !== hash) {
 						var blink_title = "Return to " + ttext + " panel";
-
 						$(this).find("span.txt").html('<a href="javascript:void(0);" onclick="$.manage_url(\'' + $.ucfirst(ttext) + '\');" title="' + blink_title + '">' + $.ucfirst(ttext) + '</a>').closest("li").removeClass("active");
 					} else {
 						$(this).find("span.txt").text(hash).closest("li").addClass("active");
@@ -365,11 +364,13 @@
 			if(hash == "Map") {
 				$.left_panel("close");
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
+				$("#contents .panel_content").hide();
+				$("#map, #pgrdg_map").fadeIn(300);
 			} else {
 				if($.left_panel("is_closed")) {
 					$.left_panel("check");
 				}
-				if(current_path !== "Map") {
+				if(current_path !== "Map" || hash !== "Map") {
 					if(hash.length > 0) {
 						$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
 						$("#contents #" + hash.toLowerCase()).fadeIn(300);
