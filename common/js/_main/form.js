@@ -943,7 +943,19 @@
 					});
 					$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
 					$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
-					$("table#" + options.res.id + " td a:not(.btn-default-white)").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+					$("table#" + options.res.id + " td a:not(.btn-default-white)").popover({
+						container: "body",
+						placement: function(pop, element){
+							// Move popover on the left if we are on the last column
+        						if($(element).parent().is("td:last-child")) {
+        							return "left";
+        						} else {
+        							return "top";
+        						}
+						},
+						html: "true",
+						trigger: "hover"
+					});
 					$("table#" + options.res.id + " td a.btn-default-white").tooltip();
 					// $("table#" + options.res.id + " form a");
 			}
@@ -1021,13 +1033,6 @@
 			$.ask_to_service(objp, function(res) {
 				$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
 			});
-			/*
-			if(type == "map") {
-				$.activate_panel("map", {res: decrypted_data});
-			} else {
-				$.activate_panel("results", {res: decrypted_data});
-			}
-			*/
 
 		};
 
@@ -1145,7 +1150,6 @@
 		* @param  {int}    limit  Limit
 		*/
 		$.show_raw_row_content = function(id, domain) {
-			//var summaries_data = storage.get("pgrdg_cache.summary." + id),
 			objp = {};
 				objp.storage_group = "results";
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
@@ -1159,14 +1163,6 @@
 				$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
 				$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
 			});
-			/*
-			if(type == "map") {
-				$.activate_panel("map", {res: decrypted_data});
-			} else {
-				$.activate_panel("results", {res: decrypted_data});
-			}
-			*/
-
 		};
 
 		/**
