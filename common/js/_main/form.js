@@ -952,11 +952,11 @@
 			if($("#pgrdg_map").children().length === 0) {
 				map = $.init_map(function(map) {
 					storage.remove("pgrdg_cache.map");
-					$.reset_all_markers();
+					$.reset_all_markers(map, markers);
 					$.add_geojson_cluster(options.res);
 				});
 			} else {
-				$.reset_all_markers();
+				$.reset_all_markers(map, markers);
 				$.add_geojson_cluster(options.res);
 			}
 			$("#pgrdg_map").fadeIn(600);
