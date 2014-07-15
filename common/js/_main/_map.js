@@ -11,7 +11,7 @@
  *	CORE ENGINE
  *======================================================================================*/
 
-        var lon, lat, zoom, default_bbox = [], map, control, current_layer, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers;
+        var lon, lat, zoom, default_bbox = [], map, control, current_layer, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers, markers;
 
         /**
          * Generate map
@@ -296,7 +296,7 @@
         };
 
         /**
-         * Hide all layers except the given one
+         * Hide all layers except thi given one
          */
         $.hide_all_layers_except = function(selected_layer_name){
                 $.each(l, function(name, level_data) {
@@ -840,40 +840,47 @@
                  * Add cluster on the map from given geojson
                  * @param {object} geojson The geojson object with markers and polygons
                  */
-                $.add_geojson_cluster = function(geojson) {
-                        var markers = L.markerClusterGroup(),
+                $.add_geojson_cluster = function(geojson, callback) {
+                        markers = L.markerClusterGroup();
                         geoJsonLayer = L.geoJson(geojson);
-
-                        markers.on("click", function(m) {
-                                var $marker_body = $("#marker_content").find(".modal-body");
-                                $marker_body.html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Extracting data</center>');
-                                $("#marker_content").modal("show").on("shown.bs.modal", function(){
-                                        var objp = {};
-                                        objp.storage_group = "results";
-                                        objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-                                        objp.parameters = {};
-                                        objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-                                        objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
-                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
-                                        $.ask_to_service(objp, function(marker_content) {
-                                                $marker_body.remove();
-                                                $("#marker_content .modal-content").html('<div class="modal-body"></div>');
-                                                $.each(marker_content.results, function(domain, rows) {
-                                                        //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
-                                                        $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
-                                                });
-                                        });
-                                        $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
-                                });
-                        });
 
         		markers.addLayer(geoJsonLayer);
 
         		map.addLayer(markers);
-        	        map.fitBounds(markers.getBounds());
+                        var marker_position = markers.getBounds().getCenter();
+                        $.set_center(marker_position.lng, marker_position.lat);
+        	        //map.fitBounds(markers.getBounds());
+
+                        markers.on("click", function(m) {
+                                var i = 0;
+                                var $marker_body = $("#marker_content").find(".modal-body");
+                                $marker_body.html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Extracting data</center>');
+                                $("#marker_content").modal("show").on("shown.bs.modal", function(){
+                                        if(i === 0) {
+                                                var objp = {};
+                                                objp.storage_group = "results";
+                                                objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                                                objp.parameters = {};
+                                                objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                                                objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
+                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
+                                                $.ask_to_service(objp, function(marker_content) {
+                                                        $marker_body.remove();
+                                                        $("#marker_content .modal-content").html('<div class="modal-body"></div>');
+                                                        $.each(marker_content.results, function(domain, rows) {
+                                                                //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
+                                                                $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
+                                                        });
+                                                });
+                                                $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+                                        }
+                                        i++;
+                                });
+                                console.log(i);
+                        });
                 };
 
                 /**

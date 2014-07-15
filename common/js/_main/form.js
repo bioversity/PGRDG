@@ -224,7 +224,7 @@
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
 					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
-					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false; false;">' + secret_input + form + '</form></div></div></div>';
+					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + '</form></div></div></div>';
 				});
 			});
 
@@ -334,69 +334,9 @@
 						}
 					});
 				});
-				/*
-				if($("body > .popover").length > 0) {
-					console.log("exists");
-					if(!$("body > .popover").hasClass("in")) {
-					console.log("visible");
-						$("body > .popover").addClass("in");
-					} else {
-					console.log("not visible");
-						$("body > .popover").removeClass("in");
-					}
-				} else {
-					$panel.find("a.treeselect").popover({
-						html: true,
-						placement: "auto",
-						title: '<div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div>',
-						content: function() {
-							treeselect_content += '</ul></li></ul></div>';
-							return treeselect_content;
-						},
-						container: "body"
-					}).on("shown.bs.popover", function(e) {
-						$.check_treeselect($panel);
-						$(".popover-title input").keyup( function() {
-							var that = this;
-							// affect all table rows on in systems table
-							var tableBody = $(".popover-content > div");
-							var tableRowsClass = $(".popover-content > div li");
-
-							tableRowsClass.each(function(i, val) {
-								//Lower text for case insensitive
-								var rowText = $(val).text().toLowerCase();
-								var inputText = $(that).val().toLowerCase();
-
-								if(rowText.indexOf( inputText ) == -1) {
-									//hide rows
-									tableRowsClass.eq(i).hide();
-								} else {
-									$(".search-sf").remove();
-									tableRowsClass.eq(i).show();
-								}
-							});
-							//all tr elements are hidden
-							if(tableRowsClass.children(":visible").length === 0) {
-								if(tableBody.find(".search-sf").length === 0) {
-									tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
-								}
-							}
-						}).focus();
-						$(".popover-body li").tooltip();
-						$("body").on("click", function (e) {
-							$('[data-toggle="popover"]').each(function () {
-								if (!$(this).is(e.target)) {
-									if($(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
-										$(this).popover("hide");
-									}
-								} else {
-									$(this).popover("show");
-								}
-							});
-						});
-					});
-				}
-				*/
+				$form.on("submit", function(){
+					return false;
+				});
 			}
 			$panel_mask.fadeOut(300);
 			$(".save_btn").removeClass("disabled");
@@ -1011,6 +951,7 @@
 		} else {
 			if($("#pgrdg_map").children().length === 0) {
 				map = $.init_map(function(map) {
+					storage.remove("pgrdg_cache.map");
 					$.reset_all_markers();
 					$.add_geojson_cluster(options.res);
 				});
@@ -1538,7 +1479,7 @@
 				}
 			}
 		});
-		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_RANGE + '" /><div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" onblur="$.check_range_value($(this))" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
+		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_RANGE + '" /><div class="input-group"><input id="' + options.id[0] + '_operator_type" type="hidden" name="operator" value="" /><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id[0] + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu" id="' + options.id[0] + '_operator_type_ul">' + op_btn_list + '</ul></div><span class="input-group-addon_white">From</span><input class="' + options.class[0] + '" type="' + input_type + '" id="' + options.id[0] + '" name="from" min="' + min + '" max="' + max + '" placeholder="' + placeholder[0] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/><span class="input-group-addon_white">to</span><input class="' + options.class[1] + '" type="' + input_type + '" id="' + options.id[1] + '" name="to" min="' + min + '" max="' + max + '" placeholder="' + placeholder[1] + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>';
 	};
 
 	/**
