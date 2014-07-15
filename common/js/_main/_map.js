@@ -84,6 +84,14 @@
 
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 
+                                map.on("zoomend", function() {
+                                        //var layer_data = $.get_level_data(l[current_layer]);
+                                        console.log($.get_current_zoom(), current_layer, l);
+                                        if($.get_current_zoom() > current_layer.maxZoom){
+                                            map.setZoom(layer_data.maxZoom);
+                                        }
+                                });
+
                                 if (callback) {
                                         callback(map);
                                 }
@@ -284,6 +292,12 @@
                 l[selected_layer_name] = L.tileLayer.provider(selected_layer_obj.layer);
 
                 map.addLayer(l[selected_layer_name]);
+                var layer_data = $.get_level_data(l[selected_layer_name]);
+
+                console.log($.get_current_zoom(), layer_data.maxZoom);
+                if($.get_current_zoom() > layer_data.maxZoom){
+                        map.setZoom(layer_data.maxZoom);
+                }
                 l[selected_layer_name].setZIndex(selected_layer_obj.zindex);
                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
         };
@@ -296,15 +310,23 @@
         };
 
         /**
+         * Retrieve the level data
+         */
+        $.get_level_data = function(level) {
+                if(level.options !== undefined) {
+                        return level.options;
+                }
+        };
+
+        /**
          * Hide all layers except thi given one
          */
         $.hide_all_layers_except = function(selected_layer_obj){
-                $.each(l, function(name, level_data) {
+                $.each(l, function(name, level) {
                         if(name !== selected_layer_obj.name && selected_layer_obj.zindex === 0) {
-                                if(level_data.options !== undefined) {
-                                        if(level_data.options.zIndex === 0) {
-                                                $.hide_layer(name);
-                                        }
+                                var level_data = $.get_level_data(level);
+                                if(level_data !== undefined && level_data.zIndex === 0) {
+                                        $.hide_layer(name);
                                 }
                         }
                 });
