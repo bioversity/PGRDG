@@ -81,17 +81,12 @@
 					{
 						"name": "Clouds",
 						"layer": "OpenWeatherMap.CloudsClassic",
-						"zindex": 310
+						"zindex": 360
 					},
 					{
 						"name": "Precipitation",
 						"layer": "OpenWeatherMap.PrecipitationClassic",
-						"zindex": 320
-					},
-					{
-						"name": "Rain",
-						"layer": "OpenWeatherMap.RainClassic",
-						"zindex": 330
+						"zindex": 370
 					},
 					{
 						"name": "Pressure",
@@ -101,7 +96,7 @@
 					{
 						"name": "Pressure (contour)",
 						"layer": "OpenWeatherMap.PressureContour",
-						"zindex": 340
+						"zindex": 390
 					},
 					{
 						"name": "Wind",
@@ -116,7 +111,7 @@
 					{
 						"name": "Snow",
 						"layer": "OpenWeatherMap.Snow",
-						"zindex": 370
+						"zindex": 400
 					}
 				]
 			}

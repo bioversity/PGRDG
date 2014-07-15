@@ -298,10 +298,14 @@
         /**
          * Hide all layers except thi given one
          */
-        $.hide_all_layers_except = function(selected_layer_name){
+        $.hide_all_layers_except = function(selected_layer_obj){
                 $.each(l, function(name, level_data) {
-                        if(name !== selected_layer_name) {
-                                $.hide_layer(name);
+                        if(name !== selected_layer_obj.name && selected_layer_obj.zindex === 0) {
+                                if(level_data.options !== undefined) {
+                                        if(level_data.options.zIndex === 0) {
+                                                $.hide_layer(name);
+                                        }
+                                }
                         }
                 });
         };
@@ -328,7 +332,7 @@
                                         $.hide_layer(selected_layer_obj.name);
                                 }
                         }
-                        $.hide_all_layers_except(selected_layer_obj.name);
+                        $.hide_all_layers_except(selected_layer_obj);
                 } else {
                         if($this.hasClass("fa-check-square")) {
                                 $("#change_map a." + selected_layer_obj.layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
