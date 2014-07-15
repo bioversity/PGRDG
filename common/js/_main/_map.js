@@ -848,12 +848,9 @@
 
         		map.addLayer(markers);
                         var marker_position = markers.getBounds().getCenter();
-                        console.log(markers.getBounds());
                         var bbx = {};
                         bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
                         bbx.northeast = [markers.getBounds().getNorthEast().lat, markers.getBounds().getNorthEast().lng];
-                        //northeast = markers.getBounds().getNorthEast();
-                        console.log(bbx);
                         //$.set_center(marker_position.lng, marker_position.lat);
         	        map.fitBounds([bbx.southwest, bbx.northeast]);
 
