@@ -8,7 +8,7 @@
 			},
 			"zoom": {
 				"default_zoom": 4,
-				"min_zoom": 1,
+				"min_zoom": 2,
 				"max_zoom": 15
 			}
 		},
