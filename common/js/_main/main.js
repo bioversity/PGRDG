@@ -248,11 +248,19 @@
 						$("#breadcrumb").animate({"padding-left": "0px"}, 200);
 						$("#breadcrumb .breadcrumb").animate({"padding-left": "40px"}, 200);
 					}
-					$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "35px"}, 200, function() {
-						if(document.location.hash !== "#Map") {
-							$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
-						}
-					});
+					if($(window).width() >= 420) {
+						$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "35px"}, 200, function() {
+							if(document.location.hash !== "#Map") {
+								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
+							}
+						});
+					} else {
+						$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "15px"}, 200, function() {
+							if(document.location.hash !== "#Map") {
+								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
+							}
+						});
+					}
 					break;
 				case "is_closed":
 					return ($("#left_panel").css("left") !== "0px") ? true : false;
