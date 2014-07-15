@@ -1161,7 +1161,12 @@
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
 			$.ask_to_service(objp, function(row_content) {
 				$("tr#" + $.md5(domain) + " td").html($.parse_row_content(row_content.results[domain]));
-				$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+				$("tr#" + $.md5(domain) + " a.text-info, tr#" + $.md5(domain) + " span.info").popover({
+					container: "body",
+					placement: "auto",
+					html: "true",
+					trigger: "hover"
+				});
 			});
 		};
 

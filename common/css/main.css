@@ -967,6 +967,18 @@ ul.list-group.transparent ul {
 		max-width: 200px;
 	}
 }
+@media only screen and (max-height:720px) {
+	#map_sub_toolbox > div {
+		max-height: 70%;
+		overflow-y: scroll;
+	}
+}
+@media only screen and (max-height:350px) {
+	#map_sub_toolbox > div {
+		max-height: 50%;
+		overflow-y: scroll;
+	}
+}
 #map_sub_toolbox > div.level0 {
 	/*margin-top: 76px;*/
 }
