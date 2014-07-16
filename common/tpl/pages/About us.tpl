@@ -10,7 +10,7 @@
         <li>On-farm data uses the '<a href="http://www.pgrsecure.bham.ac.uk/sites/default/files/documents/helpdesk/LRDESCRIPTORS_PGRSECURE.pdf">Descriptors for Web-Enabled National In Situ Landrace Inventories</a>'</li>
         <li>The <i>in situ</i> CWR national checklists, national inventories and conservation strategies use the following 'STANDARD for National Checklists, National Inventories and Conservation Strategies, v1 and 'Standards for QTL' (soon available).</li>
 </ul>
-<p>These include information at the provider level, institution, taxon level and checklist types. They  provide a structure to describe in detail the various components: identification of countries/institutes, crossability, threatened status, the taxon, population, accession, the site and location in which the population was collected or is monitored, and institute or individual monitoring. In addition, there is also a data standards publication for documenting information on Quantitative Trait Locus (QTL), which includes: data provider information, marker identifiers, trait names, sequence homology, crossability and taxon.</p>
+<p>These include information at the provider, institution and taxon level and checklist types. They provide a structure to describe in detail the various components: identification of countries/institutes, crossability, threatened status, taxon, population, accession, site and location in which the population was collected or is monitored, and institute or individual monitoring. In addition, there is also a data standards publication for documenting information on Quantitative Trait Locus (QTL), which includes: data provider information, marker identifiers, trait names, sequence homology, crossability and taxon.</p>
 <p>Examples of common fields are:</p>
 <ul>
         <li><b>Taxonomy</b>: Family, Subfamily, Genus, Species, Scientific name, Common taxon names</li>
@@ -23,8 +23,8 @@
 </ul>
 
 <h3 id="What-does-the-Plant-Genetic-Resources-Diversity-Gateway-currently-contain">What does the Plant Genetic Resources Diversity Gateway currently contain?</h3>
-<p>Currently the portal is populated with accession, checklist, national inventory, conservation strategy data, and forestry unit data. The current information available in the system comes from pre-existing ex situ resources and <i>in situ</i> and on-farm information produced during the project.</p>
-<p>The data being shared through the Plant Genetic Resources Diversity Gateway is based on standards developed in the project to meet data-sharing needs. The standards and respective templates for data collation are available for data providers. </p>
+<p>Currently the portal is populated with accession, checklist, national inventory, conservation strategy data, and forestry unit data. The current information available in the system comes from pre-existing <i>ex situ</i> resources and <i>in situ</i> and on-farm information produced during the project.</p>
+<p>The data shared through the Plant Genetic Resources Diversity Gateway are based on standards developed in the project to meet data-sharing needs. The standards and respective templates for data collation are available for data providers. </p>
 <ul>
         <li>Standards for national checklist</li>
         <li>Standards for national inventory</li>
