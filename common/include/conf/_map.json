@@ -8,7 +8,7 @@
 			},
 			"zoom": {
 				"default_zoom": 4,
-				"min_zoom": 2,
+				"min_zoom": 3,
 				"max_zoom": 15
 			}
 		},
@@ -22,40 +22,40 @@
 					{
 						"name": "Satellite",
 						"layer": "Esri.WorldImagery",
-						"zindex": 0
+						"zindex": 1
 
 					},
 					{
 						"name": "Terrain",
 						"layer": "Esri.WorldTerrain",
-						"zindex": 0
+						"zindex": 1
 					},
 					{
 						"name": "Physical",
 						"layer": "Esri.WorldPhysical",
-						"zindex": 0
+						"zindex": 1
 					}
 				],
 				"labelled": [
 					{
 						"name": "Cycle",
 						"layer": "Thunderforest.OpenCycleMap",
-						"zindex": 0
+						"zindex": 1
 					},
 					{
 						"name": "Outdoors",
 						"layer": "Thunderforest.Outdoors",
-						"zindex": 0
+						"zindex": 1
 					},
 					{
 						"name": "Streets",
 						"layer": "OpenStreetMap.HOT",
-						"zindex": 0
+						"zindex": 1
 					},
 					{
 						"name": "Streets (black & white)",
 						"layer": "OpenStreetMap.BlackAndWhite",
-						"zindex": 0
+						"zindex": 1
 					}
 				]
 			},

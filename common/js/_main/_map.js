@@ -41,20 +41,21 @@
                                 });
                                 L.control.scale().addTo(map);
                                 // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
-                                defaultLayer = L.tileLayer.provider(map_data.map.layers.defaultLayer.layer).addTo(map);
+                                defaultLayer = L.tileLayer.provider(map_data.map.layers.defaultLayer.layer);
+                                        defaultLayer.setZIndex(1);
+                                        defaultLayer.addTo(map);
                                 baseLayers = map_data.map.layers.baseLayers;
                                 overlayLayers = map_data.map.layers.overlayLayers;
+
                                 $("#change_map").append('<ul class="list-unstyled">');
                                 var i = 0, h = 0;
                                 $.each(baseLayers, function(group, layers_list) {
-                                        zindex = 1;
-
                                         h++;
                                         $.each(layers_list, function(k, v) {
                                                 if(v.layer == map_data.map.layers.defaultLayer.layer) {
-                                                        $("#change_map ul").append('<li class="selected" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;' + v.name + '</a>');
+                                                        $("#change_map ul").append('<li class="selected" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-circle"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                 } else {
-                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\', \'' + zindex + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Change layer" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-circle-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                 }
                                                 layers.push(v.layer);
                                         });
@@ -63,12 +64,10 @@
                                         }
                                 });
                                 $.each(map_data.map.layers.overlayLayers, function(group, layers_list) {
-                                        zindex = 25;
-
                                         i++;
                                         $.each(layers_list, function(k, v) {
                                                 if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
-                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\', \'' + zindex + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
+                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                         layers.push(v.layer);
                                                 }
                                         });
@@ -77,7 +76,7 @@
                                         }
                                 });
                                 current_layer = map_data.map.layers.defaultLayer.layer;
-                                l[map_data.map.layers.defaultLayer.name] = map_data.map.layers.defaultLayer.layer;
+                                l[map_data.map.layers.defaultLayer.name] = defaultLayer;
                                 //control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true});//.addTo(map);
                                 map.invalidateSize();
                                 map.setMaxBounds([[85, -190], [-190, 190]]);
@@ -85,11 +84,8 @@
                                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
 
                                 map.on("zoomend", function() {
-                                        //var layer_data = $.get_level_data(l[current_layer]);
-                                        console.log($.get_current_zoom(), current_layer, l);
-                                        if($.get_current_zoom() > current_layer.maxZoom){
-                                            map.setZoom(layer_data.maxZoom);
-                                        }
+                                        var current_layer_data = $.get_current_layer_options();
+                                        map.options.maxZoom = (current_layer_data.maxZoom - 4);
                                 });
 
                                 if (callback) {
@@ -278,6 +274,17 @@
  *======================================================================================*/
 
         /**
+         * Return the current layer object data
+         */
+        $.get_current_layer_options = function() {
+                var ll = {};
+                $.each(l, function(name, layer_data) {
+                        ll = layer_data.options;
+                });
+                return ll;
+        };
+
+        /**
          * Return the current layer
          */
         $.current_layer = function() { return current_layer; };
@@ -288,17 +295,30 @@
         $.show_layer = function(selected_layer) {
                 var selected_layer_obj = $.parseJSON($.b64_to_utf8(selected_layer)),
                 selected_layer_name = selected_layer_obj.name;
+
                 selected_layer = selected_layer_obj.layer;
                 l[selected_layer_name] = L.tileLayer.provider(selected_layer_obj.layer);
 
-                map.addLayer(l[selected_layer_name]);
-                var layer_data = $.get_level_data(l[selected_layer_name]);
+                var current_layer_data = $.get_current_layer_options(),
+                max_zoom_for_this_layer = parseInt(current_layer_data.maxZoom - 4);
 
-                console.log($.get_current_zoom(), layer_data.maxZoom);
-                if($.get_current_zoom() > layer_data.maxZoom){
-                        map.setZoom(layer_data.maxZoom);
+                map.options.maxZoom = max_zoom_for_this_layer;
+                if($.get_current_zoom() > max_zoom_for_this_layer){
+                        map.invalidateSize();
+                        //l[selected_layer_name]._clearBgBuffer();
+                        setTimeout(function() {
+                                map.setZoom(max_zoom_for_this_layer);
+                        }, 0);
+                } else {
+                        setTimeout(function() {
+                                map.setZoom($.get_current_zoom() - 1);
+                                map.setZoom($.get_current_zoom() + 1);
+                        }, 0);
                 }
+                $.hide_all_layers(selected_layer_name);
+                map.addLayer(l[selected_layer_name]);
                 l[selected_layer_name].setZIndex(selected_layer_obj.zindex);
+
                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
         };
 
@@ -310,26 +330,27 @@
         };
 
         /**
+         * Hide all level 0 layers
+         */
+        $.hide_all_layers = function(selected_layer_obj){
+                $.each(l, function(name, level) {
+                        if(name !== selected_layer_obj.name && selected_layer_obj.zindex === 1) {
+                                var level_data = $.get_level_data(level);
+                                if(level_data !== undefined && level_data.zIndex === 1) {
+                                        $.hide_layer(name);
+                                        delete l[name];
+                                }
+                        }
+                });
+        };
+
+        /**
          * Retrieve the level data
          */
         $.get_level_data = function(level) {
                 if(level.options !== undefined) {
                         return level.options;
                 }
-        };
-
-        /**
-         * Hide all layers except thi given one
-         */
-        $.hide_all_layers_except = function(selected_layer_obj){
-                $.each(l, function(name, level) {
-                        if(name !== selected_layer_obj.name && selected_layer_obj.zindex === 0) {
-                                var level_data = $.get_level_data(level);
-                                if(level_data !== undefined && level_data.zIndex === 0) {
-                                        $.hide_layer(name);
-                                }
-                        }
-                });
         };
 
         /**
@@ -354,7 +375,7 @@
                                         $.hide_layer(selected_layer_obj.name);
                                 }
                         }
-                        $.hide_all_layers_except(selected_layer_obj);
+                        $.hide_all_layers(selected_layer_obj);
                 } else {
                         if($this.hasClass("fa-check-square")) {
                                 $("#change_map a." + selected_layer_obj.layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
