@@ -47,7 +47,7 @@
                                 baseLayers = map_data.map.layers.baseLayers;
                                 overlayLayers = map_data.map.layers.overlayLayers;
 
-                                $("#change_map").append('<ul class="list-unstyled">');
+                                $("#change_map").html('<ul class="list-unstyled">');
                                 var i = 0, h = 0;
                                 $.each(baseLayers, function(group, layers_list) {
                                         h++;
