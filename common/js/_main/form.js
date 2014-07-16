@@ -783,6 +783,14 @@
 					$(this).remove(); $("#main_search").focus();
 					if($("#accordion .panel").length === 0) {
 						$.reset_all_searches(false);
+					} else {
+						var u = 0;
+						$.each($("#accordion .panel").find("div.panel-success:not(.disabled)"), function(i, v) {
+							u++;
+						});
+						if(u === 0) {
+							$(".save_btn").addClass("disabled");
+						}
 					}
 					storage.remove("pgrdg_cache.forms." + search_id);
 					storage.remove("pgrdg_cache.selected_forms." + search_id);
@@ -812,7 +820,7 @@
 					$.reset_contents("results", true);
 					$.reset_contents("map", true);
 				});
-				$("#contents #start").fadeIn(300);
+				$("#contents #start").fadeIn(600);
 				$("input.typeahead.tt-input").val("").focus();
 			});
 		};
@@ -1627,7 +1635,7 @@
 			checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
-				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span>' + '<ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul></li>';
+				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul></li>';
 			} else {
 				content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
 			}
@@ -1723,7 +1731,7 @@
 		if($("#accordion").length === 0) {
 			$(this).append('<div class="panel-group" id="accordion">');
 		} else {
-			$(".collapse").collapse("hide");
+			$(".panel-collapse.collapse").collapse("hide");
 		}
 
 		var root_node = $('<div id="' + options.id + '" class="panel panel-default">'),

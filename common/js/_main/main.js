@@ -306,7 +306,7 @@
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start h1").css("margin-top").replace("px", "") <= 120) {
-							$("#start h1").animate({"margin-top": "120px"}, 200);
+							$("#start h1").animate({"margin-top": "80px"}, 200);
 						}
 						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {

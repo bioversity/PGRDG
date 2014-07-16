@@ -629,6 +629,10 @@ section.container > #contents .carousel-inner {
 	top: 165px;
 	margin-top: -30px;
 	transform: rotate(90deg);
+	-moz-transform:rotate(90deg);
+	-webkit-transform:rotate(90deg);
+	-o-transform:rotate(90deg);
+	-ms-transform:rotate(90deg); 
 }
 .folder_menu > ul {
 	margin-left: 9px;
