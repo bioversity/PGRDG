@@ -279,6 +279,15 @@
  *======================================================================================*/
 
         /**
+         * Retrieve the level data
+         */
+        $.get_level_data = function(level) {
+                if(level.options !== undefined) {
+                        return level.options;
+                }
+        };
+
+        /**
          * Return the current layer object data
          */
         $.get_current_layer_options = function() {
@@ -348,15 +357,6 @@
                                 }
                         }
                 });
-        };
-
-        /**
-         * Retrieve the level data
-         */
-        $.get_level_data = function(level) {
-                if(level.options !== undefined) {
-                        return level.options;
-                }
         };
 
         /**
@@ -905,7 +905,7 @@
                         bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
                         bbx.northeast = [markers.getBounds().getNorthEast().lat, markers.getBounds().getNorthEast().lng];
                         //$.set_center(marker_position.lng, marker_position.lat);
-        	        map.fitBounds([bbx.southwest, bbx.northeast]);
+        	        //map.fitBounds([bbx.southwest, bbx.northeast]);
 
 
                         markers.on("click", function(m) {

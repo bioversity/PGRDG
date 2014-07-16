@@ -249,7 +249,9 @@
 	$.toggle_form_item = function(item, tag) {
 		var $this = item,
 		data = [],
-		$panel, $panel_mask;
+		$panel, $panel_mask,
+		active_forms = {}, af_obj = {},
+		frm_key = $this.closest("div.panel-collapse").parent().attr("id");
 
 		if($this.hasClass("panel-mask")) {
 			$panel = $this.next(".panel");
@@ -285,7 +287,7 @@
 				$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
 
 				var kapi_obj = {};
-				kapi_obj.storage_group = "forms";
+				kapi_obj.storage_group = "forms_data";
 				kapi_obj.loaderType = $panel.find("a.pull-left, a.pull-right");
 				kapi_obj[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_TAG_ENUMERATIONS;
 				kapi_obj.parameters = {};
@@ -341,7 +343,7 @@
 			$panel_mask.fadeOut(300);
 			$(".save_btn").removeClass("disabled");
 		} else {
-			// Anable all items with same tag
+			// Enable all items with same tag
 			$("." + $.md5(tag) + " > div.panel-mask").removeClass("unselectable").attr("onclick", $("." + $.md5(tag) + " > div.panel-mask").attr("noclick")).attr("noclick", "");
 
 			var forms_count = 0;
@@ -368,6 +370,10 @@
 				$(".save_btn").addClass("disabled");
 			}
 			$panel.prev(".panel-mask").css("display: block");
+			console.log(frm_key);
+			if(storage.isSet("pgrdg_cache.selected_forms." + frm_key)) {
+				storage.remove("pgrdg_cache.selected_forms." + frm_key);
+			}
 		}
 	};
 
@@ -652,6 +658,17 @@
 	* @param {Function} callback
 	*/
 	$.execTraitAutocomplete = function(kAPI, callback) {
+		$.get_storage_selected_forms = function() {
+			var qc = {};
+			$.each(storage.get("pgrdg_cache.selected_forms"), function(row_id, query) {
+				$.each(query.active_forms, function(k, v) {
+					qc[k] = v;
+				});
+			});
+			return qc;
+		};
+
+		var form_data = {};
 		if($("#breadcrumb").css("display") == "none") {
 			$("#breadcrumb").fadeIn(200);
 		}
@@ -661,7 +678,6 @@
 					if($(window).width() < 420) {
 						$.left_panel("close");
 					}
-					var selected_forms = {}, form_data = {};
 					$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
 						$("#forms-head #right_btn").on("click", function() {
 							$.reset_all_searches(true);
@@ -673,19 +689,18 @@
 						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 					}
 					$("#forms").fadeIn(300);
+
+					// Fires when user clicks on "Save" button
 					$("#forms-head .btn-group a.save_btn").fadeIn(300, function() {
-						var active_forms = {};
 						$(this).on("click", function() {
+						//	var qcriteria;
 							form_data.history = storage.get("pgrdg_cache.forms");
 							$.each($("#accordion > div.panel-default"), function(k, v) {
+								var active_forms = {}, af_obj = {};
 								frm_keys = $(this).attr("id");
-								selected_forms[frm_keys] = {};
-								selected_forms[frm_keys].request = storage.get("pgrdg_cache.forms." + frm_keys);
-								selected_forms[frm_keys].key = $(this).attr("id");
-								selected_forms[frm_keys].forms = [];
 
 								$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
-									var af_obj = $(this).find("form").serializeObject(),
+									af_obj = $(this).find("form").serializeObject();
 									rt = {};
 
 									switch(af_obj["input-type"]) {
@@ -721,18 +736,20 @@
 											active_forms[af_obj.tags] = rt;
 											break;
 									}
-									selected_forms[frm_keys].forms.push($(this).find("form").serializeObject());
+									storage.set("pgrdg_cache.selected_forms." + frm_keys, {
+										request: storage.get("pgrdg_cache.forms." + frm_keys),
+										key: $(this).attr("id"),
+										forms: $(this).find("form").serializeObject(),
+										active_forms: active_forms
+									});
 								});
 							});
-							form_data.form = selected_forms;
+
 							$("#goto_results_btn, #goto_map_btn").hide();
 							storage.remove("pgrdg_cache.summary");
 							storage.remove("pgrdg_cache.results");
 							storage.remove("pgrdg_cache.map");
-
-							$.show_summary(active_forms);
-							//console.log(operators);
-							//console.log(JSON.stringify(form_data));
+							$.show_summary($.get_storage_selected_forms());
 						});
 					});
 					callback.call(this, response);
@@ -763,12 +780,12 @@
 		apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				$($this).parents(".panel").fadeOut(300, function() {
-					storage.remove("pgrdg_cache.forms." + search_id);
 					$(this).remove(); $("#main_search").focus();
 					if($("#accordion .panel").length === 0) {
-						storage.remove("pgrdg_cache.forms." + search_id);
 						$.reset_all_searches(false);
 					}
+					storage.remove("pgrdg_cache.forms." + search_id);
+					storage.remove("pgrdg_cache.selected_forms." + search_id);
 				});
 			}
 		});
@@ -827,6 +844,13 @@
 				$(this).hide();
 			});
 		});
+	};
+
+	/**
+	 * Remove single breadcrumb link
+	 */
+	$.remove_breadcrumb = function(item) {
+		$("#goto_" + item.toLowerCase() + "_btn").css({"display": "none"});
 	};
 
 	/**
@@ -989,6 +1013,7 @@
 		kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 		kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
 		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = active_forms;
 		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
 		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
@@ -1565,7 +1590,7 @@
 					if($("#node_" + node).html() === "") {
 						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Retriving data...');
 						var objp = {};
-						objp.storage_group = "forms";
+						objp.storage_group = "forms_data";
 						objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 						objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_NODE_ENUMERATIONS;
 						objp.parameters = {};
@@ -1834,6 +1859,8 @@ $(document).ready(function() {
 	$.check_storage(kAPI_OP_LIST_CONSTANTS, function(data) {
 		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
+	$.reset_contents("forms", true);
+	storage.remove("pgrdg_cache.selected_forms");
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {

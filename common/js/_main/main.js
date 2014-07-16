@@ -121,7 +121,16 @@
 				success: function(response) {
 					response.id = $.md5(param);
 					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": {"effective": param, "nob64": param_nob64, "verbose": verbose_param, "obj": object_param}, "response": response});
+						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
+							"date": {"utc": new Date(), "timestamp": $.now()},
+							"query": {
+								"effective": param,
+								"nob64": param_nob64,
+								"verbose": verbose_param,
+								"obj": object_param},
+								"response": response
+							}
+						);
 						if(typeof(opt.loaderType) == "string") {
 							$("#apprise.ask_service").modal("hide");
 							callback(response);
@@ -352,7 +361,15 @@
 			}
 			// Show the content in page
 			$("#" + hash.toLowerCase()).fadeIn(300);
-
+			// Remove all other pages if user returns to the forms page
+			if(hash.toLowerCase() == "forms") {
+				$.remove_breadcrumb("summary");
+				$.reset_contents("summary", true);
+				$.remove_breadcrumb("results");
+				$.reset_contents("results", true);
+				$.remove_breadcrumb("map");
+				$.reset_contents("map", true);
+			}
 			$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
 				var item_id = $(this).attr("id"),
 				ttext = item_id.replace("goto_", "").replace("_btn", "");
