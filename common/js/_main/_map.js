@@ -77,7 +77,7 @@
                                 });
                                 current_layer = map_data.map.layers.defaultLayer.layer;
                                 l[map_data.map.layers.defaultLayer.name] = defaultLayer;
-                                storage.set("pgrdg_cache.map.layers", {"current_layer": map_data.map.layers.defaultLayer});
+                                storage.set("pgrdg_cache.map_data.layers", {"current_layer": map_data.map.layers.defaultLayer});
                                 /*control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true});//.addTo(map);*/
                                 map.invalidateSize();
                                 map.setMaxBounds([[85, -190], [-190, 190]]);
@@ -86,7 +86,7 @@
 
                                 map.on("zoomend", function() {
                                         var current_layer_data = $.get_current_layer_options(),
-                                        selected_layer_obj = storage.get("pgrdg_cache.map.layers.current_layer"),
+                                        selected_layer_obj = storage.get("pgrdg_cache.map_data.layers.current_layer"),
                                         min_zoom_for_this_layer = (selected_layer_obj.min_zoom !== undefined) ? selected_layer_obj.min_zoom : current_layer_data.minZoom,
                                         max_zoom_for_this_layer = (selected_layer_obj.max_zoom !== undefined) ? selected_layer_obj.max_zoom : parseInt(current_layer_data.maxZoom - 4);
                                         map.options.minZoom = min_zoom_for_this_layer;
@@ -323,7 +323,7 @@
                 $.hide_all_layers(selected_layer_name);
                 map.addLayer(l[selected_layer_name]);
                 l[selected_layer_name].setZIndex(selected_layer_obj.zindex);
-                storage.set("pgrdg_cache.map.layers", {"current_layer": selected_layer_obj});
+                storage.set("pgrdg_cache.map_data.layers", {"current_layer": selected_layer_obj});
 
                 $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
         };

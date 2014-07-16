@@ -1084,6 +1084,9 @@
 			$.each(res, function(tag, content) {
 				if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
 					switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
+						case "object":
+							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + content[kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+							break;
 						case "array":
 							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
 								if($.type(v) == "array") {
