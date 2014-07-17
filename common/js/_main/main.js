@@ -344,6 +344,35 @@
 	* @param  {string} hash The hash to manage
 	*/
 	$.manage_url = function(hash) {
+		$.left_panel_behaviour = function(hash) {
+			switch(hash) {
+				case "Forms":
+					$.remove_storage("pgrdg_cache.interface.left_panel");
+					if($(window).width() < 420) {
+						$.left_panel("check");
+					}
+				case "Summary":
+					if($(window).width() < 420) {
+						$.left_panel("close");
+					}
+					break;
+				case "Results":
+					if($(window).width() < 420) {
+						$.left_panel("close");
+					}
+					break;
+				case "Map":
+					if($(window).width() < 420) {
+						$.left_panel("tmp_close");
+					}
+					break;
+				default:
+					if($.left_panel("is_closed")) {
+						$.left_panel("check");
+					}
+					break;
+			}
+		};
 		var active_li = 0,
 		visible_div = 0;
 
@@ -387,15 +416,12 @@
 
 			});
 
+			$.left_panel_behaviour(hash);
 			if(hash == "Map") {
-				$.left_panel("close");
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 				$("#contents .panel_content").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
 			} else {
-				if($.left_panel("is_closed")) {
-					$.left_panel("check");
-				}
 				if(current_path !== "Map" || hash !== "Map") {
 					if(hash.length > 0) {
 						$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
@@ -410,9 +436,22 @@
 	 * Remove storage checking before if exists or is empty
 	 */
 	$.remove_storage = function(name) {
-		if(storage.isSet(name) || storage.isEmpty(name)) {
-			storage.remove(name);
+	//	if(name.indexOf(".") > )
+		var a = "",
+		names = name.split(".");
+		if(names[0] == "pgrdg_cache") {
+			names.shift();
 		}
+		$.each(names, function(k, v) {
+			if(k === 0) {
+				a = "pgrdg_cache." + v;
+			} else {
+				a += "." + names[k];
+			}
+			if(storage.isSet(a) || storage.isSet(a) && storage.isEmpty(a)) {
+				storage.remove(a);
+			}
+		});
 	};
 
 /*=======================================================================================

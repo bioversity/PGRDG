@@ -1869,9 +1869,9 @@ $(document).ready(function() {
 	$.check_storage(kAPI_OP_LIST_CONSTANTS, function(data) {
 		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
-	$.reset_contents("forms", true);
-	$.remove_storage("pgrdg_cache.selected_forms");
-	$.remove_storage("pgrdg_cache.forms_data");
+		$.reset_contents("forms", true);
+		$.remove_storage("pgrdg_cache.selected_forms");
+		$.remove_storage("pgrdg_cache.forms_data");
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {
