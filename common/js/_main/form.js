@@ -377,10 +377,7 @@
 				$(".save_btn").addClass("disabled");
 			}
 			$panel.prev(".panel-mask").css("display: block");
-			console.log(frm_key);
-			if(storage.isSet("pgrdg_cache.selected_forms." + frm_key)) {
-				storage.remove("pgrdg_cache.selected_forms." + frm_key);
-			}
+			$.remove_storage("pgrdg_cache.selected_forms." + frm_key);
 		}
 	};
 
@@ -753,9 +750,9 @@
 							});
 
 							$("#goto_results_btn, #goto_map_btn").hide();
-							storage.remove("pgrdg_cache.summary");
-							storage.remove("pgrdg_cache.results");
-							storage.remove("pgrdg_cache.map");
+							$.remove_storage("pgrdg_cache.summary");
+							$.remove_storage("pgrdg_cache.results");
+							$.remove_storage("pgrdg_cache.map");
 							$.show_summary($.get_storage_selected_forms());
 						});
 					});
@@ -799,8 +796,8 @@
 							$(".save_btn").addClass("disabled");
 						}
 					}
-					storage.remove("pgrdg_cache.forms." + search_id);
-					storage.remove("pgrdg_cache.selected_forms." + search_id);
+					$.remove_storage("pgrdg_cache.forms." + search_id);
+					$.remove_storage("pgrdg_cache.selected_forms." + search_id);
 				});
 			}
 		});
@@ -889,9 +886,7 @@
 			}
 		});
 		if(storage_also) {
-			if(storage.isSet("pgrdg_cache." + content)) {
-				storage.remove("pgrdg_cache." + content);
-			}
+			$.remove_storage("pgrdg_cache." + content);
 		}
 	};
 
@@ -1002,7 +997,7 @@
 		} else {
 			if($("#pgrdg_map").children().length === 0) {
 				map = $.init_map(function(map) {
-					storage.remove("pgrdg_cache.map");
+					$.remove_storage("pgrdg_cache.map");
 					$.reset_all_markers(map, markers);
 					$.add_geojson_cluster(options.res);
 				});
@@ -1875,7 +1870,8 @@ $(document).ready(function() {
 		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
 	});
 	$.reset_contents("forms", true);
-	storage.remove("pgrdg_cache.selected_forms");
+	$.remove_storage("pgrdg_cache.selected_forms");
+	$.remove_storage("pgrdg_cache.forms_data");
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {

@@ -406,6 +406,15 @@
 		}
 	};
 
+	/**
+	 * Remove storage checking before if exists or is empty
+	 */
+	$.remove_storage = function(name) {
+		if(storage.isSet(name) || storage.isEmpty(name)) {
+			storage.remove(name);
+		}
+	};
+
 /*=======================================================================================
 *	KEYBOARD SHORTCUTS
 *======================================================================================*/
