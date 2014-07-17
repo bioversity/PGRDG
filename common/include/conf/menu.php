@@ -61,6 +61,15 @@ $menu["menu"]["top"] = array(
 				"attributes" => array(
 					"href" => "/Conservation_Strategies"
 				)
+			),
+			"Links" => array(
+				"content" => array(
+					"icon" => "fa fa-link",
+					"text" => "Links"
+				),
+				"attributes" => array(
+					"href" => "/Links"
+				)
 			)
 		)
 	),

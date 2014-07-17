@@ -925,8 +925,7 @@
                                                 objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
                                                 objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
                                                 $.ask_to_service(objp, function(marker_content) {
-                                                        $marker_body.remove();
-                                                        $("#marker_content .modal-content").html('<div class="modal-body"></div>');
+                                                        $("#marker_content .modal-title").html('<span class="fa-map-marker text-danger fa fa-lg"></span> ' + '<span class="text-primary">' + m.layer.feature.properties.id + '</span>');
                                                         $.each(marker_content.results, function(domain, rows) {
                                                                 //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
                                                                 $("#marker_content").find(".modal-body").html($.parse_row_content(rows));

@@ -347,10 +347,11 @@
 		$.left_panel_behaviour = function(hash) {
 			switch(hash) {
 				case "Forms":
-					$.remove_storage("pgrdg_cache.interface.left_panel");
+					//$.remove_storage("pgrdg_cache.interface.left_panel");
 					if($(window).width() < 420) {
-						$.left_panel("check");
+					//	$.left_panel("check");
 					}
+					break;
 				case "Summary":
 					if($(window).width() < 420) {
 						$.left_panel("close");
@@ -416,7 +417,7 @@
 
 			});
 
-			$.left_panel_behaviour(hash);
+		//	$.left_panel_behaviour(hash);
 			if(hash == "Map") {
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 				$("#contents .panel_content").hide();

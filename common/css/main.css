@@ -253,7 +253,7 @@ section.container {
 	margin: 15px 0;
 }
 div.back_indent {
-	margin-left: -21px;
+	margin-left: -6px;
 }
 div.back_indent a {
 	text-decoration: none;
@@ -835,6 +835,10 @@ ul.list-group.transparent ul {
 	position: fixed;
 	z-index: 2;
 }
+.modal-body ul.list-unstyled {
+	margin: 0;
+}
+
 #selected_zone {
 	color: rgba(255, 255, 255, 0.8);
 	font-family: "HelveticaNeueW01-45Ligh";
