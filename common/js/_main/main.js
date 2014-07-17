@@ -243,8 +243,8 @@
 					$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 						$.resize_forms_mask();
 						$(this).removeClass("visible");
-						if($("#start h1").css("margin-top").replace("px", "") >= 85) {
-							$("#start h1").animate({"margin-top": "85px"}, 200);
+						if($("#start > div").css("margin-top").replace("px", "") >= 85) {
+							$("#start > div").animate({"margin-top": "85px"}, 200);
 						}
 
 						// Callback
@@ -258,13 +258,13 @@
 						$("#breadcrumb .breadcrumb").animate({"padding-left": "40px"}, 200);
 					}
 					if($(window).width() >= 420) {
-						$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "35px"}, 200, function() {
+						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
 								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 							}
 						});
 					} else {
-						$(".panel_content-head, .panel_content-body, #start h1").animate({"padding-left": "15px"}, 200, function() {
+						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
 								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 							}
@@ -292,7 +292,7 @@
 					} else {
 						$("#left_panel").addClass("visible").css({"left": "-" + width});
 						$.left_panel("close");
-						$("#start h1").animate({"margin-top": "85px"});
+						$("#start > div").animate({"margin-top": "85px"});
 					}
 					$.left_panel(left_panel_status);
 					break;
@@ -305,8 +305,8 @@
 					}
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
-						if($("#start h1").css("margin-top").replace("px", "") <= 120) {
-							$("#start h1").animate({"margin-top": "80px"}, 200);
+						if($("#start > div").css("margin-top").replace("px", "") <= 120) {
+							$("#start > div").animate({"margin-top": "80px"}, 200);
 						}
 						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
@@ -326,7 +326,7 @@
 						});
 						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 					});
-					$(".panel_content-head, .panel_content-body, #start h1").delay(200).animate({"padding-left": (movement+15) + "px"}, 150);
+					$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
 					// Save the left_panel position
 					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
 					break;

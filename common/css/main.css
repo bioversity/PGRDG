@@ -249,6 +249,7 @@ section.container {
 #forms-head h4,
 #forms-head h5,
 #forms-head h6 {
+	color: #333;
 	margin: 15px 0;
 }
 div.back_indent {
@@ -393,15 +394,14 @@ a.text-info, span.text-info, span.info {
 
 #start {
 	display: block;
-	padding-left: 35px;
+	padding-left: 25px;
+	padding-right: 25px;
 }
-#start h1 {
+#start h1[unselectable] {
 	color: #d0d0d0;
 	font-family: "HelveticaNeueW01-45Ligh";
 	font-size: 35px;
-	margin-top: 80px;
-	margin-left: -35px;
-	padding-left: 10px;
+	text-indent: -20px;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -412,8 +412,24 @@ a.text-info, span.text-info, span.info {
 	cursor: default;
 }
 @media only screen and (min-width:420px) {
-	#start h1 {
+	#start h1[unselectable] {
 		margin-top: 120px;
+		margin-left: 15px;
+	}
+}
+#start h1[unselectable]:hover > span {
+	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+#start > div {
+	margin-top: 80px;
+	padding-left: 10px;
+}
+#start div.content {
+	margin-top: 91px;
+}
+@media only screen and (min-width:420px) {
+	#start div.content {
+		margin-top: 41px;
 	}
 }
 #start h1:hover > span {
@@ -632,7 +648,7 @@ section.container > #contents .carousel-inner {
 	-moz-transform:rotate(90deg);
 	-webkit-transform:rotate(90deg);
 	-o-transform:rotate(90deg);
-	-ms-transform:rotate(90deg); 
+	-ms-transform:rotate(90deg);
 }
 .folder_menu > ul {
 	margin-left: 9px;

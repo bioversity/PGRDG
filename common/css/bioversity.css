@@ -643,7 +643,7 @@ strong,dt { font-family:"HelveticaNeueW01-65Medi";font-weight:normal }
 .align-right { text-align:right }
 .align-justify { text-align:justify }
 .csc-textpic-caption { font:italic 0.857em 'HelveticaNeueW01-55Roma';color:#4d4d4d }
-.csc-textpic-intext-left-nowrap .csc-textpic-text, .csc-textpic-intext-right-nowrap .csc-textpic-text { overflow:hidden }
+.csc-textpic-intext-left-nowrap .csc-textpic-text, .csc-textpic-intext-right-nowrap .csc-textpic-text { text-align: left; overflow:hidden }
 .csc-textpic-below img { padding-top:10px }
 figcaption.csc-textpic-caption { text-align:right;display:block;width:100%;margin-right:-3px }
 .gecko figcaption.csc-textpic-caption { width:100% }
@@ -723,7 +723,7 @@ nav#TopMenu ul li.act a { color:#EEAF30 }
 #nav ul.lvl1 li .navImg a img:hover { border:1p solid #fff }
 #main #normal.left70 { float:left;max-width:620px;width:100% }
 FOOTER.footer .col { width:23%;padding:1%;float:left }
-FOOTER.footer .col p, FOOTER.footer .col li { font-size:0.8em;font-family:'HelveticaNeueW01-55Roma';color:#5F604B }
+FOOTER.footer .col p, FOOTER.footer .col li { text-align: left !important; font-size:0.8em !important; font-family:'HelveticaNeueW01-55Roma' !important; color:#5F604B !important; }
 FOOTER.footer .col a { font-family:'HelveticaNeueW01-55Roma';color:#5F604B }
 FOOTER.footer .col a:hover { color:#000;text-decoration:underline }
 FOOTER.footer ul { padding:0;margin:0;list-style:none }

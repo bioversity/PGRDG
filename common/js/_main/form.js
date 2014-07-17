@@ -904,7 +904,11 @@
 		$.manage_url($.ucfirst(type));
 
 		if(type !== "map") {
-			$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
+			if(type == "summary") {
+				$("#" + type + "-head .content-title").html("Results " + type.toLowerCase());
+			} else {
+				$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
+			}
 
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
