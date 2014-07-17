@@ -64,6 +64,7 @@
 		ids = dictionary[kAPI_DICTIONARY_IDS],
 		cluster = dictionary[kAPI_DICTIONARY_CLUSTER],
 		tags = dictionary.tags,
+		return_key = false,
 		form = "",
 		forms = {},
 		html_form = "",
@@ -146,6 +147,7 @@
 									}
 								}
 								*/
+								return_key = false;
 								break;
 							case kTYPE_URL: // URL
 							case kTYPE_STRING: // String
@@ -179,6 +181,7 @@
 									}
 								}
 								*/
+								return_key = false;
 								break;
 							case kTYPE_ENUM: // Enum
 							case kTYPE_SET: // Enum-set
@@ -190,12 +193,15 @@
 									});
 									*/
 								});
+								return_key = true;
 								break;
 							case kTYPE_BOOLEAN:
 								form = $.add_switch();
+								return_key = false;
 								break;
 							default:
 								form = $.add_simple_input();
+								return_key = false;
 								break;
 						}
 					}
@@ -223,8 +229,9 @@
 					//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
-					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
-					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + '</form></div></div></div>';
+					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />',
+					info_box = (!return_key) ? '<small class="pull-right help-block"><span class="fa fa-warning"></span> Return button disabled</small>' : '';
+					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + info_box + '</form></div></div></div>';
 				});
 			});
 
