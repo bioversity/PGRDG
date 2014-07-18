@@ -262,6 +262,9 @@ div.back_indent {
 div.back_indent a {
 	text-decoration: none;
 }
+.back_indent div.collapse, .back_indent div.collapsing {
+	margin-left: 23px !important;
+}
 .panel_content-head {
 	background-color: #fff;
 	box-shadow: 6px 0 6px #d0d0d0;
