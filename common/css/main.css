@@ -30,14 +30,11 @@ header {
 	position: fixed;
 	width: 100%;
 	z-index: 3;
-	/*background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
+	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -moz-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: webkit-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -o-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -ms-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
-	*/
-	background-image: none !important;
-	background-color: transparent !important;
 	overflow: visible !important;
 }
 header .container .top {
@@ -144,6 +141,9 @@ footer ul li + li:before {
 	#nav .navbar-toggle {
 		margin: 35px 15px 0 0;
 	}
+}
+#nav .navbar-collapse.collapse, #nav .navbar-collapse.collapsing {
+	background-color: #fff;
 }
 #nav .navbar-collapse.collapse, #nav .navbar-collapse.collapsing {
 	border-bottom-right-radius: 5px;
