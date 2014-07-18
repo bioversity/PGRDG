@@ -102,6 +102,7 @@ footer ul li + li:before {
 */
 
 #nav {
+	border-bottom: #c1d82f 1px solid;
 }
 #nav.map, header.map #nav {
 	height: 75px;
@@ -143,9 +144,6 @@ footer ul li + li:before {
 	}
 }
 #nav .navbar-collapse.collapse, #nav .navbar-collapse.collapsing {
-	background-color: #fff;
-}
-#nav .navbar-collapse.collapse, #nav .navbar-collapse.collapsing {
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
 	/*background-color: rgba(255, 255, 255, 0.9);*/
@@ -153,10 +151,13 @@ footer ul li + li:before {
 	margin: 0 auto;
 	width: 100%;
 }
+#nav .navbar-collapse.collapse ul, #nav .navbar-collapse.collapsing ul {
+	background-color: #fff;
+}
 @media (min-width: 868px) {
 	#nav .navbar-collapse.collapse {
 		float: right;
-		margin-top: -20px;
+		margin-top: -21px;
 	}
 }
 #nav .navbar-collapse.collapse.in {
@@ -265,12 +266,16 @@ div.back_indent a {
 .back_indent div.collapse, .back_indent div.collapsing {
 	margin-left: 23px !important;
 }
-.panel_content-head {
+.panel_content-head, .panel_content-footer {
 	background-color: #fff;
 	box-shadow: 6px 0 6px #d0d0d0;
+	margin: 0 -15px;
 }
-.panel_content-head .btn-group {
+.panel_content-head .btn-group, .panel_content-footer .btn-group {
 	margin-top: 20px;
+}
+.panel_content-footer .btn-group {
+	margin-bottom: 20px;
 }
 .panel_content-body {
 	margin-top: 20px;
@@ -609,48 +614,7 @@ section.container > #contents .carousel-inner {
 #left_panel tr:last-child div.panel-body > div {
 	/*padding-bottom: 200px;*/
 }
-/*
-.folder_menu {
-	display: block;
-	height: 30px;
-	line-height: 25px;
-	padding: 0;
-	position: relative;
-	right: -259px;
-	top: 227px;
-	transform: rotate(90deg);
-	width: 100%;
-}
-.folder_menu > ul {
-	height: 30px;
-	line-height: 30px;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-}
-.folder_menu > ul li {
-	background-color: #fff;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	border-top-left-radius: 18px 25px;
-	border-top-right-radius: 18px 25px;
-	box-shadow: 0 -4px 8px #ccc;
-	display: inline-block;
-	line-height: 30px;
-	white-space: nowrap;
-	position: relative;
-}
-.folder_menu li + li {
-	margin-left: -15px;
-	z-index: -1;
-}
-.folder_menu li:first-child {
-	border-top-left-radius: 3px;
-}
-.folder_menu li:first-child a {
-	margin-left: 5px;
-}
-*/
+
 .folder_menu {
 	position: relative;
 	right: 258px;

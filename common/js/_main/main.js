@@ -255,14 +255,14 @@
 						$("#breadcrumb .breadcrumb").animate({"padding-left": "40px"}, 200);
 					}
 					if($(window).width() >= 420) {
-						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
+						$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
 								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 								$("#start h1[unselectable]").animate({"margin-left": "35px"}, 200);
 							}
 						});
 					} else {
-						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
+						$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
 								//$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 							}
@@ -328,7 +328,7 @@
 						});
 						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 					});
-					$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
+					$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
 					// Save the left_panel position
 					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
 					break;

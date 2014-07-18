@@ -682,8 +682,8 @@
 					if($(window).width() < 420) {
 						$.left_panel("close");
 					}
-					$("#forms-head #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
-						$("#forms-head #right_btn").on("click", function() {
+					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+						$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
 							$.reset_all_searches(true);
 						});
 					});
@@ -691,11 +691,12 @@
 					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
 						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 					}
 					$("#forms").fadeIn(300);
 
 					// Fires when user clicks on "Save" button
-					$("#forms-head .btn-group a.save_btn").fadeIn(300, function() {
+					$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
 						$(this).on("click", function() {
 						//	var qcriteria;
 							form_data.history = storage.get("pgrdg_cache.forms");
@@ -813,8 +814,8 @@
 		}
 		var next = false;
 		$.reset = function(){
-			$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
-				$("#forms-head .content-title").text("");
+			$("#forms-head #right_btn, #forms-head .save_btn, #forms-footer #right_btn, #forms-footer .save_btn").fadeOut(300, function() {
+				$("#forms-head .content-title, #forms-footer .content-title").text("");
 				$("#forms-body .content-body").html("");
 				$("section.container").animate({"padding-top": "39px"}, 300, function(){
 					// Reset breadcrumb and panels
@@ -841,7 +842,7 @@
 				});
 			}
 		} else {
-			$("#forms-head #right_btn, #forms-head .save_btn").fadeOut(300, function() {
+			$("#forms-head #right_btn, #forms-head .save_btn, #forms-footer #right_btn, #forms-footer .save_btn").fadeOut(300, function() {
 				$.reset();
 			});
 		}
@@ -879,6 +880,7 @@
 			} else {
 				if(content == "forms") {
 					$(this).find("#" + content + "-head").html('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div><div class="clearfix"></div>');
+					$(this).find("#" + content + "-footer").html('<div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div>');
 				} else {
 					$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
 				}
