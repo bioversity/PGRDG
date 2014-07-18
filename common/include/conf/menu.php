@@ -81,7 +81,7 @@ $menu["menu"]["top"] = array(
 		"attributes" => array(
 			"href" => "/Search"
 		),
-		"divider" => "vertical-divider"
+		//"divider" => "vertical-divider"
 	),
 	/*
 	"Map" => array(

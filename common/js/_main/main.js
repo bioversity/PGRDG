@@ -243,9 +243,6 @@
 					$("#left_panel").animate({"left": "-" + width}, 200, "swing", function() {
 						$.resize_forms_mask();
 						$(this).removeClass("visible");
-						if($("#start > div").css("margin-top").replace("px", "") >= 85) {
-							$("#start > div").animate({"margin-top": "85px"}, 200);
-						}
 
 						// Callback
 						if (typeof callback == "function") {
@@ -261,12 +258,13 @@
 						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
 								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
+								$("#start h1[unselectable]").animate({"margin-left": "35px"}, 200);
 							}
 						});
 					} else {
 						$(".panel_content-head, .panel_content-body, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							if(document.location.hash !== "#Map") {
-								$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
+								//$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 							}
 						});
 					}
@@ -292,7 +290,6 @@
 					} else {
 						$("#left_panel").addClass("visible").css({"left": "-" + width});
 						$.left_panel("close");
-						$("#start > div").animate({"margin-top": "85px"});
 					}
 					$.left_panel(left_panel_status);
 					break;
@@ -306,7 +303,12 @@
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start > div").css("margin-top").replace("px", "") <= 120) {
-							$("#start > div").animate({"margin-top": "80px"}, 200);
+							if($(window).width() > 420) {
+								$("#start > div").animate({"margin-top": "-80px"}, 200);
+							}
+						}
+						if($(window).width() > 420) {
+							$("#start h1[unselectable]").animate({"margin-left": "15px"}, 200);
 						}
 						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {

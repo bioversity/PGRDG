@@ -49,6 +49,7 @@
 
                                 $("#change_map").html('<ul class="list-unstyled">');
                                 var i = 0, h = 0;
+                                // Levels
                                 $.each(baseLayers, function(group, layers_list) {
                                         h++;
                                         $.each(layers_list, function(k, v) {
@@ -63,16 +64,17 @@
                                                 $("#change_map ul").append('<li class="divider"></li>');
                                         }
                                 });
+                                // Overlays
                                 $.each(map_data.map.layers.overlayLayers, function(group, layers_list) {
                                         i++;
                                         $.each(layers_list, function(k, v) {
                                                 if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
-                                                        $("#change_map ul").append('<li onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
+                                                        $("#change_map ul").append('<li class="keep_open" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                         layers.push(v.layer);
                                                 }
                                         });
                                         if(i < $.obj_len(map_data.map.layers.overlayLayers)) {
-                                                $("#change_map ul").append('<li class="divider"></li>');
+                                                $("#change_map ul").append('<li class="divider keep_open"></li>');
                                         }
                                 });
                                 current_layer = map_data.map.layers.defaultLayer.layer;
@@ -424,6 +426,7 @@
 
                                         $("#" + action + "_btn").parent("li").addClass("selected");
                                         $("#" + action).fadeIn(function() {
+                                                $(this).addClass("open");
                                                 switch(action) {
                                                         case "find_location":
                                                                 if($(this).find("input").val().length === 0) {
@@ -437,10 +440,8 @@
                                                                         var li = $("#change_map li");
                                                                         var liSelected;
 
-                                                                        $("html").click(function(e) {
-                                                                                if($(e.target).attr("id") == "change_map_btn" || $(e.target).hasClass("ion-social-buffer")) {
-                                                                                        return false;
-                                                                                } else {
+                                                                        $("body, #pgrdg_map").on("mousedown", function(e) {
+                                                                                if(!$(e.target).closest("li").hasClass("keep_open")) {
                                                                                         $.sub_toolbox("close");
                                                                                 }
                                                                         });
@@ -495,14 +496,19 @@
                                                 $("#" + action + "_btn").parent("li").removeClass("selected");
                                         } else {
                                                 $("#" + action + "_btn").parent("li").removeClass("selected");
-                                                $("#" + action).fadeOut(300, function() {
-                                                        switch(action) {
-                                                                case "change_map":
-                                                                        break;
-                                                                case "tools":
-                                                                        break;
-                                                        }
-                                                });
+                                                switch(action) {
+                                                        case "find_location":
+                                                                break;
+                                                        case "change_map":
+                                                                break;
+                                                        case "tools":
+                                                                break;
+                                                        default:
+                                                                $("#" + action).fadeOut(300, function() {
+
+                                                                });
+                                                                break;
+                                                }
                                         }
                                 }
                         };

@@ -674,8 +674,9 @@ a:link { font-weight:normal !important }
 ul,ol { margin-left:20px }
 .csc-textpic-intext-left-nowrap header { padding-bottom:5px }
 /*.container { min-width:320px;max-width:940px;margin:0 auto;text-align:left }
-*/ HEADER.main { display:block;clear:both;overflow:hidden;border-bottom:1px solid #c1d82f }
+HEADER.main { display:block;clear:both;overflow:hidden;border-bottom:1px solid #c1d82f }
 HEADER .container .top { width:100%;position:relative }
+*/
 #logo { float:left;width:400px }
 #logo img { float:left;margin-top:15px;padding-right:15px;border-right:2px solid #e6e6e6 }
 p.tagline { vertical-align:bottom;display:table-cell;height:100px;font-size:0.8em;padding: 0 0 15px;color:#5F604B }
