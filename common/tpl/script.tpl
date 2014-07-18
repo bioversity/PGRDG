@@ -62,3 +62,4 @@
 	<script type="text/javascript" src="API/?definitions=api&keep_update=true"></script>
 	<script type="text/javascript" src="API/?definitions=tags&keep_update=true"></script>
 	<script type="text/javascript" src="API/?definitions=types&keep_update=true"></script>
+	<?php include("common/include/conf/google_analytics.php"); ?>
