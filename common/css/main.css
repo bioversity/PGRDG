@@ -29,7 +29,7 @@ header > div.container {
 header {
 	position: fixed;
 	width: 100%;
-	z-index: 3;
+	z-index: 2;
 	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -moz-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: webkit-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
