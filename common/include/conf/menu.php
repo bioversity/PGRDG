@@ -26,13 +26,52 @@ $menu["menu"]["top"] = array(
 			"title" => "Go to Main Page"
 		)
 	),
+	"Blog" => array(
+		"content" => array(
+			"icon" => "fa fa-comments-o",
+			"text" => "Blog"
+		),
+		"attributes" => array(
+			"href" => "javascript: void(0);",
+			"title" => "The PGRDG Blog"
+		)
+	),
 	"About us" => array(
 		"content" => array(
-			"icon" => "fa fa-leaf",
+			"icon" => "fa fa-tencent-weibo",
 			"text" => "About us"
 		),
 		"attributes" => array(
-			"href" => "/About_us"
+			"href" => "javascript: void(0);"
+		),
+		"childs" => array(
+			"About us" => array(
+				"content" => array(
+					"icon" => "fa fa-leaf",
+					"text" => "About us"
+				),
+				"attributes" => array(
+					"href" => "/About_us"
+				)
+			),
+			"How_the_system_works" => array(
+				"content" => array(
+					"icon" => "fa fa-gears",
+					"text" => "How the system works"
+				),
+				"attributes" => array(
+					"href" => "/How_the_system_works"
+				)
+			),
+			"Feedback" => array(
+				"content" => array(
+					"icon" => "fa fa-comment-o",
+					"text" => "Give us your feedback"
+				),
+				"attributes" => array(
+					"href" => "/Feedback"
+				)
+			),
 		)
 	),
 	"National Inventories" => array(
@@ -41,7 +80,7 @@ $menu["menu"]["top"] = array(
 			"text" => "National Inventories"
 		),
 		"attributes" => array(
-			"href" => "/National_Inventories"
+			"href" => "javascript: void(0);"
 		),
 		"childs" => array(
 			"National Inventories" => array(
@@ -71,7 +110,8 @@ $menu["menu"]["top"] = array(
 					"href" => "/Links"
 				)
 			)
-		)
+		),
+		"divider" => "vertical-divider"
 	),
 	"Search" => array(
 		"content" => array(
@@ -80,7 +120,7 @@ $menu["menu"]["top"] = array(
 		),
 		"attributes" => array(
 			"href" => "/Search"
-		),
+		)//,
 		//"divider" => "vertical-divider"
 	),
 	/*

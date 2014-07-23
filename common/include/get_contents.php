@@ -10,5 +10,4 @@
 			break;
 	}
 	?>
-	<?php include("common/tpl/footer.tpl"); ?>
 </section>

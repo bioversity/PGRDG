@@ -482,6 +482,22 @@ section.container > #contents #content {
 	padding: 0 10px 10px;
 	width: 100%;
 }
+@media only screen and (max-width:420px) {
+	section.container > #contents #content a {
+		display: block;
+		max-width: 250px;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+section.container > #contents #content div.full {
+	height: 100%;
+	left: 0;
+	position: fixed;
+	right: 0;
+	width: 100%;
+}
 section.container > #contents .carousel-indicators {
 	margin: 0 20px;
 	right: 0;

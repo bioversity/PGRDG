@@ -1,4 +1,3 @@
-
 <h3 id="what-is-the-plant-genetic-resource-diversity-gateway">What is the Plant Genetic Resource Diversity Gateway?</h3>
 <p>The Plant Genetic Resources Diversity Gateway aims to promote and facilitate the use of crop wild relatives and landraces in breeding and crop improvement by providing traits and QTL information of potential value to breeders and other users of germplasm. It also provides information on checklists, inventories and conservation strategies of crop wild relatives and land races at national level and regional levels of use to conservation managers, scientists and policymakers.</p>
 <p>The Plant Genetic Resources Diversity Gateway  started as a product of a project known as 'PGR Secure'.  This collaborative project, with the full name 'Novel characterization of crop wild relative and landrace resources as a basis for improved crop breeding' was funded under the EU Seventh Framework Programme THEME KBBE.2010.1.1-03 on 'Characterization of biodiversity resources for wild crop relatives to improve crops by breeding'.</p>
@@ -56,6 +55,27 @@
 
 <br />
 <hr />
+<br />
+
+<h3>How the System works</h3>
+<p>
+        <a href="/How_the_system_works">
+                <img class="img-responsive" src="common/media/img/pgrdg_data.png">
+        </a>
+</p>
+<p class="text-right"><a href="/How_the_system_works" class="lead">Learn more &rsaquo;</a></p>
+
+<br />
+<hr />
+<br />
+
+<h3>Give us your fedback</h3>
+<p>We would appreciate if you could provide us with feedback on the gateway by completing the feedback survey at <a href="/Feedback">this page</a> or at the following link: <a target="_blank" href="https://www.surveymonkey.com/s/PGRDiversityGateway">https://www.surveymonkey.com/s/PGRDiversityGateway</a></p>
+<p>Please do give us your genuine feedback which will help us to improve the system.</p>
+
+<br />
+<hr />
+<br />
 
 <h4 id="citation">Citation</h4>
 <p>You are citing information that institutes have entered into the <b>Plant Genetic Resource Diversity Gateway</b><br />

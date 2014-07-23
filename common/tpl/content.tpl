@@ -25,14 +25,21 @@
 				if($page == "Links") {
 					print '<h1>Links to other information systems</h1>';
 				} else {
-					print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
-				}
+					if($page !== "Feedback") {
+						print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
+					}				}
 			}
 
 			require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
 			?>
 		</div>
 		<?php
+	}
+	?>
+	<hr />
+	<?php
+	if($page !== "Feedback") {
+		include("common/tpl/footer.tpl");
 	}
 	?>
 </div>
