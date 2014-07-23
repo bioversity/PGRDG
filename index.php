@@ -1,6 +1,11 @@
 <?php
 //header("Content-type: text/plain");
+require_once("common/include/funcs/nl2.php");
+require_once("common/include/funcs/readmore.php");
+require_once("common/include/lib/php-markdown-extra-extended/markdown.php");
+require_once("common/include/funcs/optimize_markdown.php");
 require_once("common/include/classes/parse_json_config.class.php");
+
 $site_config = new parse_json_config();
 $map_config = new parse_json_config("common/include/conf/map.json");
 //print_r($site_config->menu("map_toolbox", "menu"));

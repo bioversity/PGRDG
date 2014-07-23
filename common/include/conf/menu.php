@@ -32,7 +32,7 @@ $menu["menu"]["top"] = array(
 			"text" => "Blog"
 		),
 		"attributes" => array(
-			"href" => "javascript: void(0);",
+			"href" => "/Blog",
 			"title" => "The PGRDG Blog"
 		)
 	),

@@ -21,16 +21,22 @@
 			<?php
 			if(is_home()) {
 				print '<h1>Plant Genetic Resources Diversity Gateway<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small></h1>';
+
+				require_once("common/tpl/pages/home.tpl");
+				print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));
+			} else if ($page == "Conservation_Strategies") {
+				require_once("common/tpl/pages/Conservation Strategies.tpl");
 			} else {
 				if($page == "Links") {
 					print '<h1>Links to other information systems</h1>';
 				} else {
-					if($page !== "Feedback") {
+					if($page !== "Feedback" && $page !== "Blog") {
 						print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
-					}				}
+					}
+				}
+				print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));
 			}
 
-			require_once("common/tpl/pages/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".tpl");
 			?>
 		</div>
 		<?php

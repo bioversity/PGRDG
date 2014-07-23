@@ -65,6 +65,13 @@ header.map #logo, #logo.map {
 	height: 65px;
 	max-width: 275px;
 }
+section > article header {
+	background: none !important;
+	overflow: visible !important;
+	position: initial !important;
+	width: auto !important;
+	z-index: auto !important;
+}
 /*
 footer {
 	display: none;
