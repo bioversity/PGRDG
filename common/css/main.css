@@ -65,6 +65,12 @@ header.map #logo, #logo.map {
 	height: 65px;
 	max-width: 275px;
 }
+section > article {
+	border-top: #e0e0e0 1px solid;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+}
 section > article header {
 	background: none !important;
 	overflow: visible !important;
@@ -376,7 +382,9 @@ span.info {
 span.info:hover {
 	text-decoration: none;
 }
-a.text-info, span.text-info, span.info {
+td a.text-info, td span.text-info, td span.info,
+panel a.text-info, panel span.text-info,
+panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 	cursor: help;
 }
 
@@ -485,18 +493,22 @@ section.container > #contents {
 section.container > #contents #content {
 	margin: auto;
 	max-width: 925px;
-	min-width: 280px !important;
-	padding: 0 10px 10px;
+	min-width: 240px !important;
+	padding-bottom: 10px;
 	width: 100%;
 }
 @media only screen and (max-width:420px) {
 	section.container > #contents #content a {
-		display: block;
+		display: inline-block;
 		max-width: 250px;
-		overflow-x: hidden;
+		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+}
+section.container > #contents p + h3 {
+	margin-top: 1.8em;
+	padding-bottom: 0;
 }
 section.container > #contents #content div.full {
 	height: 100%;

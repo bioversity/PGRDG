@@ -34,7 +34,17 @@
 						print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
 					}
 				}
-				print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));
+				switch($page) {
+					case "Blog":
+						require_once("common/tpl/pages/Blog.tpl");
+						break;
+					case "Feedback":
+						require_once("common/tpl/pages/Feedback.tpl");
+						break;
+					default:
+						print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));
+						break;
+				}
 			}
 
 			?>

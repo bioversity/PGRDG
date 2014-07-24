@@ -8,7 +8,7 @@ if($page !== "Search") {
 					<div class="csc-textpic-imagewrap">
 						<figure class="csc-textpic-image csc-textpic-last">
 							<a title="CGIAR" target="_blank" href="http://www.cgiar.org/">
-								<img alt="CGIAR logo" src="common/media/img/cgiar-logo.jpg">
+								<img alt="CGIAR logo" src="<?php print $domain; ?>/common/media/img/cgiar-logo.jpg">
 							</a>
 						</figure>
 					</div>
@@ -19,10 +19,10 @@ if($page !== "Search") {
 				</div>
 			</div>
 			<div class="col-lg-4">
-				<img src="common/media/img/pgr_secure_logo.jpg" style="height: 62px;">
+				<img src="<?php print $domain; ?>/common/media/img/pgr_secure_logo.jpg" style="height: 62px;">
 			</div>
 			<div class="col-lg-4 text-right">
-				<img src="common/media/img/eu_flag.jpg" style="height: 62px;">
+				<img src="<?php print $domain; ?>/common/media/img/eu_flag.jpg" style="height: 62px;">
 			</div>
 		</div>
 		<div class="centered" style="padding: 15px 0; border-top: 1px solid rgb(221, 221, 221);">

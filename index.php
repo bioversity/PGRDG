@@ -24,6 +24,7 @@ if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 } else {
 	$page = "";
 }
+$domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>

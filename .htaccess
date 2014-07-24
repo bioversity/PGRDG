@@ -40,7 +40,7 @@ RewriteBase /
 	RewriteCond %{REQUEST_URI} !^/(share_data|share_data/.*?)($|/)
 	RewriteRule (.*)\ (.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	RewriteRule (.*)\+(.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
-	# Replace double quotes «"» with single quotes «'»
+	# Replace double quotes ï¿½"ï¿½ with single quotes ï¿½'ï¿½
 	RewriteRule (.*)\"(.*) http://%{SERVER_NAME}/$1'$2 [R=303,L]
 	# Replace all double-slashes "//" with single slash "/"
 	RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
@@ -58,6 +58,8 @@ RewriteBase /
 	RewriteRule ^([^/\.]+)/([^/]+)/?$ /index.php?p=$1&s=$2 [QSA]
 	RewriteCond $0 !^(API|API/.*?)($|/)
 	RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/?$ /index.php?p=$1&s=$2&ss=$3 [QSA]
+	RewriteCond $0 !^(API|API/.*?)($|/)
+	RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/([^/\.]+)/?$ /index.php?p=$1&s=$2&ss=$3&t=$4 [QSA]
 
 # ----------- ERROR PAGES -----------
 #
@@ -87,4 +89,3 @@ RewriteBase /
 
 	# Send all blocked requests to 403 error page
 	RewriteRule ^(.*)$ index.php [F,L]
-
