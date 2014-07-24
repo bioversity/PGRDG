@@ -646,6 +646,32 @@
 	};
 
 
+
+	$.get_statistics = function() {
+		$("#statistics").text("Retriving statistics data...");
+
+		var objp = {};
+		objp.storage_group = "ask";
+		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		objp.parameters = {};
+		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
+		$.ask_to_service(objp, function(response) {
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+				var res = response[kAPI_RESPONSE_RESULTS],
+				stats = [];
+				console.log(res);
+				$.each(res, function(domain, statistics) {
+					stats.push('<b>' + $.number(statistics.count) + '</b> ' + statistics[kTAG_LABEL]);
+				});
+				$("#statistics").html(stats.join(", "));
+			}
+		});
+	};
+
 /*======================================================================================*/
 
 $(document).ready(function() {
@@ -697,6 +723,9 @@ $(document).ready(function() {
 				$.manage_url();
 			};
 			$.manage_url();
+		}
+		if(current_path == "Se") {
+			$.get_statistics();
 		}
 	}
 });

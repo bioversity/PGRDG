@@ -30,7 +30,7 @@
 				if($page == "Links") {
 					print '<h1>Links to other information systems</h1>';
 				} else {
-					if($page !== "Feedback" && $page !== "Blog") {
+					if($page !== "Feedback" && $page !== "Blog" && $page !== "Se") {
 						print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
 					}
 				}
@@ -40,6 +40,12 @@
 						break;
 					case "Feedback":
 						require_once("common/tpl/pages/Feedback.tpl");
+						break;
+					case "Se":
+						require_once("common/tpl/pages/Se.tpl");
+						break;
+					case "Advanced_search":
+						//header("Location: " . $domain . "/Search");
 						break;
 					default:
 						print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));

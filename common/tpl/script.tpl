@@ -14,6 +14,8 @@
 <link rel="stylesheet" href="<?php print $domain; ?>/common/js/chosen/chosen-bootstrap.css" type="text/css" />
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/chosen/chosen.jquery.js"></script>
 <!--script type="text/javascript" src="<?php print $domain; ?>/common/js/bootstrap-multiselect/js/bootstrap-multiselect.js"></script-->
+<!-- Jquery number formatter -->
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery-number/jquery.number.min.js"></script>
 <!-- Typeahead -->
 <link rel="stylesheet" href="<?php print $domain; ?>/common/js/typeahead/typeahead.css" type="text/css" />
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/typeahead/typeahead.bundle.js"></script>
