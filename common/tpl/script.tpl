@@ -21,6 +21,9 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/typeahead/typeahead.bundle.js"></script>
 <!-- Jquery hotkeys -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery.hotkeys/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/typeahead/typeahead.bundle.js"></script>
+<!-- jQuery-Knob -->
+<!--script type="text/javascript" src="<?php print $domain; ?>/common/js/jQuery-Knob/js/jquery.knob.js"></script-->
 <!-- ToucSwipe -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/TouchSwipe/jquery.touchSwipe.min.js"></script>
 

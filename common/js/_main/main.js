@@ -646,9 +646,11 @@
 	};
 
 
-
+	/**
+	 *  Get statistics about indexed data
+	 */
 	$.get_statistics = function() {
-		$("#statistics").text("Retriving statistics data...");
+		$("#se input").focus();
 
 		var objp = {};
 		objp.storage_group = "ask";
@@ -663,11 +665,31 @@
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				var res = response[kAPI_RESPONSE_RESULTS],
 				stats = [];
-				console.log(res);
 				$.each(res, function(domain, statistics) {
-					stats.push('<b>' + $.number(statistics.count) + '</b> ' + statistics[kTAG_LABEL]);
+					stats.push(statistics[kTAG_LABEL] + ': <b>' + $.number(statistics.count) + '</b>');
 				});
-				$("#statistics").html(stats.join(", "));
+				$("#statistics .loader").html(stats.join("<br />"));
+			}
+		});
+	};
+
+	/**
+	 * Log users
+	 */
+	$.login = function(data) {
+		var objp = {};
+		objp.storage_group = "ask";
+		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_USER;
+		objp.parameters = {};
+		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = ['sonia','tiagogateway'];
+		$.ask_to_service(objp, function(response) {
+			console.log(response);
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+				console.log(response[kAPI_RESPONSE_RESULTS]);
 			}
 		});
 	};
@@ -687,32 +709,18 @@ $(document).ready(function() {
 			}
 			return apprise(string, args, callback);
 		};
-		$("#loginform").jCryption();
 		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
 		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
 			$(this).tooltip("hide");
 		});
 
-		$("#btn-login").click(function() {
-
-		});
 		$.shortcuts();
 		$("#login").on("shown.bs.modal", function() {
 			$("#login_btn").removeClass("disabled").attr("disabled", false).click(function() {
-				$.cryptAjax({
-					url: "API/index.php",
-					dataType: "json",
-					type: "POST",
-					data: {
-						jCryption: $.jCryption.encrypt($("#loginform").serialize(), password),
-						type: "login"
-					},
-					success: function(response) {
-						if(developer_mode) {
-							//console.log(response);
-						}
-					}
-				});
+				var user_data = [];
+				user_data.push($("#login-username").val());
+				user_data.push($("#login-password").val());
+				$.login(user_data);
 			});
 			$("#login-username").focus();
 		});

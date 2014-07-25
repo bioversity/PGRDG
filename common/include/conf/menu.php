@@ -153,6 +153,7 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
+	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",
@@ -164,7 +165,6 @@ $menu["menu"]["top"] = array(
 			"data-target" => "#login"
 		)
 	)
-	*/
 );
 $menu["menu"]["map_toolbox"] = array(
 	"Find_location" => array(

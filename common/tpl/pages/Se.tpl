@@ -1,11 +1,16 @@
-<div style="margin: 10% auto; text-align: center;">
-        <img style="width: 15em; padding-bottom: 3em;" src="<?php print $domain; ?>/common/media/svg/pgrsecure_logo.svg" />
-
+<div id="se">
+        <h1 unselectable="on">Collected data.</h1>
+        <br />
         <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search..." />
-                <span class="input-group-btn">
-                        <a href="<?php print $domain; ?>/Advanced_search" class="btn btn-default-grey"><span class="fa fa-gear"></span></a>
-                </span>
+                <span class="input-group-addon"><span class="fa fa-search"></span></span>
         </div>
-        <div id="statistics" class="help-block"></div>
+        <div id="statistics" class="help-block">
+                <big><a href="<?php print $domain; ?>/Advanced_search">Advanced search</a></big>
+                <br />
+                <br />
+                <small class="loader">
+                        <span class="fa fa-refresh fa-spin"></span> Retriving statistics data...
+                </small>
+        </div>
 </div>

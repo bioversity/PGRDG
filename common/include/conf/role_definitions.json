@@ -1,0 +1,42 @@
+{
+        "Legend": {
+                "Description": "Split the array keys in two characters: the first one indicates the context, the second one indicates the function on the context.",
+                "Contexts functions standard": {
+                        "A": "Add",
+                        "E": "Edit",
+                        "D": "Delete",
+                        "U": "upload",
+                        "V": "view",
+                        "M": "move, manage order"
+                }
+        },
+        "Users": {
+                "UA": "Add users",
+                "UE": "Edit users data",
+                "UD": "Delete users",
+                "US": "Subscribe users",
+                "UV": "view users data"
+        },
+        "Contents": {
+                "CA": "Add contents",
+                "CE": "Edit contents",
+                "CD": "Delete contents",
+                "CU": "Upload files to contents",
+                "MA": "Add item to menu",
+                "ME": "Edit item of menu",
+                "MD": "Delete item of menu",
+                "MM": "Move items of menu"
+        },
+        "Blog": {
+                "BA": "Add posts",
+                "BE": "Edit posts",
+                "BD": "Delete posts",
+                "BU": "Upload files"
+        },
+        "Data": {
+                "DA": "Add data",
+                "DE": "Edit data",
+                "DD": "Delete data",
+                "DU": "Upload data"
+        }
+}

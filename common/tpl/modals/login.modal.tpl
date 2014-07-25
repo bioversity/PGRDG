@@ -1,5 +1,5 @@
 <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<form id="loginform" class="form-horizontal">
+	<form id="loginform" class="form-horizontal" onsubmit="return false;">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
