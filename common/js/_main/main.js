@@ -66,7 +66,7 @@
 			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
 			object_param[kAPI_REQUEST_PARAMETERS] = opt.parameters[kAPI_REQUEST_PARAMETERS];
 		}
-		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param))) {
+		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
@@ -104,11 +104,6 @@
 				element_data = $element.html();
 				$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
 			}
-			if(developer_mode) {
-				console.group("Storage \"" + opt.storage_group + "\" saved...");
-				console.warn("id: ", $.md5(param));
-				console.groupEnd();
-			}
 			$.cryptAjax({
 				url: "API/",
 				dataType: "json",
@@ -121,16 +116,24 @@
 				success: function(response) {
 					response.id = $.md5(param);
 					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-						storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
-							"date": {"utc": new Date(), "timestamp": $.now()},
-							"query": {
-								"effective": param,
-								"nob64": param_nob64,
-								"verbose": verbose_param,
-								"obj": object_param},
-								"response": response
+						if(opt.storage_group !== "") {
+							storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
+								"date": {"utc": new Date(), "timestamp": $.now()},
+								"query": {
+									"effective": param,
+									"nob64": param_nob64,
+									"verbose": verbose_param,
+									"obj": object_param},
+									"response": response
+								}
+							);
+							if(developer_mode) {
+								console.group("Storage \"" + opt.storage_group + "\" saved...");
+								console.warn("id: ", $.md5(param));
+								console.warn(param_nob64);
+								console.groupEnd();
 							}
-						);
+						}
 						if(typeof(opt.loaderType) == "string") {
 							$("#apprise.ask_service").modal("hide");
 							callback(response);
@@ -674,6 +677,38 @@
 	};
 
 	/**
+	 * Fulltext search from given text
+	 */
+	$.search_fulltext = function(text) {
+		if(text.length >= 3) {
+			console.log("Searching '" + text + "'...'");
+
+			var objp = {};
+			objp.storage_group = "search";
+			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+			objp.parameters = {};
+			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+			objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = {};
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = text;
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
+			$.ask_to_service(objp, function(response) {
+				console.warn(response);
+				if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+					var res = response[kAPI_RESPONSE_RESULTS];
+
+					//$.show_summary(res);
+				} else {
+					alert("This search has produced no results")
+				}
+			});
+		}
+	};
+
+	/**
 	 * Log users
 	 */
 	$.login = function(data) {
@@ -734,6 +769,11 @@ $(document).ready(function() {
 		}
 		if(current_path == "Se") {
 			$.get_statistics();
+
+			var query = $.parse_params(url.query);
+			if($.obj_len(query) > 0) {
+				$.search_fulltext(query.q);
+			}
 		}
 	}
 });

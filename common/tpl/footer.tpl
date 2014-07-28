@@ -1,9 +1,9 @@
 <?php
 if($page !== "Search") {
 	?>
-	<footer>
+	<footer class="container-fluid">
 		<div class="row">
-			<div class="col-lg-4 col-xs-4">
+			<div>
 				<div class="csc-textpic csc-textpic-intext-left-nowrap">
 					<div class="csc-textpic-imagewrap">
 						<figure class="csc-textpic-image csc-textpic-last">
@@ -18,10 +18,10 @@ if($page !== "Search") {
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-4 col-xs-4">
+			<div>
 				<img src="<?php print $domain; ?>/common/media/img/pgr_secure_logo_small.png" style="height: 62px;">
 			</div>
-			<div class="col-lg-4 col-xs-4 text-right">
+			<div class="text-right">
 				<img src="<?php print $domain; ?>/common/media/img/eu_flag.jpg" style="height: 62px;">
 			</div>
 		</div>

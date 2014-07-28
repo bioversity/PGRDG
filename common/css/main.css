@@ -99,46 +99,61 @@ footer {
 	text-align: center;
 	width: 100%;
 }
-@media only screen and (max-width:420px) {
-	.csc-textpic-text {
-		display: none;
-	}
-}
-@media only screen and (max-width:500px) {
-	.csc-textpic-text {
-		display: none;
-	}
-}
 .backgrounded footer {
 	background-color: transparent;
-	position: absolute;
-	max-width: 545px;
+	width: 33%;
+	margin-top: 18%;
 	margin-right: 1%;
 	padding: 0 10px;
-	overflow: hidden;
-	right: 0;
 	height: auto;
+	position: fixed;
+	bottom: 0;
+	right: 0;
 }
-.backgrounded footer .csc-textpic-text {
-	display: none;
+@media only screen and (max-width:1024px) {
+	.backgrounded footer {
+		right: 3%;
+    		width: 57%;
+		font-size: 10px;
+	}
 }
 @media only screen and (max-width:420px) {
 	.backgrounded footer {
 		background-color: transparent;
-		left: 50%;
-		margin-left: -50%;
-		position: absolute;
-		right: 50%;
-		overflow-y: auto;
-		height: 75px;
-		max-width: 100%;
+		width: 100%;
+		margin-top: 18%;
+		float: right;
+		clear: right;
+		position: initial;
 	}
 }
 .backgrounded img {
 	max-height: 40px;
 }
-.backgrounded footer div:last-child {
+.backgrounded footer .row > div {
+	display: inline-block;
+	width: 33%;
+	text-align: center;
+}
+.backgrounded footer .row > div:first-child {
+	float: left;
+	text-align: left;
 	font-size: 10px;
+}
+.backgrounded footer .row > div:last-child {
+	font-size: 10px;
+	float: right;
+	text-align: right;
+}
+@media only screen and (max-width:420px) {
+	.csc-textpic-text {
+		display: none !important;
+	}
+}
+@media only screen and (max-width:710px) {
+	.csc-textpic-text {
+		display: none !important;
+	}
 }
 
 footer ul {
@@ -466,7 +481,7 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 #start {
 	display: block;
 }
-#start h1[unselectable], #se h1[unselectable] {
+#start h1[unselectable], #se h1[unselectable], #se h1[unselectable] + h2 {
 	color: #d0d0d0;
 	font-family: "HelveticaNeueW01-45Ligh";
 	font-size: 2.3em;
@@ -487,6 +502,16 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 	margin-bottom: 1em;
 	text-indent: 0;
 }
+#se h1[unselectable] + h2 {
+	margin: 0;
+	border: 0px none;
+	color: #aaa;
+}
+@media only screen and (max-width:1024px) {
+	#se h1[unselectable] {
+		margin-top: 0 !important;
+	}
+}
 @media only screen and (max-width:420px) {
 	#start h1[unselectable], #se h1[unselectable] {
 		margin-top: 120px;
@@ -499,6 +524,15 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 }
 #start h1[unselectable]:hover > span {
 	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+#se h1[unselectable] + h2 {
+	border: 0 none;
+	color: #aaa;
+	font-size: 2em;
+	margin: -1em 0 1em 0;
+	padding: 0;
+	text-decoration: none;
+	text-indent: 0;
 }
 #start > div {
 	margin-top: -80px;
@@ -541,6 +575,11 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 section.backgrounded {
 	background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 50% 50% no-repeat;
 }
+@media only screen and (max-width:1024px) {
+	section.backgrounded {
+		background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 70% -30% no-repeat;
+	}
+}
 @media only screen and (max-width:420px) {
 	section.backgrounded {
 		background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 70% -30% no-repeat;
@@ -554,9 +593,15 @@ section.backgrounded #se {
 	width: 33%;
 	box-shadow: 0 0 10em 2em #fff inset, 0 0 4em 1em #fff;
 }
+@media only screen and (max-width:1024px) {
+	section.backgrounded #se {
+		width: 60%;
+	}
+}
 @media only screen and (max-width:420px) {
 	section.backgrounded #se {
-		margin: 10% 5% 0 0;
+		margin: 10% 5% 0;
+		width: 90%;
 	}
 }
 section.backgrounded #se .input-group {
@@ -569,6 +614,22 @@ section.backgrounded #se #statistics {
 	position: relative;
 	margin-bottom: 0;
 	z-index: 1;
+}
+
+section #se_p {
+	padding: 20px 0 0 70px;
+	width: 50%;
+}
+@media only screen and (max-width:1024px) {
+	section #se_p {
+		width: 80%;
+	}
+}
+@media only screen and (max-width:420px) {
+	section #se_p {
+		padding: 20px 0 0 0;
+		width: 100%;
+	}
 }
 
 section.container > #contents {

@@ -16,7 +16,7 @@
 			"defaultLayer": {
 				"name": "Satellite",
 				"layer": "Esri.WorldImagery",
-				"min_zoom": 0,
+				"min_zoom": 3,
 				"max_zoom": 18
 			},
 			"baseLayers": {
@@ -24,7 +24,7 @@
 					{
 						"name": "Satellite",
 						"layer": "Esri.WorldImagery",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 18,
 						"zindex": 1
 
@@ -32,14 +32,14 @@
 					{
 						"name": "Terrain",
 						"layer": "Esri.WorldTerrain",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 8,
 						"zindex": 1
 					},
 					{
 						"name": "Physical",
 						"layer": "Esri.WorldPhysical",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 8,
 						"zindex": 1
 					}
@@ -48,28 +48,28 @@
 					{
 						"name": "Cycle",
 						"layer": "Thunderforest.OpenCycleMap",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 18,
 						"zindex": 1
 					},
 					{
 						"name": "Outdoors",
 						"layer": "Thunderforest.Outdoors",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 18,
 						"zindex": 1
 					},
 					{
 						"name": "Streets",
 						"layer": "OpenStreetMap.HOT",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 18,
 						"zindex": 1
 					},
 					{
 						"name": "Streets (black & white)",
 						"layer": "OpenStreetMap.BlackAndWhite",
-						"min_zoom": 0,
+						"min_zoom": 3,
 						"max_zoom": 18,
 						"zindex": 1
 					}

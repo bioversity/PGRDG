@@ -1,4 +1,4 @@
-<section class="container <?php print (strtolower($page) == "se") ? "backgrounded" : ""; ?>">
+<section class="container <?php print (strtolower($page) == "se" && !isset($_GET["q"])) ? "backgrounded" : ""; ?>">
 	<?php
 	switch(strtolower($page)) {
 		case "search":

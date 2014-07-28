@@ -142,6 +142,32 @@ $.linkify = function(inputText) {
 };
 
 /**
+ * Parse query string paramaters into an object.
+ * taken from https://gist.github.com/kares/956897
+ *
+ * @param {string} query
+ */
+$.parse_params = function(query) {
+        var re = /([^&=]+)=?([^&]*)/g,
+        decodeRE = /\+/g, // Regex for replacing addition symbol with a space
+        decode = function(str) {
+                return decodeURIComponent(str.replace(decodeRE, " ") );
+        },
+        params = {},
+        e;
+        while(e = re.exec(query)) {
+                var k = decode( e[1] ), v = decode( e[2] );
+                if (k.substring(k.length - 2) === '[]') {
+                        k = k.substring(0, k.length - 2);
+                        (params[k] || (params[k] = [])).push(v);
+                } else {
+                        params[k] = v;
+                }
+        }
+        return params;
+};
+
+/**
  * Detect touch device
  * @return {Boolean}
  */
