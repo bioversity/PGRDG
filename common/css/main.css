@@ -142,6 +142,7 @@ footer .row.centered {
 }
 .backgrounded footer .row > div {
 	font-size: 10px;
+	height: 42px;
 }
 @media only screen and (max-width:420px) {
 	.csc-textpic-text {
@@ -156,9 +157,6 @@ footer .row.centered {
 		clear: right;
 		right: 0;
 		position: initial;
-	}
-	.backgrounded footer .row > div {
-		height: 42px;
 	}
 }
 @media only screen and (max-height:500px) {
