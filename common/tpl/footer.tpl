@@ -25,7 +25,7 @@ if($page !== "Search") {
 				<img src="<?php print $domain; ?>/common/media/img/eu_flag.jpg" style="height: 62px;">
 			</div>
 		</div>
-		<div class="centered" style="padding: 15px 0; border-top: 1px solid rgb(221, 221, 221);">
+		<div class="row centered">
 			<a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" rel="license"><img src="http://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" style="border-width:0" alt="Creative Commons License"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" rel="license">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.<br />
 			<a href="/Terms and Conditions of Use">Terms and Conditions of Use</a>
 		</div>

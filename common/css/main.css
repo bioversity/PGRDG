@@ -99,60 +99,98 @@ footer {
 	text-align: center;
 	width: 100%;
 }
+footer .row > div {
+	display: inline-block;
+	width: 33%;
+	height: 62px;
+	margin-bottom: 10px;
+	text-align: center;
+}
+footer .row > div:first-child {
+	float: left;
+	text-align: left;
+}
+footer .row > div:last-child {
+	float: right;
+	text-align: right;
+}
+footer .row.centered {
+	padding: 15px 0;
+	border-top: 1px solid #ccc;
+}
+
 .backgrounded footer {
 	background-color: transparent;
 	width: 33%;
 	margin-top: 18%;
 	margin-right: 1%;
-	padding: 0 10px;
 	height: auto;
 	position: fixed;
 	bottom: 0;
-	right: 0;
+	right: 1%;
 }
 @media only screen and (max-width:1024px) {
 	.backgrounded footer {
 		right: 3%;
-    		width: 57%;
+		width: 57%;
 		font-size: 10px;
-	}
-}
-@media only screen and (max-width:420px) {
-	.backgrounded footer {
-		background-color: transparent;
-		width: 100%;
-		margin-top: 18%;
-		float: right;
-		clear: right;
-		position: initial;
+		padding: 0 10px;
 	}
 }
 .backgrounded img {
 	max-height: 40px;
 }
 .backgrounded footer .row > div {
-	display: inline-block;
-	width: 33%;
-	text-align: center;
-}
-.backgrounded footer .row > div:first-child {
-	float: left;
-	text-align: left;
 	font-size: 10px;
-}
-.backgrounded footer .row > div:last-child {
-	font-size: 10px;
-	float: right;
-	text-align: right;
 }
 @media only screen and (max-width:420px) {
 	.csc-textpic-text {
 		display: none !important;
 	}
+	.backgrounded footer {
+		background-color: transparent;
+		width: 100%;
+		padding: 0 15px;
+		margin-top: 18%;
+		float: right;
+		clear: right;
+		right: 0;
+		position: initial;
+	}
+	.backgrounded footer .row > div {
+		height: 42px;
+	}
+}
+@media only screen and (max-height:500px) {
+	.backgrounded footer {
+		background-color: transparent;
+		width: 60%;
+		padding: 0 15px;
+		margin-top: 18%;
+		float: right;
+		clear: right;
+		right: 0;
+		position: initial;
+	}
+}
+@media only screen and (max-height:600px) {
+	.backgrounded footer {
+		background-color: transparent;
+		width: 100%;
+		padding: 0 15px;
+		margin-top: 18%;
+		float: right;
+		clear: right;
+		right: 0;
+		position: initial;
+	}
 }
 @media only screen and (max-width:710px) {
 	.csc-textpic-text {
 		display: none !important;
+	}
+	.backgrounded footer .row > div {
+		height: 42px;
 	}
 }
 
@@ -508,6 +546,11 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 	color: #aaa;
 }
 @media only screen and (max-width:1024px) {
+	#se h1[unselectable] {
+		margin-top: -1em !important;
+	}
+}
+@media only screen and (max-width:710px) {
 	#se h1[unselectable] {
 		margin-top: 0 !important;
 	}
