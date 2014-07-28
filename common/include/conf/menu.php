@@ -162,7 +162,8 @@ $menu["menu"]["top"] = array(
 		"attributes" => array(
 			"href" => "javascript:void(0);",
 			"data-toggle" => "modal",
-			"data-target" => "#login"
+			"data-target" => "#login",
+			"id" => "login_menu_btn"
 		)
 	)
 );

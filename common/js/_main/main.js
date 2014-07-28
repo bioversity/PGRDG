@@ -712,6 +712,36 @@
 	 * Log users
 	 */
 	$.login = function(data) {
+		$.get_user_data = function(resp) {
+			if(resp !== undefined) {
+				$.each(resp, function(obj, data){
+					var user_data = {
+						local: {
+							username: data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							pass: data[kTAG_CONN_PASS][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							type: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							role: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							creation_date: data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP]
+						},
+						domain: data[kTAG_DOMAIN][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						name: data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						lastname: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						email: data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						role: data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						job: {
+							authority: data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							task: {
+								label: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+								description: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]
+							}
+						}
+
+					};
+					console.log(user_data);
+					return user_data;
+				});
+			}
+		};
 		var objp = {};
 		objp.storage_group = "ask";
 		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_USER;
@@ -722,9 +752,21 @@
 		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
 		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = ['sonia','tiagogateway'];
 		$.ask_to_service(objp, function(response) {
-			console.log(response);
-			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-				console.log(response[kAPI_RESPONSE_RESULTS]);
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+				var $li = $("#login_menu_btn").closest("li"),
+				user_data = $.get_user_data(response[kAPI_RESPONSE_RESULTS]);
+				console.log(user_data);
+				/*
+
+				$("#login").modal("close");
+				$li.addClass("btn-group");
+				$("#login_menu_btn").html('<span class="fa fa-user"></span> ' + user_data.name);
+				if($li.find("ul.dropdown-menu").length === 0) {
+					$li.append('<ul class="dropdown-menu" role="menu">');
+					$li.find("ul").append('<li>Profile</li>');
+					console.log(jQuery.inArray("BA", user_data));
+				}
+				*/
 			}
 		});
 	};
