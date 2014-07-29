@@ -461,8 +461,8 @@
 	/**
 	 * Remove storage checking before if exists or is empty
 	 */
+
 	$.remove_storage = function(name) {
-	//	if(name.indexOf(".") > )
 		var a = "",
 		names = name.split(".");
 		if(names[0] == "pgrdg_cache") {
@@ -701,8 +701,6 @@
 	 */
 	$.search_fulltext = function(text) {
 		if(text.length >= 3) {
-			console.log("Searching '" + text + "'...'");
-
 			var objp = {};
 			objp.storage_group = "summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;

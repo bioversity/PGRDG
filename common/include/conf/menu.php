@@ -26,6 +26,7 @@ $menu["menu"]["top"] = array(
 			"title" => "Go to Main Page"
 		)
 	),
+	/*
 	"Blog" => array(
 		"content" => array(
 			"icon" => "fa fa-comments-o",
@@ -36,6 +37,7 @@ $menu["menu"]["top"] = array(
 			"title" => "The PGRDG Blog"
 		)
 	),
+	*/
 	"About us" => array(
 		"content" => array(
 			"icon" => "fa fa-tencent-weibo",
@@ -122,7 +124,7 @@ $menu["menu"]["top"] = array(
 			"href" => "/Search"
 		)//,
 		//"divider" => "vertical-divider"
-	),
+	)
 	/*
 	"Map" => array(
 		"content" => array(
@@ -153,7 +155,6 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
-	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",
@@ -166,6 +167,7 @@ $menu["menu"]["top"] = array(
 			"id" => "login_menu_btn"
 		)
 	)
+	*/
 );
 $menu["menu"]["map_toolbox"] = array(
 	"Find_location" => array(
