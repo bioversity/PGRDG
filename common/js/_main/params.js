@@ -189,4 +189,6 @@ url = $.url().attr(),
 url_paths = url.path.split("/"),
 query = $.parse_params(url.query),
 current_path = url_paths[url_paths.length - 1],
-developer_mode = true;
+last_version = "",
+local_version = "",
+developer_mode = false;

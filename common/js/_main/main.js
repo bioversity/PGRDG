@@ -480,6 +480,27 @@
 		});
 	};
 
+	$.check_version = function() {
+		var local_version = "";
+		$.reset_storage = function(last_version) {
+			storage.remove("pgrdg_cache");
+			storage.set("pgrdg_cache.version", last_version);
+		};
+
+		$.get("https://api.github.com/repos/bioversity/PGRDG/tags", function(v){
+			last_version = v[0].name;
+
+			if(storage.isSet("pgrdg_cache.version")) {
+				if(storage.get("pgrdg_cache.version") !== last_version) {
+					$.reset_storage(last_version);
+				}
+			} else {
+				$.reset_storage(last_version);
+			}
+		});
+	};
+
+
 /*=======================================================================================
 *	KEYBOARD SHORTCUTS
 *======================================================================================*/
@@ -722,7 +743,7 @@
 						$("#se_p").fadeIn(300);
 					});
 				} else {
-					alert("This search has produced no results")
+					alert("This search has produced no results");
 				}
 			});
 		}
@@ -794,6 +815,8 @@
 /*======================================================================================*/
 
 $(document).ready(function() {
+	$.check_version();
+
 	if(!$.browser_cookie_status()) {
 		apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
 	} else {
