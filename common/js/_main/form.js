@@ -897,7 +897,7 @@
 	* @param  {string} type    The panel to activate
 	* @param  {object} options (res, label)
 	*/
-	$.activate_panel = function(type, options) {
+	$.activate_panel = function(type, options, callback) {
 		options = $.extend({
 			res: "",
 			label: ""
@@ -915,89 +915,89 @@
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
 				$.each(options.res.results, function(domain, values) {
-					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\">View raw data <span class=\"fa fa-th\"></span></a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "View on map <span class=\"ionicons ion-map\"></span>") + "</a>" : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
+					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
 			} else {
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
 				rows = options.res[kAPI_RESPONSE_RESULTS];
 				$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
-					/**
-					 * Parse cell content and display helps if present
-					 * @param  {string|object} disp The text or object that will be parsed
-					 * @return {string}      The html string to place iside cell
-					 */
-					$.cycle_disp = function(disp) {
-						if($.type(disp) == "object") {
-							return disp[kAPI_PARAM_RESPONSE_FRMT_DISP] + " " + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "");
-						} else if($.type(disp) == "array") {
-							return disp.join(", ");
+				/**
+				 * Parse cell content and display helps if present
+				 * @param  {string|object} disp The text or object that will be parsed
+				 * @return {string}      The html string to place iside cell
+				 */
+				$.cycle_disp = function(disp) {
+					if($.type(disp) == "object") {
+						return disp[kAPI_PARAM_RESPONSE_FRMT_DISP] + " " + ((disp[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info pull-right" data-toggle="popover" data-content="' + $.html_encode(disp[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "");
+					} else if($.type(disp) == "array") {
+						return disp.join(", ");
+					} else {
+						return disp;
+					}
+				};
+
+				/**
+				* Open/close row
+				* @param  {string} id Row id
+				*/
+				$.expand_row = function(res_id, id) {
+					var $icon = $("#" + $.md5(id)).prev("tr").find("td:first-child a > span");
+
+					if($icon.hasClass("fa-rotate-90")) {
+						// Row is closed
+						$("#" + $.md5(id)).slideUp(600);
+						$icon.removeClass("fa-rotate-90");
+					} else {
+						// Row is opened
+						$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Waiting...</center>');
+						$.show_raw_row_content(res_id, id);
+						$("#" + $.md5(id)).slideDown(600);
+						$icon.addClass("fa-rotate-90");
+					}
+				};
+
+				var c_count = $.obj_len(cols),
+				column = "",
+				general_column = "",
+				actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
+				affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
+				limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
+				skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
+
+				// Create table header
+				$.each(cols, function(col_id, col_data) {
+					column += '<td><b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b> ' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '</td>';
+					general_column += '<td class="col_' + col_id + '"></td>';
+				});
+
+				$("table#" + options.res.id).html('<thead><tr><td></td>' + column + '</tr></thead><tbody></tbody>');
+				$.each(rows, function(row_id, row_data) {
+					// Create empty rows
+					$("table#" + options.res.id + " tbody").append('<tr id="tr_' + $.md5(row_id) + '" class="expandable" onclick="$.expand_row(\'' + options.res.id + '\', \'' + row_id + '\');"><td align="center"><a href="javascript:void(0);" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>' + general_column + '</tr>');
+					$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(row_id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><div><ul class="list-group transparent">' + '</ul></div></td></tr>');
+
+					// Place contents in each table cell
+					$.each(row_data, function(row_col_id, cell_data) {
+						$("tr#tr_" + $.md5(row_id) + ' td.col_' + row_col_id).html($.cycle_disp(cell_data[kAPI_PARAM_RESPONSE_FRMT_DISP]));
+					});
+				});
+				$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
+				$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
+				$("table#" + options.res.id + " td a:not(.btn-default-white)").popover({
+					container: "body",
+					placement: function(pop, element){
+						// Move popover on the left if we are on the last column
+						if($(element).parent().is("td:last-child")) {
+							return "left";
 						} else {
-							return disp;
+							return "top";
 						}
-					};
-
-					/**
-					* Open/close row
-					* @param  {string} id Row id
-					*/
-					$.expand_row = function(res_id, id) {
-						var $icon = $("#" + $.md5(id)).prev("tr").find("td:first-child a > span");
-
-						if($icon.hasClass("fa-rotate-90")) {
-							// Row is closed
-							$("#" + $.md5(id)).slideUp(600);
-							$icon.removeClass("fa-rotate-90");
-						} else {
-							// Row is opened
-							$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Waiting...</center>');
-							$.show_raw_row_content(res_id, id);
-							$("#" + $.md5(id)).slideDown(600);
-							$icon.addClass("fa-rotate-90");
-						}
-					};
-
-					var c_count = $.obj_len(cols),
-					column = "",
-					general_column = "",
-					actual = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_ACTUAL],
-					affected = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED],
-					limit = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_LIMIT],
-					skipped = options.res[kAPI_RESPONSE_PAGING][kAPI_PAGING_SKIP];
-
-					// Create table header
-					$.each(cols, function(col_id, col_data) {
-						column += '<td><b>' + col_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b> ' + ((col_data[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? '<a href="javascript:void(0);" class="text-info" data-toggle="popover" data-content="' + $.html_encode(col_data[kAPI_PARAM_RESPONSE_FRMT_INFO]) + '"><span class="fa fa-question-circle"></span></a>' : "") + '</td>';
-						general_column += '<td class="col_' + col_id + '"></td>';
-					});
-
-					$("table#" + options.res.id).html('<thead><tr><td></td>' + column + '</tr></thead><tbody></tbody>');
-					$.each(rows, function(row_id, row_data) {
-						// Create empty rows
-						$("table#" + options.res.id + " tbody").append('<tr id="tr_' + $.md5(row_id) + '" class="expandable" onclick="$.expand_row(\'' + options.res.id + '\', \'' + row_id + '\');"><td align="center"><a href="javascript:void(0);" class="text-muted"><span class="fa fa-chevron-right"></span></a></td>' + general_column + '</tr>');
-						$("table#" + options.res.id + " tbody").append('<tr id="' + $.md5(row_id) + '" class="detail"><td colspan="' + (c_count + 1) + '"><div><ul class="list-group transparent">' + '</ul></div></td></tr>');
-
-						// Place contents in each table cell
-						$.each(row_data, function(row_col_id, cell_data) {
-							$("tr#tr_" + $.md5(row_id) + ' td.col_' + row_col_id).html($.cycle_disp(cell_data[kAPI_PARAM_RESPONSE_FRMT_DISP]));
-						});
-					});
-					$("table#" + options.res.id + " thead").prepend('<tr><td colspan="' + (c_count + 1) + '">' + $.paging_btns(options, actual, affected, limit, skipped) + '<br /></td></tr>');
-					$("table#" + options.res.id).append('<tfoot><tr><td colspan="' + (c_count + 1) + '"><br />' + $.paging_btns(options, actual, affected, limit, skipped) + '</td></tr></tfoot>');
-					$("table#" + options.res.id + " td a:not(.btn-default-white)").popover({
-						container: "body",
-						placement: function(pop, element){
-							// Move popover on the left if we are on the last column
-        						if($(element).parent().is("td:last-child")) {
-        							return "left";
-        						} else {
-        							return "top";
-        						}
-						},
-						html: "true",
-						trigger: "hover"
-					});
-					$("table#" + options.res.id + " td a.btn-default-white").tooltip();
-					// $("table#" + options.res.id + " form a");
+					},
+					html: "true",
+					trigger: "hover"
+				});
+				$("table#" + options.res.id + " td a.btn-default-white").tooltip();
+				// $("table#" + options.res.id + " form a");
 			}
 			$("#contents #" + type + "").fadeIn(300);
 		} else {
@@ -1013,7 +1013,9 @@
 			}
 			$("#pgrdg_map").fadeIn(600);
 		}
-
+		if (jQuery.type(callback) == "function") {
+			callback.call(this);
+		}
 	};
 
 
@@ -1892,4 +1894,8 @@ $(document).ready(function() {
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
 	}*/
+
+	if($.obj_len(query) > 0) {
+		$.search_fulltext(query.q);
+	}
 });

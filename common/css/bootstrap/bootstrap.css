@@ -2093,8 +2093,8 @@ fieldset[disabled] .btn {
 	  border-color: #aec12e;
 	}
 	.btn-default .badge {
-	  color: #c1d82f;
-	  background-color: #333;
+	  color: #666;
+	  background-color: #efefef;
 	}
         .bootstrap-switch-primary {
                 background-color: #c1d82f !important;

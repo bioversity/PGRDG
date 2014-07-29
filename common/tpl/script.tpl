@@ -31,7 +31,7 @@
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/_main/params.js"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/_main/main.js"></script>
 	<?php
-	if(strtolower($page) == "map" || strtolower($page) == "search") {
+	if(strtolower($page) == "map" || strtolower($page) == "search" || strtolower($page) == "advanced_search") {
 		?>
 		<!-- OpenLayers2 -->
 			<!--

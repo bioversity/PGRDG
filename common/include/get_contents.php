@@ -1,9 +1,9 @@
-<section class="container <?php print (strtolower($page) == "se" && !isset($_GET["q"])) ? "backgrounded" : ""; ?>">
+<section class="container <?php print (strtolower($page) == "search" && !isset($_GET["q"])) ? "backgrounded" : ""; ?>">
 	<?php
 	switch(strtolower($page)) {
-		case "search":
+		case "advanced_search":
 			require_once("common/tpl/left_panel.tpl");
-			require_once("common/tpl/search_content.tpl");
+			require_once("common/tpl/advanced_search_content.tpl");
 			break;
 		default:
 			require_once("common/tpl/content.tpl");

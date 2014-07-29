@@ -1,5 +1,5 @@
 <?php
-if($page !== "Search") {
+if($page !== "Advanced_search") {
 	?>
 	<footer class="container-fluid">
 		<div class="row">

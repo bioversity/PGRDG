@@ -352,7 +352,7 @@ section.container {
 }
 
 .panel_content {
-    display: none;
+	display: none;
 	width: 100%;
 }
 
@@ -559,8 +559,9 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 		margin-left: 15px;
 	}
 	#se h1[unselectable] {
-		margin-bottom: 1em;
 		margin-top: 0 !important;
+		margin-bottom: 1em;
+		margin-left: 0;
 	}
 }
 #start h1[unselectable]:hover > span {
@@ -657,20 +658,48 @@ section.backgrounded #se #statistics {
 	z-index: 1;
 }
 
-section #se_p {
-	padding: 20px 0 0 70px;
+section #se_p #breadcrumb {
+	display: block;
+	margin-left: -15px;
+	position: absolute;
+	top: 0;
+}
+section #se_p #se_results {
+	padding: 70px 0 70px 70px;
+}
+@media only screen and (max-width:420px) {
+	section.backgrounded #se {
+		margin: 10% 0;
+	}
+	section #se_p #se_results {
+		padding: 50px 0 0 0;
+	}
+}
+section #se_p #se_results .panel_content-head, section #se_p #se_results .panel_content-footer{
+	margin: 0;
+}
+section #se_p form .input-group {
 	width: 50%;
 }
 @media only screen and (max-width:1024px) {
-	section #se_p {
+	section #se_p form .input-group {
 		width: 80%;
 	}
 }
 @media only screen and (max-width:420px) {
 	section #se_p {
 		padding: 20px 0 0 0;
+	}
+	section #se_p form .input-group {
 		width: 100%;
 	}
+}
+section #se_p #summary {
+	margin-top: 5em;
+}
+section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
+	box-shadow: 0 0 0 transparent;
+	padding: 0;
 }
 
 section.container > #contents {

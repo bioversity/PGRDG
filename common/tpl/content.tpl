@@ -1,8 +1,3 @@
-<div id="breadcrumb">
-	<ol class="breadcrumb">
-		<li id="goto_forms_btn"><span class="text-muted fa fa-tasks"></span> <span class="txt">Forms</span></li>
-	</ol>
-</div>
 <div id="contents">
 	<?php
 	if(strtolower($page) == "map") {
@@ -16,8 +11,8 @@
 		<div id="pgrdg_map"></div>
 		<?php
 	} else {
-		if($page == "Se") {
-			require_once("common/tpl/pages/Se.tpl");
+		if($page == "Search") {
+			require_once("common/tpl/pages/Search.tpl");
 		} else {
 			?>
 			<div id="content" class="panel-content">

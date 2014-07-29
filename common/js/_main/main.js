@@ -300,7 +300,9 @@
 					//console.log("open");
 					// Move all document to the right
 					if($(window).width() < 420) {
-						$("section #contents").animate({"left": width}, 200);
+						if(current_path !== "Search") {
+							$("section #contents").animate({"left": width}, 200);
+						}
 					//	$("header").animate({"left": width}, 200);
 					}
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
@@ -331,7 +333,7 @@
 						});
 						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 					});
-					$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
+					$("#contents > .panel_content .panel_content-head, #contents > .panel_content .panel_content-body, #contents > .panel_content .panel_content-footer, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
 					// Save the left_panel position
 					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
 					break;
@@ -390,20 +392,38 @@
 		});
 		if(hash.length > 0) {
 			document.location.hash = hash;
-
 			if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
 				$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
 			}
 			// Show the content in page
 			$("#" + hash.toLowerCase()).fadeIn(300);
-			// Remove all other pages if user returns to the forms page
-			if(hash.toLowerCase() == "forms") {
-				$.remove_breadcrumb("summary");
-				$.reset_contents("summary", true);
-				$.remove_breadcrumb("results");
-				$.reset_contents("results", true);
-				$.remove_breadcrumb("map");
-				$.reset_contents("map", true);
+			if(current_path == "Search") {
+				switch(document.location.hash) {
+					case "#Summary":
+						$("#results").hide();
+						$("#map").hide();
+						$("#pgrdg_map").hide();
+						break;
+					case "#Results":
+						$("#summary").hide();
+						$("#map").hide();
+						$("#pgrdg_map").hide();
+						break;
+					case "#Map":
+						$("#results").hide();
+						$("#summary").hide();
+						break;
+				}
+			} else {
+				// Remove all other pages if user returns to the forms page
+				if(hash.toLowerCase() == "forms") {
+					$.remove_breadcrumb("summary");
+					$.reset_contents("summary", true);
+					$.remove_breadcrumb("results");
+					$.reset_contents("results", true);
+					$.remove_breadcrumb("map");
+					$.reset_contents("map", true);
+				}
 			}
 			$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
 				var item_id = $(this).attr("id"),
@@ -428,9 +448,9 @@
 				$("#contents .panel_content").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
 			} else {
-				if(current_path !== "Map" || hash !== "Map") {
+				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
-						$("#contents > div:not(#" + hash.toLowerCase() + ")").hide();
+						$("#contents > div:not(#" + hash.toLowerCase()).hide();
 						$("#contents #" + hash.toLowerCase()).fadeIn(300);
 					}
 				}
@@ -684,7 +704,7 @@
 			console.log("Searching '" + text + "'...'");
 
 			var objp = {};
-			objp.storage_group = "search";
+			objp.storage_group = "summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			objp.parameters = {};
 			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -695,12 +715,14 @@
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = text;
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
 			$.ask_to_service(objp, function(response) {
-				console.warn(response);
 				if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 					var res = response[kAPI_RESPONSE_RESULTS];
 
-					//$.show_summary(res);
+					$.activate_panel("summary", {res: response}, function() {
+						$("#se_p").fadeIn(300);
+					});
 				} else {
 					alert("This search has produced no results")
 				}
@@ -803,19 +825,22 @@ $(document).ready(function() {
 		});
 
 		if(current_path == "Search") {
+			$.get_statistics();
+
+			if($.obj_len(query) > 0) {
+				if($("#breadcrumb").css("display") == "none") {
+					$("#breadcrumb").fadeIn(200);
+				}
+
+				$.search_fulltext(query.q);
+			}
+		}
+		if(current_path == "Search" || current_path == "Advanced_search") {
 			document.location.hash = "";
 			window.onhashchange = function() {
 				$.manage_url();
 			};
 			$.manage_url();
-		}
-		if(current_path == "Se") {
-			$.get_statistics();
-
-			var query = $.parse_params(url.query);
-			if($.obj_len(query) > 0) {
-				$.search_fulltext(query.q);
-			}
 		}
 	}
 });
