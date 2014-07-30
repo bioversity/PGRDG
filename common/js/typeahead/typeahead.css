@@ -23,7 +23,6 @@
 }
 
 .tt-dropdown-menu {
-    width: 422px;
     margin-top: 12px;
     padding: 0;
     background-color: #fff;
@@ -35,6 +34,10 @@
     -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+#left_panel .tt-dropdown-menu {
+        width: 280px;
+        margin-left: -100px;
 }
 #scrollable-dropdown-menu .tt-dropdown-menu {
 	max-height: 250px;

@@ -769,7 +769,7 @@ section.container > #contents .carousel-inner {
 	background-image: webkit-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -o-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -ms-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
-	z-index: 3;
+	z-index: 10;
 	border-radius: 0px;
 }
 #left_panel div.contents {
