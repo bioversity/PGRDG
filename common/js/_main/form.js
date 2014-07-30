@@ -1606,7 +1606,7 @@
 					$("#" + node + "_toggler").find("span").removeClass("fa-caret-right").addClass("fa-caret-down");
 
 					if($("#node_" + node).html() === "") {
-						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Retriving data...');
+						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Acquiring data...');
 						var objp = {};
 						objp.storage_group = "forms_data";
 						objp.loaderType = $panel.find("a.pull-left, a.pull-right");

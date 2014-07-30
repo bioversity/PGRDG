@@ -102,7 +102,7 @@
 			} else {
 				var $element = opt.loaderType,
 				element_data = $element.html();
-				$element.html('<span class="fa fa-fa fa-refresh fa-spin"></span>');
+				$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span> Acquiring data...');
 			}
 			$.cryptAjax({
 				url: "API/",
@@ -480,6 +480,10 @@
 		});
 	};
 
+	/**
+	 * Check the latest version on Github an compare it with its own.
+	 * Note that if you want to reset the user storage, you need to update Github repo's version tag
+	 */
 	$.check_version = function() {
 		var local_version = "";
 		$.reset_storage = function(last_version) {
@@ -698,6 +702,7 @@
 
 		var objp = {};
 		objp.storage_group = "ask";
+		objp.loaderType = $("#statistics_loader");
 		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 		objp.parameters = {};
 		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -712,7 +717,7 @@
 				$.each(res, function(domain, statistics) {
 					stats.push(statistics[kTAG_LABEL] + ': <b>' + $.number(statistics.count) + '</b>');
 				});
-				$("#statistics .loader").html(stats.join("<br />"));
+				$("#statistics_loader").html(stats.join("<br />"));
 			}
 		});
 	};

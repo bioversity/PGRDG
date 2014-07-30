@@ -8,7 +8,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                 <!--form onsubmit="$.search_fulltext($('#search_form').val()); return false;"-->
                 <form method="get" action="">
                         <div class="input-group">
-                                <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." />
+                                <input type="text" name="q" class="form-control" id="search_form" autocomplete="off" placeholder="Search..." />
                                 <span class="input-group-btn">
                                         <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
                                 </span>
@@ -18,9 +18,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         <big><a href="<?php print $domain; ?>/Advanced_search<?php print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : ""; ?>">Advanced search</a></big>
                         <br />
                         <br />
-                        <small class="loader">
-                                <span class="fa fa-refresh fa-spin"></span> Retriving statistics data...
-                        </small>
+                        <small id="statistics_loader"></small>
                 </div>
         </div>
         <?php
@@ -37,7 +35,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                 <div id="se_results">
                         <form method="get" action="">
                                 <div class="input-group">
-                                        <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." value="<?php print $_GET["q"]; ?>" />
+                                        <input type="text" name="q" class="form-control" id="search_form" autocomplete="off" placeholder="Search..." value="<?php print $_GET["q"]; ?>" />
                                         <span class="input-group-btn">
                                                 <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
                                         </span>
