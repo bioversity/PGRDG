@@ -191,4 +191,4 @@ query = $.parse_params(url.query),
 current_path = url_paths[url_paths.length - 1],
 last_version = "",
 local_version = "",
-developer_mode = false;
+developer_mode = true;

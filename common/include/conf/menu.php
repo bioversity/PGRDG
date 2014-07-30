@@ -124,7 +124,7 @@ $menu["menu"]["top"] = array(
 			"href" => "/Search"
 		)//,
 		//"divider" => "vertical-divider"
-	)
+	),
 	/*
 	"Map" => array(
 		"content" => array(
@@ -155,6 +155,7 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
+	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",
@@ -167,7 +168,6 @@ $menu["menu"]["top"] = array(
 			"id" => "login_menu_btn"
 		)
 	)
-	*/
 );
 $menu["menu"]["map_toolbox"] = array(
 	"Find_location" => array(

@@ -1538,6 +1538,13 @@ label.checkbox {
 	color: #999;
 	padding: 0 0 10px;
 }
+#accordion a.treeselect + .dropdown-menu {
+	width: 100%;
+}
+#accordion a.treeselect + .dropdown-menu .nav > li > a {
+	display: inline;
+	padding: 10px 3px 10px 15px;
+}
 
 /* Popover */
 .popover .nav > li > a {

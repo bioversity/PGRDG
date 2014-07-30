@@ -1,10 +1,10 @@
 <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<form id="loginform" class="form-horizontal" onsubmit="return false;">
+	<div id="loginform" class="form-horizontal" method="post">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel"><span class="fa fa-sign-in	"></span>&nbsp;&nbsp;Sign In</h4>
+					<h4 class="modal-title"><span class="fa fa-sign-in"></span>&nbsp;&nbsp;Sign In</h4>
 				</div>
 				<div class="modal-body">
 					<div style="margin-bottom: 25px" class="input-group">
@@ -13,7 +13,7 @@
 					</div>
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" />
+						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="" />
 					</div>
 					<div class="input-group">
 						<div class="checkbox">
@@ -31,11 +31,11 @@
 							</div>
 						</div>
 						<div class="col-sm-6 text-right">
-							<input type="submit" id="login_btn" class="btn btn-primary" value="Sign in" />
+							<a href="javascript: void(0);" id="login_btn" class="btn btn-primary">Sign in</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 </div>

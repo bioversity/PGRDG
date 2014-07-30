@@ -327,7 +327,7 @@
 							var rowText = $(val).text().toLowerCase();
 							var inputText = $(that).val().toLowerCase();
 
-							if(rowText.indexOf( inputText ) == -1) {
+							if(rowText.indexOf(inputText) == -1) {
 								//hide rows
 								tableRowsClass.eq(i).hide();
 							} else {
@@ -341,6 +341,7 @@
 								tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
 							}
 						}
+						//$form.find(".dropdown-header input").focus();
 					});
 				});
 				$form.on("submit", function(){
@@ -1641,7 +1642,7 @@
 			panel_input_term_id = $panel.find('input[name="term"]').attr("id"),
 			content = "",
 			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-			checkbox = '<div class="checkbox"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'disabled="disabled"' : '') + ' /> {LABEL}</label></div>';
+			checkbox = '<div class="checkbox"><label class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'text-muted' : '') + '"><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'disabled=\"disabled\"' : '') + ' /> {LABEL}</label></div>';
 			checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
