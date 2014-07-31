@@ -15,7 +15,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         </div>
                 </form>
                 <div id="statistics" class="help-block">
-                        <big><a href="<?php print $domain; ?>/Advanced_search<?php print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : ""; ?>">Advanced search</a></big>
+                        <big><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
                         <br />
                         <br />
                         <small id="statistics_loader"></small>
@@ -42,7 +42,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                                 </div>
                         </form>
                         <div id="statistics" class="help-block">
-                                <big><a href="<?php print $domain; ?>/Advanced_search?q=<?php print $_GET["q"]; ?>">Advanced search</a></big>
+                                <big><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
                         </div>
                         <?php
                         require_once("common/tpl/search_panels/search_panel_summary.tpl");
