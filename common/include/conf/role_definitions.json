@@ -1,42 +1,143 @@
 {
-        "Legend": {
-                "Description": "Split the array keys in two characters: the first one indicates the context, the second one indicates the function on the context.",
-                "Contexts functions standard": {
-                        "A": "Add",
-                        "E": "Edit",
-                        "D": "Delete",
-                        "U": "upload",
-                        "V": "view",
-                        "M": "move, manage order"
+        "dictionary": {
+                "groups": {
+                        "B": {
+                                "icon": "fa fa-fw fa-paper-plane-o",
+                                "label": "Blog",
+                                "link": "",
+                                "order": 0,
+                                "separator": false,
+                                "type": "static"
+                        },
+                        "C": {
+                                "icon": "fa fa-fw fa-files-o",
+                                "label": "Contents",
+                                "link": "",
+                                "order": 0,
+                                "separator": false,
+                                "type": "static"
+                        },
+                        "D": {
+                                "icon": "fa fa-fw fa-cubes",
+                                "label": "Data",
+                                "link": "https://data.pgrdiversity.bioversity.org",
+                                "order": 1,
+                                "separator": false,
+                                "type": "dynamic"
+                        },
+                        "O": {
+                                "icon": "fa fa-fw fa-list-alt",
+                                "label": "Metadata",
+                                "link": "/Metadata",
+                                "order": 2,
+                                "separator": true,
+                                "type": "dynamic"
+                        },
+                        "M": {
+                                "icon": "fa fa-fw fa-list-alt",
+                                "label": "Menu",
+                                "link": "/Manager/Menu",
+                                "order": 3,
+                                "separator": false,
+                                "type": "dynamic"
+                        },
+                        "m": {
+                                "icon": "fa fa-fw fa-compass",
+                                "label": "Map",
+                                "link": "/Manager/Map",
+                                "order": 4,
+                                "separator": false,
+                                "type": "dynamic"
+                        },
+                        "G": {
+                                "icon": "fa fa-fw fa-bar-chart-o",
+                                "label": "Graphs",
+                                "link": "/Manager/Graphs",
+                                "order": 5,
+                                "separator": false,
+                                "type": "dynamic"
+                        },
+                        "U": {
+                                "icon": "fa fa-fw fa-group",
+                                "label": "Users",
+                                "link": "/Manager/Users",
+                                "order": 6,
+                                "separator": false,
+                                "type": "dynamic"
+                        }
+                },
+                "functions": {
+                        "A": {
+                                "label": "Add"
+                        },
+                        "D": {
+                                "label": "Delete"
+                        },
+                        "E": {
+                                "label": "Edit"
+                        },
+                        "F": {
+                                "label": "Full access"
+                        },
+                        "M": {
+                                "label": "Move, manage, order"
+                        },
+                        "S": {
+                                "label": "Settings"
+                        },
+                        "U": {
+                                "label": "Upload"
+                        },
+                        "V": {
+                                "label": "View"
+                        }
                 }
-        },
-        "Users": {
-                "UA": "Add users",
-                "UE": "Edit users data",
-                "UD": "Delete users",
-                "US": "Subscribe users",
-                "UV": "view users data"
-        },
-        "Contents": {
-                "CA": "Add contents",
-                "CE": "Edit contents",
-                "CD": "Delete contents",
-                "CU": "Upload files to contents",
-                "MA": "Add item to menu",
-                "ME": "Edit item of menu",
-                "MD": "Delete item of menu",
-                "MM": "Move items of menu"
         },
         "Blog": {
                 "BA": "Add posts",
-                "BE": "Edit posts",
                 "BD": "Delete posts",
+                "BE": "Edit posts",
+                "BS": "Blog settings",
                 "BU": "Upload files"
+        },
+        "Contents": {
+                "CA": "Add contents",
+                "CD": "Delete contents",
+                "CE": "Edit contents",
+                "CU": "Upload files to contents"
         },
         "Data": {
                 "DA": "Add data",
-                "DE": "Edit data",
                 "DD": "Delete data",
+                "DE": "Edit data",
+                "DS": "Data settings",
                 "DU": "Upload data"
+        },
+        "Metadata": {
+                "OA": "Add metadata",
+                "OD": "Delete metadata",
+                "OE": "Edit metadata",
+                "OF": "Full access",
+                "OS": "Metadata settings",
+                "OV": "View metadata"
+        },
+        "Graphs": {
+                "GS": "Graphs settings"
+        },
+        "Map": {
+                "mS": "Map settings"
+        },
+        "Menu": {
+                "MA": "Add item to menu",
+                "MD": "Delete item of menu",
+                "ME": "Edit item of menu",
+                "MM": "Move items of menu"
+        },
+        "Users": {
+                "UA": "Add users",
+                "UD": "Delete users",
+                "UE": "Edit users data",
+                "US": "Users settings",
+                "UV": "View users data"
         }
 }

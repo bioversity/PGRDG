@@ -5,9 +5,10 @@
 <!-- jquery.cookie & storage -->
 <script src="<?php print $domain; ?>/common/js/jquery-cookie/jquery.cookie.js"></script>
 <script src="<?php print $domain; ?>/common/js/jquery-storage/jquery.storageapi.js"></script>
-<!-- Jcryption & MD5 -->
+<!-- Jcryption, MD5 & SHA1 -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery-md5/jquery.md5.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery.sha1.js"></script>
 <!-- Purl (A JavaScript URL parser) -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/purl/purl.js"></script>
 <!-- Jquery Choosen -->

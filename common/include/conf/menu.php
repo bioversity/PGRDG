@@ -40,7 +40,7 @@ $menu["menu"]["top"] = array(
 	*/
 	"About us" => array(
 		"content" => array(
-			"icon" => "fa fa-tencent-weibo",
+			"icon" => "fa fa-leaf",
 			"text" => "About us"
 		),
 		"attributes" => array(
@@ -49,7 +49,7 @@ $menu["menu"]["top"] = array(
 		"childs" => array(
 			"About us" => array(
 				"content" => array(
-					"icon" => "fa fa-leaf",
+					"icon" => "fa fa-comment-o",
 					"text" => "About us"
 				),
 				"attributes" => array(
@@ -67,7 +67,7 @@ $menu["menu"]["top"] = array(
 			),
 			"Feedback" => array(
 				"content" => array(
-					"icon" => "fa fa-comment-o",
+					"icon" => "fa fa-comments-o",
 					"text" => "Give us your feedback"
 				),
 				"attributes" => array(
@@ -112,8 +112,7 @@ $menu["menu"]["top"] = array(
 					"href" => "/Links"
 				)
 			)
-		),
-		"divider" => "vertical-divider"
+		)
 	),
 	"Search" => array(
 		"content" => array(
@@ -122,8 +121,8 @@ $menu["menu"]["top"] = array(
 		),
 		"attributes" => array(
 			"href" => "/Search"
-		)//,
-		//"divider" => "vertical-divider"
+		),
+		"divider" => "vertical-divider"
 	),
 	/*
 	"Map" => array(

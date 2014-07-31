@@ -7,7 +7,7 @@ class parse_json_config {
 			// Uncomment if you want to remote json menu
 			//$config = "common/include/conf/menu.json";
 			include("common/include/conf/menu.php");
-			$config = $menu;	
+			$config = $menu;
 		}
 		// Same as comment before
 		//$this->json_conf = json_decode(file_get_contents($config), true);
@@ -23,7 +23,7 @@ class parse_json_config {
 			}
 			$data = $this->walk($v, $key);
 			if($data != false){
-				return $data;        
+				return $data;
 			}
 		}
 		return false;
@@ -53,14 +53,14 @@ class parse_json_config {
 				}
 			} else {
 				//print_r($this->walk($map_toolbox, $mo_key));
-				$attributes[] = '"class="btn btn-default dropdown-toggle" data-toggle="dropdown"';
+				$attributes[] = 'class="dropdown-toggle" data-toggle="dropdown"';
 			}
 		}
 		return $attributes;
 	}
 	public function menu($menu_position, $ul_class = array()) {
 		$menu_list = '<ul';
-		if(!is_array($ul_class)) { 
+		if(!is_array($ul_class)) {
 			$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
 		} else {
 			foreach($ul_class as $k => $v) {
@@ -86,7 +86,7 @@ class parse_json_config {
 
 	public function contextmenu($menu_position, $ul_class = array()) {
 		$menu_list = '<ul';
-		if(!is_array($ul_class)) { 
+		if(!is_array($ul_class)) {
 			$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
 		} else {
 			foreach($ul_class as $k => $v) {
@@ -94,7 +94,7 @@ class parse_json_config {
 			}
 		}
 		$menu_list .=  ">\n";
-		
+
 		foreach($this->walk($this->json_conf, $menu_position) as $obj => $map_toolbox) {
 			if($obj !== "_comment") {
 				$divider = "";

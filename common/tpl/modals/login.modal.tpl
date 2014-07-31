@@ -9,11 +9,11 @@
 				<div class="modal-body">
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						<input id="login-username" type="text" class="form-control" name="username" autofocus value="" placeholder="username or email" />
+						<input id="login-username" type="text" class="form-control" name="username" autofocus value="sonia" placeholder="username or email" />
 					</div>
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="" />
+						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="tiagogateway" />
 					</div>
 					<div class="input-group">
 						<div class="checkbox">
@@ -27,7 +27,7 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="input-group">
-								Don't have an account? <a href="#" onclick="$('#loginbox').hide(); $('#signupbox').show()">Sign Up Here</a>
+								Don't have an account? <a href="javascript:void(0);">Sign Up Here</a>
 							</div>
 						</div>
 						<div class="col-sm-6 text-right">

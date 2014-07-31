@@ -771,7 +771,7 @@
 			user_data = {},
 			objp = {};
 			data.push($("#login-username").val());
-			data.push($("#login-password").val());
+			data.push($.sha1($("#login-password").val()));
 
 			$.get_user_data = function(resp) {
 				if($.type(resp) == "object" && $.obj_len(resp) > 0) {
@@ -814,25 +814,99 @@
 			$.ask_to_service(objp, function(response) {
 				if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 					var $li = $("#login_menu_btn").closest("li"),
-					user_data = $.get_user_data(response[kAPI_RESPONSE_RESULTS]);
-					console.dir(user_data);
-					/*
-
-					$("#login").modal("close");
-					$li.addClass("btn-group");
-					$("#login_menu_btn").html('<span class="fa fa-user"></span> ' + user_data.name);
-					if($li.find("ul.dropdown-menu").length === 0) {
-						$li.append('<ul class="dropdown-menu" role="menu">');
-						$li.find("ul").append('<li>Profile</li>');
-						console.log(jQuery.inArray("BA", user_data));
-					}
-					*/
+					user_data = $.get_user_data(response[kAPI_RESPONSE_RESULTS]),
+					permissions = [], roles_groups = [];
+					$.each(user_data.role, function(k, v){
+						roles_groups.push(k, v.charAt(0));
+					});
+					$.cryptAjax({
+						url: "common/include/conf/role_definitions.json",
+						dataType: "json",
+						async: "true",
+						success: function(roles) {
+							$.create_user_menu(user_data, roles_groups);
+							$.cookie("l", $.sha1(user_data.local.username), {expires: 1, path: "/" });
+							storage.set("pgrdg_cache.session." + $.sha1(user_data.local.username) + ".data", user_data);
+							//location.reload();
+						}
+					});
 				}
 			});
 		} else {
 			$("#loginform .input-group").addClass("has-error");
 			$("#login-username").focus();
 		}
+	};
+
+	$.check_logged_user = function() {
+		var username = $.cookie("l"),
+		user_data = "",
+		roles_groups = [];
+		if(storage.isSet("pgrdg_cache.session." + username)) {
+			user_data = storage.get("pgrdg_cache.session." + username);
+			$.each(user_data.role, function(k, v){
+				roles_groups.push(k, v.charAt(0));
+			});
+		}
+		$.create_user_menu(user_data, roles_groups);
+	};
+
+	$.create_user_menu = function(user_data, roles_groups) {
+		var $li = $("#login_menu_btn").closest("li"), permissions = [];
+
+		$.cryptAjax({
+			url: "common/include/conf/role_definitions.json",
+			dataType: "json",
+			async: "true",
+			success: function(roles) {
+				$.each(roles.dictionary.groups, function(gl, gd){
+					if($.inArray(gl, roles_groups) !== -1) {
+						var detailed_permissions = [];
+
+						$.each(roles[gd.label], function(fl, fd){
+							if($.inArray(fl, user_data.role) !== -1) {
+								detailed_permissions.push(fd);
+							}
+						});
+						var gdlabel = gd.label;
+						permissions.push({
+							gdlabel: {
+								type: gd.type,
+								label: gd.label,
+								link: gd.link,
+								icon: gd.icon,
+								order: gd.order,
+								separator: gd.separator,
+								details: detailed_permissions
+							},
+							order: gd.order
+						});
+					}
+				});
+
+				permissions.sort(function(obj1, obj2) {
+					// Ascending: first age less than the previous
+					return obj1.order - obj2.order;
+				});
+				//$('<li class="vertical-divider">').insertBefore($li);
+				$li.addClass("btn-group");
+				$li.html('<a data-toggle="dropdown" href="javascript: void(0);" class="dropdown-toggle"><small class="fa fa-user"></small> ' + user_data.name + ' <span class="caret"></span></a>');
+				if($li.find("ul.dropdown-menu").length === 0) {
+					$li.append('<ul class="dropdown-menu" role="menu">');
+					$li.find("ul").append('<li><a href="./Profile"><span class="fa fa-fw fa-gear"></span> Profile</a></li><li class="divider"></li>');
+					$.each(permissions, function(group, details){
+						if(details.gdlabel.type !== "static") {
+							$li.find("ul").append('<li><a href="' + details.gdlabel.link + '"><small class="' + details.gdlabel.icon + '"></small> ' + details.gdlabel.label + '</a></li>');
+							if(details.gdlabel.separator) {
+								$li.find("ul").append('<li role="menu" class="divider"></li>');
+							}
+						}
+					});
+					$li.find("ul").append('<li class="divider"></li><li><a href="javascript: void(0);"><small class="fa fa-fw fa-sign-out"></small> Sign out</a></li>');
+				}
+				$("#login").modal("hide");
+			}
+		});
 	};
 
 /*======================================================================================*/
@@ -886,5 +960,6 @@ $(document).ready(function() {
 			};
 			$.manage_url();
 		}
+		$.check_logged_user();
 	}
 });
