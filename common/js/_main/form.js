@@ -674,9 +674,6 @@
 		};
 
 		var form_data = {};
-		if($("#breadcrumb").css("display") == "none") {
-			$("#breadcrumb").fadeIn(200);
-		}
 		$.ask_to_service(kAPI, function(response) {
 			if (jQuery.type(callback) == "function") {
 				if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
@@ -693,6 +690,9 @@
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
 						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+					}
+					if($("#breadcrumb").css("display") == "none") {
+						$("#breadcrumb").fadeIn(200);
 					}
 					$("#forms").fadeIn(300);
 
@@ -818,7 +818,7 @@
 			$("#forms-head #right_btn, #forms-head .save_btn, #forms-footer #right_btn, #forms-footer .save_btn").fadeOut(300, function() {
 				$("#forms-head .content-title, #forms-footer .content-title").text("");
 				$("#forms-body .content-body").html("");
-				$("section.container").animate({"padding-top": "39px"}, 300, function(){
+				$("section.container").animate({"padding-top": "75px"}, 300, function(){
 					// Reset breadcrumb and panels
 					$.reset_breadcrumb();
 					$.reset_contents("forms", true);

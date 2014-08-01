@@ -29,7 +29,17 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 if(isset($_GET["definitions"]) && trim($_GET["definitions"]) !== "") {
 	$api->set_content_type("text");
 
-	$api->get_definitions($_GET["definitions"], (($_GET["keep_update"] == "true") ? true : false));
+	$api->get_definitions(
+		$_GET["definitions"],
+		((isset($_GET["keep_update"]) && $_GET["keep_update"] == "true") ? true : false),
+		((isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : "string"),
+		((isset($_GET["condensed"]) && $_GET["condensed"] == "true") ? true : false)
+	);
+}
+if(isset($_GET["local"]) && trim($_GET["local"]) !== "") {
+	$api->set_content_type("text");
+
+	$api->get_local_json($_GET["local"]);
 }
 if(isset($_GET["download"]) && trim($_GET["download"]) !== "") {
 	$api->force_download("../common/media/" . base64_decode($_GET["download"]));

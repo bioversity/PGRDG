@@ -136,6 +136,7 @@ class frontend_api {
 		}
 		return $def_file;
 	}
+
 	/* PUBLIC FUNCTIONS */
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -145,7 +146,23 @@ class frontend_api {
 		return $this->browse($definitions_url);
 	}
 
-	public function get_definitions($type, $keep_update, $response_type = "string") {
+	/**
+	 * Extract Service definitions print as javascript variables
+	 *
+	 * Example: Get all definition of types from Github repo and print condensed
+	 * `.../API/?definitions=types&keep_update=true&type=all&condensed=true`
+	 *
+	 * Example: Get all definition of api directly from service and print in json (not condensed)
+	 * `?definitions=api&type=json&condensed=false`
+	 *
+	 *
+	 * @param {string}	$type		The Service define (also listed in @get_definition_file())
+	 * @param {bool}	$keep_update	If true take the definition from Github repo
+	 * @param {string}	$response_type	(string|array|json|obj|object|all) The type of the response. Default: "string"
+	 * @param {bool}	$condensed	If true displayed results will be condensed (without spaces and break returns)
+	 * @return {string|obj}
+	 */
+	public function get_definitions($type, $keep_update, $response_type = "string", $condensed = false) {
 		$def_file = $this->get_definition_file($type);
 		$global_constants = $this->getUserDefinedConstants();
 		if($keep_update) {
@@ -164,19 +181,29 @@ class frontend_api {
 
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
 		}
+		foreach($script_constants as $define => $value) {
+			$k[$define] = $value;
+			$d[] = $define . (($condensed) ? '="' : ' = "') . $value . '"';
+		}
+		$js = "";
 		if($response_type == "string" || $response_type == "all") {
-			foreach($script_constants as $define => $value) {
-				$js .= "var " . $define . ' = "' . $value . '";' . "\n";
-				$k[$define] = $value;
+			if($condensed) {
+				$js .= "var " . implode(",", $d) . ";";
+			} else {
+				$js .= "var " . implode(",\n", $d) . ";";
 			}
 		}
-		if($response_type == "all") { $js .= "\n"; }
-		if($response_type == "array" || $response_type == "all") {
-			$js .= "var __ = {};\n";
-			foreach($script_constants as $define => $value) {
-				$js .= '__["' . $define . '"] = "' . $value . '";' . "\n";
+		if($response_type == "json" || $response_type == "array" || $response_type == "all") {
+			if($condensed) {
+				$jsj .= "{" . implode(",", preg_replace("/^(\w+)\=/", '"$1":', $d)) . "}";
+			} else {
+				$jsj .= "{\n	" . implode(",\n	", preg_replace("/^(\w+)\ \=\ /", '"$1": ', $d)) . "\n}";
 			}
+			if($response_type == "all") { $js .= (($condensed) ? "\n" : "\n\n"); }
+			$jsa = ($response_type != "json") ? "var k = " . $jsj . ";" : $jsj;
+			$js .= $jsa;
 		}
+
 		if($response_type == "obj" || $response_type == "object") {
 			return $script_constants;
 		} else {
@@ -184,6 +211,7 @@ class frontend_api {
 			exit();
 		}
 	}
+
 	public function set_content_type($content_type) {
 		switch($content_type) {
 			case "json":
@@ -194,6 +222,12 @@ class frontend_api {
 				header("Content-type: text/plain");
 				break;
 		}
+	}
+
+	public function get_local_json($path){
+		$f = file_get_contents("../common/include/" . rawurldecode($path));
+		print "var roles = " . trim($f) . ";";
+		exit();
 	}
 
 	public function debug() {

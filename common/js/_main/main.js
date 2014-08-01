@@ -310,7 +310,7 @@
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start > div").css("margin-top").replace("px", "") <= 120) {
 							if($(window).width() > 420) {
-								$("#start > div").animate({"margin-top": "-80px"}, 200);
+								$("#start > div").animate({"margin-top": "50px"}, 200);
 							}
 						}
 						if($(window).width() > 420) {
@@ -397,7 +397,7 @@
 				$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
 			}
 			// Show the content in page
-			$("#" + hash.toLowerCase()).fadeIn(300);
+			//$("#" + hash.toLowerCase()).fadeIn(300);
 			if(current_path == "Search") {
 				switch(document.location.hash) {
 					case "#Summary":
@@ -446,17 +446,19 @@
 		//	$.left_panel_behaviour(hash);
 			if(hash == "Map") {
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
-				$("#contents .panel_content").hide();
+				$("#contents .panel_content:not(#loader_bg)").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
 						$.each($("#contents > div"), function(i, $v) {
-							if($(this).attr("id") !== hash.toLowerCase()){
+							if($(this).attr("id") !== hash.toLowerCase() && $(this).attr("id") !== "loader_bg"){
 								$(this).hide();
 							}
 						});
-						$("#contents #" + hash.toLowerCase()).fadeIn(300);
+						if($("#contents #" + hash.toLowerCase() + " h1").html().length > 0) {
+							$("#contents #" + hash.toLowerCase()).fadeIn(300);
+						}
 					}
 				}
 			}
@@ -751,10 +753,12 @@
 					var res = response[kAPI_RESPONSE_RESULTS];
 
 					$.activate_panel("summary", {res: response}, function() {
+						$("#se_loader").fadeOut(300);
 						$("#se_p").fadeIn(300);
 					});
 				} else {
-					alert("This search has produced no results");
+					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
+					$("#search_form").focus();
 				}
 			});
 		}
@@ -819,17 +823,9 @@
 					$.each(user_data.role, function(k, v){
 						roles_groups.push(k, v.charAt(0));
 					});
-					$.cryptAjax({
-						url: "common/include/conf/role_definitions.json",
-						dataType: "json",
-						async: "true",
-						success: function(roles) {
-							$.create_user_menu(user_data, roles_groups);
-							$.cookie("l", $.sha1(user_data.local.username), {expires: 1, path: "/" });
-							storage.set("pgrdg_cache.session." + $.sha1(user_data.local.username) + ".data", user_data);
-							//location.reload();
-						}
-					});
+					$.create_user_menu(user_data, roles_groups);
+					$.cookie("l", $.sha1(user_data.local.username), {expires: 1, path: "/" });
+					storage.set("pgrdg_cache.session." + $.sha1(user_data.local.username) + ".data", user_data);
 				}
 			});
 		} else {
@@ -838,75 +834,96 @@
 		}
 	};
 
+	/**
+	* Log out users
+	*/
+	$.logout = function(){
+		$.removeCookie("l");
+		$.remove_storage("pgrdg_cache.session");
+		location.reload();
+	};
+
+	/**
+	* Check if there's logged users
+	*/
 	$.check_logged_user = function() {
+		//$("#login_menu_btn").addClass("disabled");
+	//	$("#login_menu_btn").addClass("disabled").html('<span class="fa fa-spin fa-refresh"></span> Wait...');
 		var username = $.cookie("l"),
 		user_data = "",
 		roles_groups = [];
-		if(storage.isSet("pgrdg_cache.session." + username)) {
-			user_data = storage.get("pgrdg_cache.session." + username);
-			$.each(user_data.role, function(k, v){
-				roles_groups.push(k, v.charAt(0));
-			});
+		if(username !== undefined || username !== null || username !== "") {
+			if(storage.isSet("pgrdg_cache.session." + username)) {
+				user_data = storage.get("pgrdg_cache.session." + username + ".data");
+				$.each(user_data.role, function(k, v){
+					roles_groups.push(k, v.charAt(0));
+				});
+			}
+			$.create_user_menu(user_data, roles_groups);
+		} else {
+			$.cookie("l", null);
+			$.remove_storage("pgrdg_cache.session");
+			$("#login_menu_btn").html('<span class="fa fa-sign-in"></span> Sign in');
 		}
-		$.create_user_menu(user_data, roles_groups);
+		$("#login_menu_btn").removeClass("disabled");
 	};
 
+	/**
+	* Create the user menu
+	*/
 	$.create_user_menu = function(user_data, roles_groups) {
-		var $li = $("#login_menu_btn").closest("li"), permissions = [];
+		if(user_data !== undefined && user_data !== null && user_data !== ""){
+			var $li = $("#login_menu_btn").closest("li"), permissions = [];
 
-		$.cryptAjax({
-			url: "common/include/conf/role_definitions.json",
-			dataType: "json",
-			async: "true",
-			success: function(roles) {
-				$.each(roles.dictionary.groups, function(gl, gd){
-					if($.inArray(gl, roles_groups) !== -1) {
-						var detailed_permissions = [];
+			$.each(roles.dictionary.groups, function(gl, gd){
+				if($.inArray(gl, roles_groups) !== -1) {
+					var detailed_permissions = [];
 
-						$.each(roles[gd.label], function(fl, fd){
-							if($.inArray(fl, user_data.role) !== -1) {
-								detailed_permissions.push(fd);
-							}
-						});
-						var gdlabel = gd.label;
-						permissions.push({
-							gdlabel: {
-								type: gd.type,
-								label: gd.label,
-								link: gd.link,
-								icon: gd.icon,
-								order: gd.order,
-								separator: gd.separator,
-								details: detailed_permissions
-							},
-							order: gd.order
-						});
-					}
-				});
-
-				permissions.sort(function(obj1, obj2) {
-					// Ascending: first age less than the previous
-					return obj1.order - obj2.order;
-				});
-				//$('<li class="vertical-divider">').insertBefore($li);
-				$li.addClass("btn-group");
-				$li.html('<a data-toggle="dropdown" href="javascript: void(0);" class="dropdown-toggle"><small class="fa fa-user"></small> ' + user_data.name + ' <span class="caret"></span></a>');
-				if($li.find("ul.dropdown-menu").length === 0) {
-					$li.append('<ul class="dropdown-menu" role="menu">');
-					$li.find("ul").append('<li><a href="./Profile"><span class="fa fa-fw fa-gear"></span> Profile</a></li><li class="divider"></li>');
-					$.each(permissions, function(group, details){
-						if(details.gdlabel.type !== "static") {
-							$li.find("ul").append('<li><a href="' + details.gdlabel.link + '"><small class="' + details.gdlabel.icon + '"></small> ' + details.gdlabel.label + '</a></li>');
-							if(details.gdlabel.separator) {
-								$li.find("ul").append('<li role="menu" class="divider"></li>');
-							}
+					$.each(roles[gd.label], function(fl, fd){
+						if($.inArray(fl, user_data.role) !== -1) {
+							detailed_permissions.push(fd);
 						}
 					});
-					$li.find("ul").append('<li class="divider"></li><li><a href="javascript: void(0);"><small class="fa fa-fw fa-sign-out"></small> Sign out</a></li>');
+					var gdlabel = gd.label;
+					permissions.push({
+						gdlabel: {
+							type: gd.type,
+							label: gd.label,
+							link: gd.link,
+							icon: gd.icon,
+							order: gd.order,
+							separator: gd.separator,
+							details: detailed_permissions
+						},
+						order: gd.order
+					});
 				}
-				$("#login").modal("hide");
+			});
+
+			permissions.sort(function(obj1, obj2) {
+				// Ascending: first age less than the previous
+				return obj1.order - obj2.order;
+			});
+			//$('<li class="vertical-divider">').insertBefore($li);
+			$li.addClass("btn-group");
+			$li.html('<a id="login_menu_btn" data-toggle="dropdown" href="javascript: void(0);" class="btn btn-link dropdown-toggle"><small class="fa fa-user"></small> ' + user_data.name + ' <span class="caret"></span></a>');
+			if($li.find("ul.dropdown-menu").length === 0) {
+				$li.append('<ul class="dropdown-menu" role="menu">');
+				$li.find("ul").append('<li><a href="./Profile"><span class="fa fa-fw fa-gear"></span> Profile</a></li><li class="divider"></li>');
+				$.each(permissions, function(group, details){
+					if(details.gdlabel.type !== "static") {
+						$li.find("ul").append('<li><a href="' + details.gdlabel.link + '"><small class="' + details.gdlabel.icon + '"></small> ' + details.gdlabel.label + '</a></li>');
+						if(details.gdlabel.separator) {
+							$li.find("ul").append('<li role="menu" class="divider"></li>');
+						}
+					}
+				});
+				$li.find("ul").append('<li class="divider"></li><li><a href="javascript: void(0);" onclick="$.logout();"><small class="fa fa-fw fa-sign-out"></small> Logout</a></li>');
 			}
-		});
+			$("#login").modal("hide");
+		} else {
+
+		}
 	};
 
 /*======================================================================================*/
@@ -959,7 +976,18 @@ $(document).ready(function() {
 				$.manage_url();
 			};
 			$.manage_url();
+
+			$("#search_tips").click(function(){
+				apprise('To search all occurrences of words, separate them with a space, for instance:<br /><kbd>Forest area managed for wood production</kbd> will select all records containing any of the following words: <i>forest</i>, <i>area</i>, <i>managed</i>, <i>wood</i> and <i>production</i>.<p>To search all occurrences matching a specific phrase, enclose it in double quotes <kbd><b style="color: #ff0000 !important;">&quot;</b></kbd>, for instance:<br /><kbd><b style="color: #ff0000 !important;">&quot;</b>forest area managed for wood production<b style="color: #ff0000 !important;">&quot;</b></kbd> will select all records matching the full phrase.</p><p>To exclude a term from the results prefix it with a minus <kbd><b style="color: #ff0000 !important;">-</b></kbd> sign, for instance:<br /><kbd>forest <b style="color: #ff0000 !important;">-</b>wood</kbd> will select all records matching the word <i>forest</i> and not matching the word <i>wood</i>.</p><p>The same is true for phrases, for instance:<br /><kbd><b style="color: #ff0000 !important;">-</b>&quot;research organization&quot; genebank</kbd> will select all records containing the word <i>genebank</i> but not the phrase <i>research organization</i>.</p><p>The search is case insensitive.</p>', {
+					title: "Search tips",
+					icon: "fa-keyboard-o",
+					titleClass: "text-info",
+					textOk: "Ok",
+					allowExit: true
+				});
+			});
 		}
+
 		$.check_logged_user();
 	}
 });

@@ -23,7 +23,8 @@ $menu["menu"]["top"] = array(
 		),
 		"attributes" => array(
 			"href" => "/",
-			"title" => "Go to Main Page"
+			"title" => "Go to Main Page",
+			"class" => "btn btn-link"
 		)
 	),
 	/*
@@ -44,7 +45,8 @@ $menu["menu"]["top"] = array(
 			"text" => "About us"
 		),
 		"attributes" => array(
-			"href" => "javascript: void(0);"
+			"href" => "javascript: void(0);",
+			"class" => "btn btn-link"
 		),
 		"childs" => array(
 			"About us" => array(
@@ -82,7 +84,8 @@ $menu["menu"]["top"] = array(
 			"text" => "National Inventories"
 		),
 		"attributes" => array(
-			"href" => "javascript: void(0);"
+			"href" => "javascript: void(0);",
+			"class" => "btn btn-link"
 		),
 		"childs" => array(
 			"National Inventories" => array(
@@ -120,7 +123,8 @@ $menu["menu"]["top"] = array(
 			"text" => "Search"
 		),
 		"attributes" => array(
-			"href" => "/Search"
+			"href" => "/Search",
+			"class" => "btn btn-link"
 		),
 		"divider" => "vertical-divider"
 	),
@@ -154,7 +158,6 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
-	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",
@@ -164,9 +167,11 @@ $menu["menu"]["top"] = array(
 			"href" => "javascript:void(0);",
 			"data-toggle" => "modal",
 			"data-target" => "#login",
-			"id" => "login_menu_btn"
+			"id" => "login_menu_btn",
+			"class" => "btn btn-link disabled"
 		)
 	)
+	*/
 );
 $menu["menu"]["map_toolbox"] = array(
 	"Find_location" => array(

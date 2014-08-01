@@ -263,7 +263,7 @@ footer ul li + li:before {
 @media (min-width: 868px) {
 	#nav .navbar-collapse.collapse {
 		float: right;
-		margin-top: -21px;
+		margin-top: -23px;
 	}
 }
 @media only screen and (max-width:420px) {
@@ -273,9 +273,9 @@ footer ul li + li:before {
 }
 .navbar .divider-vertical, .navbar .vertical-divider {
 	height: 29px;
-	border-left: 1px solid #e0e0e0;
-	border-right: 1px solid #ffffff;
-	margin: 0 5px !important;
+	background-color: #e0e0e0;
+	width: 1px;
+	margin: 0 !important;
 }
 @media (max-width: 868px) {
 	.navbar .divider-vertical, .navbar .vertical-divider {
@@ -352,7 +352,9 @@ section.container {
 }
 
 .panel_content {
+	background-color: #fff;
 	display: none;
+	height: 100%;
 	width: 100%;
 }
 
@@ -531,6 +533,17 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 	user-select: none;
 	cursor: default;
 }
+#loader_bg {
+	bottom: 0;
+	display: block;
+	left: 0;
+	position: fixed;
+	right: 0;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: -1;
+}
 #se h1[unselectable] {
 	color: #666;
 	font-size: 3em;
@@ -538,7 +551,30 @@ panel span.info, .modal a.text-info, .modal span.text-info, .modal span.info {
 	margin-bottom: 1em;
 	text-indent: 0;
 }
-#se h1[unselectable] + h2 {
+#se_p h1[unselectable], #loader_bg h1[unselectable] {
+	opacity: 0.2;
+	text-align: center;
+	font-family: 'HelveticaNeueW01-45Ligh';
+	font-size: 3em;
+	margin-bottom: 1em;
+	margin-top: 3em;
+	text-indent: 0;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+#loader_bg h1[unselectable] {
+	margin: 25% 0;
+	opacity: 0.15;
+	padding-left: 300px;
+}
+
+#se h1[unselectable] + h2, {
 	margin: 0;
 	border: 0px none;
 	color: #aaa;
@@ -678,11 +714,11 @@ section #se_p #se_results {
 section #se_p #se_results .panel_content-head, section #se_p #se_results .panel_content-footer{
 	margin: 0;
 }
-section #se_p form .input-group {
+section #se_p form .input-group, section #se_p #statistics {
 	width: 50%;
 }
 @media only screen and (max-width:1024px) {
-	section #se_p form .input-group {
+	section #se_p form .input-group, section #se_p #statistics {
 		width: 80%;
 	}
 }
@@ -690,7 +726,7 @@ section #se_p form .input-group {
 	section #se_p {
 		padding: 20px 0 0 0;
 	}
-	section #se_p form .input-group {
+	section #se_p form .input-group, section #se_p #statistics {
 		width: 100%;
 	}
 }
@@ -1853,4 +1889,8 @@ label.checkbox {
 		height: 3em;
 		line-height: 3em;
 	}
+}
+
+#apprise.ask_service {
+	z-index: 9999;
 }

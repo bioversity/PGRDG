@@ -15,4 +15,7 @@
 	require_once("common/tpl/search_panels/search_panel_map.tpl");
 	require_once("common/tpl/search_panels/search_panel_start.tpl");
 	?>
+	<div id="loader_bg" class="panel_content" style="display: block">
+		<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> Searching...</h1>
+	</div>
 </div>
