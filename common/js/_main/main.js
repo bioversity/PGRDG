@@ -157,25 +157,30 @@
 						}
 					}
 				},
-				error: function(response) {
-					if(developer_mode) {
-						console.warn("!!!", response);
-						console.group("The Service has returned an error");
-							console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
-							console.warn(param);
-							console.warn(param_nob64);
-							console.warn(verbose_param);
-							console.warn(object_param);
-							console.dir(response);
-						console.groupEnd();
+				error: function(x, t, response) {
+					console.warn("Errors: " + x, t, response);
+					if(t === "timeout") {
+						console.log("got timeout");
+				        } else {
+						if(developer_mode) {
+							console.warn("!!!", response);
+							console.group("The Service has returned an error");
+								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
+								console.warn(param);
+								console.warn(param_nob64);
+								console.warn(verbose_param);
+								console.warn(object_param);
+								console.dir(response);
+							console.groupEnd();
+						}
+						$("#apprise.ask_service").modal("destroy");
+						if($("#apprise.service_coffee").length === 0) {
+							apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
+						}
+						setTimeout(function() {
+							$.ask_to_service(options, callback);
+						}, 3000);
 					}
-					$("#apprise.ask_service").modal("destroy");
-					if($("#apprise.service_coffee").length === 0) {
-						apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
-					}
-					setTimeout(function() {
-						$.ask_to_service(options, callback);
-					}, 3000);
 				}
 			});
 		}
