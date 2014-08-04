@@ -158,9 +158,11 @@
 					}
 				},
 				error: function(x, t, response) {
-					console.warn("Errors: " + x, t, response);
+					$.display_error_msg("There was an error in your request, please try again later");
 					if(t === "timeout") {
-						console.log("got timeout");
+						if(developer_mode) {
+							console.log("got timeout");
+						}
 				        } else {
 						if(developer_mode) {
 							console.warn("!!!", response);
@@ -184,6 +186,14 @@
 				}
 			});
 		}
+	};
+
+	/**
+	 * Display an error message
+	 */
+	$.display_error_msg = function(message) {
+		$("#apprise").modal("destroy");
+		apprise(message, {"icon": "error"});
 	};
 
 	/**
@@ -475,6 +485,7 @@
 	 */
 
 	$.remove_storage = function(name) {
+		/*
 		var a = "",
 		names = name.split(".");
 		if(names[0] == "pgrdg_cache") {
@@ -489,7 +500,14 @@
 			if(storage.isSet(a) || storage.isSet(a) && storage.isEmpty(a)) {
 				storage.remove(a);
 			}
-		});
+		});*/
+		if(storage.isSet(name)) {
+			storage.remove(name);
+		} else {
+			if(developer_mode) {
+				console.error("You try to delete the storage \"" + name + "\" but this storage do not exists!");
+			}
+		}
 	};
 
 	/**
@@ -853,7 +871,7 @@
 	*/
 	$.check_logged_user = function() {
 		//$("#login_menu_btn").addClass("disabled");
-	//	$("#login_menu_btn").addClass("disabled").html('<span class="fa fa-spin fa-refresh"></span> Wait...');
+		//$("#login_menu_btn").addClass("disabled").html('<span class="fa fa-spin fa-refresh"></span> Wait...');
 		var username = $.cookie("l"),
 		user_data = "",
 		roles_groups = [];

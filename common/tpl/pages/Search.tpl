@@ -51,7 +51,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         require_once("common/tpl/search_panels/search_panel_result.tpl");
                         require_once("common/tpl/search_panels/search_panel_map.tpl");
                         ?>
-                        <h1 id="se_loader" unselectable="on"><span class="fa fa-gear fa-spin"></span> Performing your research...</h1>
+                        <h1 id="se_loader" unselectable="on"><span class="fa fa-gear fa-spin"></span> Performing your search...</h1>
                 </div>
         </div>
         <hr />

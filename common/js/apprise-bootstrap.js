@@ -45,7 +45,7 @@ function apprise(string, args, callback) {
 	row = $('<div class="row">'),
 	panel = $('<div>'),
 	footer = $('<div class="modal-footer" style="margin-top: 0;">');
-	
+
 	if (args) {
 		if(args["showHeader"]) {
 			if (args["title"]) {
@@ -74,7 +74,7 @@ function apprise(string, args, callback) {
 						title_class = " text-primary";
 					}
 					title.addClass(title_class).append(title_icon + args["title"]);
-					
+
 					if(args["fa_icon"]) {
 						row.prepend('<div class="col-sm-2 text-muted"><span style="font-size: 81px;" class="fa ' + args["fa_icon"] + '"></span></div>');
 					}
@@ -87,7 +87,7 @@ function apprise(string, args, callback) {
 			title.appendTo(header);
 		}
 	}
-	if(string != undefined) {
+	if(string !== undefined) {
 		if(string.length > 0) {
 			if(args["fa_icon"]) {
 				panel.addClass("col-sm-10");
@@ -105,7 +105,7 @@ function apprise(string, args, callback) {
 			}
 		}
 	}
-	
+
 	if (args) {
 		if (args["input"]) {
 			if (typeof(args["input"]) == 'string') {
@@ -120,7 +120,7 @@ function apprise(string, args, callback) {
 		}
 		if (args["inputIP"]) {
 			row.prepend('<div class="form-group col-sm-5"><p>Tipo di indirizzo:</p><label><input type="radio" id="ipv4" name="ipaddr" class="ipaddr" checked /> <acronym title="Internet Protocol versione 4">IPv4</acronym></label><br /><label><input type="radio" id="ipv6" name="ipaddr" class="ipaddr" /> <acronym title="Internet Protocol versione 6">IPv6</acronym></label><br /><label><input type="radio" id="dns" name="ipaddr" class="ipaddr" /> <acronym title="Domain Name System">DNS</acronym></label></div>');
-			
+
 			$.add_input = function(args) {
 				if (typeof(args["inputIP"]) == 'string') {
 					row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args["inputIP"] + '" /></div>');
@@ -169,7 +169,7 @@ function apprise(string, args, callback) {
 		footer.append('<button value="ok" data-dismiss="modal" class="btn btn-default right">Ok</button>');
 		$("#apprise .modal-footer, #apprise .progress").css({"margin": "0px"});
 	}
-	
+
 	dialog.appendTo(modal);
 	content.appendTo(dialog);
 	if(args["showFooter"]) {
