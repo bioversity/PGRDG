@@ -713,7 +713,6 @@
 										case kAPI_PARAM_INPUT_ENUM:
 											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
 											rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-											rt[kAPI_PARAM_GROUP] = [kTAG_DOMAIN];
 											active_forms[af_obj.tags] = rt;
 											break;
 										case kAPI_PARAM_INPUT_RANGE:
@@ -890,6 +889,7 @@
 		});
 		if(storage_also) {
 			$.remove_storage("pgrdg_cache." + content);
+			$.remove_storage("pgrdg_cache.selected_forms");
 		}
 	};
 
@@ -1129,7 +1129,7 @@
 				if(content[kAPI_PARAM_RESPONSE_FRMT_DOCU] === undefined) {
 					switch($.type(content[kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 						case "object":
-							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + content[kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+							r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + $.highlight(content[kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 							break;
 						case "array":
 							$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
@@ -1144,7 +1144,7 @@
 							if(v_type == "string") {
 								r += '<li><b>' + content[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b>: <ul>';
 								$.each(content[kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-									r += '<li>' + $.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP) + '</li>';
+									r += '<li>' + $.highlight($.cycle_disp(v, kAPI_PARAM_RESPONSE_FRMT_DISP)) + '</li>';
 								});
 								r += '</ul></li>';
 							} else {
@@ -1153,14 +1153,14 @@
 							break;
 						case "string":
 							if(content[kAPI_PARAM_RESPONSE_FRMT_LINK] !== undefined) {
-								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
+								r += '<li><b>' + $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: <a target="_blank" href="' + content[kAPI_PARAM_RESPONSE_FRMT_LINK] + '">' + $.highlight(content[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '</a></li>';
 							} else {
 								if(content[kAPI_PARAM_RESPONSE_FRMT_DISP] !== undefined) {
 									if(content.serv !== undefined) {
 										var a_id = $.uuid();
-										r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: &nbsp;<a id="' + a_id + '" onclick="$.call_service(\'' + $.utf8_to_b64(JSON.stringify(content.serv)) + '\', \'' + a_id  + '\')" href="javascript:void(0);"><span class="fa fa-caret-right">&nbsp;' + content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</a></li>';
+										r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: &nbsp;<a id="' + a_id + '" onclick="$.call_service(\'' + $.utf8_to_b64(JSON.stringify(content.serv)) + '\', \'' + a_id  + '\')" href="javascript:void(0);"><span class="fa fa-caret-right">&nbsp;' + $.highlight(content[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '</a></li>';
 									} else {
-										r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + content[kAPI_PARAM_RESPONSE_FRMT_DISP] + '</li>';
+										r += '<li><b>'+ $.cycle_disp(content, kAPI_PARAM_RESPONSE_FRMT_NAME, "label") + '</b>: ' + $.highlight(content[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '</li>';
 									}
 								}
 							}
@@ -1187,6 +1187,15 @@
 			});
 
 			return '<div><ul class="list-unstyled fa-ul">' + r + '</ul></div>';
+		};
+		$.highlight = function(string) {
+			if($.isNumeric(string)) {
+				return '<span style="color: #099;">' + string + '</span>';
+			} else if (Date.parse("some string")) {
+				return '<span style="color: #800000;">' + string + '</span>';
+			} else {
+				return string;
+			}
 		};
 
 		/**

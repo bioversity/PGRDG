@@ -475,6 +475,12 @@
 							$("#contents #" + hash.toLowerCase()).fadeIn(300);
 						}
 					}
+				} else if(current_path == "Search"){
+					if(hash.length > 0) {
+						if($("#contents #" + hash.toLowerCase() + " h1").html().length > 0) {
+							$("#contents #" + hash.toLowerCase()).fadeIn(300);
+						}
+					}
 				}
 			}
 		}

@@ -127,7 +127,8 @@ $menu["menu"]["top"] = array(
 			"class" => "btn btn-link"
 		),
 		"divider" => "vertical-divider"
-	),
+	)
+	//),
 	/*
 	"Map" => array(
 		"content" => array(

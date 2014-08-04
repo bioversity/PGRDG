@@ -730,7 +730,7 @@ section #se_p form .input-group, section #se_p #statistics {
 		width: 100%;
 	}
 }
-section #se_p #summary {
+section #se_p #summary, section #se_p #results {
 	margin-top: 5em;
 }
 section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
