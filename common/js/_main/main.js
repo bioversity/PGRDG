@@ -503,10 +503,6 @@
 		});*/
 		if(storage.isSet(name)) {
 			storage.remove(name);
-		} else {
-			if(developer_mode) {
-				console.error("You try to delete the storage \"" + name + "\" but this storage do not exists!");
-			}
 		}
 	};
 
