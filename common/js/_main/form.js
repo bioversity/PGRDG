@@ -20,10 +20,44 @@
 		return ((v.description !== undefined && v.description.length > 0) ? ((v.description !== undefined && v.description.length > 0) ? v.description : "") : ((v.definition !== undefined && v.definition.length > 0) ? v.definition : ""));
 	};
 
+
 	/**
 	* Check if local storage is allowed
 	*/
-	$.check_storage = function(cname, callback) {
+	$.check_storage = function(cname, page, callback) {
+		$.operate = function(oprst){
+			if(page == "Advanced_search") {
+				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				$("#left_panel div.panel-body.autocomplete").addTraitAutocomplete({
+					id: "main_search",
+					class: "",
+					placeholder:  oprst[kAPI_RESPONSE_RESULTS].placeholder,
+					op: operators
+				}, "remote", function() {
+					operators = operators;
+				});
+				$.left_panel("check", "", function() {
+					$("#forms-body").fadeIn(300);
+				});
+			} else if(page == "Search"){
+				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				$("#collapsed_group_form .panel.panel-default-white").addAutocomplete({
+					id: "filter_search_summary",
+					class: "",
+					placeholder:  oprst[kAPI_RESPONSE_RESULTS].placeholder,
+					op: operators
+				}, "remote", function() {
+					operators = operators;
+				});
+				$('.collapse').on("shown.bs.collapse", function() {
+					$("input.typeahead").focus();
+				});
+			}
+			if (jQuery.type(callback) == "function") {
+				callback.call(this, system_constants);
+			}
+		};
+
 		if(jQuery.type(cname) == "string") {
 			cname = new Array(cname);
 		}
@@ -35,21 +69,19 @@
 					// http://pgrdg.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
 						storage.set("pgrdg_cache.local." + $.md5(name), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": name, "response": system_constants});
-						$.get_operators_list(system_constants);
-
-						if (jQuery.type(callback) == "function") {
-							callback.call(system_constants);
-						}
+						$.get_operators_list(system_constants, function(oprts){
+							$.operate(oprts);
+						});
 					});
 				} else {
-					$.get_operators_list(storage.get("pgrdg_cache.local." + $.md5(name) + ".response"));
-					if (jQuery.type(callback) == "function") {
-						callback.call(cname);
-					}
+					$.get_operators_list(storage.get("pgrdg_cache.local." + $.md5(name) + ".response"), function(oprst) {
+						$.operate(oprst);
+					});
 				}
 			}
 		}
 	};
+
 
 /*=======================================================================================
 *	CORE FORM FUNCTIONS
@@ -405,37 +437,41 @@
 	/**
 	* Get the list of Service operators
 	*/
-	$.get_operators_list = function(system_constants) {
-		if(jQuery.type(system_constants) == "string") {
-			system_constants = jQuery.parseJSON(system_constants);
-		}
-		if(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS !== undefined) {
-			$.ask_to_service(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS, function(oprts) {
-				$.each(oprts.results, function(rx, rv) {
-					if(rv.label !== undefined) {
-						operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
-					} else {
-						if(rx == "label") {
-							operators.push({"label": rv});
-						} else if(rx == "title") {
-							operators.push({"title": rv});
+	$.get_operators_list = function(system_constants, callback) {
+		$.list_operators = function(system_constants, callback) {
+			if(jQuery.type(system_constants) == "string") {
+				system_constants = jQuery.parseJSON(system_constants);
+			}
+
+			if(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS !== undefined) {
+				$.ask_to_service(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS, function(oprts) {
+					$.each(oprts.results, function(rx, rv) {
+						if(rv.label !== undefined) {
+							operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
+						} else {
+							if(rx == "label") {
+								operators.push({"label": rv});
+							} else if(rx == "title") {
+								operators.push({"title": rv});
+							}
 						}
+					});
+					if(jQuery.type(callback) == "function") {
+						callback.call(this, oprts);
 					}
 				});
-				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
-				$("#left_panel div.panel-body.autocomplete").addTraitAutocomplete({
-					id: "main_search",
-					class: "",
-					placeholder:  oprts.results.placeholder,
-					op: operators
-				}, "remote", function() {
-					operators = operators;
-				});
-				$.left_panel("check", "", function() {
-					$("#forms-body").fadeIn(300);
-				});
+			}
+		};
+
+		if(system_constants === undefined) {
+			// Check the presence of constants on storage
+			$.check_storage(kAPI_OP_LIST_CONSTANTS, current_path, function(data) {
+				$.check_storage(kAPI_OP_LIST_REF_COUNTS, current_path); // Remember that you can pass also an array
 			});
+		} else {
+			$.list_operators(system_constants, callback);
 		}
+
 	};
 
 
@@ -908,7 +944,11 @@
 
 		if(type !== "map") {
 			if(type == "summary") {
-				$("#" + type + "-head .content-title").html("Results " + type.toLowerCase());
+				if(current_path == "Search") {
+					$("#" + type + "-head .content-title > span").html("Results " + type.toLowerCase());
+				} else {
+					$("#" + type + "-head .content-title").html("Results " + type.toLowerCase());
+				}
 			} else {
 				$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
 			}
@@ -917,6 +957,7 @@
 			if(type !== "results") {
 				$.each(options.res.results, function(domain, values) {
 					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
+					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"result panel\"><h4 class=\"\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span></h4><p>" + values[kTAG_DEFINITION] + "</p><div class=\"\"><span class=\"text-muted\">" + values[kAPI_PARAM_RESPONSE_COUNT] + " items</span><span class=\"pull-right\"><a class=\"\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? " | <a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"" + ((values.points > 10000) ? "text-warning disabled" : "") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</span></div></div>");
 				});
 			} else {
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
@@ -1188,6 +1229,10 @@
 
 			return '<div><ul class="list-unstyled fa-ul">' + r + '</ul></div>';
 		};
+
+		/**
+		 * Highlight text for more readability
+		 */
 		$.highlight = function(string) {
 			if($.isNumeric(string)) {
 				return '<span style="color: #099;">' + string + '</span>';
@@ -1801,37 +1846,118 @@
 			class: "",
 			placeholder: "Choose..."
 		}, options);
-		$(this).append('<div id="autocomplete">' + /*<span class="icomoon icon-spinner-2"></span> */ '<input type="text" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div>');
+		var op_btn_list = "",
+		selected_label = "Operator",
+		checkbox = "",
+		user_input,
+		is_autocompleted = false,
+		selected_label_key = "",
+		selected_label_value = "";
 
-		var substringMatcher = function(strs) {
-			return function findMatches(q, cb) {
-				var matches, substringRegex;
-				// an array that will be populated with substring matches
-				matches = [];
-				// regex used to determine if a string contains the substring `q`
-				substrRegex = new RegExp(q, 'i');
-				// iterate through the pool of strings and for any string that
-				// contains the substring `q`, add it to the `matches` array
-				$.each(strs, function(i, str) {
-					if (substrRegex.test(str)) {
-						// the typeahead jQuery plugin expects suggestions to a
-						// JavaScript object, refer to typeahead docs for more info
-						matches.push({ value: str });
-					}
-				});
-				cb(matches);
-			};
+		$.selected_menu = function(k, v) {
+			var kk = k.replace("$", "");
+			$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
+			$("#autocomplete ul.dropdown-menu li").removeClass("active");
+			$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
+			$("#" + options.id).focus();
 		};
-		$(this).find(".typeahead").typeahead({
+		$.each(options.op, function(k, v) {
+			if(!v.main) {
+				if(v.label !== undefined) {
+					checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" value="" /> ' + v.label + '</label></div>';
+				}
+			} else {
+				if(v.main !== undefined) {
+					if(v.type == "string") {
+						if(v.selected){
+							if(v.main) {
+								selected_label_key = v.key;
+								selected_label_value = v.label;
+							}
+							op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						} else {
+							op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						}
+					}
+				}
+			}
+		});
+		$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
+
+		remoteAutocomplete = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			remote: {
+				url: service_url + "%QUERY",
+				replace: function(url, query) {
+					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					return url.replace("%QUERY", state);
+				},
+				filter: function (parsedResponse) {
+					var res = [];
+					$.each(parsedResponse, function(respType, v) {
+						if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+							if(respType == "results") {
+								for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
+									var re = [];
+									re.value = v[i];
+									res.push(re);
+								}
+							}
+						}
+					});
+					return res;
+				}
+			}
+		});
+		remoteAutocomplete.clearPrefetchCache();
+		remoteAutocomplete.initialize();
+
+		var form_help_text = "Click on the green rectangle to activate the field: if you press the search button the system will select all data <em>containing</em> the selected field, regardless of its value.<br />To search for specific field values, fill the field search value or select the provided options.";
+		$("#" + options.id).typeahead({
 			hint: true,
 			highlight: true,
-			minLength: 1,
+			minLength: 3,
 			limit: 50
 		}, {
-			name: 'data',
-			displayKey: 'value',
-			source: substringMatcher(data)
+			displayKey: "value",
+			//source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
+			source: remoteAutocomplete.ttAdapter()
+		}).on("typeahead:selected", function(){
+			// Autocomplete
+			$.manage_url("Forms");
+
+			var kAPI = {};
+			kAPI.storage_group = "forms";
+			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+			kAPI.parameters = {};
+			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
+			console.log("ok");
+
+			return false;
+		}).bind("keydown", "return", function(event) {
+			$(this).trigger("typeahead:_changed");
+			return false;
+		}).bind("keydown", "alt+left", function(e) {
+			$.left_panel("close", "", function() {
+				$("#" + options.id).blur();
+			});
+			return false;
+		}).bind("keydown", "alt+right", function(e) {
+			$.left_panel("open");
+			return false;
 		});
+
+		if (jQuery.type(callback) == "function") {
+			callback.call(this);
+		}
 	};
 
 	/**
@@ -1883,10 +2009,6 @@ $(document).ready(function() {
 			$.resize_forms_mask();
 		});
 	}
-	// Check the presence of constants on storage
-	$.check_storage(kAPI_OP_LIST_CONSTANTS, function(data) {
-		$.check_storage(kAPI_OP_LIST_REF_COUNTS); // Remember that you can pass also an array
-	});
 		$.reset_contents("forms", true);
 		$.remove_storage("pgrdg_cache.selected_forms");
 		$.remove_storage("pgrdg_cache.forms_data");

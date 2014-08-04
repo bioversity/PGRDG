@@ -37,9 +37,9 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         <form method="get" action="" onsubmit="if($('#search_form').val().length < 3) { return false; }">
                                 <div class="input-group">
                                         <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." value="<?php print htmlentities(urldecode($_GET["q"])); ?>" />
-                                        <span class="input-group-btn">
+                                        <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
-                                        </span>
+                                        </div>
                                 </div>
                         </form>
                         <div id="statistics" class="help-block">

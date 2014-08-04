@@ -703,6 +703,28 @@ section #se_p #breadcrumb {
 section #se_p #se_results {
 	padding: 70px 0 70px 70px;
 }
+section #se_p #se_results .result.panel {
+	border: 0px none;
+	border-left: 5px solid #FCC153;
+	border-radius: 0 !important;
+	padding-bottom: 10px;
+	padding-left: 15px;
+	padding-top: 10px;
+}
+section #se_p #se_results .result.panel > h4 {
+	margin-bottom: 5px;
+	margin-top: 0;
+	padding-bottom: 0;
+}
+section #se_p #se_results .result.panel > p {
+	margin: 0;
+	margin-bottom: 10px;
+}
+section #se_p #se_results .result.panel > p + div {
+	border-top: 1px solid #ddd;
+	padding: 5px 0;
+}
+
 @media only screen and (max-width:420px) {
 	section.backgrounded #se {
 		margin: 10% 0;
@@ -714,11 +736,11 @@ section #se_p #se_results {
 section #se_p #se_results .panel_content-head, section #se_p #se_results .panel_content-footer{
 	margin: 0;
 }
-section #se_p form .input-group, section #se_p #statistics {
+section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 	width: 50%;
 }
 @media only screen and (max-width:1024px) {
-	section #se_p form .input-group, section #se_p #statistics {
+	section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 		width: 80%;
 	}
 }
@@ -726,12 +748,17 @@ section #se_p form .input-group, section #se_p #statistics {
 	section #se_p {
 		padding: 20px 0 0 0;
 	}
-	section #se_p form .input-group, section #se_p #statistics {
+	section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 		width: 100%;
 	}
 }
 section #se_p #summary, section #se_p #results {
 	margin-top: 5em;
+}
+section #se_p #summary-head h1, section #se_p #results-head h1 {
+	border-bottom: #eee 1px solid;
+	margin-bottom: 15px;
+	padding-bottom: 5px;
 }
 section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
 	box-shadow: 0 0 0 transparent;

@@ -1011,6 +1011,7 @@ $(document).ready(function() {
 					allowExit: true
 				});
 			});
+			$.get_operators_list();
 		}
 
 		$.check_logged_user();
