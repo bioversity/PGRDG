@@ -956,8 +956,29 @@
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
 				$.each(options.res.results, function(domain, values) {
-					$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
-					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"result panel\"><h4 class=\"\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span></h4><p>" + values[kTAG_DEFINITION] + "</p><div class=\"\"><span class=\"text-muted\">" + values[kAPI_PARAM_RESPONSE_COUNT] + " items</span><span class=\"pull-right\"><a class=\"\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? " | <a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"" + ((values.points > 10000) ? "text-warning disabled" : "") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</span></div></div>");
+					var result_panel = $('<div class="result panel">'),
+					result_h4 = $('<h4 class="">'),
+					result_title = $('<span class="title">'),
+					result_description = $('<p>'),
+					result_content_container = $('<div class="row">'),
+					result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
+					result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
+
+					result_title.html($.trim(values[kTAG_LABEL]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
+					result_h4.appendTo(result_panel);
+					result_description.html(values[kTAG_DEFINITION]).appendTo(result_panel);
+
+					result_description_span_muted.html('<span class="help-block">' + values[kAPI_PARAM_RESPONSE_COUNT] + ' items</span>').appendTo(result_content_container);
+					result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View raw data</a>');
+					if(values.points > 0) {
+						result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View on map <sup class="text-muted">' + values.points + '</sup></a>');
+					}
+					result_description_span_right.appendTo(result_content_container);
+					result_content_container.appendTo(result_panel);
+
+					$("#" + type + "-body .content-body").attr("id", options.res.id).append(result_panel);
+
+					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
 			} else {
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
@@ -1239,7 +1260,7 @@
 			} else if (Date.parse("some string")) {
 				return '<span style="color: #800000;">' + string + '</span>';
 			} else {
-				return string;
+				return $.linkify(string);
 			}
 		};
 
@@ -1306,7 +1327,9 @@
 					$.activate_panel("map", {res: res.results, shape: kTAG_GEO_SHAPE});
 					if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
 						var alert_title = "Displayed " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " of " + res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] + " markers";
-						apprise("The map cannot currently display more than " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points.<br />This means that it contains only the first " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+						setTimeout(function() {
+							apprise("The map cannot currently display more than " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points.<br />This means that it contains only the first " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+						}, 4000);
 					}
 				} else {
 					alert("No results");

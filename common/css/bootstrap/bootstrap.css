@@ -1980,6 +1980,7 @@ select[multiple].input-lg {
   padding-top: 7px;
   margin-top: 0;
   margin-bottom: 0;
+  line-height: 25px;
 }
 .form-horizontal .radio,
 .form-horizontal .checkbox {
@@ -3485,7 +3486,7 @@ input[type="button"].btn-block {
 }
 .input-group .form-control {
   position: relative;
-  z-index: 1;
+  /*z-index: 1;*/
   float: left;
   width: 100%;
   margin-bottom: 0;
@@ -3647,7 +3648,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .nav > li {
   position: relative;
-  display: block;
+  /*display: block;*/
 }
 .nav > li > a {
   position: relative;

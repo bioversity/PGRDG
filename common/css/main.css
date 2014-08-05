@@ -11,9 +11,33 @@ body {
 	width: 100%;
 	height: 100%;
 }
+h1, h2, h3 {
+	font-family: "HelveticaNeueW01-45Ligh";
+}
+h1.text-muted {
+	margin-bottom: 2em;
+	border-bottom: #eee 1px solid;
+}
+h2 {
+	border-bottom: #eee 1px solid;
+	margin-bottom: 3em;
+	margin-top: 0;
+}
+form > h3 {
+	margin-top: 1.5em;
+	margin-bottom: 0;
+	color: #aaa;
+}
 hr {
 	margin-top: 0;
 	margin-bottom: 15px;
+}
+
+a > span.fa, a > span.ionicons {
+	margin-right: 5px;
+}
+a sup, a:hover sup, a:focus sup {
+	text-decoration: none !important;
 }
 
 /* -----------------------------------------------------------------------------
@@ -219,8 +243,10 @@ footer ul li + li:before {
 }
 #nav li > a {
 	font-size: 0.9em;
-    	padding: 5px 10px;
+	padding: 5px 10px;
 	color: #333;
+	text-align: left;
+	width: 100%;
 }
 #nav li > a:hover {
 	color: #000;
@@ -230,6 +256,7 @@ footer ul li + li:before {
 		background-color: #dedede;
 		border-radius: 0;
 		box-shadow: 0 5px 5px #aaa inset;
+		width: 100%;
 	}
 }
 #nav .container-fluid {
@@ -266,9 +293,12 @@ footer ul li + li:before {
 		margin-top: -23px;
 	}
 }
-@media only screen and (max-width:420px) {
+@media only screen and (max-width:868px) {
 	#nav .navbar-collapse.collapse.in {
 		box-shadow: 0 3px 6px #666;
+	}
+	.btn-group, .btn-group-vertical {
+		width: 100%;
 	}
 }
 .navbar .divider-vertical, .navbar .vertical-divider {
@@ -335,7 +365,7 @@ section.container {
 	position: fixed;
 	top: 75px;
 	width: 100%;
-	z-index: 2;
+	z-index: 1;
 }
 
 #breadcrumb .breadcrumb {
@@ -700,10 +730,10 @@ section #se_p #breadcrumb {
 	position: absolute;
 	top: 0;
 }
-section #se_p #se_results {
+section #se_results {
 	padding: 70px 0 70px 70px;
 }
-section #se_p #se_results .result.panel {
+section #se_results .result.panel, .result.panel {
 	border: 0px none;
 	border-left: 5px solid #FCC153;
 	border-radius: 0 !important;
@@ -711,16 +741,16 @@ section #se_p #se_results .result.panel {
 	padding-left: 15px;
 	padding-top: 10px;
 }
-section #se_p #se_results .result.panel > h4 {
+section #se_results .result.panel > h4, .result.panel > h4 {
 	margin-bottom: 5px;
 	margin-top: 0;
 	padding-bottom: 0;
 }
-section #se_p #se_results .result.panel > p {
+section #se_results .result.panel > p, .result.panel > p {
 	margin: 0;
 	margin-bottom: 10px;
 }
-section #se_p #se_results .result.panel > p + div {
+section #se_results .result.panel > p + div, .result.panel > p + div {
 	border-top: 1px solid #ddd;
 	padding: 5px 0;
 }
@@ -729,11 +759,11 @@ section #se_p #se_results .result.panel > p + div {
 	section.backgrounded #se {
 		margin: 10% 0;
 	}
-	section #se_p #se_results {
+	section #se_results {
 		padding: 50px 0 0 0;
 	}
 }
-section #se_p #se_results .panel_content-head, section #se_p #se_results .panel_content-footer{
+section #se_results .panel_content-head, section #se_results .panel_content-footer{
 	margin: 0;
 }
 section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
@@ -1088,7 +1118,7 @@ ul.list-group.transparent ul {
 	bottom: 0;
 	left: 0;
 	margin-top: 75px;
-	z-index: 1;
+	z-index: 0;
 	/*
 	cursor: hand;
 	cursor: grab;

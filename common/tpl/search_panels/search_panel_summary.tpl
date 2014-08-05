@@ -1,8 +1,12 @@
 <div id="summary" class="panel_content">
         <div id="summary-head" class="left panel_content-head container-fluid">
-                <h1 class="content-title">
+                <h1 class="content-title clearfix">
                         <span></span>
-                        <small class="pull-right text-sm"><a data-toggle="collapse" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-white"><span class="fa fa-indent text-muted"></span> Group by...</a></small>
+                        <div class="pull-right">
+                                <a data-toggle="collapse" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-white">
+                                        <span class="fa fa-indent text-muted"></span>Group by...
+                                </a>
+                        </div>
                 </h1>
                 <div class="panel-group" id="group_by_accordion">
                         <div id="collapsed_group_form" class="panel-collapse collapse">

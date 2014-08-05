@@ -128,15 +128,15 @@ $.linkify = function(inputText) {
 
         //URLs starting with http://, https://, or ftp://
         replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+        replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
 
         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
         replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+        replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
 
         //Change email addresses to mailto:: links.
         replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
 
         return replacedText;
 };
@@ -151,12 +151,13 @@ $.parse_params = function(query) {
         var re = /([^&=]+)=?([^&]*)/g,
         decodeRE = /\+/g, // Regex for replacing addition symbol with a space
         decode = function(str) {
-                return decodeURIComponent(str.replace(decodeRE, " ") );
+                return decodeURIComponent(str.replace(decodeRE, " "));
         },
         params = {},
         e;
         while(e = re.exec(query)) {
-                var k = decode( e[1] ), v = decode( e[2] );
+                var k = decode(e[1]),
+                v = decode(e[2]);
                 if (k.substring(k.length - 2) === '[]') {
                         k = k.substring(0, k.length - 2);
                         (params[k] || (params[k] = [])).push(v);

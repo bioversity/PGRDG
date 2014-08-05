@@ -26,12 +26,13 @@
 					require_once("common/tpl/pages/Conservation Strategies.tpl");
 				} else {
 					if($page == "Links") {
-						print '<h1>Links to other information systems</h1>';
+						$page_title = 'Links to other information systems';
 					} else {
 						if($page !== "Feedback" && $page !== "Blog" && $page !== "Se") {
-							print "<h1>" . str_replace("_", " ", (($page == "") ? "home" : $page)) . "</h1>";
+							$page_title = str_replace("_", " ", (($page == "") ? "home" : $page));
 						}
 					}
+					print "<h1 class=\"" . $page_class . "\">" . $page_title . "</h1>";
 					switch($page) {
 						case "Blog":
 							require_once("common/tpl/pages/Blog.tpl");
@@ -42,6 +43,28 @@
 						case "Advanced_search":
 							//header("Location: " . $domain . "/Search");
 							break;
+						// ---------------
+						// User page
+						case "Profile":
+							require_once("common/tpl/admin_pages/Profile.tpl");
+							break;
+						// ---------------
+						// Metadata management
+						case "Metadata":
+							break;
+						// Menu management
+						case "Menu":
+							break;
+						// Menu management
+						case "Map":
+							break;
+						// Menu management
+						case "Graphs":
+							break;
+						// Menu management
+						case "Users":
+							break;
+
 						default:
 							print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page == "") ? "home" : $page)) . ".md")));
 							break;

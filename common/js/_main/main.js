@@ -798,35 +798,52 @@
 
 			var data = [],
 			user_data = {},
-			objp = {};
+			objp = {},
+			objpp = {},
+			authority = "";
 			data.push($("#login-username").val());
 			data.push($.sha1($("#login-password").val()));
 
 			$.get_user_data = function(resp) {
 				if($.type(resp) == "object" && $.obj_len(resp) > 0) {
 					$.each(resp, function(obj, data){
-						user_data = {
-							local: {
-								username: data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP],
-								pass: data[kTAG_CONN_PASS][kAPI_PARAM_RESPONSE_FRMT_DISP],
-								type: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
-								role: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
-								creation_date: data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP]
-							},
-							domain: data[kTAG_DOMAIN][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							name: data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							lastname: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							email: data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							role: data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							job: {
-								authority: data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP],
-								task: {
-									label: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
-									description: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]
-								}
-							}
+						objpp.storage_group = "session";
+						objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+						objpp.parameters = {};
+						objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+						objpp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+						objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+						objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP];
+						objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+						$.ask_to_service(objpp, function(a) {
+							if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
+								$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
+									authority = data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
+								});
+								user_data = {
+									local: {
+										username: data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP],
+										pass: data[kTAG_CONN_PASS][kAPI_PARAM_RESPONSE_FRMT_DISP],
+										type: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+										role: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+										creation_date: data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP]
+									},
+									domain: data[kTAG_DOMAIN][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+									name: data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+									lastname: data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+									email: data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP],
+									role: data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP],
+									job: {
+										authority: authority,
+										task: {
+											label: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP],
+											description: data[kTAG_ENTITY_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]
+										}
+									}
 
-						};
+								};
+							}
+						});
 					});
 				}
 				return user_data;
@@ -872,6 +889,7 @@
 	* Check if there's logged users
 	*/
 	$.check_logged_user = function() {
+
 		//$("#login_menu_btn").addClass("disabled");
 		//$("#login_menu_btn").addClass("disabled").html('<span class="fa fa-spin fa-refresh"></span> Wait...');
 		var username = $.cookie("l"),
@@ -885,6 +903,33 @@
 				});
 			}
 			$.create_user_menu(user_data, roles_groups);
+
+			if(current_path == "Profile") {
+				$("#uname").val(user_data.name);
+				$("#ulast").val(user_data.lastname);
+				$("#uemail").val(user_data.email);
+				$("#ujob").val(user_data.job.authority);
+				$("#utask").val(user_data.job.task.description);
+				$("#username").val(user_data.local.username);
+				if(user_data.local.pgp_key === undefined || user_data.local.pgp_key.length == 0) {
+					$("#upgp").closest(".form-group").addClass("has-error");
+					$("#nopgp").fadeIn(300);
+					$("input[type=submit]").removeClass("btn-default").addClass("btn-danger disabled");
+				}
+
+				// window.onbeforeunload = function() {
+				// 	apprise("Are you sure that you want to leave this page?", {"confirm": "true"}, function(r) {
+				// 		if(r) {
+				// 			return false;
+				// 		}
+				// 	});
+				// };
+				/*
+				window.onbeforeunload = function() {
+					return "You have unsaved changes\nAre you sure that you want to leave this page?";
+				};
+				*/
+			}
 		} else {
 			$.cookie("l", null);
 			$.remove_storage("pgrdg_cache.session");
