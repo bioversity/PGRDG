@@ -162,7 +162,7 @@ $menu["menu"]["top"] = array(
 	*/
 	"Sign in" => array(
 		"content" => array(
-			"icon" => "fa fa-sign-in",
+			"icon" => "fa fa-refresh fa-spin",
 			"text" => "Sign in"
 		),
 		"attributes" => array(

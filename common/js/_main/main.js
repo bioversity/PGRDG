@@ -795,17 +795,18 @@
 	$.login = function() {
 		if($("#login-username").val().length >= 4 && $("#login-password").val().length >= 6) {
 			$("#loginform .input-group").removeClass("has-error");
-
 			var data = [],
 			user_data = {},
 			objp = {},
 			objpp = {},
 			authority = "";
-			data.push($("#login-username").val());
-			data.push($.sha1($("#login-password").val()));
+			data.push($.trim($("#login-username").val()));
+			data.push($.trim($.sha1($("#login-password").val())));
 
-			$.get_user_data = function(resp) {
+			$.get_user_data = function(resp, callback) {
 				if($.type(resp) == "object" && $.obj_len(resp) > 0) {
+					user_data = resp;
+					/*
 					$.each(resp, function(obj, data){
 						objpp.storage_group = "session";
 						objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
@@ -845,8 +846,11 @@
 							}
 						});
 					});
+					*/
+					if (typeof callback == "function") {
+						callback.call(this, user_data);
+					}
 				}
-				return user_data;
 			};
 
 			objp.storage_group = "local";
@@ -860,14 +864,23 @@
 			$.ask_to_service(objp, function(response) {
 				if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 					var $li = $("#login_menu_btn").closest("li"),
-					user_data = $.get_user_data(response[kAPI_RESPONSE_RESULTS]),
+					user_data = {},
 					permissions = [], roles_groups = [];
-					$.each(user_data.role, function(k, v){
-						roles_groups.push(k, v.charAt(0));
+					$.get_user_data(response[kAPI_RESPONSE_RESULTS], function(user_data){
+						$.each(user_data, function(domain, data) {
+							$.each(data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v){
+								roles_groups.push(k, v.charAt(0));
+							});
+							if($("#remember_login_btn").is(":checked")) {
+								$.cookie("l", $.sha1(data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP]), {expires: 7, path: "/" });
+							} else {
+								$.cookie("l", $.sha1(data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP]), {expires: 1, path: "/" });
+							}
+							storage.set("pgrdg_cache.session." + $.sha1(data[kTAG_CONN_USER][kAPI_PARAM_RESPONSE_FRMT_DISP]) + ".data", data);
+							$.create_user_menu(data, roles_groups);
+						});
+						//location.reload();
 					});
-					$.create_user_menu(user_data, roles_groups);
-					$.cookie("l", $.sha1(user_data.local.username), {expires: 1, path: "/" });
-					storage.set("pgrdg_cache.session." + $.sha1(user_data.local.username) + ".data", user_data);
 				}
 			});
 		} else {
@@ -889,33 +902,36 @@
 	* Check if there's logged users
 	*/
 	$.check_logged_user = function() {
-
-		//$("#login_menu_btn").addClass("disabled");
 		//$("#login_menu_btn").addClass("disabled").html('<span class="fa fa-spin fa-refresh"></span> Wait...');
 		var username = $.cookie("l"),
 		user_data = "",
 		roles_groups = [];
-		if(username !== undefined || username !== null || username !== "") {
+		if(username === undefined || username === null || username === "") {
+			$.cookie("l", null);
+			$.remove_storage("pgrdg_cache.session");
+			$("#login_menu_btn").find("span").removeClass("fa-check fa-spin").addClass("fa-sign-in");
+		} else {
 			if(storage.isSet("pgrdg_cache.session." + username)) {
 				user_data = storage.get("pgrdg_cache.session." + username + ".data");
-				$.each(user_data.role, function(k, v){
+				$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v){
 					roles_groups.push(k, v.charAt(0));
 				});
+				$.create_user_menu(user_data, roles_groups);
 			}
-			$.create_user_menu(user_data, roles_groups);
 
 			if(current_path == "Profile") {
-				$("#uname").val(user_data.name);
-				$("#ulast").val(user_data.lastname);
-				$("#uemail").val(user_data.email);
-				$("#ujob").val(user_data.job.authority);
-				$("#utask").val(user_data.job.task.description);
-				$("#username").val(user_data.local.username);
-				if(user_data.local.pgp_key === undefined || user_data.local.pgp_key.length == 0) {
-					$("#upgp").closest(".form-group").addClass("has-error");
-					$("#nopgp").fadeIn(300);
-					$("input[type=submit]").removeClass("btn-default").addClass("btn-danger disabled");
-				}
+				//console.log(user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+				// $("#uname").val(user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+				// $("#ulast").val(user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+				// $("#uemail").val(user_data.email);
+				// $("#ujob").val(user_data.job.authority);
+				// $("#utask").val(user_data.job.task.description);
+				// $("#username").val(user_data.local.username);
+				// if(user_data.local.pgp_key === undefined || user_data.local.pgp_key.length == 0) {
+				// 	$("#upgp").closest(".form-group").addClass("has-error");
+				// 	$("#nopgp").fadeIn(300);
+				// 	$("input[type=submit]").removeClass("btn-default").addClass("btn-danger disabled");
+				// }
 
 				// window.onbeforeunload = function() {
 				// 	apprise("Are you sure that you want to leave this page?", {"confirm": "true"}, function(r) {
@@ -929,11 +945,8 @@
 					return "You have unsaved changes\nAre you sure that you want to leave this page?";
 				};
 				*/
+				$.generate_personal_form(user_data);
 			}
-		} else {
-			$.cookie("l", null);
-			$.remove_storage("pgrdg_cache.session");
-			$("#login_menu_btn").html('<span class="fa fa-sign-in"></span> Sign in');
 		}
 		$("#login_menu_btn").removeClass("disabled");
 	};
@@ -944,7 +957,6 @@
 	$.create_user_menu = function(user_data, roles_groups) {
 		if(user_data !== undefined && user_data !== null && user_data !== ""){
 			var $li = $("#login_menu_btn").closest("li"), permissions = [];
-
 			$.each(roles.dictionary.groups, function(gl, gd){
 				if($.inArray(gl, roles_groups) !== -1) {
 					var detailed_permissions = [];
@@ -976,7 +988,7 @@
 			});
 			//$('<li class="vertical-divider">').insertBefore($li);
 			$li.addClass("btn-group");
-			$li.html('<a id="login_menu_btn" data-toggle="dropdown" href="javascript: void(0);" class="btn btn-link dropdown-toggle"><small class="fa fa-user"></small> ' + user_data.name + ' <span class="caret"></span></a>');
+			$li.html('<a id="login_menu_btn" data-toggle="dropdown" href="javascript: void(0);" class="btn btn-link dropdown-toggle"><small class="fa fa-user"></small> ' + user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <span class="fa fa-caret-down"></span></a>');
 			if($li.find("ul.dropdown-menu").length === 0) {
 				$li.append('<ul class="dropdown-menu" role="menu">');
 				$li.find("ul").append('<li><a href="./Profile"><span class="fa fa-fw fa-gear"></span> Profile</a></li><li class="divider"></li>');
@@ -992,8 +1004,95 @@
 			}
 			$("#login").modal("hide");
 		} else {
-
 		}
+	};
+
+	$.generate_personal_form = function(user_data) {
+		$.fn.add_forms = function(options) {
+			options = $.extend({
+				data: {},
+				tags: [],
+				type: ""
+			}, options);
+
+			if($.obj_len(options.data) > 0) {
+				var form = $('<form method="post" action="" class="form-horizontal" role="form">'),
+				input_value = "";
+				// EDIT HERE
+				// ---------------------------------------------------------------------------------------------
+				$.each(options.data, function(tag, data) {
+					if(tag == options.tag_range[0] && tag <= options.tag_range[1]) {
+						if(tag == options.tag_range[0]) {
+							form.append('<h3>' + options.type + '</h3>');
+						}
+						var form_group = $('<div class="form-group">'),
+						label = $('<label>'),
+						input_div = $('<div class="col-sm-8">');
+						if($.type(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP]) == "object") {
+							input_value = options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+						} else {
+							input_value = options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP];
+						}
+						label.append(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]);
+						label.attr("for", $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME])).addClass("col-sm-4 control-label");
+						label.appendTo(form_group);
+						input_div.html('<input type="text" name="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" required class="form-control" id="' + $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]) + '" placeholder="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" value="' + input_value + '" />');
+						input_div.appendTo(form_group);
+						form_group.appendTo(form);
+						form.append(form_group);
+					}
+				});
+				$(this).append(form);
+			} else {
+				$(this).append('<div class="panel panel-danger">No user data to display</div>');
+			}
+		};
+
+		console.warn(user_data);
+		$("#personal_form").html('<address><b>' + user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
+		$("#personal_form").append('<address><b>' + user_data[kTAG_RECORD_MODIFIED][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + user_data[kTAG_RECORD_MODIFIED][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
+		$("#personal_form").add_forms({
+			data: user_data,
+			tags: [kTAG_ENTITY_FNAME, kTAG_ENTITY_LNAME, kTAG_ENTITY_EMAIL],
+			type: "Personal"
+		});
+		var objpp = {};
+		objpp.storage_group = "session";
+		objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+		objpp.parameters = {};
+		objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objpp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+		$.ask_to_service(objpp, function(a) {
+			if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
+				$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
+					$("#personal_form").append('<address><b>' + user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
+				});
+			}
+		});
+
+	};
+
+	$.get_authority = function(domain){
+		var objpp = {};
+		objpp.storage_group = "session";
+		objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+		objpp.parameters = {};
+		objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objpp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = domain;
+		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+		$.ask_to_service(objpp, function(a) {
+			if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
+				$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
+					console.log(data[kTAG_NAME]);
+					return data[kTAG_NAME];
+				});
+			}
+		});
 	};
 
 /*======================================================================================*/
@@ -1058,7 +1157,11 @@ $(document).ready(function() {
 			});
 			$.get_operators_list();
 		}
-
 		$.check_logged_user();
+		if(current_path == "Profile") {
+			if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
+				//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
+			}
+		}
 	}
 });

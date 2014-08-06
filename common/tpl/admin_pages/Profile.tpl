@@ -1,6 +1,9 @@
 <h2 class="text-muted">Your data</h2>
 
-<div class="pull-left"></div>
+<div id="personal_form"></div>
+<hr />
+<hr />
+<hr />
 <form method="post" action="" class="form-horizontal" role="form">
         <h3>Personal</h3>
         <div class="form-group">
@@ -47,7 +50,15 @@
                 <label for="upgp" class="col-sm-2 control-label"><span class="fa fa-lock"></span> <acronym title="Pretty Good Privacy">PGP</acronym> PUBLIC key</label>
                 <div class="col-sm-10">
                         <textarea name="pgp" rows="4" class="form-control" required id="upgp" placeholder="PGP PUBLIC key"></textarea>
-                        <span class="help-block">You strictly need a personal PGP key.<br />For further instructions please see here: <a class="text-danger" target="_blank" href="http://www.pgpi.org/doc/pgpintro/">http://www.pgpi.org/doc/pgpintro/</a><sup class="fa fa-external-link text-muted"></sup></span>
+                        <div class="help-block">
+                                You strictly need a personal PGP key.<br />
+                                If you do not have a personal PGP key, you can install these free software:
+                                <ul>
+                                        <li class="text-danger"><b>Windows</b>: <a class="text-danger" target="_blank" href="http://gpg4win.org/">Gpg4win</a></li>
+                                        <li class="text-danger"><b>Mac</b>: <a class="text-danger" target="_blank" href="http://gpgtools.org/">Mac GPG</a></li>
+                                        <li class="text-danger"><b>Linux/Unix</b>: the package <code>pgpgpg</code> is currently available</li>
+                                </ul>
+                                For further instructions please see here: <a class="text-danger" target="_blank" href="http://www.pgpi.org/doc/pgpintro/">http://www.pgpi.org/doc/pgpintro/</a><sup class="fa fa-external-link text-muted"></sup>
                 </div>
         </div>
         <div id="user_permission"></div>

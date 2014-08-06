@@ -9,16 +9,16 @@
 				<div class="modal-body">
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						<input id="login-username" type="text" class="form-control" name="username" autofocus value="sonia" placeholder="username or email" />
+						<input id="login-username" type="text" class="form-control" name="username" autofocus value="alessandro" placeholder="username or email" />
 					</div>
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="tiagogateway" />
+						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="quellochetepare" />
 					</div>
 					<div class="input-group">
 						<div class="checkbox">
 							<label>
-								<input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
+								<input id="remember_login_btn" type="checkbox" name="remember" value="1"> Remember me
 							</label>
 						</div>
 					</div>
