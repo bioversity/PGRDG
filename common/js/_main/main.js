@@ -92,11 +92,13 @@
 		} else {
 			if(typeof(opt.loaderType) == "string") {
 				if(!$("#marker_content").is(":visible")) {
-					if($("#apprise.ask_service").length === 0) {
-						apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
-					} else {
-						if($("#apprise.ask_service").css("display") == "none") {
-							$("#apprise.ask_service").modal("show");
+					if(!$("#apprise.service_coffee").is(":visible")) {
+						if($("#apprise.ask_service").length === 0) {
+							apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
+						} else {
+							if($("#apprise.ask_service").css("display") == "none") {
+								$("#apprise.ask_service").modal("show");
+							}
 						}
 					}
 				}
@@ -176,9 +178,7 @@
 							console.groupEnd();
 						}
 						$("#apprise.ask_service").modal("destroy");
-						if($("#apprise.service_coffee").length === 0) {
-							apprise("The Service is temporarily unavailable.<br />Try again later...", {class: "service_coffee", title: "Taking coffee...", titleClass: "text-warning", icon: "fa-coffee", progress: true, allowExit: false});
-						}
+						$.service_coffee();
 						setTimeout(function() {
 							$.ask_to_service(options, callback);
 						}, 3000);
@@ -194,6 +194,67 @@
 	$.display_error_msg = function(message) {
 		$("#apprise").modal("destroy");
 		apprise(message, {"icon": "error"});
+	};
+
+	/**
+	* Display the coffee message
+	*/
+	$.service_coffee = function(options) {
+		options = $.extend({
+			message: "The Service is temporarily unavailable.<br />Try again later...",
+			class: "service_coffee",
+			title: "Taking coffee...",
+			titleClass: "text-warning",
+			icon: "fa-coffee"
+		}, options);
+
+		if($("#apprise.service_coffee").length === 0) {
+			apprise(options.message, {
+				class: options.class,
+				title: options.title,
+				titleClass: options.titleClass,
+				icon: options.icon,
+				progress: true,
+				allowExit: false
+			});
+		} else {
+			$("#apprise.service_coffee").modal("show");
+		}
+	};
+
+
+	/**
+	* Load site configurations
+	*/
+	$.site_conf = function(callback) {
+		if(!developer_mode) {
+			$.cryptAjax({
+				url: "common/include/conf/site.json",
+				dataType: "json",
+				success: function(site) {
+					if(site.maintainance === true) {
+						$.service_coffee({
+							message: "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over.",
+							title: "Under maintainance",
+							titleClass: "text-danger",
+							icon: "fa-wrench"
+						});
+					} else {
+						if($("#apprise.service_coffee").length > 0) {
+							$("#apprise.service_coffee").modal("hide");
+						}
+						if (typeof callback == "function") {
+							callback.call(this);
+						}
+					}
+					setTimeout(function() {
+						$.site_conf(callback);
+					}, 15000);
+				}
+			});
+		} else {
+			callback.call(this);
+		}
 	};
 
 	/**
@@ -748,7 +809,7 @@
 				var res = response[kAPI_RESPONSE_RESULTS],
 				stats = [];
 				$.each(res, function(domain, statistics) {
-					stats.push(statistics[kTAG_LABEL] + ': <b>' + $.number(statistics.count) + '</b>');
+					stats.push(statistics[kAPI_PARAM_RESPONSE_FRMT_NAME] + ': <b>' + $.number(statistics[kAPI_PARAM_RESPONSE_COUNT]) + '</b>');
 				});
 				$("#statistics_loader").html(stats.join("<br />"));
 			}
@@ -906,11 +967,7 @@
 		var username = $.cookie("l"),
 		user_data = "",
 		roles_groups = [];
-		if(username === undefined || username === null || username === "") {
-			$.cookie("l", null);
-			$.remove_storage("pgrdg_cache.session");
-			$("#login_menu_btn").find("span").removeClass("fa-check fa-spin").addClass("fa-sign-in");
-		} else {
+		if(username !== undefined && username !== null && username !== "null" && username !== "") {
 			if(storage.isSet("pgrdg_cache.session." + username)) {
 				user_data = storage.get("pgrdg_cache.session." + username + ".data");
 				$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v){
@@ -920,6 +977,7 @@
 			}
 
 			if(current_path == "Profile") {
+				$("#personal_form").html('<span class="fa fa-refresh fa-spin"></span> Waiting...');
 				//console.log(user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 				// $("#uname").val(user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 				// $("#ulast").val(user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
@@ -945,7 +1003,19 @@
 					return "You have unsaved changes\nAre you sure that you want to leave this page?";
 				};
 				*/
-				$.generate_personal_form(user_data);
+				$("#personal_form").generate_personal_form(user_data);
+			}
+		} else {
+			$.removeCookie("l");
+			$.remove_storage("pgrdg_cache.session");
+			$("#login_menu_btn").find("span").removeClass("fa-check fa-spin").addClass("fa-sign-in");
+
+			if(current_path == "Profile") {
+				$("#login").modal("show").on("hidden.bs.modal", function(e) {
+					if($.cookie("l") === undefined) {
+						$("#login").modal("show");
+					}
+				});
 			}
 		}
 		$("#login_menu_btn").removeClass("disabled");
@@ -1007,71 +1077,131 @@
 		}
 	};
 
-	$.generate_personal_form = function(user_data) {
+	$.fn.generate_personal_form = function(user_data) {
 		$.fn.add_forms = function(options) {
 			options = $.extend({
+				form_id: $.makeid(),
 				data: {},
 				tags: [],
-				type: ""
+				readonly_tags: [],
+				requested_tags: [],
+				type: "",
+				action: "append"
 			}, options);
 
+			$.recurse_disp = function(tag, data) {
+				if($.type(data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP]) == "object") {
+					return data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				} else {
+					return data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				}
+			};
+
 			if($.obj_len(options.data) > 0) {
-				var form = $('<form method="post" action="" class="form-horizontal" role="form">'),
-				input_value = "";
+				var form = $('<div>'),
+				input_value = "",
+				k = 0;
 				// EDIT HERE
 				// ---------------------------------------------------------------------------------------------
 				$.each(options.data, function(tag, data) {
-					if(tag == options.tag_range[0] && tag <= options.tag_range[1]) {
-						if(tag == options.tag_range[0]) {
+					if($.inArray(tag, options.tags) !== -1) {
+						k++;
+						if(k == 1) {
 							form.append('<h3>' + options.type + '</h3>');
 						}
 						var form_group = $('<div class="form-group">'),
 						label = $('<label>'),
-						input_div = $('<div class="col-sm-8">');
-						if($.type(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP]) == "object") {
-							input_value = options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+						input_div = $('<div class="col-sm-8">'),
+						asterisk = (($.inArray(tag, options.requested_tags) <= -1 || options.requested_tags.length === 0) ? '' : ' <span class="text-danger">*</span>');
+
+						if(tag == kTAG_ENTITY_PGP_KEY && (options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] === "" || options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined)) {
+							label.append('<span class="fa fa-lock"></span> ' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("PGP", '<abbr title="Pretty Good Privacy">PGP</abbr>') + asterisk);
 						} else {
-							input_value = options.data[tag][kAPI_PARAM_RESPONSE_FRMT_DISP];
+							label.append(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + asterisk);
 						}
-						label.append(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]);
 						label.attr("for", $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME])).addClass("col-sm-4 control-label");
 						label.appendTo(form_group);
-						input_div.html('<input type="text" name="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" required class="form-control" id="' + $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]) + '" placeholder="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" value="' + input_value + '" />');
+						if($.inArray(tag, options.readonly_tags) <= -1 || options.readonly_tags.length === 0) {
+							// PGP
+							if(tag == kTAG_ENTITY_PGP_KEY && (options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] === "" || options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined)) {
+								input_div.html('<textarea name="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" required class="form-control" id="' + $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]) + '" placeholder="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '">' + $.recurse_disp(tag, options.data) + '</textarea>');
+							} else {
+								input_div.html('<input type="text" name="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" required class="form-control" id="' + $.md5(options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME]) + '" placeholder="' + options.data[tag][kAPI_PARAM_RESPONSE_FRMT_NAME] + '" value="' + $.recurse_disp(tag, options.data) + '" />');
+							}
+						} else {
+							input_div.html('<p class="form-control-static">' + $.recurse_disp(tag, options.data) + '</p>');
+						}
+
 						input_div.appendTo(form_group);
 						form_group.appendTo(form);
 						form.append(form_group);
 					}
 				});
-				$(this).append(form);
+				if(options.action == "append") {
+					$(this).append(form);
+				} else {
+					$(this).prepend(form);
+				}
 			} else {
 				$(this).append('<div class="panel panel-danger">No user data to display</div>');
 			}
 		};
+		var objpp = {},
+		form_id = $.makeid(),
+		tmp_val = "";
 
 		console.warn(user_data);
-		$("#personal_form").html('<address><b>' + user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
-		$("#personal_form").append('<address><b>' + user_data[kTAG_RECORD_MODIFIED][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + user_data[kTAG_RECORD_MODIFIED][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
-		$("#personal_form").add_forms({
+		$(this).html("");
+		$(this).add_forms({
+			form_id: form_id,
 			data: user_data,
 			tags: [kTAG_ENTITY_FNAME, kTAG_ENTITY_LNAME, kTAG_ENTITY_EMAIL],
+			requested_tags: [kTAG_ENTITY_FNAME, kTAG_ENTITY_LNAME, kTAG_ENTITY_EMAIL],
 			type: "Personal"
 		});
-		var objpp = {};
-		objpp.storage_group = "session";
-		objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-		objpp.parameters = {};
-		objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-		objpp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP];
-		objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-		$.ask_to_service(objpp, function(a) {
-			if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
-				$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
-					$("#personal_form").append('<address><b>' + user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b><br />' + data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</address>');
+		$(this).add_forms({
+			form_id: form_id,
+			data: user_data,
+			tags: [kTAG_ENTITY_AFFILIATION, kTAG_ENTITY_TYPE],
+			readonly_tags: [kTAG_ENTITY_AFFILIATION],
+			type: "Job"
+		});
+		$(this).add_forms({
+			form_id: form_id,
+			data: user_data,
+			tags: [kTAG_RECORD_CREATED, kTAG_RECORD_MODIFIED, kTAG_CONN_USER, kTAG_ENTITY_PGP_FINGERPRINT, kTAG_ENTITY_PGP_KEY],
+			readonly_tags: [kTAG_RECORD_CREATED, kTAG_RECORD_MODIFIED, kTAG_ENTITY_PGP_FINGERPRINT],
+			requested_tags: [kTAG_CONN_USER, kTAG_ENTITY_PGP_FINGERPRINT, kTAG_ENTITY_PGP_KEY],
+			type: "Account"
+		});
+		$(this).find("input").focus(function(e) {
+			tmp_val = e.target.value;
+		});
+		$(this).find("input").blur(function(e) {
+			if(e.target.value !== tmp_val) {
+				apprise("Do you want to save \"" + e.target.value + "\"?", {"confirm": "true"}, function(r){
+					if(r) {
+						// Launch Service to save data
+					}
 				});
 			}
 		});
+
+		// objpp.storage_group = "session";
+		// objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+		// objpp.parameters = {};
+		// objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		// objpp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		// objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		// objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		// objpp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+		// $.ask_to_service(objpp, function(a) {
+		// 	if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
+		// 		$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
+		// 			$("#personal_form #" + form_id).append('<div class="form-group"><label class="col-sm-4 control-label">' + user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</label><div class="col-sm-8"><p class="form-control-static">' + data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</p></div>');
+		// 		});
+		// 	}
+		// });
 
 	};
 
@@ -1098,70 +1228,72 @@
 /*======================================================================================*/
 
 $(document).ready(function() {
-	$.check_version();
+	$.site_conf(function() {
+		$.check_version();
 
-	if(!$.browser_cookie_status()) {
-		apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
-	} else {
-		// Use bootstrap apprise instead javascript's alert
-		window.alert = function(string, args, callback) {
-			if(args === undefined) {
-				args = [];
-				args.title = "Warning";
-				args.icon = "warning";
-			}
-			return apprise(string, args, callback);
-		};
-		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
-		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
-			$(this).tooltip("hide");
-		});
-
-		$.shortcuts();
-		$("#login").on("shown.bs.modal", function(e) {
-			e.preventDefault();
-			$("#login_btn").removeClass("disabled").attr("disabled", false);
-			$("#login-username").focus();
-
-			$("#login_btn").on("click", function() {
-				$.login();
-			});
-		});
-
-		if(current_path == "Search") {
-			$.get_statistics();
-
-			if($.obj_len(query) > 0) {
-				if($("#breadcrumb").css("display") == "none") {
-					$("#breadcrumb").fadeIn(200);
+		if(!$.browser_cookie_status()) {
+			apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
+		} else {
+			// Use bootstrap apprise instead javascript's alert
+			window.alert = function(string, args, callback) {
+				if(args === undefined) {
+					args = [];
+					args.title = "Warning";
+					args.icon = "warning";
 				}
-
-				$.search_fulltext(query.q);
-			}
-		}
-		if(current_path == "Search" || current_path == "Advanced_search") {
-			document.location.hash = "";
-			window.onhashchange = function() {
-				$.manage_url();
+				return apprise(string, args, callback);
 			};
-			$.manage_url();
+			$("nav a[title]").tooltip({placement: "bottom", container: "body"});
+			$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
+				$(this).tooltip("hide");
+			});
 
-			$("#search_tips").click(function(){
-				apprise('To search all occurrences of words, separate them with a space, for instance:<br /><kbd>Forest area managed for wood production</kbd> will select all records containing any of the following words: <i>forest</i>, <i>area</i>, <i>managed</i>, <i>wood</i> and <i>production</i>.<p>To search all occurrences matching a specific phrase, enclose it in double quotes <kbd><b style="color: #ff0000 !important;">&quot;</b></kbd>, for instance:<br /><kbd><b style="color: #ff0000 !important;">&quot;</b>forest area managed for wood production<b style="color: #ff0000 !important;">&quot;</b></kbd> will select all records matching the full phrase.</p><p>To exclude a term from the results prefix it with a minus <kbd><b style="color: #ff0000 !important;">-</b></kbd> sign, for instance:<br /><kbd>forest <b style="color: #ff0000 !important;">-</b>wood</kbd> will select all records matching the word <i>forest</i> and not matching the word <i>wood</i>.</p><p>The same is true for phrases, for instance:<br /><kbd><b style="color: #ff0000 !important;">-</b>&quot;research organization&quot; genebank</kbd> will select all records containing the word <i>genebank</i> but not the phrase <i>research organization</i>.</p><p>The search is case insensitive.</p>', {
-					title: "Search tips",
-					icon: "fa-keyboard-o",
-					titleClass: "text-info",
-					textOk: "Ok",
-					allowExit: true
+			$.shortcuts();
+			$("#login").on("shown.bs.modal", function(e) {
+				e.preventDefault();
+				$("#login_btn").removeClass("disabled").attr("disabled", false);
+				$("#login-username").focus();
+
+				$("#login_btn").on("click", function() {
+					$.login();
 				});
 			});
-			$.get_operators_list();
-		}
-		$.check_logged_user();
-		if(current_path == "Profile") {
-			if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
-				//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
+
+			if(current_path == "Search") {
+				$.get_statistics();
+
+				if($.obj_len(query) > 0) {
+					if($("#breadcrumb").css("display") == "none") {
+						$("#breadcrumb").fadeIn(200);
+					}
+
+					$.search_fulltext(query.q);
+				}
+			}
+			if(current_path == "Search" || current_path == "Advanced_search") {
+				document.location.hash = "";
+				window.onhashchange = function() {
+					$.manage_url();
+				};
+				$.manage_url();
+
+				$("#search_tips").click(function(){
+					apprise('To search all occurrences of words, separate them with a space, for instance:<br /><kbd>Forest area managed for wood production</kbd> will select all records containing any of the following words: <i>forest</i>, <i>area</i>, <i>managed</i>, <i>wood</i> and <i>production</i>.<p>To search all occurrences matching a specific phrase, enclose it in double quotes <kbd><b style="color: #ff0000 !important;">&quot;</b></kbd>, for instance:<br /><kbd><b style="color: #ff0000 !important;">&quot;</b>forest area managed for wood production<b style="color: #ff0000 !important;">&quot;</b></kbd> will select all records matching the full phrase.</p><p>To exclude a term from the results prefix it with a minus <kbd><b style="color: #ff0000 !important;">-</b></kbd> sign, for instance:<br /><kbd>forest <b style="color: #ff0000 !important;">-</b>wood</kbd> will select all records matching the word <i>forest</i> and not matching the word <i>wood</i>.</p><p>The same is true for phrases, for instance:<br /><kbd><b style="color: #ff0000 !important;">-</b>&quot;research organization&quot; genebank</kbd> will select all records containing the word <i>genebank</i> but not the phrase <i>research organization</i>.</p><p>The search is case insensitive.</p>', {
+						title: "Search tips",
+						icon: "fa-keyboard-o",
+						titleClass: "text-info",
+						textOk: "Ok",
+						allowExit: true
+					});
+				});
+				$.get_operators_list();
+			}
+			$.check_logged_user();
+			if(current_path == "Profile") {
+				if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
+					//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
+				}
 			}
 		}
-	}
+	});
 });

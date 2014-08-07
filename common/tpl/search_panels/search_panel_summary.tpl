@@ -3,7 +3,7 @@
                 <h1 class="content-title clearfix">
                         <span></span>
                         <div class="pull-right">
-                                <a data-toggle="collapse" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-white">
+                                <a data-toggle="collapse" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-white disabled">
                                         <span class="fa fa-indent text-muted"></span>Group by...
                                 </a>
                         </div>

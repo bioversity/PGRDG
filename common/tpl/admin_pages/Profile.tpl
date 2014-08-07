@@ -1,54 +1,9 @@
 <h2 class="text-muted">Your data</h2>
 
-<div id="personal_form"></div>
-<hr />
-<hr />
-<hr />
-<form method="post" action="" class="form-horizontal" role="form">
-        <h3>Personal</h3>
+<form id="personal_form" method="post" action="" class="form-horizontal" role="form">
         <div class="form-group">
-                <label for="uname" class="col-sm-2 control-label">Name <span class="text-danger">*</span></label>
-                <div class="col-sm-10">
-                        <input type="text" name="name" required class="form-control" id="uname" placeholder="Name">
-                </div>
-        </div>
-        <div class="form-group">
-                <label for="ulast" class="col-sm-2 control-label">Last name <span class="text-danger">*</span></label>
-                <div class="col-sm-10">
-                        <input type="text" name="lastname" required class="form-control" id="ulast" placeholder="Last name">
-                </div>
-        </div>
-        <div class="form-group">
-                <label for="uemail" class="col-sm-2 control-label">Email address <span class="text-danger">*</span></label>
-                <div class="col-sm-10">
-                        <input type="email" name="email" required class="form-control" id="uemail" placeholder="Email address">
-                </div>
-        </div>
-
-        <h3>Job</h3>
-        <div class="form-group">
-                <label for="ujob" class="col-sm-2 control-label">Company name <span class="text-danger">*</span></label>
-                <div class="col-sm-10">
-                        <input type="text" name="ujob" required class="form-control" id="ujob" placeholder="Authority">
-                </div>
-        </div>
-        <div class="form-group">
-                <label for="utask" class="col-sm-2 control-label">Task</label>
-                <div class="col-sm-10">
-                        <input type="text" name="lastname" class="form-control" id="utask" placeholder="Job taks">
-                </div>
-        </div>
-        <hr />
-        <h3>Account</h3>
-        <div class="form-group">
-                <label for="username" class="col-sm-2 control-label">Username <span class="text-danger">*</span></label>
-                <div class="col-sm-10">
-                        <input type="text" name="username" required class="form-control" id="username" placeholder="Username">
-                </div>
-        </div>
-        <div class="form-group">
-                <label for="upgp" class="col-sm-2 control-label"><span class="fa fa-lock"></span> <acronym title="Pretty Good Privacy">PGP</acronym> PUBLIC key</label>
-                <div class="col-sm-10">
+                <label for="upgp" class="col-sm-4 control-label"><span class="fa fa-lock"></span> <abbr title="Pretty Good Privacy">PGP</abbr> PUBLIC key</label>
+                <div class="col-sm-8">
                         <textarea name="pgp" rows="4" class="form-control" required id="upgp" placeholder="PGP PUBLIC key"></textarea>
                         <div class="help-block">
                                 You strictly need a personal PGP key.<br />
@@ -62,11 +17,6 @@
                 </div>
         </div>
         <div id="user_permission"></div>
-
-        <div class="btn-group pull-right">
-                <button class="btn btn-default-white">Cancel</button>
-                <input id="save_profile_btn" type="submit" class="btn btn-default" value="Save" />
-        </div>
         <div class="clearfix"></div>
 </form>
 <br />

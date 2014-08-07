@@ -26,7 +26,7 @@ h2 {
 h2 + div > address + address {
 	margin-bottom: 3em;
 }
-form > h3 {
+form > h3, form > div > h3 {
 	border-bottom: #ddd 1px solid;
 	margin-top: 1.5em;
 	margin-bottom: 1;

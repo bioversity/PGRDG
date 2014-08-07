@@ -955,6 +955,7 @@
 
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
+				console.log(options.res.results);
 				$.each(options.res.results, function(domain, values) {
 					var result_panel = $('<div class="result panel">'),
 					result_h4 = $('<h4 class="">'),
@@ -964,9 +965,9 @@
 					result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
 					result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
 
-					result_title.html($.trim(values[kTAG_LABEL]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
+					result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
 					result_h4.appendTo(result_panel);
-					result_description.html(values[kTAG_DEFINITION]).appendTo(result_panel);
+					result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
 
 					result_description_span_muted.html('<span class="help-block">' + values[kAPI_PARAM_RESPONSE_COUNT] + ' items</span>').appendTo(result_content_container);
 					result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View raw data</a>');

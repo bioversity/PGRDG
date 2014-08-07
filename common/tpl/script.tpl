@@ -66,7 +66,7 @@
 	}
 	?>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?local=conf%2Frole_definitions.json"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&keep_update=true"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&keep_update=true"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&keep_update=true"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types"></script>
 	<?php include("common/include/conf/google_analytics.php"); ?>
