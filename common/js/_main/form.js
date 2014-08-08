@@ -31,7 +31,7 @@
 				$("#left_panel div.panel-body.autocomplete").addTraitAutocomplete({
 					id: "main_search",
 					class: "",
-					placeholder:  oprst[kAPI_RESPONSE_RESULTS].placeholder,
+					placeholder: oprst[kAPI_RESPONSE_RESULTS].placeholder,
 					op: operators
 				}, "remote", function() {
 					operators = operators;
@@ -44,8 +44,9 @@
 				$("#collapsed_group_form .panel.panel-default-white").addAutocomplete({
 					id: "filter_search_summary",
 					class: "",
-					placeholder:  oprst[kAPI_RESPONSE_RESULTS].placeholder,
-					op: operators
+					placeholder: oprst[kAPI_RESPONSE_RESULTS].placeholder,
+					op: operators,
+					operator: kAPI_OP_MATCH_TAG_SUMMARY_LABELS
 				}, "remote", function() {
 					operators = operators;
 				});
@@ -341,43 +342,46 @@
 						$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $panel));
 					});
 					$item.removeClass("disabled");
-				});
-
-				$form.find(".dropdown-menu > *").click(function(e) {
-					e.stopPropagation();
-				});
-				$form.on("shown.bs.dropdown", function () {
-					$form.find(".dropdown-menu .dropdown-header input.form-control").focus();
-					$form.find(".dropdown-menu .dropdown-header input.form-control").keyup(function() {
-						var that = this;
-						// affect all table rows on in systems table
-						var tableBody = $form.find(".dropdown-menu .dropdown-content > ul");
-						var tableRowsClass = $form.find(".dropdown-menu .dropdown-content > ul li");
-
-						tableRowsClass.each(function(i, val) {
-							//Lower text for case insensitive
-							var rowText = $(val).text().toLowerCase();
-							var inputText = $(that).val().toLowerCase();
-
-							if(rowText.indexOf(inputText) == -1) {
-								//hide rows
-								tableRowsClass.eq(i).hide();
-							} else {
-								$(".search-sf").remove();
-								tableRowsClass.eq(i).show();
-							}
-						});
-						//all tr elements are hidden
-						if(tableRowsClass.children(":visible").length === 0) {
-							if(tableBody.find(".search-sf").length === 0) {
-								tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
-							}
-						}
-						//$form.find(".dropdown-header input").focus();
+					$form.find(".dropdown-toggle").dropdown("toggle");
+					$form.find(".dropdown-menu > *").click(function(e) {
+						e.stopPropagation();
 					});
-				});
-				$form.on("submit", function(){
-					return false;
+					if($form.find(".dropdown-menu").is(":visible")) {
+						$form.find(".dropdown-menu .dropdown-header input").focus();
+
+						console.log("ok");
+						$form.find(".dropdown-menu .dropdown-header input.form-control").focus();
+						$form.find(".dropdown-menu .dropdown-header input.form-control").keyup(function() {
+							var that = this;
+							// affect all table rows on in systems table
+							var tableBody = $form.find(".dropdown-menu .dropdown-content > ul");
+							var tableRowsClass = $form.find(".dropdown-menu .dropdown-content > ul li");
+
+							tableRowsClass.each(function(i, val) {
+								//Lower text for case insensitive
+								var rowText = $(val).text().toLowerCase();
+								var inputText = $(that).val().toLowerCase();
+
+								if(rowText.indexOf(inputText) == -1) {
+									//hide rows
+									tableRowsClass.eq(i).hide();
+								} else {
+									$(".search-sf").remove();
+									tableRowsClass.eq(i).show();
+								}
+							});
+							//all tr elements are hidden
+							if(tableRowsClass.children(":visible").length === 0) {
+								if(tableBody.find(".search-sf").length === 0) {
+									tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+								}
+							}
+							//$form.find(".dropdown-header input").focus();
+						});
+					}
+					$form.on("submit", function(){
+						return false;
+					});
 				});
 			}
 			$panel_mask.fadeOut(300);
@@ -489,7 +493,8 @@
 		options = $.extend({
 			id: "",
 			class: "",
-			placeholder: "Choose..."
+			placeholder: "Choose...",
+			operator: kAPI_OP_MATCH_TAG_LABELS
 		}, options);
 		var op_btn_list = "",
 		selected_label = "Operator",
@@ -535,7 +540,7 @@
 			remote: {
 				url: service_url + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
@@ -955,36 +960,14 @@
 
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
-				console.log(options.res.results);
-				$.each(options.res.results, function(domain, values) {
-					var result_panel = $('<div class="result panel">'),
-					result_h4 = $('<h4 class="">'),
-					result_title = $('<span class="title">'),
-					result_description = $('<p>'),
-					result_content_container = $('<div class="row">'),
-					result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
-					result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
-
-					result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
-					result_h4.appendTo(result_panel);
-					result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
-
-					result_description_span_muted.html('<span class="help-block">' + values[kAPI_PARAM_RESPONSE_COUNT] + ' items</span>').appendTo(result_content_container);
-					result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View raw data</a>');
-					if(values.points > 0) {
-						result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + options.res.id + '\', \'' + domain + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View on map <sup class="text-muted">' + values.points + '</sup></a>');
-					}
-					result_description_span_right.appendTo(result_content_container);
-					result_content_container.appendTo(result_panel);
-
-					$("#" + type + "-body .content-body").attr("id", options.res.id).append(result_panel);
-
+				$.generate_summaries(options.res, function(result_panel){
+					$("#" + type + "-body .content-body").attr("id", options.res[kAPI_PARAM_ID]).append(result_panel);
 					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
 			} else {
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
 				rows = options.res[kAPI_RESPONSE_RESULTS];
-				$("#" + type + "-body .content-body").append('<table id="' + options.res.id + '" class="table table-striped table-hover table-responsive"></table>');
+				$("#" + type + "-body .content-body").append('<table id="' + options.res[kAPI_PARAM_ID] + '" class="table table-striped table-hover table-responsive"></table>');
 				/**
 				 * Parse cell content and display helps if present
 				 * @param  {string|object} disp The text or object that will be parsed
@@ -1108,6 +1091,39 @@
 			}
 		});
 
+	};
+
+	/**
+	 * Create summary content pane
+	 * @param {object} the result of previous query (eg. Search or Autocomplete)
+	 */
+	$.generate_summaries = function(options, callback) {
+		console.log(options[kAPI_RESPONSE_RESULTS]);
+		$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
+			var result_panel = $('<div class="result panel">'),
+			result_h4 = $('<h4 class="">'),
+			result_title = $('<span class="title">'),
+			result_description = $('<p>'),
+			result_content_container = $('<div class="row">'),
+			result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
+			result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
+
+			result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
+			result_h4.appendTo(result_panel);
+			result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
+
+			result_description_span_muted.html('<span class="help-block"></span>').appendTo(result_content_container);
+			result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View raw data</a>');
+			if(values.points > 0) {
+				result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View on map <sup class="text-muted">' + values.points + '</sup></a>');
+			}
+			result_description_span_right.appendTo(result_content_container);
+			result_content_container.appendTo(result_panel);
+
+			if (jQuery.type(callback) == "function") {
+				callback.call(this, result_panel);
+			}
+		});
 	};
 
 	/*=======================================================================================
@@ -1719,9 +1735,17 @@
 			var $panel = item,
 			panel_input_term_id = $panel.find('input[name="term"]').attr("id"),
 			content = "",
-			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></a>',
-			checkbox = '<div class="checkbox"><label class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'text-muted' : '') + '"><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'disabled=\"disabled\"' : '') + ' /> {LABEL}</label></div>';
-			checkbox_inline = '<div class="checkbox-inline"><label><input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></span></a>',
+			checkbox = '<div class="checkbox">';
+				checkbox += '<label class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'text-muted' : '') + '">';
+				checkbox += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ';
+					if(v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) {
+						checkbox += 'disabled="disabled"';
+					}
+				checkbox += ' /> {LABEL}</label></div>';
+			var checkbox_inline = '<div class="checkbox-inline">';
+				checkbox_inline += '<label>';
+				checkbox_inline += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
 				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul></li>';
@@ -1868,7 +1892,8 @@
 		options = $.extend({
 			id: "",
 			class: "",
-			placeholder: "Choose..."
+			placeholder: "Choose...",
+			op: kAPI_OP_MATCH_TAG_LABELS
 		}, options);
 		var op_btn_list = "",
 		selected_label = "Operator",
@@ -1914,8 +1939,8 @@
 			remote: {
 				url: service_url + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
 				filter: function (parsedResponse) {
@@ -1938,7 +1963,6 @@
 		remoteAutocomplete.clearPrefetchCache();
 		remoteAutocomplete.initialize();
 
-		var form_help_text = "Click on the green rectangle to activate the field: if you press the search button the system will select all data <em>containing</em> the selected field, regardless of its value.<br />To search for specific field values, fill the field search value or select the provided options.";
 		$("#" + options.id).typeahead({
 			hint: true,
 			highlight: true,
@@ -1950,11 +1974,9 @@
 			source: remoteAutocomplete.ttAdapter()
 		}).on("typeahead:selected", function(){
 			// Autocomplete
-			$.manage_url("Forms");
-
 			var kAPI = {};
 			kAPI.storage_group = "forms";
-			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
@@ -1962,20 +1984,12 @@
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
-			console.log("ok");
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
+			$.ask_to_service(kAPI, function(response) {
+				console.log(response);
 
-			return false;
-		}).bind("keydown", "return", function(event) {
-			$(this).trigger("typeahead:_changed");
-			return false;
-		}).bind("keydown", "alt+left", function(e) {
-			$.left_panel("close", "", function() {
-				$("#" + options.id).blur();
 			});
-			return false;
-		}).bind("keydown", "alt+right", function(e) {
-			$.left_panel("open");
+			is_autocompleted = true;
 			return false;
 		});
 
