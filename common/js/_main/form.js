@@ -962,7 +962,7 @@
 			if(type !== "results") {
 				$.generate_summaries(options.res, function(result_panel){
 					$("#" + type + "-body .content-body").attr("id", options.res[kAPI_PARAM_ID]).append(result_panel);
-					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View raw data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View on map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
+					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
 			} else {
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
@@ -1113,9 +1113,9 @@
 			result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
 
 			result_description_span_muted.html('<span class="help-block"></span>').appendTo(result_content_container);
-			result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View raw data</a>');
+			result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')\"><span class="fa fa-list-alt"></span>View data</a>');
 			if(values.points > 0) {
-				result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View on map <sup class="text-muted">' + values.points + '</sup></a>');
+				result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + options[kAPI_PARAM_ID] + '\', \'' + domain + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View map <sup class="text-muted">' + values.points + '</sup></a>');
 			}
 			result_description_span_right.appendTo(result_content_container);
 			result_content_container.appendTo(result_panel);
@@ -1973,6 +1973,10 @@
 			//source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
 			source: remoteAutocomplete.ttAdapter()
 		}).on("typeahead:selected", function(){
+			var exclude = [];
+			if(storage.isSet("pgrdg_cache.exclude")) {
+				exclude = storage.get("pgrdg_cache.exclude");
+			}
 			// Autocomplete
 			var kAPI = {};
 			kAPI.storage_group = "forms";
@@ -1982,11 +1986,59 @@
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_EXCLUDED_TAGS] = exclude;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
 			$.ask_to_service(kAPI, function(response) {
-				console.log(response);
+				$.fn.to_html = function() {
+					return $('<div></div>').html($(this).clone()).html();
+				};
+				$.iterate_childrens = function(data, level) {
+					var list = $('<li>'),
+					id = "",
+					lists = "";
+					if(level === undefined) {
+						level = 0;
+					}
+					$.each(data, function(d, v){
+						if(d !== kAPI_PARAM_RESPONSE_CHILDREN) {
+							if(v !== undefined && v !== null) {
+								if(d == kAPI_PARAM_RESPONSE_FRMT_NAME) {
+									if(level === 0) {
+										list.html('<a onclick="$.group_tag_by(\'' + id + '\')" href="javascript: void(0);" class=""><span class="fa fa-li fa-angle-right text-muted"></span>' + v + '</a>');
+									} else {
+										list.html('<a onclick="$.group_tag_by(\'' + id + '\')" href="javascript: void(0);" class=""><span class="fa fa-li fa-angle-right text-muted"></span>' + v + '</a>');
+									}
+								}
+								if(d == kAPI_PARAM_RESPONSE_FRMT_INFO) {
+									list.append('<br /><p>' + v + '</p>');
+								}
+							}
+						} else {
+							var ul = $('<ul class="fa-ul">');
+							ul.append($.iterate_childrens(v, (level +1)));
+							list.append(ul);
+						}
+						lists = list.to_html();
+					});
+					return lists;
+				};
+
+				var tag = {};
+				//console.log(response[kAPI_RESPONSE_RESULTS]);
+				$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
+				var lll = "";
+				$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
+					if(data[kAPI_PARAM_TAG] !== undefined && data[kAPI_PARAM_TAG] !== null) {
+						tag[id] = data[kAPI_PARAM_TAG];
+						storage.set("pgrdg_cache.exclude.id", data);
+						lll += $.iterate_childrens(data, 0);
+					}
+				});
+				$("#summary_ordering").find(".modal-body ul").html(lll);
+				$("#summary_ordering").modal("show");
+				$("#group_by_selection").modal("show");
 
 			});
 			is_autocompleted = true;
@@ -1997,6 +2049,10 @@
 			callback.call(this);
 		}
 	};
+
+	$.group_tag_by = function(id) {
+		console.log(id);
+	}
 
 	/**
 	* Add Chosen form (select with search engine)

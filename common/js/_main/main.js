@@ -249,7 +249,7 @@
 					}
 					setTimeout(function() {
 						$.site_conf(callback);
-					}, 15000);
+					}, 30000);
 				}
 			});
 		} else {

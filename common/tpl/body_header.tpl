@@ -29,3 +29,4 @@
 <?php require_once("common/tpl/modals/markers.modal.tpl"); ?>
 <?php require_once("common/tpl/modals/login.modal.tpl"); ?>
 <?php require_once("common/tpl/modals/map_toolbox_help.modal.tpl"); ?>
+<?php require_once("common/tpl/modals/summary_ordering.modal.tpl"); ?>

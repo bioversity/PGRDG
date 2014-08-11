@@ -79,9 +79,17 @@
         * This function is a porting of php's ucfirst()
         *
         * @param  {string}      The string to manipulate
-        * @return {[type]}      Ucase converted string
+        * @return {string}      Ucase converted string
         */
         $.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
+
+        /**
+         * Repeat a string for 'n' times
+         *
+         * @param  {string}     The string to repeat
+         * @return {string}     Repeated string
+         */
+        $.str_repeat = function(string, n) { return new Array(parseInt(num) + 1).join(string); };
 
 /**
 * Return if browser has cookie allowed
