@@ -107,6 +107,7 @@
 				element_data = $element.html();
 				$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span>' + ((opt.loaderText !== "") ? opt.loaderText : ""));
 			}
+				console.warn("!!!", param_nob64, response);
 			$.cryptAjax({
 				url: "API/",
 				dataType: "json",

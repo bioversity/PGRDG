@@ -794,6 +794,19 @@ section #se_p #summary-head h1, section #se_p #results-head h1 {
 	margin-bottom: 15px;
 	padding-bottom: 5px;
 }
+section #se_p #summary-head #group_by_accordion #filter_stage {
+	margin-bottom: 0;
+	padding-bottom: 20px;
+	max-height: 200px;
+	overflow-y: auto;
+}
+section #se_p #summary-head #group_by_accordion .tabbable {
+	margin-bottom: 20px;
+}
+section #se_p #summary-head #group_by_accordion .tabs-below .nav {
+	border-top: 0px none;
+	margin-left: 0;
+}
 section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
 	box-shadow: 0 0 0 transparent;
 	padding: 0;

@@ -10,10 +10,30 @@
                 </h1>
                 <div class="panel-group" id="group_by_accordion">
                         <div id="collapsed_group_form" class="panel-collapse collapse">
-                                <div class="panel">
-                                        <div class="col-lg-5">
-                                                <div class="panel panel-default-white">
-                                                        <div class="autocomplete"></div>
+                                <div class="row" id="filter_stage_panel" style="display: none;">
+                                        <input type="text" id="selected_filters" value="" />
+                                        <h4 class="col-lg-1 text-muted">Selected items</h4>
+                                        <div class="col-lg-4">
+                                                <div class="well well-sm" id="filter_stage"></div>
+                                                <div class="tabbable tabs-below">
+                                                        <ul class="nav nav-tabs" role="tablist" id="filter_stage_controls">
+                                                                <li><a href="javascript: void(0);" class="btn disabled" title="Move to top"><span class="fa fa-arrow-up text-info"></span><span class="visible-md visible-lg text-muted">Move to top</span></a></li>
+                                                                <li><a href="javascript: void(0);" class="btn disabled" title="Move up"><span class="fa fa-chevron-up text-info"></span><span class="visible-md visible-lg text-muted">Move up</span></a></li>
+                                                                <li><a href="javascript: void(0);" class="btn disabled" title="Move down"><span class="fa fa-chevron-down text-info"></span><span class="visible-md visible-lg text-muted">Move down</span></a></li>
+                                                                <li><a href="javascript: void(0);" class="btn disabled" title="Move to bottom"><span class="fa fa-arrow-down text-info"></span><span class="visible-md visible-lg text-muted">Move to bottom</span></a></li>
+                                                                <li class="pull-right"><a href="javascript: void(0);" class="btn disabled" title="Remove"><span class="fa fa-times text-danger"></span><span class="visible-md visible-lg text-muted">Remove</span></a></li>
+                                                        </ul>
+                                                </div>
+                                        </div>
+                                </div>
+                                <br />
+                                <div class="well well-sm">
+                                        <div class="row">
+                                                <h4 id="filter_group_title" class="col-lg-1 text-muted">Group by...</h4>
+                                                <div class="col-lg-4">
+                                                        <div class="panel">
+                                                                <div class="autocomplete"></div>
+                                                        </div>
                                                 </div>
                                         </div>
                                 </div>
