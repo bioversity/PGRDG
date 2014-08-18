@@ -1114,8 +1114,9 @@
 			if(!$("#summary #summary-body").hasClass("disabled")) {
 				$("#summary #summary-body").addClass("disabled");
 			}
-			$("#group_by_btn").append('<small class="label label-danger" style="position: absolute; top: -6px; right: -6px;">' + $.obj_len(storage.get("pgrdg_cache.search.selected._ordering")) + '</small>');
 			$.each(storage.get("pgrdg_cache.search.selected._ordering"), function(k, v) {
+				$("#group_by_btn").append('<small class="label label-danger" style="position: absolute; top: -6px; right: -6px;">' + $.obj_len(storage.get("pgrdg_cache.search.selected._ordering")) + '</small>');
+
 				if($.obj_len(v) > 0) {
 					var id = v.id, storage_id = v.storage;
 					if(storage.isSet("pgrdg_cache.search.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
@@ -1138,7 +1139,6 @@
 				}
 				$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 			});
-			//$("#collapsed_group_form").collapse("show");
 			$.exec_ordering();
 		}
 	};
@@ -1354,6 +1354,9 @@
 				$("#group_by_btn .label-danger").text(st.length);
 			}
 			$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
+		} else {
+			storage.remove("pgrdg_cache.search.selected");
+			$("#group_by_btn .label-danger").remove();
 		}
 	};
 
@@ -1367,7 +1370,7 @@
 		$.each(storage.get("pgrdg_cache.search.selected._ordering"), function(k, data) {
 			ids.push(data.id);
 		});
-		console.log(ids);
+		$("#collapsed_group_form").collapse("hide");
 
 		var objp = {};
 		objp.storage_group = "summary";
@@ -1389,18 +1392,7 @@
 				$("#summary-body .content-body").html("");
 				$.generate_tree_summaries(res, function(result_panel){
 					$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
-					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
-			/*
-				$.activate_panel("summary", {res: response}, function() {
-					$("#se_loader").fadeOut(300);
-					$("#se_p").fadeIn(300);
-					$("#group_by_btn").removeClass("disabled");
-				});
-			} else {
-				$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
-				$("#search_form").focus();
-			*/
 			}
 		});
 	};
@@ -1555,7 +1547,7 @@
 
 			$("#" + type + "-body .content-body").html("");
 			if(type !== "results") {
-				$.generate_summaries(options.res, function(result_panel){
+				$.generate_summaries(options.res, "", function(result_panel){
 					$("#" + type + "-body .content-body").attr("id", options.res[kAPI_PARAM_ID]).append(result_panel);
 					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
 				});
@@ -1737,17 +1729,15 @@
 		};
 
 		$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
-		console.log(values);
 			var item_colour = $.random_colour(),
-			result_panel = $('<div class="result panel" style="border-color: ' + item_colour + '">'),
-			result_h4 = $('<h4 class="">'),
+			result_panel = $('<div class="result panel tree_summary">'),
+			result_h4 = $('<h4 style="border-color: ' + item_colour + '">'),
 			result_title = $('<span class="title">'),
 			result_description = $('<p>'),
 			result_content_container = $('<div class="row">'),
-			result_description_ul_results = $('<ul class="list-unstyled">'),
+			result_description_ul_results = $('<div class="children">'),
 			res = {};
 
-			//result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME])).appendTo(result_h4);
 			result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) + '</sup>').appendTo(result_h4);
 			result_h4.appendTo(result_panel);
 			if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
@@ -1755,7 +1745,6 @@
 			}
 
 			if($.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
-				console.log(values[kAPI_PARAM_RESPONSE_CHILDREN]);
 
 				res[kAPI_RESPONSE_RESULTS] = values[kAPI_PARAM_RESPONSE_CHILDREN];
 				$.generate_summaries(res, item_colour, function(tree) {
@@ -2615,11 +2604,17 @@ $(document).ready(function() {
 			// Resize the forms when window is resized
 			$.resize_forms_mask();
 		});
-		$.restore_stage();
+		if($.obj_len(query) > 0) {
+			if(storage.isSet("pgrdg_cache.search.selected._ordering") && storage.get("pgrdg_cache.search.selected._ordering").length > 0) {
+				$.restore_stage();
+			} else {
+				$.search_fulltext(query.q);
+			}
+		}
 	}
-		$.reset_contents("forms", true);
-		$.remove_storage("pgrdg_cache.selected_forms");
-		$.remove_storage("pgrdg_cache.forms_data");
+	$.reset_contents("forms", true);
+	$.remove_storage("pgrdg_cache.selected_forms");
+	$.remove_storage("pgrdg_cache.forms_data");
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {
 		if($(this).closest(".input-group").hasClass("open")) {
@@ -2634,12 +2629,4 @@ $(document).ready(function() {
 	/*if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
 		$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
 	}*/
-
-	if($.obj_len(query) > 0) {
-		if(!storage.isSet("pgrdg_cache.search.selected._ordering")) {
-			$.search_fulltext(query.q);
-		} else {
-			$.restore_stage();
-		}
-	}
 });

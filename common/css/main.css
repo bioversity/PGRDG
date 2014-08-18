@@ -741,24 +741,40 @@ section #se_results .result.panel, .result.panel {
 	border: 0px none;
 	border-left: 5px solid #FCC153;
 	border-radius: 0 !important;
-	padding-bottom: 10px;
-	padding-left: 15px;
-	padding-top: 10px;
+	padding: 0;
+}
+section #se_results .result.panel.tree_summary, .result.panel.tree_summary {
+	border: 0px none;
 }
 section #se_results .result.panel > h4, .result.panel > h4 {
-	margin-bottom: 5px;
-	margin-top: 0;
-	padding-bottom: 0;
+	margin: 0;
+	padding: 15px;
+}
+section #se_results .result.panel.tree_summary > h4, .result.panel.tree_summary > h4 {
+	border-left: 5px solid #FCC153;
+	border-bottom: 1px solid #FCC153;
+	border-bottom-left-radius: 20px;
 }
 section #se_results .result.panel > p, .result.panel > p {
 	margin: 0;
-	margin-bottom: 10px;
+	padding: 0 0 0 15px;
+}
+section #se_results .result.panel > div.row, .result.panel > div.row {
+	margin-left: 10px;
+	padding: 0;
+}
+section #se_results .result.panel.tree_summary > h4 + div.row, .result.panel.tree_summary > h4 + div.row {
+	margin-left: 25px;
+	border-top: 0px none;
+}
+section #se_results .result.panel > div.row div.children .result.panel, .result.panel > div.row div.children .result.panel {
+	border-width: 1px !important;
+	margin: 0;
 }
 section #se_results .result.panel > h4 + div, .result.panel > h4 + div,
 section #se_results .result.panel > p + div, .result.panel > p + div {
 	border-top: 1px solid #ddd;
 	padding: 5px 0;
-	margin-top: 15px;
 }
 
 @media only screen and (max-width:420px) {

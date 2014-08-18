@@ -4,7 +4,7 @@
                         <div id="collapsed_group_form" class="panel-collapse collapse">
                                 <h3>Group results</h3>
                                 <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-lg-6 col-md-4">
                                                 <div class="row">
                                                         <h4 id="filter_group_title" class="col-lg-2 text-muted">Insert a filter</h4>
                                                         <div class="col-lg-10">
@@ -14,7 +14,7 @@
                                                         </div>
                                                 </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-lg-6 col-md-8">
                                                 <div class="row" id="filter_stage_panel" style="display: none;">
                                                         <h4 class="col-lg-2 text-muted">Selected items</h4>
                                                         <div class="col-lg-10">
