@@ -754,15 +754,19 @@ section #se_results .result.panel > p, .result.panel > p {
 	margin: 0;
 	margin-bottom: 10px;
 }
+section #se_results .result.panel > h4 + div, .result.panel > h4 + div,
 section #se_results .result.panel > p + div, .result.panel > p + div {
 	border-top: 1px solid #ddd;
 	padding: 5px 0;
+	margin-top: 15px;
 }
 
 @media only screen and (max-width:420px) {
 	section.backgrounded #se {
 		margin: 10% 0;
 	}
+}
+@media only screen and (max-width:650px) {
 	section #se_results {
 		padding: 50px 0 0 0;
 	}
@@ -773,9 +777,17 @@ section #se_results .panel_content-head, section #se_results .panel_content-foot
 section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 	width: 50%;
 }
+section #se_p #statistics {
+	padding-right: 120px;
+}
 @media only screen and (max-width:1024px) {
 	section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 		width: 80%;
+	}
+}
+@media only screen and (max-width:650px) {
+	section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
+		width: 100%;
 	}
 }
 @media only screen and (max-width:420px) {
@@ -785,9 +797,12 @@ section #se_p form .input-group, section #se_p #statistics, section #se_p #se_re
 	section #se_p form .input-group, section #se_p #statistics, section #se_p #se_results #summary-body > .content-body {
 		width: 100%;
 	}
+	section #se_p #statistics {
+		padding-right: 0;
+	}
 }
 section #se_p #summary, section #se_p #results {
-	margin-top: 5em;
+	margin-top: 3em;
 }
 section #se_p #summary-head h1, section #se_p #results-head h1 {
 	border-bottom: #eee 1px solid;
@@ -796,9 +811,15 @@ section #se_p #summary-head h1, section #se_p #results-head h1 {
 }
 section #se_p #summary-head #group_by_accordion #filter_stage {
 	margin-bottom: 0;
-	padding-bottom: 20px;
-	max-height: 200px;
+	max-height: 250px;
 	overflow-y: auto;
+	padding-bottom: 20px;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a, section #se_p #summary-head #group_by_accordion #filter_stage .well-sm {
+	margin-bottom: 5px;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a > h4 {
+	margin: 0;
 }
 section #se_p #summary-head #group_by_accordion .tabbable {
 	margin-bottom: 20px;
@@ -810,6 +831,23 @@ section #se_p #summary-head #group_by_accordion .tabs-below .nav {
 section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
 	box-shadow: 0 0 0 transparent;
 	padding: 0;
+}
+section #se_p .panel_content-body.disabled {
+	position: relative;
+}
+section #se_p .panel_content-body.disabled:before {
+	background-color: rgba(255, 255, 255, 0.65);
+	color: #aaa;
+	content: "Reconfiguring...";
+	cursor: default;
+	font-family: "HelveticaNeueW01-45Ligh";
+	font-size: 3.5em;
+	height: 100%;
+	padding: 10%;
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	z-index: 1;
 }
 
 section.container > #contents {
@@ -847,11 +885,11 @@ section.container > #contents #content div.full {
 	width: 100%;
 }
 section.container > #contents .carousel-indicators {
+	bottom: 10px;
+	left: none;
 	margin: 0 20px;
 	right: 0;
-	left: none;
 	text-align: right;
-	bottom: 10px;
 	width: auto;
 }
 section.container > #contents .carousel-indicators li {
@@ -1967,4 +2005,33 @@ label.checkbox {
 
 #apprise.ask_service {
 	z-index: 9999;
+}
+#summary_ordering a {
+	display: block;
+	margin-bottom: 5px;
+	padding: 0 15px;
+	position: relative;
+	text-align: left;
+	white-space: normal;
+	z-index: 1;
+}
+#summary_ordering a + ul {
+	margin-left: 10%;
+	margin-top: -7px;
+	position: relative;
+	z-index: 3;
+}
+#summary_ordering a + ul a {
+	border-top: 0 none;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	padding-top: 1px;
+}
+#summary_ordering #modal-body .fa-ul li {
+	margin-bottom: 10px;
+}
+#summary_ordering ul {
+	margin: 0;
+	position: relative;
+	z-index: 0;
 }

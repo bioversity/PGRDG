@@ -2442,6 +2442,9 @@ fieldset[disabled] .btn-danger.active {
   cursor: pointer;
   border-radius: 0;
 }
+.btn-link.no-padding {
+        padding: 0;
+}
 .btn-link,
 .btn-link:active,
 .btn-link[disabled],
@@ -3653,7 +3656,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  /*padding: 10px 15px;*/
 }
 .nav > li > a:hover,
 .nav > li > a:focus {
@@ -4460,7 +4463,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .label {
   display: inline;
-  padding: .2em .6em .3em;
+  padding: .3em .6em .3em;
   font-size: 75%;
   font-weight: bold;
   line-height: 1;
@@ -5266,7 +5269,7 @@ a.list-group-item-danger.active:focus {
   float: right;
   font-size: 21px;
   font-weight: bold;
-  line-height: 1;
+  line-height: 15px;
   color: #000;
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);

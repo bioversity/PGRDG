@@ -490,6 +490,126 @@
 	* @param {Function} callback
 	*/
 	$.fn.addTraitAutocomplete = function(options, data, callback) {
+		$.selected_menu = function(k, v) {
+			var kk = k.replace("$", "");
+			$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
+			$("#autocomplete ul.dropdown-menu li").removeClass("active");
+			$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
+			$("#" + options.id).focus();
+		};
+
+		/**
+		* Execute autocomplete
+		* @param {object}   kAPI
+		* @param {Function} callback
+		*/
+		$.execTraitAutocomplete = function(kAPI, callback) {
+			$.get_storage_selected_forms = function() {
+				var qc = {};
+				$.each(storage.get("pgrdg_cache.selected_forms"), function(row_id, query) {
+					$.each(query.active_forms, function(k, v) {
+						qc[k] = v;
+					});
+				});
+				return qc;
+			};
+
+			var form_data = {};
+			$.ask_to_service(kAPI, function(response) {
+				if (jQuery.type(callback) == "function") {
+					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+						if($(window).width() < 420) {
+							$.left_panel("close");
+						}
+						$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+							$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
+								$.reset_all_searches(true);
+							});
+						});
+						$("section.container").animate({"padding-top": "115px"});
+						$("#breadcrumb").animate({"top": "75px"});
+						if($("#forms-head .btn-group a.save_btn").length === 0) {
+							$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+							$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						}
+						if($("#breadcrumb").css("display") == "none") {
+							$("#breadcrumb").fadeIn(200);
+						}
+						$("#forms").fadeIn(300);
+
+						// Fires when user clicks on "Save" button
+						$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
+							$(this).on("click", function() {
+							//	var qcriteria;
+								form_data.history = storage.get("pgrdg_cache.forms");
+								$.each($("#accordion > div.panel-default"), function(k, v) {
+									var active_forms = {}, af_obj = {};
+									frm_keys = $(this).attr("id");
+
+									$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
+										af_obj = $(this).find("form").serializeObject();
+										rt = {};
+
+										switch(af_obj["input-type"]) {
+											case kAPI_PARAM_INPUT_ENUM:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_RANGE:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
+												rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
+												rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_STRING:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+												rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_SHAPE: break;
+											case kAPI_PARAM_INPUT_DEFAULT:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+													case kTYPE_BOOLEAN:
+														rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+														break;
+													default:
+														break;
+												}
+												active_forms[af_obj.tags] = rt;
+												break;
+										}
+										storage.set("pgrdg_cache.selected_forms." + frm_keys, {
+											request: storage.get("pgrdg_cache.forms." + frm_keys),
+											key: $(this).attr("id"),
+											forms: $(this).find("form").serializeObject(),
+											active_forms: active_forms
+										});
+									});
+								});
+
+								$("#goto_results_btn, #goto_map_btn").hide();
+								$.remove_storage("pgrdg_cache.summary");
+								$.remove_storage("pgrdg_cache.results");
+								$.remove_storage("pgrdg_cache.map");
+								$.show_summary($.get_storage_selected_forms());
+							});
+						});
+						callback.call(this, response);
+					} else {
+						apprise("Entered text has produced 0 results", {title: "No results", icon: "warning"}, function(r) {
+							if(r) {
+								$("#main_search").focus();
+							}
+						});
+					}
+				}
+			});
+		};
+
 		options = $.extend({
 			id: "",
 			class: "",
@@ -504,13 +624,6 @@
 		selected_label_key = "",
 		selected_label_value = "";
 
-		$.selected_menu = function(k, v) {
-			var kk = k.replace("$", "");
-			$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
-			$("#autocomplete ul.dropdown-menu li").removeClass("active");
-			$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
-			$("#" + options.id).focus();
-		};
 		$.each(options.op, function(k, v) {
 			if(!v.main) {
 				if(v.label !== undefined) {
@@ -699,113 +812,595 @@
 	};
 
 	/**
-	* Execute autocomplete (or simple user's input) search
-	* @param {object}   kAPI
-	* @param {Function} callback
+	* Add generic autocomplete form, like Trait Autocomplete
 	*/
-	$.execTraitAutocomplete = function(kAPI, callback) {
-		$.get_storage_selected_forms = function() {
-			var qc = {};
-			$.each(storage.get("pgrdg_cache.selected_forms"), function(row_id, query) {
-				$.each(query.active_forms, function(k, v) {
-					qc[k] = v;
-				});
-			});
-			return qc;
+	$.fn.addAutocomplete = function(options, data, callback) {
+		options = $.extend({
+			id: "",
+			class: "",
+			placeholder: "Choose...",
+			op: kAPI_OP_MATCH_TAG_LABELS
+		}, options);
+		var op_btn_list = "",
+		selected_label = "Operator",
+		checkbox = "",
+		user_input,
+		is_autocompleted = false,
+		selected_label_key = "",
+		selected_label_value = "";
+
+		$.selected_menu = function(k, v) {
+			var kk = k.replace("$", "");
+			$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
+			$("#autocomplete ul.dropdown-menu li").removeClass("active");
+			$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
+			$("#" + options.id).focus();
 		};
 
-		var form_data = {};
-		$.ask_to_service(kAPI, function(response) {
-			if (jQuery.type(callback) == "function") {
-				if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-					if($(window).width() < 420) {
-						$.left_panel("close");
+		$.each(options.op, function(k, v) {
+			if(!v.main) {
+				if(v.label !== undefined) {
+					checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" value="" /> ' + v.label + '</label></div>';
+				}
+			} else {
+				if(v.main !== undefined) {
+					if(v.type == "string") {
+						if(v.selected){
+							if(v.main) {
+								selected_label_key = v.key;
+								selected_label_value = v.label;
+							}
+							op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						} else {
+							op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
+						}
 					}
-					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
-						$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
-							$.reset_all_searches(true);
-						});
-					});
-					$("section.container").animate({"padding-top": "115px"});
-					$("#breadcrumb").animate({"top": "75px"});
-					if($("#forms-head .btn-group a.save_btn").length === 0) {
-						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-					}
-					if($("#breadcrumb").css("display") == "none") {
-						$("#breadcrumb").fadeIn(200);
-					}
-					$("#forms").fadeIn(300);
+				}
+			}
+		});
+		$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
 
-					// Fires when user clicks on "Save" button
-					$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
-						$(this).on("click", function() {
-						//	var qcriteria;
-							form_data.history = storage.get("pgrdg_cache.forms");
-							$.each($("#accordion > div.panel-default"), function(k, v) {
-								var active_forms = {}, af_obj = {};
-								frm_keys = $(this).attr("id");
-
-								$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
-									af_obj = $(this).find("form").serializeObject();
-									rt = {};
-
-									switch(af_obj["input-type"]) {
-										case kAPI_PARAM_INPUT_ENUM:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_RANGE:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
-											rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
-											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_STRING:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
-											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_SHAPE: break;
-										case kAPI_PARAM_INPUT_DEFAULT:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
-												case kTYPE_BOOLEAN:
-													rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
-													break;
-												default:
-													break;
-											}
-											active_forms[af_obj.tags] = rt;
-											break;
-									}
-									storage.set("pgrdg_cache.selected_forms." + frm_keys, {
-										request: storage.get("pgrdg_cache.forms." + frm_keys),
-										key: $(this).attr("id"),
-										forms: $(this).find("form").serializeObject(),
-										active_forms: active_forms
-									});
-								});
-							});
-
-							$("#goto_results_btn, #goto_map_btn").hide();
-							$.remove_storage("pgrdg_cache.summary");
-							$.remove_storage("pgrdg_cache.results");
-							$.remove_storage("pgrdg_cache.map");
-							$.show_summary($.get_storage_selected_forms());
-						});
-					});
-					callback.call(this, response);
-				} else {
-					apprise("Entered text has produced 0 results", {title: "No results", icon: "warning"}, function(r) {
-						if(r) {
-							$("#main_search").focus();
+		remoteAutocomplete = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			remote: {
+				url: service_url + "%QUERY",
+				replace: function(url, query) {
+					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					return url.replace("%QUERY", state);
+				},
+				filter: function (parsedResponse) {
+					var res = [];
+					$.each(parsedResponse, function(respType, v) {
+						if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+							if(respType == "results") {
+								for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
+									var re = [];
+									re.value = v[i];
+									res.push(re);
+								}
+							}
 						}
 					});
+					return res;
 				}
+			}
+		});
+		remoteAutocomplete.clearPrefetchCache();
+		remoteAutocomplete.initialize();
+
+		$("#" + options.id).typeahead({
+			hint: true,
+			highlight: true,
+			minLength: 3,
+			limit: 50
+		}, {
+			displayKey: "value",
+			//source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
+			source: remoteAutocomplete.ttAdapter()
+		}).bind("keydown", "return", function(event) {
+			$(this).trigger("typeahead:_changed");
+			return false;
+		}).on("typeahead:selected typeahead:_changed", function(){
+			var exclude = [];
+			if(storage.isSet("pgrdg_cache.search.searched")) {
+				st = storage.get("pgrdg_cache.search.searched");
+				exclude = st.filter(function(itm, i, a){
+					return i == st.indexOf(itm);
+				});
+				console.log(exclude);
+			}
+
+			/*
+			if($("#autocomplete .input-group #autocomplete_undo_btn").length === 0) {
+				$("#autocomplete .input-group").append('<span class="input-group-btn"><a class="btn btn-default-grey" id="autocomplete_undo_btn" href="javascript:void(0);"><span class="fa fa-reply"></span>Undo</a></span>');
+			}
+			$("#autocomplete_undo_btn").on("click", function() {
+				apprise("Are you sure to remove all defined group filters?", {confirm: true}, function(r) {
+					if(r) {
+						$("#summary #summary-body").removeClass("disabled");
+						$("#filter_stage").html("");
+						$("#autocomplete_undo_btn").closest("span").remove();
+						$("#filter_stage_panel").fadeOut(300, function() {
+							$("#filter_search_summary").val("").focus();
+						});
+					}
+				});
+			});
+			*/
+			/*
+			if (jQuery.type(callback) == "function") {
+				callback.call(this);
+			}
+			*/
+
+			// Autocomplete
+			var kAPI = {};
+			kAPI.storage_group = "search.loaded";
+			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
+			kAPI.parameters = {};
+			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_EXCLUDED_TAGS] = [];
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
+			$.ask_to_service(kAPI, function(response) {
+				if($.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0){
+					var tag = {},
+					exclude_tags = [],
+					lll = "",
+					contains = "";
+					//console.log(response[kAPI_RESPONSE_RESULTS]);
+					$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
+					$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
+						if(data[kAPI_PARAM_TAG] !== undefined) {
+							tag[id] = data[kAPI_PARAM_TAG];
+							exclude_tags.push(data[kAPI_PARAM_TAG]);
+
+							if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+								contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
+							}
+							lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
+						}
+					});
+					$("#summary_ordering").find(".modal-body ul").html(lll);
+					$("#summary_ordering").modal("show");
+				}
+			});
+			is_autocompleted = true;
+			return false;
+		});
+	};
+
+	/**
+	 * Generate dialog contents
+	 */
+	$.iterate_childrens = function(data, level, storage_id, id, tag, contains) {
+		$("#summary #summary-body").addClass("disabled");
+		if(id !== undefined) {
+			$.fn.to_html = function() {
+				return $('<div></div>').html($(this).clone()).html();
+			};
+			var list = $('<li>'),
+			lists = "",
+			name = "",
+			info = "",
+			already_selected = false;
+
+			if(level === undefined) {
+				level = 0;
+			}
+
+			if(!storage.isSet("pgrdg_cache.search.selected." + storage_id)) {
+				storage.set("pgrdg_cache.search.selected", storage_id);
+			}
+			if($.inArray(id, storage.get("pgrdg_cache.search.selected." + storage_id)) > -1) {
+				already_selected = true;
+			}
+			$.each(data, function(d, v){
+				if(d !== kAPI_PARAM_TAG) {
+					if(d == kAPI_PARAM_RESPONSE_CHILDREN) {
+						var ul = $('<ul class="fa-ul level2">');
+
+						ul.append($.iterate_childrens(v, (level +1), storage_id, id, tag, contains));
+						list.append(ul);
+					} else {
+						if(v !== undefined && v !== null) {
+							if(d == kAPI_PARAM_RESPONSE_FRMT_NAME) {
+								if(level === 0) {
+									list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5><span class="fa fa-fw fa-angle-right pull-right"></span>' + v + '</h5></a>');
+								} else {
+									list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5><span class="fa fa-fw fa-angle-right pull-right"></span>' + v + '</h5></a>');
+								}
+								name = v;
+							}
+							if(d == kAPI_PARAM_RESPONSE_FRMT_INFO) {
+								list.find("h5").append('<span class="help-block">' + v + '</span>');
+								info = v;
+							}
+							list.find('a').attr("onclick", '$(this).add_remove_item_to_stage(\'' + storage_id + '\', \'' + id + '\', \'' + name + '\', \'' + contains + '\', \'' + info + '\');');
+							if(already_selected) {
+								list.find('a').add_remove_item_to_stage(storage_id, id, name, contains, info, false);
+							}
+						}
+					}
+					lists = list.to_html();
+				}
+			});
+			return lists;
+		}
+
+	};
+
+	/**
+	* Group buttons in the dialog
+	*/
+	$.group_tag_by = function(storage_id, id, name, contains, info) {
+		var selected = [];
+		if(storage.isSet("pgrdg_cache.search.selected." + storage_id)) {
+			selected = storage.get("pgrdg_cache.search.selected." + storage_id);
+		}
+		if($.inArray(id, storage.get("pgrdg_cache.search.selected." + storage_id)) === -1) {
+			selected.push(id);
+		} else {
+			already_selected = true;
+		}
+
+		if($("#filter_stage #" + $.md5(id)).length === 0) {
+			var already_selected = false,
+			panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" class="list-group-item list-group-item-success" id="' + $.md5(id) + '" data-id="' + id + '" data-storage-id="' + storage_id + '">');
+
+			panel.html('<h4 class="list-group-item-heading">' + name + '</h4>');
+			if(contains !== undefined && contains !== null && contains !== "") {
+				panel.find("h4").append(' <small class="label label-success pull-right">' + contains + '</small>');
+			}
+			if(info !== undefined && info !== null && info.length > 0) {
+				panel.append('<p class="list-group-item-text">' + info + '</p>');
+			}
+			if($("#filter_stage").html().length === 0) {
+				$("#filter_stage_panel").fadeIn(300);
+				$("#filter_group_title").text("Add another filter");
+			}
+
+			// Move on the stage
+			$("#filter_stage").append(panel);
+		} else {
+			if($("#" + $.md5(id) + "_restore").length > 0) {
+				$.restore_deleted_filter($.md5(id));
+			}
+		}
+
+		storage.set("pgrdg_cache.search.selected." + storage_id, selected);
+	};
+
+	/**
+	* Re-open filters dialogs and let user to add or remove others
+	*/
+	$.fn.edit_filter = function() {
+		var response = storage.get("pgrdg_cache.search.loaded." + $(this).attr("data-storage-id") + ".response"),
+		tag = {},
+		exclude_tags = [],
+		lll = "",
+		contains = "";
+		$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
+		$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
+			if(data[kAPI_PARAM_TAG] !== undefined) {
+				tag[id] = data[kAPI_PARAM_TAG];
+				exclude_tags.push(data[kAPI_PARAM_TAG]);
+
+				if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+					contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
+				}
+				lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
+			}
+		});
+		$("#summary_ordering").find(".modal-body ul").html(lll);
+		$("#summary_ordering").modal("show");
+	};
+
+	/*=======================================================================================
+	*	STAGE
+	*======================================================================================*/
+
+	/**
+	 * Generate stage buttons reading selected filters on the storage
+	 */
+	$.restore_stage = function() {
+		if(storage.isSet("pgrdg_cache.search.selected._ordering")) {
+			if(!$("#summary #summary-body").hasClass("disabled")) {
+				$("#summary #summary-body").addClass("disabled");
+			}
+			$("#group_by_btn").append('<small class="label label-danger" style="position: absolute; top: -6px; right: -6px;">' + $.obj_len(storage.get("pgrdg_cache.search.selected._ordering")) + '</small>');
+			$.each(storage.get("pgrdg_cache.search.selected._ordering"), function(k, v) {
+				if($.obj_len(v) > 0) {
+					var id = v.id, storage_id = v.storage;
+					if(storage.isSet("pgrdg_cache.search.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
+						var res = storage.get("pgrdg_cache.search.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
+						name = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME],
+						info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
+						a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" id="' + $.md5(id) + '" data-id="' + id + '" data-storage-id="' + storage_id + '">');
+						a.html('<h4 class="list-group-item-heading">' + name + '</h4>');
+						if(res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+							a.find("h4").append(' <small class="label label-success pull-right">' + res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</small>');
+						}
+						if(info !== undefined && info.length > 0) {
+							a.append('<p class="list-group-item-text">' + info + '</p>');
+						}
+						//if($.inArray(id, item) > -1) {
+							$("#filter_stage").append(a);
+						//}
+						$("#filter_stage_panel").fadeIn(300);
+					}
+				}
+				$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
+			});
+			//$("#collapsed_group_form").collapse("show");
+			$.exec_ordering();
+		}
+	};
+
+	/**
+	 * Highlight selected filter button of the stage
+	 */
+	$.select_group_filter = function(item) {
+		$this = item;
+
+		if($this.hasClass("active")) {
+			$this.removeClass("active");
+			$("#filter_stage_controls a").addClass("disabled");
+		} else {
+			$("#filter_stage a").removeClass("active");
+			$this.addClass("active");
+			if($("#filter_stage a:visible").length > 0) {
+				$("#filter_stage_controls a").removeClass("disabled");
+			}
+			$.show_btns();
+		}
+	};
+
+	/**
+	 * Enable/disable stage buttons (move, edit and remove buttons)
+	 */
+	$.show_btns = function() {
+		if($("#filter_stage > a.active").prev(":visible").length === 0) {
+			$("#move_down_btn, #move_bottom_btn").removeClass("disabled");
+			$("#move_up_btn, #move_top_btn").addClass("disabled");
+		}
+		if($("#filter_stage > a.active").next(":visible").length === 0) {
+			$("#move_up_btn, #move_top_btn").removeClass("disabled");
+			$("#move_down_btn, #move_bottom_btn").addClass("disabled");
+		}
+		if($("#filter_stage > a.active").prev(":visible").length > 0 && $("#filter_stage a.active").next(":visible").length > 0) {
+			$("#move_top_btn, #move_up_btn, #move_down_btn, #move_bottom_btn").removeClass("disabled");
+		}
+	};
+
+	/**
+	 * Move selected item on the stage (top, up, down and bottom directions)
+	 */
+	$.fn.move_to = function(where) {
+		var selected = $('#filter_stage a.active'),
+		selected_before = $("#filter_stage a.active").prev(),
+		selected_after = $("#filter_stage a.active").next();
+
+		switch(where) {
+			case "top":
+				selected.remove();
+				$('#filter_stage').prepend(selected);
+				break;
+			case "bottom":
+				selected.remove();
+				$('#filter_stage').append(selected);
+				break;
+			case "up":
+				selected.remove();
+				selected.insertBefore(selected_before);
+				break;
+			case "down":
+				selected.remove();
+				selected.insertAfter(selected_after);
+				break;
+		}
+
+		$.update_ordering();
+		$.show_btns();
+	};
+
+	/**
+	 * Add or remove selected item from the stage
+	 */
+	$.fn.add_remove_item_to_stage = function(storage_id, id, name, contains, info, display_message) {
+		if(display_message === undefined) {
+			display_message = true;
+		}
+		if($(this).closest("ul:not(.level2) > li").find("a").hasClass("btn-default")) {
+			$(this).closest("ul:not(.level2) > li").find("a").removeClass("btn-default").addClass("btn-default-white");
+			$("#filter_stage #" + $.md5(id)).remove_filter(true);
+			if(display_message) {
+				$("#modal_messages").removeClass("alert-success").addClass("alert-danger").find("div.text-left").text('"' + name + '" removed');
+				$("#modal_messages").fadeIn(300);
+			}
+		} else {
+			$(this).closest("ul:not(.level2) > li").find("a").removeClass("btn-default-white").addClass("btn-default");
+			$.group_tag_by(storage_id, id, name, contains, info);
+			if(display_message) {
+				$("#modal_messages").removeClass("alert-danger").addClass("alert-success").find("div.text-left").text('"' + name + '" added');
+				$("#modal_messages").fadeIn(300);
+			}
+		}
+		$.update_ordering();
+
+	};
+
+	/**
+	 * Restore a previous removed filter from stage
+	 */
+	$.restore_deleted_filter = function(id) {
+		var item_id = $("#" + id).attr("data-id"),
+		storage_id = $("#" + id).attr("data-storage-id"),
+		selected = storage.get("pgrdg_cache.search.selected." + storage_id);
+
+		$("#" + id + "_restore").stop().remove();
+		$("#" + id).fadeIn(300, function() {
+			$("#filter_stage_controls a").removeClass("disabled");
+			$.show_btns();
+
+			selected.push(item_id);
+			storage.set("pgrdg_cache.search.selected." + storage_id, selected);
+		});
+		$.update_ordering();
+	};
+
+	/**
+	 * Remove a filter
+	 */
+	$.fn.remove_filter = function(direct) {
+		$.reset_stage = function() {
+			$("#summary #summary-body").removeClass("disabled");
+			$("#filter_stage").html("");
+			//$("#autocomplete_undo_btn").closest("span").remove();
+			$("#filter_stage_panel").fadeOut(300, function() {
+				$("#filter_search_summary").val("").focus();
+			});
+		};
+
+		var id = $(this).attr("data-id"),
+		storage_id = $(this).attr("data-storage-id"),
+		selected = storage.get("pgrdg_cache.search.selected." + storage_id);
+
+		$("#filter_stage_controls a").addClass("disabled");
+		$(this).fadeOut(300, function() {
+			if(!direct) {
+				$('<div id="' + $.md5(id) + '_restore" class="well well-sm text-muted">Removed \"' + $(this).find("h4").text() + '\".<a class="pull-right text-muted" href="javascript:void(0);" onclick="$.restore_deleted_filter(\'' + $(this).attr("id") +  '\')" title="Restore it"><small class="fa fa-reply"></small></a></div>').insertBefore($(this));
+
+				$("#" + $.md5(id) + "_restore").fadeOut(10000, "easeInExpo", function() {
+					$("#" + $.md5(id) + "_restore").remove();
+					$("#" + $.md5(id)).remove();
+					if($("#filter_stage > a:visible").length === 0) {
+						$.reset_stage();
+					}
+				});
+			} else {
+				if($("#filter_stage > a:visible").length === 0) {
+					$.reset_stage();
+				}
+				$("#" + $.md5(id)).remove();
+			}
+
+			selected = $.grep(selected, function(value) {
+				return value != id;
+			});
+			storage.set("pgrdg_cache.search.selected." + storage_id, selected);
+			$.update_ordering();
+		});
+
+		if($("#filter_stage a").length === 0) {
+			$("#filter_stage_controls a").addClass("disabled");
+		}
+	};
+
+	/**
+	 * Cancel and remove all ordering criteria
+	 */
+	$.reset_ordering = function() {
+		apprise("Are you sure to cancel and remove all defined group filters?", {confirm: true}, function(r) {
+			if(r) {
+				$("#summary #summary-body").removeClass("disabled");
+				$("#filter_stage").html("");
+				$("#autocomplete_undo_btn").closest("span").remove();
+				$("#filter_stage_panel").fadeOut(300, function() {
+					$("#autocomplete .typeahead").val("");
+				});
+
+				if(!$("#summary_order_cancel_btn").hasClass("disabled")) {
+					$("#summary_order_cancel_btn").addClass("disabled");
+				}
+				if(!$("#summary_order_reorder_btn").hasClass("disabled")) {
+					$("#summary_order_reorder_btn").addClass("disabled");
+				}
+				$("#summary #summary-body").removeClass("disabled");
+				$("#collapsed_group_form").collapse("hide");
+				$("#group_by_btn .label-danger").remove();
+
+				storage.remove("pgrdg_cache.search.selected");
+			}
+		});
+	};
+
+	/**
+	 * Update the ordering in the storage
+	 */
+	$.update_ordering = function() {
+		var st = [];
+
+		if(!$("#summary #summary-body").hasClass("disabled")) {
+			$("#summary #summary-body").addClass("disabled");
+		}
+		$.each($("#filter_stage > a:visible"), function(k, item) {
+			var stid = $(this).attr("data-id"),
+			ststorage_id = $(this).attr("data-storage-id");
+			st.push({"id": stid, "storage": ststorage_id});
+		});
+		storage.set("pgrdg_cache.search.selected._ordering", st);
+
+		if(st.length > 0) {
+			if($("#group_by_btn .label-danger").length === 0) {
+				$("#group_by_btn").append('<small class="label label-danger" style="position: absolute; top: -6px; right: -6px;">' + st.length + '</small>');
+			} else {
+				$("#group_by_btn .label-danger").text(st.length);
+			}
+			$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
+		}
+	};
+
+	/**
+	 * Call Service and reorder results summary
+	 */
+	$.exec_ordering = function() {
+		var ids = [];
+
+		$("#summary #summary-body").removeClass("disabled");
+		$.each(storage.get("pgrdg_cache.search.selected._ordering"), function(k, data) {
+			ids.push(data.id);
+		});
+		console.log(ids);
+
+		var objp = {};
+		objp.storage_group = "summary";
+		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		objp.parameters = {};
+		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = $.trim($("#search_form").val());
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = ids;
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+		$.ask_to_service(objp, function(response) {
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+				var res = response;
+
+				$("#summary-body .content-body").html("");
+				$.generate_tree_summaries(res, function(result_panel){
+					$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
+					//$("#" + type + "-body .content-body").attr("id", options.res.id).append("<div class=\"panel panel-success\"><div class=\"panel-heading\"><h4 class=\"list-group-item-heading\"><span class=\"title\">" + $.trim(values[kTAG_LABEL]) + "</span> <span class=\"badge pull-right\">" + values[kAPI_PARAM_RESPONSE_COUNT] + "</span></h4></div><div class=\"panel-body\"><div class=\"btn-group pull-right\"><a class=\"btn btn-default-white\" href=\"javascript: void(0);\" onclick=\"$.show_raw_data('" + options.res.id + "', '" + domain + "')\"><span class=\"fa fa-th\"></span> View data</a>" + ((values.points > 0) ? "<a onclick=\"$.show_data_on_map('" + options.res.id + "', '" + domain + "')\" class=\"btn " + ((values.points > 10000) ? "btn-warning disabled" : "btn-default") + "\">" + ((values.points > 10000) ? values.points + " points" : "<span class=\"ionicons ion-map\"></span>") + ' View map&emsp;<span class="badge">' + values.points + '</span></a>' : "") + "</div>" + values[kTAG_DEFINITION] + "</div></div>");
+				});
+			/*
+				$.activate_panel("summary", {res: response}, function() {
+					$("#se_loader").fadeOut(300);
+					$("#se_p").fadeIn(300);
+					$("#group_by_btn").removeClass("disabled");
+				});
+			} else {
+				$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
+				$("#search_form").focus();
+			*/
 			}
 		});
 	};
@@ -950,12 +1545,12 @@
 		if(type !== "map") {
 			if(type == "summary") {
 				if(current_path == "Search") {
-					$("#" + type + "-head .content-title > span").html("Results " + type.toLowerCase());
+					$("#" + type + "-head h1.content-title > span").html("Results " + type.toLowerCase());
 				} else {
-					$("#" + type + "-head .content-title").html("Results " + type.toLowerCase());
+					$("#" + type + "-head h1.content-title").html("Results " + type.toLowerCase());
 				}
 			} else {
-				$("#" + type + "-head .content-title").html("Search " + type.toLowerCase());
+				$("#" + type + "-head h1.content-title").html("Search " + type.toLowerCase());
 			}
 
 			$("#" + type + "-body .content-body").html("");
@@ -1097,10 +1692,16 @@
 	 * Create summary content pane
 	 * @param {object} the result of previous query (eg. Search or Autocomplete)
 	 */
-	$.generate_summaries = function(options, callback) {
-		console.log(options[kAPI_RESPONSE_RESULTS]);
+	$.generate_summaries = function(options, colour, callback) {
+		$.random_colour = function() {
+			return "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156)) + ")";
+		};
+
+		if(colour === undefined) {
+			colour = $.random_colour();
+		}
 		$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
-			var result_panel = $('<div class="result panel">'),
+			var result_panel = $('<div class="result panel" style="border-color: ' + colour + '">'),
 			result_h4 = $('<h4 class="">'),
 			result_title = $('<span class="title">'),
 			result_description = $('<p>'),
@@ -1125,6 +1726,51 @@
 			}
 		});
 	};
+
+	/**
+	* Create indented summary content pane
+	* @param {object} the result of previous query (eg. Search or Autocomplete)
+	*/
+	$.generate_tree_summaries = function(options, callback) {
+		$.random_colour = function() {
+			return "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156)) + ")";
+		};
+
+		$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
+		console.log(values);
+			var item_colour = $.random_colour(),
+			result_panel = $('<div class="result panel" style="border-color: ' + item_colour + '">'),
+			result_h4 = $('<h4 class="">'),
+			result_title = $('<span class="title">'),
+			result_description = $('<p>'),
+			result_content_container = $('<div class="row">'),
+			result_description_ul_results = $('<ul class="list-unstyled">'),
+			res = {};
+
+			//result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME])).appendTo(result_h4);
+			result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) + '</sup>').appendTo(result_h4);
+			result_h4.appendTo(result_panel);
+			if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
+				result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
+			}
+
+			if($.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
+				console.log(values[kAPI_PARAM_RESPONSE_CHILDREN]);
+
+				res[kAPI_RESPONSE_RESULTS] = values[kAPI_PARAM_RESPONSE_CHILDREN];
+				$.generate_summaries(res, item_colour, function(tree) {
+					result_description_ul_results.append(tree);
+				});
+				result_description_ul_results.appendTo(result_content_container);
+			}
+			result_content_container.appendTo(result_panel);
+
+			if (jQuery.type(callback) == "function") {
+				callback.call(this, result_panel);
+			}
+		});
+	};
+
 
 	/*=======================================================================================
 	*	RAW DATA
@@ -1355,156 +2001,156 @@
 
 		};
 
-	/*=======================================================================================
-	*	RAW DATA TABLE
-	*======================================================================================*/
+		/*=======================================================================================
+		*	RAW DATA TABLE
+		*======================================================================================*/
 
-		/**
-		* Show paging buttons
-		* @param  {object} options  The entire (raw data) object
-		* @param  {int}    actual   The "actual" data passed from Service
-		* @param  {int}    affected The "affected" data passed from Service
-		* @param  {int}    limit    The "limit" data passed from Service
-		* @param  {int}    skipped  The "skipped" data passed from Service
-		* @return {string}          Html div with paging buttons
-		*/
-		$.paging_btns = function(options, actual, affected, limit, skipped) {
-			var page_count = Math.ceil(affected / limit),
-			current_page = (skipped/limit) + 1,
-			first_page = 1,
-			previous_page = current_page - 1,
-			next_page = current_page + 1,
-			last_page = page_count,
-			previous_skip = skipped - limit,
-			next_skip = skipped + limit,
-			last_skip = (page_count - 1) * limit;
+			/**
+			* Show paging buttons
+			* @param  {object} options  The entire (raw data) object
+			* @param  {int}    actual   The "actual" data passed from Service
+			* @param  {int}    affected The "affected" data passed from Service
+			* @param  {int}    limit    The "limit" data passed from Service
+			* @param  {int}    skipped  The "skipped" data passed from Service
+			* @return {string}          Html div with paging buttons
+			*/
+			$.paging_btns = function(options, actual, affected, limit, skipped) {
+				var page_count = Math.ceil(affected / limit),
+				current_page = (skipped/limit) + 1,
+				first_page = 1,
+				previous_page = current_page - 1,
+				next_page = current_page + 1,
+				last_page = page_count,
+				previous_skip = skipped - limit,
+				next_skip = skipped + limit,
+				last_skip = (page_count - 1) * limit;
 
-			$form_group = $('<div class="form-group">');
-			$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
+				$form_group = $('<div class="form-group">');
+				$first_btn = $('<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>');
 
-			page_btns = '<div class="form-group">';
-				page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
-			page_btns += '</div>&nbsp;';
-			page_btns += '<div class="form-group">';
-				page_btns += '<div class="input-group">';
-					page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
-					page_btns += '<span class="input-group-addon">Page</span>';
-					page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
-					page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
-					page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+				page_btns = '<div class="form-group">';
+					page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + 0 + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="First page"><span class="fa fa fa-angle-double-left"></a>';
+				page_btns += '</div>&nbsp;';
+				page_btns += '<div class="form-group">';
+					page_btns += '<div class="input-group">';
+						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + previous_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == 1) ? ' disabled' : '') + '" title="Previous page"><span class="fa fa-angle-left"></a></span>';
+						page_btns += '<span class="input-group-addon">Page</span>';
+						page_btns += '<input type="number" min="1" max="' + page_count + '" class="form-control" style="width: 75px;" placeholder="Current page" value="' + current_page + '" />';
+						page_btns += '<span class="input-group-addon">of ' + page_count + '</span>';
+						page_btns += '<span class="input-group-btn"><a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + next_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Nex page"><span class="fa fa-angle-right"></a></span>';
+					page_btns += '</div>';
+				page_btns += '</div>&nbsp;';
+				page_btns += '<div class="btn-group">';
+					page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
 				page_btns += '</div>';
-			page_btns += '</div>&nbsp;';
-			page_btns += '<div class="btn-group">';
-				page_btns += '<a href="javascript:void(0);" onclick="$.show_raw_data(\'' + options.res.id + '\', \'' + options.domain + '\', \'' + last_skip + '\', \'' + limit + '\')" class="btn btn-default-white' + ((current_page == page_count) ? ' disabled' : '') + '" title="Last page"><span class="fa fa-angle-double-right"></a>';
-			page_btns += '</div>';
 
-			return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
-		};
+				return '<form class="form-inline text-center" role="form">' + page_btns + '</form>';
+			};
 
-		/**
-		* Parse recursive Service data and show in a row tree
-		* @param  {object} options The entire Service object
-		*/
-		$.cycle_row_data = function(options) {
-			var content = "";
-			$.each(options.row_obj, function(tag, value) {
-				var id = $.makeid(),
-				label, tag_label, tag_type;
-				if(!jQuery.isEmptyObject(options.res)) {
-					if($.isNumeric(tag)) {
-						tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
-						tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
+			/**
+			* Parse recursive Service data and show in a row tree
+			* @param  {object} options The entire Service object
+			*/
+			$.cycle_row_data = function(options) {
+				var content = "";
+				$.each(options.row_obj, function(tag, value) {
+					var id = $.makeid(),
+					label, tag_label, tag_type;
+					if(!jQuery.isEmptyObject(options.res)) {
+						if($.isNumeric(tag)) {
+							tag_label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_LABEL];
+							tag_type = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG][options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_TAGS][tag]][kTAG_DATA_TYPE];
+						}
+					} else {
+						tag_label = tag;
 					}
-				} else {
-					tag_label = tag;
-				}
-				switch(jQuery.type(value)) {
-					case "object":
-						if(jQuery.isArray(value)) {
-							$.each(value, function(key, val) {
-								var val_type = jQuery.type(val);
-							});
-							/*if(val_type == "object") {
-								content += "~";//$.cycle_row_data({row_obj: value});
+					switch(jQuery.type(value)) {
+						case "object":
+							if(jQuery.isArray(value)) {
+								$.each(value, function(key, val) {
+									var val_type = jQuery.type(val);
+								});
+								/*if(val_type == "object") {
+									content += "~";//$.cycle_row_data({row_obj: value});
+								} else {
+									*/content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + value.join(", ") + "</li>";
+								//}
 							} else {
-								*/content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + value.join(", ") + "</li>";
-							//}
-						} else {
-							if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
-								if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
-									label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+								if(tag_type == kTYPE_ENUM || tag_type == kTYPE_SET) {
+									if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value] !== undefined) {
+										label = options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][value][kTAG_LABEL];
+									} else {
+										label = tag_label;
+									}
 								} else {
 									label = tag_label;
 								}
-							} else {
-								label = tag_label;
-							}
-							if($.obj_len(value) == 1) {
-								$.each(value, function(i, n) {
-									label = i;
-									value = n;
-								});
-							}
-							content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
-						}
-						break;
-					case "array":
-						switch(tag_type) {
-							case kTYPE_ENUM:
-							case kTYPE_SET:
-								var lab = [];
-								$.each(value, function(key, val) {
-									if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
-										lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
-									}
-								});
-								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
-								break;
-							case kTYPE_STRUCT:
 								if($.obj_len(value) == 1) {
+									$.each(value, function(i, n) {
+										label = i;
+										value = n;
+									});
+								}
+								content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: value}) + "</ul></div></li>";
+							}
+							break;
+						case "array":
+							switch(tag_type) {
+								case kTYPE_ENUM:
+								case kTYPE_SET:
+									var lab = [];
 									$.each(value, function(key, val) {
-										if($.obj_len(val) > 1) {
-											content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
-										} else {
-											$.each(val, function(k, v) {
-												content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
-											});
+										if(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val] !== undefined) {
+											lab.push(options.res[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TERM][val][kTAG_LABEL]);
 										}
 									});
-								} else {
-									$.each(value, function(key, val) {
-										content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
-									});
-								}
-								break;
-							default:
-								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + value.join(", ") + "</li>";
-								break;
-						}
-						break;
-					default:
-						switch(tag_type) {
-							case kTYPE_ENUM:
-							case kTYPE_SET:
-								if(tag_label == "Domain") {
-									value = options.title;
-								} else {
-									value = $.get_enum_label_from_string(options.res, value);
-								}
-								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
-								break;
-							case kTYPE_STRUCT:
-								break;
-							default:
-								content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
-								break;
-						}
-						break;
-				}
-				//content += tag + ": " + jQuery.type(value) + '<br />';
-			});
-			return content;
-		};
+									content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + lab.join(", ") + "</li>";
+									break;
+								case kTYPE_STRUCT:
+									if($.obj_len(value) == 1) {
+										$.each(value, function(key, val) {
+											if($.obj_len(val) > 1) {
+												content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+											} else {
+												$.each(val, function(k, v) {
+													content += '<li class="list-group-item"><b>' + tag_label + "</b>: " + v + "</li>";
+												});
+											}
+										});
+									} else {
+										$.each(value, function(key, val) {
+											content += '<li class="list-group-item"><span class="fa fa-caret-right fa-fw"></span><a href="javascript:void(0);" data-toggle="collapse" data-target="#' + $.md5(label) + '">View</a><div id="' + $.md5(label) + '" class="collapse"><ul class="list-group">' + $.cycle_row_data({res: options.res, row_obj: val}) + "</ul></div></li>";
+										});
+									}
+									break;
+								default:
+									content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + value.join(", ") + "</li>";
+									break;
+							}
+							break;
+						default:
+							switch(tag_type) {
+								case kTYPE_ENUM:
+								case kTYPE_SET:
+									if(tag_label == "Domain") {
+										value = options.title;
+									} else {
+										value = $.get_enum_label_from_string(options.res, value);
+									}
+									content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag_label) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+									break;
+								case kTYPE_STRUCT:
+									break;
+								default:
+									content += '<li class="list-group-item"><b>' + $.get_tag_label_from_string(options.res, tag) + "</b>: " + $.get_enum_label_from_string(options.res, value) + "</li>";
+									break;
+							}
+							break;
+					}
+					//content += tag + ": " + jQuery.type(value) + '<br />';
+				});
+				return content;
+			};
 
 
 
@@ -1826,6 +2472,42 @@
 		};
 
 
+		/**
+		* Fulltext search from given text
+		*/
+		$.search_fulltext = function(text) {
+			if(text.length >= 3) {
+				var objp = {};
+				objp.storage_group = "summary";
+				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+				objp.parameters = {};
+				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = text;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+				$.ask_to_service(objp, function(response) {
+					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+						var res = response[kAPI_RESPONSE_RESULTS];
+
+						$.activate_panel("summary", {res: response}, function() {
+							$("#se_loader").fadeOut(300);
+							$("#se_p").fadeIn(300);
+							$("#group_by_btn").removeClass("disabled");
+						});
+					} else {
+						$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
+						$("#search_form").focus();
+					}
+				});
+			}
+		};
+
+
 /*=======================================================================================
 *	FORM GENERATION (JQUERY FUNCTIONS)
 *======================================================================================*/
@@ -1886,214 +2568,6 @@
 
 
 	/**
-	* Add generic autocomplete form, like Trait Autocomplete
-	*/
-	$.fn.addAutocomplete = function(options, data, callback) {
-		options = $.extend({
-			id: "",
-			class: "",
-			placeholder: "Choose...",
-			op: kAPI_OP_MATCH_TAG_LABELS
-		}, options);
-		var op_btn_list = "",
-		selected_label = "Operator",
-		checkbox = "",
-		user_input,
-		is_autocompleted = false,
-		selected_label_key = "",
-		selected_label_value = "";
-
-		$.selected_menu = function(k, v) {
-			var kk = k.replace("$", "");
-			$("#" + options.id + "_operator").attr("class", "").addClass(kk).text(v);
-			$("#autocomplete ul.dropdown-menu li").removeClass("active");
-			$("#autocomplete ul.dropdown-menu li." + kk).addClass("active");
-			$("#" + options.id).focus();
-		};
-		$.each(options.op, function(k, v) {
-			if(!v.main) {
-				if(v.label !== undefined) {
-					checkbox += '<div class="checkbox"><label title="' + ((v.title !== undefined) ? v.title : "") + '"><input type="checkbox" id="' + options.id + '_operator_' + v.key.replace("$", "") + '" ' + ((v.selected) ? 'checked="checked"' : "") + ' title="' + ((v.title !== undefined) ? v.title : "") + '" value="" /> ' + v.label + '</label></div>';
-				}
-			} else {
-				if(v.main !== undefined) {
-					if(v.type == "string") {
-						if(v.selected){
-							if(v.main) {
-								selected_label_key = v.key;
-								selected_label_value = v.label;
-							}
-							op_btn_list += '<li class="' + v.key.replace("$", "") + ' active"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key+ '\',\'' + v.label + '\')">' + v.label + '</a></li>';
-						} else {
-							op_btn_list += '<li class="' + v.key.replace("$", "") + '"><a href="javascript:void(0);" onclick="$.selected_menu(\'' + v.key + '\',\'' + v.label + '\')">' + v.label + '</a></li>';
-						}
-					}
-				}
-			}
-		});
-		$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
-
-		remoteAutocomplete = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			remote: {
-				url: service_url + "%QUERY",
-				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					return url.replace("%QUERY", state);
-				},
-				filter: function (parsedResponse) {
-					var res = [];
-					$.each(parsedResponse, function(respType, v) {
-						if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-							if(respType == "results") {
-								for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
-									var re = [];
-									re.value = v[i];
-									res.push(re);
-								}
-							}
-						}
-					});
-					return res;
-				}
-			}
-		});
-		remoteAutocomplete.clearPrefetchCache();
-		remoteAutocomplete.initialize();
-
-		$("#" + options.id).typeahead({
-			hint: true,
-			highlight: true,
-			minLength: 3,
-			limit: 50
-		}, {
-			displayKey: "value",
-			//source: ((data == "remote") ? remoteAutocomplete.ttAdapter() : data)
-			source: remoteAutocomplete.ttAdapter()
-		}).on("typeahead:selected", function(){
-			var exclude = [];
-			if(storage.isSet("pgrdg_cache.search.exclude_tags")) {
-				st = storage.get("pgrdg_cache.search.exclude_tags");
-				exclude = st.filter(function(itm, i, a){
-					return i == st.indexOf(itm);
-				});
-				console.log(exclude);
-			}
-
-			$.iterate_childrens = function(data, level, id, tag) {
-				if(id !== undefined) {
-					$.fn.to_html = function() {
-						return $('<div></div>').html($(this).clone()).html();
-					};
-					var list = $('<li>'),
-					lists = "",
-					name = "",
-					info = "";
-					if(level === undefined) {
-						level = 0;
-					}
-					$.each(data, function(d, v){
-						if(d !== kAPI_PARAM_TAG) {
-							if(d !== kAPI_PARAM_RESPONSE_CHILDREN) {
-								if(v !== undefined && v !== null) {
-									if(d == kAPI_PARAM_RESPONSE_FRMT_NAME) {
-										if(level === 0) {
-											list.html('<a onclick="" href="javascript: void(0);" class=""><span class="fa fa-li fa-angle-right text-muted"></span>' + v + '</a>');
-										} else {
-											list.html('<a onclick="" href="javascript: void(0);" class=""><span class="fa fa-li fa-angle-right text-muted"></span>' + v + '</a>');
-										}
-										name = v;
-									}
-									if(d == kAPI_PARAM_RESPONSE_FRMT_INFO) {
-										list.append('<br /><p>' + v + '</p>');
-										info = v;
-									}
-									list.find('a').attr("onclick", '$.group_tag_by(\'' + id + '\', \'' + name + '\', \'' + info + '\')');
-								}
-							} else {
-								var ul = $('<ul class="fa-ul">');
-								ul.append($.iterate_childrens(v, (level +1), id, tag));
-								list.append(ul);
-							}
-							lists = list.to_html();
-						}
-					});
-					return lists;
-				}
-			};
-
-			$.group_tag_by = function(id, name, info) {
-				//$("#summary_ordering").modal("hide");
-				console.log(id, name, info);
-				var panel = $('<div class="panel panel-default" id="' + $.md5(id) + '">'),
-				panel_footer = $('<div class="panel-footer">');
-				panel_footer.html('<span class="fa fa-fw fa-ellipsis-v text-muted"></span><span class="text-success">' + name + '</span>');
-				if(info !== undefined) {
-					panel_footer.append('<small class="help-block" style="text-indent: 15px;">' + info + '</small>');
-				}
-				panel_footer.appendTo(panel);
-				panel.appendTo(panel);
-				if($("#filter_stage").html().length === 0) {
-					$("#filter_stage_panel").fadeIn(300);
-					$("#filter_group_title").text("Add another filter");
-				}
-				if($("#filter_stage #" + $.md5(id)).length === 0) {
-					$("#filter_stage").append(panel);
-				} else {
-					$("#filter_stage_controls a.disabled").removeClass("disabled");
-				}
-
-				exclude_tags.push(id);
-				console.log(exclude);
-				$("#selected_filters").val(exclude_tags);
-				storage.set("pgrdg_cache.search.exclude_tags", exclude_tags);
-			};
-			/*
-			if (jQuery.type(callback) == "function") {
-				callback.call(this);
-			}
-			*/
-
-			// Autocomplete
-			var kAPI = {};
-			kAPI.storage_group = "forms";
-			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
-			kAPI.parameters = {};
-			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_EXCLUDED_TAGS] = [];
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
-			$.ask_to_service(kAPI, function(response) {
-				if($.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0){
-					var tag = {},
-					exclude_tags = [],
-					lll = "";
-					//console.log(response[kAPI_RESPONSE_RESULTS]);
-					$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
-					$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
-						if(data[kAPI_PARAM_TAG] !== undefined) {
-							tag[id] = data[kAPI_PARAM_TAG];
-							exclude_tags.push(data[kAPI_PARAM_TAG]);
-							lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, id, data[kAPI_PARAM_TAG]);
-						}
-					});
-					$("#summary_ordering").find(".modal-body ul").html(lll);
-					$("#summary_ordering").modal("show");
-				}
-			});
-			is_autocompleted = true;
-			return false;
-		});
-	};
-
-
-	/**
 	* Add Chosen form (select with search engine)
 	*/
 	$.fn.addChosen = function(options, content, callback) {
@@ -2141,6 +2615,7 @@ $(document).ready(function() {
 			// Resize the forms when window is resized
 			$.resize_forms_mask();
 		});
+		$.restore_stage();
 	}
 		$.reset_contents("forms", true);
 		$.remove_storage("pgrdg_cache.selected_forms");
@@ -2161,6 +2636,10 @@ $(document).ready(function() {
 	}*/
 
 	if($.obj_len(query) > 0) {
-		$.search_fulltext(query.q);
+		if(!storage.isSet("pgrdg_cache.search.selected._ordering")) {
+			$.search_fulltext(query.q);
+		} else {
+			$.restore_stage();
+		}
 	}
 });

@@ -6,6 +6,19 @@
                                 <h4 class="modal-title text-warning"><span class="fa fa-list"></span> Group by... <span class="help-block">Select one of the following elements</span></h4>
                         </div>
                         <div class="modal-body"></div>
+                        <div class="modal-footer">
+                                <div class="row">
+                                        <div class="col-lg-9">
+                                                <div id="modal_messages" class="alert alert-success alert-dismissible" style="display: none;">
+                                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <div class="text-left"></div>
+                                                </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                                <button type="button" data-dismiss="modal" class="btn btn-default-grey pull-right">Close dialog</button>
+                                        </div>
+                                </div>
+                        </div>
                 </div>
         </div>
 </div>

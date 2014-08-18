@@ -71,6 +71,7 @@
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
+				response.md5 = $.md5(param);
 				callback(response);
 			} else {
 				if(developer_mode) {
@@ -107,7 +108,10 @@
 				element_data = $element.html();
 				$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span>' + ((opt.loaderText !== "") ? opt.loaderText : ""));
 			}
-				console.warn("!!!", param_nob64, response);
+			if(developer_mode) {
+				console.log("Fetching:\n", param);
+				console.log("(", param_nob64, ")");
+			}
 			$.cryptAjax({
 				url: "API/",
 				dataType: "json",
@@ -817,39 +821,6 @@
 		});
 	};
 
-	/**
-	 * Fulltext search from given text
-	 */
-	$.search_fulltext = function(text) {
-		if(text.length >= 3) {
-			var objp = {};
-			objp.storage_group = "summary";
-			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
-			objp.parameters = {};
-			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-			objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = {};
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = text;
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
-			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
-			$.ask_to_service(objp, function(response) {
-				if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
-					var res = response[kAPI_RESPONSE_RESULTS];
-
-					$.activate_panel("summary", {res: response}, function() {
-						$("#se_loader").fadeOut(300);
-						$("#se_p").fadeIn(300);
-					});
-				} else {
-					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
-					$("#search_form").focus();
-				}
-			});
-		}
-	};
 
 	/**
 	 * Log users

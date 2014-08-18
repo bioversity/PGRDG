@@ -39,6 +39,9 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                                         <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." value="<?php print htmlentities(urldecode($_GET["q"])); ?>" />
                                         <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
+                                                <a data-toggle="collapse" id="group_by_btn" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey disabled">
+                                                        <span class="fa fa-sliders text-muted"></span>Group by...
+                                                </a>
                                         </div>
                                 </div>
                         </form>

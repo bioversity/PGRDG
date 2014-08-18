@@ -30,7 +30,7 @@ class frontend_api {
 			}
 		}
 	}
-	private function browse($url) {
+	public function browse($url) {
 		// Set the user agent as "PGRD Request" if not exists
 		$this->input["agent"] = ($this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
 		// Set the request type as "GET" if not exists

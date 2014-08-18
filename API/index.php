@@ -20,7 +20,7 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 			}
 			break;
 		default:
-			print file_get_contents($_GET["address"]);
+			print $api->browse($_GET["address"]);
 			break;
 	}
 
