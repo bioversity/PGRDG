@@ -1285,6 +1285,7 @@
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = active_forms;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
+			kAPI.colour = true;
 
 			$.ask_to_service(kAPI, function(res) {
 				if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
@@ -1301,17 +1302,13 @@
 		 * @param {object} the result of previous query (eg. Search or Autocomplete)
 		 */
 		$.generate_summaries = function(options, colour, callback) {
-			$.random_colour = function() {
-				return "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156)) + ")";
+			$.get_domain_colour = function(domain) {
+				return storage.get("pgrdg_cache.search.domain_colours." + domain);
 			};
 
 			var storage_id = options[kAPI_PARAM_ID];
-			console.log(options, storage_id);
-			if(colour === undefined) {
-				colour = $.random_colour();
-			}
 			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
-				var result_panel = $('<div class="result panel" style="border-color: ' + colour + '">'),
+				var result_panel = $('<div class="result panel" style="border-color: ' + $.get_domain_colour(domain) + '">'),
 				result_h4 = $('<h4 class="">'),
 				result_title = $('<span class="title">'),
 				result_description = $('<p>'),
@@ -1345,22 +1342,39 @@
 			$.random_colour = function() {
 				return "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156)) + ")";
 			};
+			$.title_behaviour = function(item) {
+				var $item = item;
+				if($("#" + $item.attr("href").replace("#", "")).hasClass("in")) {
+					$item.closest("h4").css({
+						"border-bottom-left-radius": "0",
+						"border-bottom-width": "0"
+					});
+					$item.find("span").removeClass("fa-chevron-down").addClass("fa-chevron-right");
+				} else {
+					$item.closest("h4").css({
+						"border-bottom-left-radius": "15px 10px",
+						"border-bottom-width": "1px"
+					});
+					$item.find("span").removeClass("fa-chevron-right").addClass("fa-chevron-down");
+				}
+			};
 
 			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
 				var item_colour = $.random_colour(),
+				item_id = $.md5(values[kAPI_PARAM_RESPONSE_FRMT_NAME]),
 				result_panel = $('<div class="result panel tree_summary">'),
 				result_h4 = $('<h4 style="border-color: ' + item_colour + '">'),
-				result_title = $('<span class="title">'),
-				result_description = $('<p>'),
-				result_content_container = $('<div class="row">'),
+				result_title = $('<a class="btn btn-unstyled" data-toggle="collapse" data-parent="#' + options[kAPI_PARAM_ID] + '" href="#' + item_id + '" class="title" onclick="$.title_behaviour($(this));">'),
+				result_description = $('<small class="help-block">'),
+				result_content_container = $('<div class="row collapse" id="' + item_id + '">'),
 				result_description_ul_results = $('<div class="children">'),
 				res = {};
 
-				result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) + '</sup>').appendTo(result_h4);
-				result_h4.appendTo(result_panel);
+				result_title.html('<span class="fa fa-chevron-right text-muted"></span> ' + $.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) + '</sup>').appendTo(result_h4);
 				if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
-					result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
+					result_description.html('<span style="margin-left: 25px;">' + values[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</span>').appendTo(result_h4);
 				}
+				result_h4.appendTo(result_panel);
 
 				if($.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
 					res[kAPI_PARAM_ID] = options[kAPI_PARAM_ID];
@@ -1415,14 +1429,14 @@
 							if(v !== undefined && v !== null) {
 								if(d == kAPI_PARAM_RESPONSE_FRMT_NAME) {
 									if(level === 0) {
-										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5><span class="fa fa-fw fa-angle-right pull-right"></span>' + v + '</h5></a>');
+										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5 class="row"><span class="col-md-11 vcenter">' + v + '</span><span class="fa fa-fw fa-angle-right col-md-1 vcenter"></span></h5></a>');
 									} else {
-										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5><span class="fa fa-fw fa-angle-right pull-right"></span>' + v + '</h5></a>');
+										list.html('<a onclick="" href="javascript: void(0);" class="btn unclickable ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5>' + v + '</h5></a>');
 									}
 									name = v;
 								}
 								if(d == kAPI_PARAM_RESPONSE_FRMT_INFO) {
-									list.find("h5").append('<span class="help-block">' + v + '</span>');
+									list.find("h5 > span.col-md-11").append('<span class="help-block">' + v + '</span>');
 									info = v;
 								}
 								list.find('a').attr("onclick", '$(this).add_remove_item_to_stage(\'' + storage_id + '\', \'' + id + '\', \'' + name + '\', \'' + contains + '\', \'' + info + '\');');
@@ -1457,11 +1471,11 @@
 				panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" class="list-group-item list-group-item-success" id="' + $.md5(id) + '" data-id="' + id + '" data-storage-id="' + storage_id + '">');
 
 				panel.html('<h4 class="list-group-item-heading">' + name + '</h4>');
-				if(contains !== undefined && contains !== null && contains !== "") {
-					panel.find("h4").append(' <small class="label label-success pull-right">' + contains + '</small>');
-				}
 				if(info !== undefined && info !== null && info.length > 0) {
 					panel.append('<p class="list-group-item-text">' + info + '</p>');
+				}
+				if(contains !== undefined && contains !== null && contains !== "") {
+					panel.append('<h4 style="padding-left: 15px;" class="text-muted">' + contains + '</h4>');
 				}
 				if($("#filter_stage").html().length === 0) {
 					$("#filter_stage_panel").fadeIn(300);
@@ -1502,6 +1516,12 @@
 			});
 			$("#summary_ordering").find(".modal-body ul").html(lll);
 			$("#summary_ordering").modal("show");
+
+			$("#summary_ordering .modal-body .fa-ul a").hover(function(){
+				$(this).next().find("a.unclickable").addClass("active");
+			}, function() {
+				$(this).next().find("a.unclickable").removeClass("active");
+			});
 		};
 
 
@@ -1528,11 +1548,11 @@
 								info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
 								a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" id="' + $.md5(id) + '" data-id="' + id + '" data-storage-id="' + storage_id + '">');
 								a.html('<h4 class="list-group-item-heading">' + name + '</h4>');
-								if(res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
-									a.find("h4").append(' <small class="label label-success pull-right">' + res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</small>');
-								}
 								if(info !== undefined && info.length > 0) {
 									a.append('<p class="list-group-item-text">' + info + '</p>');
+								}
+								if(res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+									a.append('<h4 style="padding-left: 15px;" class="text-muted">' + res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME] + '</small>');
 								}
 								//if($.inArray(id, item) > -1) {
 									$("#filter_stage").append(a);
@@ -1622,6 +1642,8 @@
 				}
 				if($(this).closest("ul:not(.level2) > li").find("a").hasClass("btn-default")) {
 					$(this).closest("ul:not(.level2) > li").find("a").removeClass("btn-default").addClass("btn-default-white");
+					$(this).next().find("a.unclickable").removeClass("btn-default").addClass("btn-default-white");
+
 					$("#filter_stage #" + $.md5(id)).remove_filter(true);
 					if(display_message) {
 						$("#modal_messages").removeClass("alert-success").addClass("alert-danger").find("div.text-left").text('"' + name + '" removed');
@@ -1629,6 +1651,7 @@
 					}
 				} else {
 					$(this).closest("ul:not(.level2) > li").find("a").removeClass("btn-default-white").addClass("btn-default");
+					$(this).next().find("a.unclickable").removeClass("btn-default-white").addClass("btn-default");
 					$.group_tag_by(storage_id, id, name, contains, info);
 					if(display_message) {
 						$("#modal_messages").removeClass("alert-danger").addClass("alert-success").find("div.text-left").text('"' + name + '" added');
@@ -1728,6 +1751,7 @@
 						$("#summary #summary-body").removeClass("disabled");
 						$("#collapsed_group_form").collapse("hide");
 						$("#group_by_btn .label-danger").remove();
+						$.search_fulltext($("#search_form").val());
 
 						storage.remove("pgrdg_cache.search.selected");
 					}

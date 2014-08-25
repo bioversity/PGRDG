@@ -2050,6 +2050,15 @@ fieldset[disabled] .btn {
           box-shadow: none;
   opacity: .65;
 }
+.btn.unclickable,
+.btn[unclickable],
+fieldset[unclickable] .btn {
+        pointer-events: none;
+        cursor: not-allowed;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+          box-shadow: none;
+}
 
 	/**
 	/* PERSONALIZATIONS
@@ -2502,6 +2511,15 @@ fieldset[disabled] .btn-link:focus {
 .btn-block + .btn-block {
   margin-top: 5px;
 }
+
+.btn-unstyled {
+        font-size: unset;
+        padding: 0;
+}
+.btn-unstyled:active {
+        box-shadow: 0 0 transparent;
+}
+
 input[type="submit"].btn-block,
 input[type="reset"].btn-block,
 input[type="button"].btn-block {

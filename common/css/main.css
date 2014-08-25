@@ -737,37 +737,47 @@ section #se_p #breadcrumb {
 section #se_results {
 	padding: 70px 0 70px 70px;
 }
-section #se_results .result.panel, .result.panel {
+section #se_results .result.panel,
+.result.panel {
 	border: 0px none;
 	border-left: 5px solid #FCC153;
 	border-radius: 0 !important;
 	padding: 0;
 }
-section #se_results .result.panel.tree_summary, .result.panel.tree_summary {
+section #se_results .result.panel.tree_summary,
+.result.panel.tree_summary {
 	border: 0px none;
+	margin-bottom: 15px;
 }
-section #se_results .result.panel > h4, .result.panel > h4 {
+section #se_results .result.panel > h4,
+.result.panel > h4 {
 	margin: 0;
 	padding: 15px;
 }
-section #se_results .result.panel.tree_summary > h4, .result.panel.tree_summary > h4 {
+section #se_results .result.panel.tree_summary > h4,
+.result.panel.tree_summary > h4 {
 	border-left: 5px solid #FCC153;
-	border-bottom: 1px solid #FCC153;
-	border-bottom-left-radius: 20px;
+	border-bottom-style: solid;
+	border-bottom-width: 0;
 }
-section #se_results .result.panel > p, .result.panel > p {
+section #se_results .result.panel > p,
+.result.panel > p {
 	margin: 0;
 	padding: 0 0 0 15px;
 }
-section #se_results .result.panel > div.row, .result.panel > div.row {
+section #se_results .result.panel > div.row,
+.result.panel > div.row {
 	margin-left: 10px;
 	padding: 0;
 }
-section #se_results .result.panel.tree_summary > h4 + div.row, .result.panel.tree_summary > h4 + div.row {
+section #se_results .result.panel.tree_summary > h4 + div.row,
+.result.panel.tree_summary > h4 + div.row {
 	margin-left: 25px;
+	margin-right: 0;
 	border-top: 0px none;
 }
-section #se_results .result.panel > div.row div.children .result.panel, .result.panel > div.row div.children .result.panel {
+section #se_results .result.panel > div.row div.children .result.panel,
+.result.panel > div.row div.children .result.panel {
 	border-width: 1px !important;
 	margin: 0;
 }
@@ -775,6 +785,7 @@ section #se_results .result.panel > h4 + div, .result.panel > h4 + div,
 section #se_results .result.panel > p + div, .result.panel > p + div {
 	border-top: 1px solid #ddd;
 	padding: 5px 0;
+	margin: 0;
 }
 
 @media only screen and (max-width:420px) {
@@ -831,8 +842,30 @@ section #se_p #summary-head #group_by_accordion #filter_stage {
 	overflow-y: auto;
 	padding-bottom: 20px;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a, section #se_p #summary-head #group_by_accordion #filter_stage .well-sm {
+section #se_p #summary-head #group_by_accordion #filter_stage a,
+section #se_p #summary-head #group_by_accordion #filter_stage .well-sm {
 	margin-bottom: 5px;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a {
+	margin-left: 1em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a {
+	margin-left: 2em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a {
+	margin-left: 3em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a {
+	margin-left: 4em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a {
+	margin-left: 5em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a + a {
+	margin-left: 6em;
+}
+section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a + a + a {
+	margin-left: 7em;
 }
 section #se_p #summary-head #group_by_accordion #filter_stage a > h4 {
 	margin: 0;
@@ -852,14 +885,14 @@ section #se_p .panel_content-body.disabled {
 	position: relative;
 }
 section #se_p .panel_content-body.disabled:before {
-	background-color: rgba(255, 255, 255, 0.65);
+	background-color: rgba(255, 255, 255, 0.75);
 	color: #aaa;
 	content: "Reconfiguring...";
 	cursor: default;
+	display: inline-block;
 	font-family: "HelveticaNeueW01-45Ligh";
-	font-size: 3.5em;
+	font-size: 3em;
 	height: 100%;
-	padding: 10%;
 	position: absolute;
 	text-align: center;
 	width: 100%;
@@ -1996,10 +2029,9 @@ label.checkbox {
 
 }
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-	margin: 10px 0;
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
 }
 
 @media only screen and (max-width: 500px) {
@@ -2033,7 +2065,7 @@ label.checkbox {
 }
 #summary_ordering a + ul {
 	margin-left: 10%;
-	margin-top: -7px;
+	margin-top: -6px;
 	position: relative;
 	z-index: 3;
 }

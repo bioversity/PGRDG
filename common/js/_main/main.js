@@ -71,7 +71,7 @@
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
-				response.md5 = $.md5(param);
+				response.extra_data = opt.extra;
 				callback(response);
 			} else {
 				if(developer_mode) {
@@ -123,7 +123,28 @@
 				},
 				success: function(response) {
 					response.id = $.md5(param);
+					response.extra_data = opt.extra;
 					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+						if(options.colour !== undefined && options.colour !== null && options.colour === true) {
+							var rgba = {r:255, g:0, b:0, a:1},
+							g = 0,
+							b = 0,
+							h = $.obj_len(response[kAPI_RESPONSE_RESULTS]);
+							i = 0;
+							$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
+								g = Math.round(i/($.obj_len(response[kAPI_RESPONSE_RESULTS]) - 1) * 255);
+								b = Math.round(h/($.obj_len(response[kAPI_RESPONSE_RESULTS])) * 100);
+								h--;
+								i++;
+								rgba.g = g;
+								rgba.b = b;
+								v.colour = $.set_colour({colour: rgba});
+								if(!storage.isSet("pgrdg_cache.search")) {
+									storage.set("pgrdg_cache.search", {});
+								}
+								storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
+							});
+						}
 						if(opt.storage_group !== "") {
 							storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
 								"date": {"utc": new Date(), "timestamp": $.now()},
@@ -131,10 +152,10 @@
 									"effective": param,
 									"nob64": param_nob64,
 									"verbose": verbose_param,
-									"obj": object_param},
-									"response": response
-								}
-							);
+									"obj": object_param
+								},
+								"response": response
+							});
 							if(developer_mode) {
 								console.group("Storage \"" + opt.storage_group + "\" saved...");
 								console.warn("id: ", $.md5(param));
@@ -1182,6 +1203,70 @@
 *======================================================================================*/
 
 	/**
+	 * Generate colour
+	 */
+	$.set_colour = function(options, alpha) {
+		var opt = $.extend({
+			range: [],
+			colour: {r:252, g:193, b:83}
+		}, options);
+		var rgba = {};
+
+		if(alpha === undefined || alpha === null) {
+			alpha = 1;
+		} else {
+			if(alpha == "random") {
+				alpha = "0." + (Math.floor(Math.random() * 9));
+			} else {
+				if(alpha > 1) {
+					alpha = 1;
+				} else if(alpha < 0) {
+					alpha = 0;
+				}
+			}
+		}
+		if($.type(options) == "string") {
+			if(options == "random") {
+				rgba = {
+					r: (Math.floor(Math.random() * 256)),
+					g: (Math.floor(Math.random() * 256)),
+					b: (Math.floor(Math.random() * 256))
+				};
+			} else {
+				switch(options) {
+					// Black & white scale
+					case "white":		rgba = {r: 255, g: 255, b: 255};	break;							return "rgba(255, 255, 255, " + alpha + ")";		break;
+					case "light-grey": 	rgba = {r:204, g:204, b:204};		break;
+					case "dark-grey": 	rgba = {r:102, g:102, b:102};		break;
+					case "black":		rgba = {r:0, g:0, b:0};			break;
+					// Colour scale
+					case "red": 		rgba = {r:255, g:0, b:0};		break;
+					case "orange": 		rgba = {r:255, g:150, b:0};		break;
+					case "yellow": 		rgba = {r:255, g:255, b:0};		break;
+					case "green": 		rgba = {r:0, g:255, b:0};		break;
+					case "aqua": 		rgba = {r:0, g:255, b:255};		break;
+					case "blue": 		rgba = {r:0, g:0, b:255};		break;
+					case "turquoise":	rgba = {r:150, g:100, b:255};		break;
+					case "violet": 		rgba = {r:150, g:0, b:255};		break;
+					case "pink": 		rgba = {r:255, g:0, b:255};		break;
+					case "purple": 		rgba = {r:255, g:0, b:150};		break;
+					case "brown": 		rgba = {r:150, g:100, b:0};		break;
+					// Bioversity colours
+					case "bio-green": 	rgba = {r:193, g:216, b:47};		break;
+					case "bio-orange": 	rgba = {r:238, g:170, b:48};		break;
+					default:
+						rgba = {r:opt.colour.r, g:opt.colour.g, b:opt.colour.b};
+						break;
+				}
+			}
+		} else {
+			rgba = {r:opt.colour.r, g:opt.colour.g, b:opt.colour.b};
+		}
+
+		return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + alpha + ")";
+	};
+
+	/**
 	*  Get statistics about indexed data
 	*/
 	$.get_statistics = function() {
@@ -1198,10 +1283,13 @@
 		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
 		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
+		objp.colour = true;
+
 		$.ask_to_service(objp, function(response) {
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				var res = response[kAPI_RESPONSE_RESULTS],
 				stats = [];
+
 				$.each(res, function(domain, statistics) {
 					stats.push(statistics[kAPI_PARAM_RESPONSE_FRMT_NAME] + ': <b>' + $.number(statistics[kAPI_PARAM_RESPONSE_COUNT]) + '</b>');
 				});

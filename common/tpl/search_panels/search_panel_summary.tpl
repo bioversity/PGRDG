@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="btn-group pull-right">
                                         <a href="javascript: void(0);" onclick="$.reset_ordering();" id="summary_order_cancel_btn" class="btn btn-default-grey disabled">Cancel</a>
-                                        <a href="javascript: void(0);" onclick="$.exec_ordering();" id="summary_order_reorder_btn" class="btn btn-success disabled">Reorder <span class="fa fa-indent"></span></a>
+                                        <a href="javascript: void(0);" onclick="$.exec_ordering();" id="summary_order_reorder_btn" class="btn btn-success disabled">Group <span class="fa fa-indent"></span></a>
                                 </div>
                         </div>
                 </div>
