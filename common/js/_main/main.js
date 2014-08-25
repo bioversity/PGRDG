@@ -792,35 +792,9 @@
 	};
 
 
-	/**
-	 *  Get statistics about indexed data
-	 */
-	$.get_statistics = function() {
-		$("#se input").focus();
-
-		var objp = {};
-		objp.storage_group = "ask";
-		objp.loaderType = $("#statistics_loader");
-		objp.loaderText = "Acquiring data...";
-		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
-		objp.parameters = {};
-		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
-		$.ask_to_service(objp, function(response) {
-			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-				var res = response[kAPI_RESPONSE_RESULTS],
-				stats = [];
-				$.each(res, function(domain, statistics) {
-					stats.push(statistics[kAPI_PARAM_RESPONSE_FRMT_NAME] + ': <b>' + $.number(statistics[kAPI_PARAM_RESPONSE_COUNT]) + '</b>');
-				});
-				$("#statistics_loader").html(stats.join("<br />"));
-			}
-		});
-	};
-
+/*=======================================================================================
+*	LOGIN AND LOGGED USER INTERFACE
+*======================================================================================*/
 
 	/**
 	 * Log users
@@ -1049,6 +1023,9 @@
 		}
 	};
 
+	/**
+	 * Create the form for user personal data
+	 */
 	$.fn.generate_personal_form = function(user_data) {
 		$.fn.add_forms = function(options) {
 			options = $.extend({
@@ -1177,6 +1154,9 @@
 
 	};
 
+	/**
+	 * Get the authority type from given domain
+	 */
 	$.get_authority = function(domain){
 		var objpp = {};
 		objpp.storage_group = "session";
@@ -1193,6 +1173,39 @@
 					console.log(data[kTAG_NAME]);
 					return data[kTAG_NAME];
 				});
+			}
+		});
+	};
+
+/*=======================================================================================
+*	OTHER FUNCTIONS
+*======================================================================================*/
+
+	/**
+	*  Get statistics about indexed data
+	*/
+	$.get_statistics = function() {
+		$("#se input").focus();
+
+		var objp = {};
+		objp.storage_group = "ask";
+		objp.loaderType = $("#statistics_loader");
+		objp.loaderText = "Acquiring data...";
+		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		objp.parameters = {};
+		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
+		$.ask_to_service(objp, function(response) {
+			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+				var res = response[kAPI_RESPONSE_RESULTS],
+				stats = [];
+				$.each(res, function(domain, statistics) {
+					stats.push(statistics[kAPI_PARAM_RESPONSE_FRMT_NAME] + ': <b>' + $.number(statistics[kAPI_PARAM_RESPONSE_COUNT]) + '</b>');
+				});
+				$("#statistics_loader").html(stats.join("<br />"));
 			}
 		});
 	};
