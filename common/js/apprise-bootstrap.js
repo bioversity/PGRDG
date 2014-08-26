@@ -97,7 +97,7 @@ function apprise(string, args, callback) {
 			if(string.length > 0) {
 				row.appendTo(body);
 				if(args["showHeader"] && args["showFooter"]) {
-					panel.append('<p>' + string + '</p>').appendTo(row);
+					panel.append('<h4>' + string + '</h4>').appendTo(row);
 				} else {
 					panel.append('<div style="text-align: center;">' + string + '</div>').appendTo(row);
 				}
@@ -149,6 +149,10 @@ function apprise(string, args, callback) {
 	if (args) {
 		var btn_group = $('<div class="btn-group">');
 		if (args["confirm"] || args["input"] || args["message"]) {
+			if(args["confirm"]) {
+				args["textOk"] = "Yes";
+				args["textCancel"] = "No";
+			}
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args["textCancel"] + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textOk"] + '</button>');
 			btn_group.appendTo(footer);

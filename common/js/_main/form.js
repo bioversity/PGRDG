@@ -966,6 +966,12 @@
 					});
 					$("#summary_ordering").find(".modal-body ul").html(lll);
 					$("#summary_ordering").modal("show");
+
+					$("#summary_ordering .modal-body .fa-ul a").hover(function(){
+						$(this).next().find("a.unclickable").addClass("active");
+					}, function() {
+						$(this).next().find("a.unclickable").removeClass("active");
+					});
 				}
 			});
 			is_autocompleted = true;
@@ -1299,9 +1305,10 @@
 
 		/**
 		 * Create summary content pane
-		 * @param {object} the result of previous query (eg. Search or Autocomplete)
+		 * @options {object} the result of previous query (eg. Search or Autocomplete)
 		 */
 		$.generate_summaries = function(options, colour, callback) {
+			console.log(options.history);
 			$.get_domain_colour = function(domain) {
 				return storage.get("pgrdg_cache.search.domain_colours." + domain);
 			};
@@ -1316,7 +1323,7 @@
 				result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
 				result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
 
-				result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>').appendTo(result_h4);
+				result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ((values[kAPI_PARAM_RESPONSE_COUNT] !== undefined) ? ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>' : "")).appendTo(result_h4);
 				result_h4.appendTo(result_panel);
 				result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
 
@@ -1338,7 +1345,7 @@
 		* Create indented summary content pane
 		* @param {object} the result of previous query (eg. Search or Autocomplete)
 		*/
-		$.generate_tree_summaries = function(options, callback) {
+		$.generate_tree_summaries = function(options, colour, callback) {
 			$.random_colour = function() {
 				return "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156)) + ")";
 			};
@@ -1358,32 +1365,81 @@
 					$item.find("span").removeClass("fa-chevron-right").addClass("fa-chevron-down");
 				}
 			};
-
+			//console.log(options);
+			var g = {};
 			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
-				var item_colour = $.random_colour(),
-				item_id = $.md5(values[kAPI_PARAM_RESPONSE_FRMT_NAME]),
+				//g[$.md5(domain)] = {};
+				// GOOD
+				//console.log(options.level, [values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]);
+				g[$.md5(domain)][options.level] = [values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]];
+				//options.history = g;
+				//console.warn(g);
+					//storage.set("pgrdg_cache.search.displayed." + values[kAPI_PARAM_PATTERN], {offset: values[kAPI_PARAM_OFFSETS], pattern: values[kAPI_PARAM_PATTERN]});
+				var item_colour = (colour !== undefined && colour !== "") ? colour : $.set_colour("random", 0.7),
+				item_id = $.makeid(),
 				result_panel = $('<div class="result panel tree_summary">'),
 				result_h4 = $('<h4 style="border-color: ' + item_colour + '">'),
-				result_title = $('<a class="btn btn-unstyled" data-toggle="collapse" data-parent="#' + options[kAPI_PARAM_ID] + '" href="#' + item_id + '" class="title" onclick="$.title_behaviour($(this));">'),
+				// "data-parent" attribute was removed here
+				result_title = $('<a class="btn btn-unstyled" data-toggle="collapse" href="#' + item_id + '" class="title" onclick="$.title_behaviour($(this));">'),
 				result_description = $('<small class="help-block">'),
 				result_content_container = $('<div class="row collapse" id="' + item_id + '">'),
 				result_description_ul_results = $('<div class="children">'),
-				res = {};
+				res = {},
+				has_child = false,
+				child_counts = 0;
 
-				result_title.html('<span class="fa fa-chevron-right text-muted"></span> ' + $.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) + '</sup>').appendTo(result_h4);
+				if($.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
+					// if(options.history.length == 0) {
+					// 	options.history = [[values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]];
+					// } else {
+					// 	$.each(options.history, function(k, v) {
+					// 		if(k > 0) {
+					// 			$.each(v, function(kk, vv) {
+					// 				if(kk !== values[kAPI_PARAM_OFFSETS]) {
+					// 					options.history.push([values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]);
+					// 				}
+					// 			});
+					// 		}
+					// 		options.history.push([values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]);
+					// 		console.log(k, v);
+					// 	});
+					// }
+					// console.log(options.history);
+					res[kAPI_PARAM_ID] = options[kAPI_PARAM_ID];
+					res[kAPI_RESPONSE_RESULTS] = values[kAPI_PARAM_RESPONSE_CHILDREN];
+
+					$.each(res[kAPI_RESPONSE_RESULTS], function(dom, data) {
+						if(data[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined && $.obj_len(data[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
+							has_child = true;
+							child_counts = 0;
+						} else {
+							has_child = false;
+							child_counts += data[kAPI_PARAM_RESPONSE_COUNT];
+							//h = [values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]];
+						}
+					});
+						//	console.warn(values[kAPI_PARAM_RESPONSE_FRMT_NAME], h);
+						//console.log(options.history, h);
+						res.level = (options.level + 1);
+						res.domain_id = $.md5(domain);
+						res.history = g;
+					if(has_child) {
+						$.generate_tree_summaries(res, item_colour, function(tree) {
+							result_description_ul_results.append(tree);
+							options.history = [];
+						});
+					} else {
+						$.generate_summaries(res, item_colour, function(tree) {
+							result_description_ul_results.append(tree);
+						});
+					}
+					result_description_ul_results.appendTo(result_content_container);
+				}
+				result_title.html('<span class="fa fa-chevron-right text-muted"></span> ' + $.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + ((!has_child) ? child_counts : $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN])) + '</sup>').appendTo(result_h4);
 				if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
 					result_description.html('<span style="margin-left: 25px;">' + values[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</span>').appendTo(result_h4);
 				}
 				result_h4.appendTo(result_panel);
-
-				if($.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
-					res[kAPI_PARAM_ID] = options[kAPI_PARAM_ID];
-					res[kAPI_RESPONSE_RESULTS] = values[kAPI_PARAM_RESPONSE_CHILDREN];
-					$.generate_summaries(res, item_colour, function(tree) {
-						result_description_ul_results.append(tree);
-					});
-					result_description_ul_results.appendTo(result_content_container);
-				}
 				result_content_container.appendTo(result_panel);
 
 				if (jQuery.type(callback) == "function") {
@@ -1733,7 +1789,7 @@
 			* Cancel and remove all ordering criteria
 			*/
 			$.reset_ordering = function() {
-				apprise("Are you sure to cancel and remove all defined group filters?", {confirm: true}, function(r) {
+				apprise("Do you really want to cancel and remove all defined group filters?", {title: "Reset all group filters", icon: "warning", confirm: true}, function(r) {
 					if(r) {
 						$("#summary #summary-body").removeClass("disabled");
 						$("#filter_stage").html("");
@@ -1815,9 +1871,11 @@
 				$.ask_to_service(objp, function(response) {
 					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 						var res = response;
+						res.level = 0;
+						res.history = {};
 
 						$("#summary-body .content-body").html("");
-						$.generate_tree_summaries(res, function(result_panel){
+						$.generate_tree_summaries(res, "", function(result_panel){
 							$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
 						});
 					}

@@ -759,6 +759,7 @@ section #se_results .result.panel.tree_summary > h4,
 	border-left: 5px solid #FCC153;
 	border-bottom-style: solid;
 	border-bottom-width: 0;
+	padding: 10px;
 }
 section #se_results .result.panel > p,
 .result.panel > p {
