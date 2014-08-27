@@ -39,7 +39,8 @@
 				$.left_panel("check", "", function() {
 					$("#forms-body").fadeIn(300);
 				});
-			} else if(page == "Search"){
+			}
+			if(page == "Search" || page == "Advanced_search"){
 				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
 				$("#collapsed_group_form .panel .autocomplete").addAutocomplete({
 					id: "filter_search_summary",
@@ -934,7 +935,7 @@
 
 			// Autocomplete
 			var kAPI = {};
-			kAPI.storage_group = "search.loaded";
+			kAPI.storage_group = "summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -978,7 +979,6 @@
 			return false;
 		});
 	};
-
 
 	/**
 	* Remove a single search forms
@@ -1128,7 +1128,12 @@
 					$(this).find("#" + content + "-head").html('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div><div class="clearfix"></div>');
 					$(this).find("#" + content + "-footer").html('<div class="btn-group pull-right"><a id="right_btn" class="btn btn-default-grey" style="display: none;" href="javascript: void(0);"></a></div>');
 				} else {
-					$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
+					if(content !== "summary") {
+						$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
+					} else {
+						$(this).find("#" + content + "-head").find("h1").remove();
+						$(this).find("#" + content + "-head").prepend('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url(\'Summary\');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey"><span class="fa fa-sliders text-muted"></span>Group by...</a></div><div class="clearfix"></div>');
+					}
 				}
 				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
 			}
@@ -1535,7 +1540,7 @@
 		* Re-open filters dialogs and let user to add or remove others
 		*/
 		$.fn.edit_filter = function() {
-			var response = storage.get("pgrdg_cache.search.loaded." + $(this).attr("data-storage-id") + ".response"),
+			var response = storage.get("pgrdg_cache.summary." + $(this).attr("data-storage-id") + ".response"),
 			tag = {},
 			exclude_tags = [],
 			lll = "",
@@ -1580,8 +1585,8 @@
 
 						if($.obj_len(v) > 0) {
 							var id = v.id, storage_id = v.storage;
-							if(storage.isSet("pgrdg_cache.search.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
-								var res = storage.get("pgrdg_cache.search.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
+							if(storage.isSet("pgrdg_cache.summary." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
+								var res = storage.get("pgrdg_cache.summary." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
 								name = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME],
 								info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
 								a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" id="' + $.md5(id) + '" data-id="' + id + '" data-storage-id="' + storage_id + '">');
@@ -1627,16 +1632,23 @@
 			* Enable/disable stage buttons (move, edit and remove buttons)
 			*/
 			$.show_btns = function() {
-				if($("#filter_stage > a.active").prev(":visible").length === 0) {
+				if($("#filter_stage > a.active").prev("a:visible").length === 0) {
 					$("#move_down_btn, #move_bottom_btn").removeClass("disabled");
 					$("#move_up_btn, #move_top_btn").addClass("disabled");
+					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 				}
-				if($("#filter_stage > a.active").next(":visible").length === 0) {
+				if($("#filter_stage > a.active").next("a:visible").length === 0) {
 					$("#move_up_btn, #move_top_btn").removeClass("disabled");
 					$("#move_down_btn, #move_bottom_btn").addClass("disabled");
+					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 				}
-				if($("#filter_stage > a.active").prev(":visible").length > 0 && $("#filter_stage a.active").next(":visible").length > 0) {
+				if($("#filter_stage > a.active").prev("a:visible").length > 0 && $("#filter_stage a.active").next("a:visible").length > 0) {
 					$("#move_top_btn, #move_up_btn, #move_down_btn, #move_bottom_btn").removeClass("disabled");
+					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
+				}
+				if($("#filter_stage > a.active").prev("a:visible").length === 0 && $("#filter_stage a.active").next("a:visible").length === 0) {
+					$("#move_top_btn, #move_up_btn, #move_down_btn, #move_bottom_btn").addClass("disabled");
+					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 				}
 			};
 
@@ -1738,6 +1750,12 @@
 
 				$("#filter_stage_controls a").addClass("disabled");
 				$(this).fadeOut(300, function() {
+					selected = $.grep(selected, function(value) {
+						return value != id;
+					});
+					storage.set("pgrdg_cache.search.selected." + storage_id, selected);
+					$.update_ordering();
+
 					if(!direct) {
 						$('<div id="' + $.md5(id) + '_restore" class="well well-sm text-muted">Removed \"' + $(this).find("h4").text() + '\".<a class="pull-right text-muted" href="javascript:void(0);" onclick="$.restore_deleted_filter(\'' + $(this).attr("id") +  '\')" title="Restore it"><small class="fa fa-reply"></small></a></div>').insertBefore($(this));
 
@@ -1754,12 +1772,6 @@
 						}
 						$("#" + $.md5(id)).remove();
 					}
-
-					selected = $.grep(selected, function(value) {
-						return value != id;
-					});
-					storage.set("pgrdg_cache.search.selected." + storage_id, selected);
-					$.update_ordering();
 				});
 
 				if($("#filter_stage a").length === 0) {
@@ -1791,7 +1803,7 @@
 						$("#group_by_btn .label-danger").remove();
 						$.search_fulltext($("#search_form").val());
 
-						storage.remove("pgrdg_cache.search.selected");
+						//storage.remove("pgrdg_cache.search.selected");
 					}
 				});
 			};
@@ -1820,7 +1832,8 @@
 					}
 					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 				} else {
-					storage.remove("pgrdg_cache.search.selected");
+					//storage.remove("pgrdg_cache.search.selected");
+					$("#summary_order_cancel_btn, #summary_order_reorder_btn").addClass("disabled");
 					$("#group_by_btn .label-danger").remove();
 				}
 			};
@@ -1845,9 +1858,11 @@
 				objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = {};
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = $.trim($("#search_form").val());
+				if($("#search_form").length > 0 && $.trim($("#search_form").val() !== "")) {
+					objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
+					objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
+					objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = $.trim($("#search_form").val());
+				}
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = ids;
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
 				$.ask_to_service(objp, function(response) {
@@ -1860,6 +1875,8 @@
 						$.generate_tree_summaries(res, "", function(result_panel){
 							$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
 						});
+					} else {
+						apprise("No results for this combination");
 					}
 				});
 			};

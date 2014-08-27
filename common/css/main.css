@@ -417,6 +417,7 @@ div.back_indent a {
 }
 .panel_content-head .btn-group, .panel_content-footer .btn-group {
 	margin-top: 20px;
+	margin-bottom: 20px;
 }
 .panel_content-footer .btn-group {
 	margin-bottom: 20px;
@@ -837,38 +838,38 @@ section #se_p #summary-head h1, section #se_p #results-head h1 {
 	margin-bottom: 15px;
 	padding-bottom: 5px;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage {
+#filter_stage {
 	margin-bottom: 0;
 	max-height: 250px;
 	overflow-y: auto;
 	padding-bottom: 20px;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a,
-section #se_p #summary-head #group_by_accordion #filter_stage .well-sm {
+#filter_stage a,
+#filter_stage .well-sm {
 	margin-bottom: 5px;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a {
+#filter_stage a + a {
 	margin-left: 1em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a {
+#filter_stage a + a + a {
 	margin-left: 2em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a {
+#filter_stage a + a + a + a {
 	margin-left: 3em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a {
+#filter_stage a + a + a + a + a {
 	margin-left: 4em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a {
+#filter_stage a + a + a + a + a + a {
 	margin-left: 5em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a + a {
+#filter_stage a + a + a + a + a + a + a {
 	margin-left: 6em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a + a + a + a + a + a + a + a {
+#filter_stage a + a + a + a + a + a + a + a {
 	margin-left: 7em;
 }
-section #se_p #summary-head #group_by_accordion #filter_stage a > h4 {
+#filter_stage a > h4 {
 	margin: 0;
 }
 section #se_p #summary-head #group_by_accordion .tabbable {

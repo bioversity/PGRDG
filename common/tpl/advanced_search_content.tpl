@@ -8,7 +8,7 @@
 </div>
 <div id="contents">
 	<?php
-	// IMPORTANT: Do not change the following structure: nothing will not work!
+	// IMPORTANT: Do not change the following structure: everyting will not work!
 	require_once("common/tpl/search_panels/search_panel_form.tpl");
 	require_once("common/tpl/search_panels/search_panel_summary.tpl");
 	require_once("common/tpl/search_panels/search_panel_result.tpl");
