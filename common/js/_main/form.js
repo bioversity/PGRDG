@@ -1312,36 +1312,37 @@
 				return storage.get("pgrdg_cache.search.domain_colours." + domain);
 			};
 			//console.warn(options.history);
+			var storage_id = options[kAPI_PARAM_ID],
+			h = "";
 			if(options.history !== undefined) {
-				var storage_id = options[kAPI_PARAM_ID],
 				h = JSON.stringify(options.history);
-
-				$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
-					var result_panel = $('<div class="result panel" style="border-color: ' + $.get_domain_colour(domain) + '">'),
-					result_h4 = $('<h4 class="">'),
-					result_title = $('<span class="title">'),
-					result_description = $('<p>'),
-					result_content_container = $('<div class="row">'),
-					result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
-					result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
-
-					result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ((values[kAPI_PARAM_RESPONSE_COUNT] !== undefined) ? ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>' : "")).appendTo(result_h4);
-					result_h4.appendTo(result_panel);
-					result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
-
-					result_description_span_muted.html('<span class="help-block"></span>').appendTo(result_content_container);
-					result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + storage_id + '\', \'' + domain + '\', \'0\', \'50\', \'' + $.rawurlencode(h) + '\')\"><span class="fa fa-list-alt"></span>View data</a>');
-					if(values.points > 0) {
-						result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + storage_id + '\', \'' + domain + '\', \'' + $.rawurlencode(h) + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View map <sup class="text-muted">' + values.points + '</sup></a>');
-					}
-					result_description_span_right.appendTo(result_content_container);
-					result_content_container.appendTo(result_panel);
-
-					if (jQuery.type(callback) == "function") {
-						callback.call(this, result_panel);
-					}
-				});
 			}
+
+			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
+				var result_panel = $('<div class="result panel" style="border-color: ' + $.get_domain_colour(domain) + '">'),
+				result_h4 = $('<h4 class="">'),
+				result_title = $('<span class="title">'),
+				result_description = $('<p>'),
+				result_content_container = $('<div class="row">'),
+				result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
+				result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
+
+				result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ((values[kAPI_PARAM_RESPONSE_COUNT] !== undefined) ? ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>' : "")).appendTo(result_h4);
+				result_h4.appendTo(result_panel);
+				result_description.html(values[kAPI_PARAM_RESPONSE_FRMT_INFO]).appendTo(result_panel);
+
+				result_description_span_muted.html('<span class="help-block"></span>').appendTo(result_content_container);
+				result_description_span_right.append('<a class="btn text-info" href="javascript: void(0);" onclick="$.show_raw_data(\'' + storage_id + '\', \'' + domain + '\', \'0\', \'50\', \'' + $.rawurlencode(h) + '\')\"><span class="fa fa-list-alt"></span>View data</a>');
+				if(values.points > 0) {
+					result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span><a class="btn ' + ((values.points > 10000) ? "text-warning" : "") + '" href="javascript: void(0);" onclick="$.show_data_on_map(\'' + storage_id + '\', \'' + domain + '\', \'' + $.rawurlencode(h) + '\')" title="' + values.points + ' nodes for this entry"><span class="ionicons ion-map"></span>View map <sup class="text-muted">' + values.points + '</sup></a>');
+				}
+				result_description_span_right.appendTo(result_content_container);
+				result_content_container.appendTo(result_panel);
+
+				if (jQuery.type(callback) == "function") {
+					callback.call(this, result_panel);
+				}
+			});
 		};
 
 		/**
