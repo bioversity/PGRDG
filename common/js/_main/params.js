@@ -91,6 +91,15 @@
          */
         $.str_repeat = function(string, n) { return new Array(parseInt(num) + 1).join(string); };
 
+        /**
+         * Removes duplicate values from an array
+         *
+         * @param  {array}      The array to parse
+         * @return {array}      The filtered array
+         */
+        $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); });
+}
+
 /**
 * Return if browser has cookie allowed
 * @return {bool}   Browser cookie permission
@@ -200,4 +209,6 @@ query = $.parse_params(url.query),
 current_path = url_paths[url_paths.length - 1],
 last_version = "",
 local_version = "",
-developer_mode = true;
+developer_mode = true,
+
+form_help_text = "Click on the green rectangle to activate the field: if you press the search button the system will select all data <em>containing</em> the selected field, regardless of its value.<br />To search for specific field values, fill the field search value or select the provided options.";

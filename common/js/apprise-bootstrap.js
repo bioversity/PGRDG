@@ -34,8 +34,11 @@ function apprise(string, args, callback) {
 		for (var index in default_args) {
 			if (typeof(args[index]) == "undefined") args[index] = default_args[index];
 		}
+	} else {
+		args = default_args;
 	}
-	var modal = $('<div class="modal fade ' + args["class"] + '" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((!args["allowExit"]) ? ' data-backdrop="static" data-keyboard="false"' : '') + '></div>'),
+	
+	var modal = $('<div class="modal fade' + ((args !== undefined) ? " " + args["class"] : "") + '" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((args !== undefined && !args["allowExit"]) ? ' data-backdrop="static" data-keyboard="false"' : '') + '></div>'),
 	dialog = $('<div class="modal-dialog">'),
 	content = $('<div class="modal-content">'),
 	header = $('<div class="modal-header">'),

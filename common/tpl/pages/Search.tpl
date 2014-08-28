@@ -44,11 +44,11 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                                                 </a>
                                         </div>
                                 </div>
+                                <div id="statistics" class="help-block">
+                                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
+                                        <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span>Search tips</a>
+                                </div>
                         </form>
-                        <div id="statistics" class="help-block">
-                                <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
-                                <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span>Search tips</a>
-                        </div>
                         <?php
                         require_once("common/tpl/search_panels/search_panel_summary.tpl");
                         require_once("common/tpl/search_panels/search_panel_result.tpl");

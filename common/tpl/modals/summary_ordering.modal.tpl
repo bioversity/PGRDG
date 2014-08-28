@@ -9,8 +9,7 @@
                         <div class="modal-footer">
                                 <div class="row">
                                         <div class="col-lg-9">
-                                                <div id="modal_messages" class="alert alert-success alert-dismissible" style="display: none;">
-                                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <div id="modal_messages" class="alert alert-success" style="display: none;">
                                                         <div class="text-left"></div>
                                                 </div>
                                         </div>

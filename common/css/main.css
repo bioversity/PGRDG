@@ -879,21 +879,26 @@ section #se_p #summary-head #group_by_accordion .tabs-below .nav {
 	border-top: 0px none;
 	margin-left: 0;
 }
-section #se_p .panel_content-head, section #se_p .panel_content-body, section #se_p .panel_content-footer {
+section #se_p .panel_content-head,
+section #se_p .panel_content-body,
+section #se_p .panel_content-footer {
 	box-shadow: 0 0 0 transparent;
 	padding: 0;
+	background-color: #fff;
 }
+section #summary .panel_content-body.disabled,
 section #se_p .panel_content-body.disabled {
 	position: relative;
 }
+section #summary .panel_content-body.disabled:before,
 section #se_p .panel_content-body.disabled:before {
 	background-color: rgba(255, 255, 255, 0.75);
 	color: #aaa;
-	content: "Reconfiguring...";
+	content: "Press \"Group\" button to show summary...";
 	cursor: default;
 	display: inline-block;
 	font-family: "HelveticaNeueW01-45Ligh";
-	font-size: 3em;
+	font-size: 2em;
 	height: 100%;
 	position: absolute;
 	text-align: center;
@@ -2084,4 +2089,7 @@ label.checkbox {
 	margin: 0;
 	position: relative;
 	z-index: 0;
+}
+#summary_ordering #modal_messages {
+	display: none;
 }

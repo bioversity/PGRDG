@@ -502,17 +502,17 @@
 			//$("#" + hash.toLowerCase()).fadeIn(300);
 			if(current_path == "Search") {
 				switch(document.location.hash) {
-					case "#Summary":
+					case "Summary":
 						$("#results").hide();
 						$("#map").hide();
 						$("#pgrdg_map").hide();
 						break;
-					case "#Results":
+					case "Results":
 						$("#summary").hide();
 						$("#map").hide();
 						$("#pgrdg_map").hide();
 						break;
-					case "#Map":
+					case "Map":
 						$("#results").hide();
 						$("#summary").hide();
 						break;
@@ -553,6 +553,7 @@
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
+						console.warn(hash);
 						$.each($("#contents > div"), function(i, $v) {
 							if($(this).attr("id") !== hash.toLowerCase() && $(this).attr("id") !== "loader_bg"){
 								$(this).hide();
@@ -564,9 +565,15 @@
 					}
 				} else if(current_path == "Search"){
 					if(hash.length > 0) {
+						$.each($("#se_results > div"), function(i, $v) {
+							if($(this).attr("id") !== hash.toLowerCase() && $(this).attr("id") !== "loader_bg"){
+								$(this).hide();
+							}
+						});
 						if($("#contents #" + hash.toLowerCase() + " h1").html().length > 0) {
 							$("#contents #" + hash.toLowerCase()).fadeIn(300);
 						}
+						storage.set("pgrdg_cache.search.criteria.fulltext", $("#search_form").val());
 					}
 				}
 			}
@@ -1347,7 +1354,7 @@ $(document).ready(function() {
 			if(current_path == "Search" || current_path == "Advanced_search") {
 				document.location.hash = "";
 				window.onhashchange = function() {
-					$.manage_url();
+					$.manage_url(document.location.hash.replace("#", ""));
 				};
 				$.manage_url();
 

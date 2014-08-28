@@ -16,7 +16,7 @@
                                         </div>
                                         <div class="col-lg-7 col-md-8">
                                                 <div class="row" id="filter_stage_panel" style="display: none;">
-                                                        <h4 class="col-lg-2 text-muted">Selected items</h4>
+                                                        <h4 class="col-lg-2 text-muted">Group hierachy</h4>
                                                         <div class="col-lg-10">
                                                                 <input type="hidden" id="selected_filters" value="" />
                                                                 <div class="well well-sm list-group" id="filter_stage"></div>
