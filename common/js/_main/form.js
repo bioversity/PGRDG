@@ -289,9 +289,11 @@
 	 * Restore a previous generated form
 	 */
 	$.restore_form = function() {
-		if(storage.isSet("pgrdg_cache.search.criteria.traitAutocomplete")) {
-			$("#main_search").val(storage.get("pgrdg_cache.search.criteria.traitAutocomplete.text"));
-			$.exec_autocomplete(storage.get("pgrdg_cache.search.criteria.traitAutocomplete.type"));
+		if(storage.isSet("pgrdg_cache.search.criteria.forms")) {
+			if(storage.isSet("pgrdg_cache.search.criteria.traitAutocomplete")) {
+				$("#main_search").val(storage.get("pgrdg_cache.search.criteria.traitAutocomplete.text"));
+			}
+			$.exec_autocomplete("restore");
 		}
 	}
 
@@ -493,6 +495,294 @@
 *======================================================================================*/
 
 	/**
+	* Execute the autocomplete
+	*/
+	$.exec_autocomplete = function(type) {
+		$.manage_url("Forms");
+
+		var is_autocompleted = false;
+
+		switch(type) {
+			case "autocomplete":
+				//if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.forms")) {
+
+				var kAPI = {};
+				kAPI.storage_group = "search.criteria.forms";
+				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+				kAPI.parameters = {};
+				kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#main_search").val();
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
+				$.execTraitAutocomplete(kAPI, function(response) {
+					if($("#accordion > #" + response.id).length === 0) {
+						var the_title = "";
+						if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+							$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
+							if($("#forms-head div.clearfix + .help-block").length === 0) {
+								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+							}
+							$.each(operators, function(ck, cv) {
+								if(cv.key == kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
+									if(cv.main) {
+										the_title = cv.title;
+									} else {
+										the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+									}
+								}
+							});
+
+							// Create forms
+							var forms = $.create_form(response);
+							if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+									$("#forms-body .content-body").addCollapsible({
+										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
+										class: "fulltext_search",
+										icon: "fa fa-edit",
+										title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+										show_json: false,
+										content: ""
+									});
+								}
+							}
+							$("#forms-body .content-body").addCollapsible({
+								id: response.id,
+								title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
+								show_json: true,
+								content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+							});
+							$("input.switch").bootstrapSwitch();
+							$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
+								$(this).parent().find("input[type='checkbox']").attr("checked", state);
+							});
+							$("#forms-body .panel").tooltip();
+							$.resize_forms_mask();
+							$("#autocomplete .typeahead").trigger("blur");
+						}
+					}
+				});
+				is_autocompleted = true;
+				return false;
+				break;
+			case "input":
+				if($("#main_search").val().length >= 3) {
+					if(!is_autocompleted) {
+						storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
+
+						var kAPI = {};
+						kAPI.storage_group = "search.criteria.forms";
+						kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
+						kAPI.parameters = {};
+						kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#main_search").val();
+						kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#main_search_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
+
+						$.execTraitAutocomplete(kAPI, function(response) {
+							if($("#accordion > #" + response.id).length === 0) {
+								var the_title = "";
+								if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+									$.each(operators, function(ck, cv) {
+										$.each(kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
+											if(ccv == cv.key) {
+												if(cv.main) {
+													the_title = cv.title;
+												} else {
+													the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+												}
+											}
+										});
+									});
+									// Create forms
+									var forms = $.create_form(response);
+									$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
+									if($("#forms-head div.clearfix + .help-block").length === 0) {
+										$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+									}
+									$("#forms").fadeIn(300);
+									if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+											$("#forms-body .content-body").addCollapsible({
+												id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
+												class: "fulltext_search",
+												icon: "fa fa-edit",
+												title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+												show_json: false,
+												content: ""
+											});
+										}
+									}
+									$("#forms-body .content-body").addCollapsible({
+										id: response.id,
+										title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
+										show_json: true,
+										content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+									});
+									$("input.switch").bootstrapSwitch();
+									$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
+										$(this).parent().find("input[type='checkbox']").attr("checked", state);
+									});
+									$("#forms-body .panel").tooltip();
+									$(".tt-dropdown-menu").css("display", "none");
+									$.resize_forms_mask();
+									$("#autocomplete .typeahead").trigger("blur");
+								}
+							}
+						});
+					}
+					is_autocompleted = false;
+				}
+				return false;
+				break;
+			case "restore":
+				$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(row_id, results) {
+					var the_title = "",
+					response = results.response;
+					//console.log(response);
+					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+						if($(window).width() < 420) {
+							$.left_panel("close");
+						}
+						$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+							$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
+								$.reset_all_searches(true);
+							});
+						});
+						$("section.container").animate({"padding-top": "115px"});
+						$("#breadcrumb").animate({"top": "75px"});
+						if($("#forms-head .btn-group a.save_btn").length === 0) {
+							if($("#accordion .panel.fulltext_search").length > 0) {
+								btn_disabled = "";
+							} else {
+								btn_disabled = "disabled";
+							}
+							$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+							$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						}
+						if($("#breadcrumb").css("display") == "none") {
+							$("#breadcrumb").fadeIn(200);
+						}
+
+						$.each(operators, function(ck, cv) {
+							$.each(response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_OPERATOR], function(cck, ccv) {
+								if(ccv == cv.key) {
+									if(cv.main) {
+										the_title = cv.title;
+									} else {
+										the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+									}
+								}
+							});
+						});
+						// Create forms
+						var forms = $.create_form(response);
+						$("#forms-head .content-title").html('Output for the last search');
+						if($("#forms-head div.clearfix + .help-block").length === 0) {
+							$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+						}
+						$("#forms").fadeIn(300);
+						if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+							if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+								$("#forms-body .content-body").addCollapsible({
+									id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
+									class: "fulltext_search",
+									icon: "fa fa-edit",
+									title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+									show_json: false,
+									content: ""
+								});
+							}
+						}
+						$("#forms-body .content-body").addCollapsible({
+							id: response.id,
+							title: the_title.replace("@pattern@", '<span style="color: #dd1144"> "' + response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_PATTERN] + '"</span>'),
+							show_json: true,
+							content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+						});
+						$("input.switch").bootstrapSwitch();
+						$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
+							$(this).parent().find("input[type='checkbox']").attr("checked", state);
+						});
+						$("#forms-body .panel").tooltip();
+						$(".tt-dropdown-menu").css("display", "none");
+						$.resize_forms_mask();
+						$("#autocomplete .typeahead").trigger("blur");
+
+						// Fires when user clicks on "Save" button
+						$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
+							$(this).on("click", function() {
+							//	var qcriteria;
+								form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
+								$.each($("#accordion > div.panel-default"), function(k, v) {
+									var active_forms = {}, af_obj = {};
+									frm_keys = $(this).attr("id");
+
+									$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
+										af_obj = $(this).find("form").serializeObject();
+										rt = {};
+
+										switch(af_obj["input-type"]) {
+											case kAPI_PARAM_INPUT_ENUM:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_RANGE:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
+												rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
+												rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_STRING:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+												rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+												active_forms[af_obj.tags] = rt;
+												break;
+											case kAPI_PARAM_INPUT_SHAPE: break;
+											case kAPI_PARAM_INPUT_DEFAULT:
+												rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+												switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+													case kTYPE_BOOLEAN:
+														rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+														break;
+													default:
+														break;
+												}
+												active_forms[af_obj.tags] = rt;
+												break;
+										}
+										storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
+											request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+											key: $(this).attr("id"),
+											forms: $(this).find("form").serializeObject(),
+											active_forms: active_forms
+										});
+									});
+								});
+
+								$("#goto_results_btn, #goto_map_btn").hide();
+								$.remove_storage("pgrdg_cache.summary");
+								$.remove_storage("pgrdg_cache.results");
+								$.remove_storage("pgrdg_cache.map");
+								$.show_summary($.get_storage_selected_forms());
+							});
+						});
+					}
+				});
+				break;
+		}
+	};
+
+	/**
 	* Execute autocomplete
 	* @param {object}   kAPI
 	* @param {Function} callback
@@ -508,7 +798,8 @@
 			return qc;
 		};
 
-		var form_data = {};
+		var form_data = {},
+		btn_disabled = "";
 		$.ask_to_service(kAPI, function(response) {
 			if (jQuery.type(callback) == "function") {
 				if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
@@ -523,8 +814,13 @@
 					$("section.container").animate({"padding-top": "115px"});
 					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
-						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn disabled" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						if($("#accordion .panel.fulltext_search").length > 0) {
+							btn_disabled = "";
+						} else {
+							btn_disabled = "disabled";
+						}
+						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
 					}
 					if($("#breadcrumb").css("display") == "none") {
 						$("#breadcrumb").fadeIn(200);
@@ -602,154 +898,6 @@
 				}
 			}
 		});
-	};
-
-	/**
-	 * Execute the autocomplete
-	 */
-	$.exec_autocomplete = function(type) {
-		$.manage_url("Forms");
-
-		var is_autocompleted = false;
-
-		if(type == "autocomplete"){
-			//if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.forms")) {
-
-			var kAPI = {};
-			kAPI.storage_group = "search.criteria.forms";
-			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
-			kAPI.parameters = {};
-			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#main_search").val();
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
-			$.execTraitAutocomplete(kAPI, function(response) {
-				if($("#accordion > #" + response.id).length === 0) {
-					var the_title = "";
-					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-						$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
-						if($("#forms-head div.clearfix + .help-block").length === 0) {
-							$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
-						}
-						$.each(operators, function(ck, cv) {
-							if(cv.key == kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
-								if(cv.main) {
-									the_title = cv.title;
-								} else {
-									the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
-								}
-							}
-						});
-
-						// Create forms
-						var forms = $.create_form(response);
-						if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
-							if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
-								$("#forms-body .content-body").addCollapsible({
-									id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
-									class: "fulltext_search",
-									icon: "fa fa-edit",
-									title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
-									show_json: false,
-									content: ""
-								});
-							}
-						}
-						$("#forms-body .content-body").addCollapsible({
-							id: response.id,
-							title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
-							show_json: true,
-							content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
-						});
-						$("input.switch").bootstrapSwitch();
-						$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
-							$(this).parent().find("input[type='checkbox']").attr("checked", state);
-						});
-						$("#forms-body .panel").tooltip();
-						$.resize_forms_mask();
-						$("#autocomplete .typeahead").trigger("blur");
-					}
-				}
-			});
-			is_autocompleted = true;
-			return false;
-		} else {
-			if($("#main_search").val().length >= 3) {
-				if(!is_autocompleted) {
-					$.manage_url("Forms");
-					storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
-
-					var kAPI = {};
-					kAPI.storage_group = "search.criteria.forms";
-					kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
-					kAPI.parameters = {};
-					kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#main_search").val();
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#main_search_operator").attr("class"), ($("#main_search_operator_i").is(":checked") ? '$i' : '"')];
-
-					$.execTraitAutocomplete(kAPI, function(response) {
-						if($("#accordion > #" + response.id).length === 0) {
-							var the_title = "";
-							if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-								$.each(operators, function(ck, cv) {
-									$.each(kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR], function(cck, ccv) {
-										if(ccv == cv.key) {
-											if(cv.main) {
-												the_title = cv.title;
-											} else {
-												the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
-											}
-										}
-									});
-								});
-								// Create forms
-								var forms = $.create_form(response);
-								$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
-								if($("#forms-head div.clearfix + .help-block").length === 0) {
-									$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
-								}
-								$("#forms").fadeIn(300);
-								if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
-									if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
-										$("#forms-body .content-body").addCollapsible({
-											id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
-											class: "fulltext_search",
-											icon: "fa fa-edit",
-											title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
-											show_json: false,
-											content: ""
-										});
-									}
-								}
-								$("#forms-body .content-body").addCollapsible({
-									id: response.id,
-									title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
-									show_json: true,
-									content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
-								});
-								$("input.switch").bootstrapSwitch();
-								$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
-									$(this).parent().find("input[type='checkbox']").attr("checked", state);
-								});
-								$("#forms-body .panel").tooltip();
-								$(".tt-dropdown-menu").css("display", "none");
-								$.resize_forms_mask();
-								$("#autocomplete .typeahead").trigger("blur");
-							}
-						}
-					});
-				}
-				is_autocompleted = false;
-			}
-			return false;
-		}
 	};
 
 	/**
@@ -1067,6 +1215,9 @@
 						$.each($("#accordion .panel").find("div.panel-success:not(.disabled)"), function(i, v) {
 							u++;
 						});
+						if($("#accordion .panel.fulltext_search").length > 0) {
+							u++;
+						}
 						if(u === 0) {
 							$(".save_btn").addClass("disabled");
 						}
@@ -1362,7 +1513,6 @@
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = active_forms;
-			console.log(active_forms);
 				if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext")) {
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
@@ -1600,7 +1750,7 @@
 				}
 				if($("#filter_stage").html().length === 0) {
 					$("#filter_stage_panel").fadeIn(300);
-					$("#filter_group_title").text("Add another filter");
+					$("#filter_group_title").text("Add another group field");
 				}
 
 				// Move on the stage
