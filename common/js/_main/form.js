@@ -133,7 +133,6 @@
 			});
 			return form_data;
 		},
-
 		is_kind_quantitative = function() {
 			return ($.inArray(kTYPE_QUANTITATIVE, forms.kind) === 0) ? true : false;
 		},
@@ -260,7 +259,7 @@
 					}
 					var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="Enable this item"><span class="fa fa-square-o"></span></a>',
 					badge = '<span class="badge pull-right">' + ((forms.count !== undefined && forms.count > 0) ? forms.count : 0) + '</span>',
-					mask = ((forms.count !== undefined && forms.count > 0) ? '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
+					mask = ((forms.count !== undefined && forms.count > 0) ? '<div id="' + $.md5(idv) + '" onclick="$.toggle_form_item($(\'#' + $.md5(idv) + '\'), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
 					//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
@@ -289,12 +288,84 @@
 	 * Restore a previous generated form
 	 */
 	$.restore_form = function() {
-		if(storage.isSet("pgrdg_cache.search.criteria.forms")) {
+		if(storage.isSet("pgrdg_cache.search.criteria.forms") && $.obj_len(storage.get("pgrdg_cache.search.criteria.forms")) > 0) {
 			if(storage.isSet("pgrdg_cache.search.criteria.traitAutocomplete")) {
 				$("#main_search").val(storage.get("pgrdg_cache.search.criteria.traitAutocomplete.text"));
 			}
 			$.exec_autocomplete("restore");
 		}
+	}
+
+	/**
+	 * Activate treeselect
+	 */
+	$.fn.activate_treeselect = function(tag) {
+		var $item = $(this).find("a.treeselect"),
+		$form = $item.closest("form"),
+		treeselect_id = $(this).find("a.treeselect").attr("id"),
+		treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
+		//treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
+		treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
+
+		$item.addClass("disabled");
+		$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
+
+		var kapi_obj = {};
+		kapi_obj.storage_group = "local.forms_data";
+		kapi_obj.loaderType = $(this).find("a.pull-left, a.pull-right");
+		kapi_obj[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_TAG_ENUMERATIONS;
+		kapi_obj.parameters = {};
+		kapi_obj.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		kapi_obj.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+		kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG] = tag;
+		kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+
+		$.ask_to_service(kapi_obj, function(res) {
+			$.each(res[kAPI_RESPONSE_RESULTS], function(k, v) {
+				$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $(this)));
+			});
+			$item.removeClass("disabled");
+			$form.find(".dropdown-toggle").dropdown("toggle");
+			$form.find(".dropdown-menu > *").click(function(e) {
+				e.stopPropagation();
+			});
+			if($form.find(".dropdown-menu").is(":visible")) {
+				$form.find(".dropdown-menu .dropdown-header input").focus();
+
+				$form.find(".dropdown-menu .dropdown-header input.form-control").focus();
+				$form.find(".dropdown-menu .dropdown-header input.form-control").keyup(function() {
+					var that = this;
+					// affect all table rows on in systems table
+					var tableBody = $form.find(".dropdown-menu .dropdown-content > ul");
+					var tableRowsClass = $form.find(".dropdown-menu .dropdown-content > ul li");
+
+					tableRowsClass.each(function(i, val) {
+						//Lower text for case insensitive
+						var rowText = $(val).text().toLowerCase();
+						var inputText = $(that).val().toLowerCase();
+
+						if(rowText.indexOf(inputText) == -1) {
+							//hide rows
+							tableRowsClass.eq(i).hide();
+						} else {
+							$(".search-sf").remove();
+							tableRowsClass.eq(i).show();
+						}
+					});
+					//all tr elements are hidden
+					if(tableRowsClass.children(":visible").length === 0) {
+						if(tableBody.find(".search-sf").length === 0) {
+							tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+						}
+					}
+					//$form.find(".dropdown-header input").focus();
+				});
+			}
+			$form.on("submit", function(){
+				return false;
+			});
+		});
 	}
 
 	/**
@@ -330,73 +401,7 @@
 			// Treeselect
 			//
 			if($panel.find("a.treeselect").length > 0){
-				var $item = $panel.find("a.treeselect"),
-				$form = $item.closest("form"),
-				treeselect_id = $panel.find("a.treeselect").attr("id"),
-				treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
-				//treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
-				treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
-
-				$item.addClass("disabled");
-				$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
-
-				var kapi_obj = {};
-				kapi_obj.storage_group = "local.forms_data";
-				kapi_obj.loaderType = $panel.find("a.pull-left, a.pull-right");
-				kapi_obj[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_TAG_ENUMERATIONS;
-				kapi_obj.parameters = {};
-				kapi_obj.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS] = {};
-				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
-				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG] = tag;
-				kapi_obj.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
-
-				$.ask_to_service(kapi_obj, function(res) {
-					$.each(res[kAPI_RESPONSE_RESULTS], function(k, v) {
-						$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $panel));
-					});
-					$item.removeClass("disabled");
-					$form.find(".dropdown-toggle").dropdown("toggle");
-					$form.find(".dropdown-menu > *").click(function(e) {
-						e.stopPropagation();
-					});
-					if($form.find(".dropdown-menu").is(":visible")) {
-						$form.find(".dropdown-menu .dropdown-header input").focus();
-
-						console.log("ok");
-						$form.find(".dropdown-menu .dropdown-header input.form-control").focus();
-						$form.find(".dropdown-menu .dropdown-header input.form-control").keyup(function() {
-							var that = this;
-							// affect all table rows on in systems table
-							var tableBody = $form.find(".dropdown-menu .dropdown-content > ul");
-							var tableRowsClass = $form.find(".dropdown-menu .dropdown-content > ul li");
-
-							tableRowsClass.each(function(i, val) {
-								//Lower text for case insensitive
-								var rowText = $(val).text().toLowerCase();
-								var inputText = $(that).val().toLowerCase();
-
-								if(rowText.indexOf(inputText) == -1) {
-									//hide rows
-									tableRowsClass.eq(i).hide();
-								} else {
-									$(".search-sf").remove();
-									tableRowsClass.eq(i).show();
-								}
-							});
-							//all tr elements are hidden
-							if(tableRowsClass.children(":visible").length === 0) {
-								if(tableBody.find(".search-sf").length === 0) {
-									tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
-								}
-							}
-							//$form.find(".dropdown-header input").focus();
-						});
-					}
-					$form.on("submit", function(){
-						return false;
-					});
-				});
+				$panel.activate_treeselect(tag);
 			}
 			$panel_mask.fadeOut(300);
 			$(".save_btn").removeClass("disabled");
@@ -493,6 +498,19 @@
 /*=======================================================================================
 *	SEARCH FUNCTIONS
 *======================================================================================*/
+
+	/**
+	 * Get selected forms from the storage and returns in an array list
+	 */
+	$.get_storage_selected_forms = function() {
+		var qc = {};
+		$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, query) {
+			$.each(query.active_forms, function(k, v) {
+				qc[k] = v;
+			});
+		});
+		return qc;
+	};
 
 	/**
 	* Execute the autocomplete
@@ -642,6 +660,8 @@
 				return false;
 				break;
 			case "restore":
+				var form_data = {},
+				btn_disabled = "";
 				$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(row_id, results) {
 					var the_title = "",
 					response = results.response;
@@ -715,6 +735,22 @@
 						$.resize_forms_mask();
 						$("#autocomplete .typeahead").trigger("blur");
 
+						if(storage.isSet("pgrdg_cache.search.criteria.selected_forms") && $.obj_len(storage.get("pgrdg_cache.search.criteria.selected_forms")) > 0) {
+							$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, row_data){
+								var $panel = $("#" + $.md5(row_data.forms.tags)).next(".panel"),
+								$item = $panel.find("a.treeselect");
+
+								$("#" + $.md5(row_data.forms.tags)).addClass("unselectable").hide();
+								$panel.removeClass("disabled").find(".panel-heading a > span").removeClass("fa-square-o").addClass("fa-check-square-o");
+								$panel.find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+								$panel.find("input").prop("disabled", false);
+								$panel.find("button").prop("disabled", false);
+								if($panel.find("a.treeselect").length > 0){
+									$panel.activate_treeselect(row_data.forms.tags);
+								}
+							});
+							$(".save_btn").removeClass("disabled");
+						}
 						// Fires when user clicks on "Save" button
 						$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
 							$(this).on("click", function() {
@@ -788,16 +824,6 @@
 	* @param {Function} callback
 	*/
 	$.execTraitAutocomplete = function(kAPI, callback) {
-		$.get_storage_selected_forms = function() {
-			var qc = {};
-			$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, query) {
-				$.each(query.active_forms, function(k, v) {
-					qc[k] = v;
-				});
-			});
-			return qc;
-		};
-
 		var form_data = {},
 		btn_disabled = "";
 		$.ask_to_service(kAPI, function(response) {
@@ -1360,7 +1386,12 @@
 		});
 		if(storage_also) {
 			$.remove_storage("pgrdg_cache." + content);
-			$.remove_storage("pgrdg_cache.search.criteria.selected_forms");
+			if(content == "forms") {
+				$.remove_storage("pgrdg_cache.search.criteria.forms");
+				$.remove_storage("pgrdg_cache.search.criteria.selected_forms");
+				$.remove_storage("pgrdg_cache.search.criteria.fulltext");
+				$.remove_storage("pgrdg_cache.search.criteria.traitAutocomplete");
+			}
 		}
 	};
 
