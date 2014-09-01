@@ -553,7 +553,6 @@
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
-						console.warn(hash);
 						$.each($("#contents > div"), function(i, $v) {
 							if($(this).attr("id") !== hash.toLowerCase() && $(this).attr("id") !== "loader_bg"){
 								$(this).hide();

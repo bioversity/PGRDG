@@ -153,7 +153,7 @@ $.linkify = function(inputText) {
 
         //Change email addresses to mailto:: links.
         replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-        replacedText = replacedText.toLowerCase().replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
 
         return replacedText;
 };

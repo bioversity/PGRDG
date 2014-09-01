@@ -522,67 +522,74 @@
 	*/
 	$.exec_autocomplete = function(type) {
 		$.activate_form_btns = function() {
-			// Fires when user clicks on "Save" button
-			$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
-				$(this).on("click", function() {
-				//	var qcriteria;
-					form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
-					$.each($("#accordion > div.panel-default"), function(k, v) {
-						var active_forms = {}, af_obj = {};
-						frm_keys = $(this).attr("id");
-
-						$.each($(this).find("div.panel-success:not(.disabled)"), function(i, v) {
-							af_obj = $(this).find("form").serializeObject();
-							rt = {};
-
-							switch(af_obj["input-type"]) {
-								case kAPI_PARAM_INPUT_ENUM:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_RANGE:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
-									rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
-									rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_STRING:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
-									rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_SHAPE: break;
-								case kAPI_PARAM_INPUT_DEFAULT:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
-										case kTYPE_BOOLEAN:
-											rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+			if($("#accordion > div.panel-default").length > 0) {
+				// Fires when user clicks on "Save" button
+				$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
+					$(this).on("click", function() {
+						var active_forms = {};
+						//form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
+						$.each($("#accordion > div.panel-default"), function(k, v) {
+							var af_obj = {}, rt = {};
+							frm_keys = $(this).attr("id");
+							if($(this).find("div.panel-success:not(.disabled)").length > 0) {
+								$.each($(this).find("div.panel-success:not(.disabled)"), function(i, vv) {
+									af_obj = $(this).find("form").serializeObject();
+									switch(af_obj["input-type"]) {
+										case kAPI_PARAM_INPUT_ENUM:
+											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+											active_forms[af_obj.tags] = rt;
 											break;
-										default:
+										case kAPI_PARAM_INPUT_RANGE:
+											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
+											rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
+											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+											active_forms[af_obj.tags] = rt;
+											break;
+										case kAPI_PARAM_INPUT_STRING:
+											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+											active_forms[af_obj.tags] = rt;
+											break;
+										case kAPI_PARAM_INPUT_SHAPE: break;
+										case kAPI_PARAM_INPUT_DEFAULT:
+											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+											switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+												case kTYPE_BOOLEAN:
+													rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+													break;
+												default:
+													break;
+											}
+											active_forms[af_obj.tags] = rt;
 											break;
 									}
-									active_forms[af_obj.tags] = rt;
-									break;
+									storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
+										request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+										key: $(this).attr("id"),
+										forms: $(this).find("form").serializeObject(),
+										active_forms: active_forms
+									});
+								});
+							} else {
+								storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
+									request: {}, //storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+									key: $(this).attr("id"),
+									forms: {},
+									active_forms: active_forms
+								});
 							}
-							storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
-								request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
-								key: $(this).attr("id"),
-								forms: $(this).find("form").serializeObject(),
-								active_forms: active_forms
-							});
 						});
+						$("#goto_results_btn, #goto_map_btn").hide();
+						$.remove_storage("pgrdg_cache.summary");
+						$.remove_storage("pgrdg_cache.results");
+						$.remove_storage("pgrdg_cache.map");
+						$.show_summary($.get_storage_selected_forms());
 					});
-
-					$("#goto_results_btn, #goto_map_btn").hide();
-					$.remove_storage("pgrdg_cache.summary");
-					$.remove_storage("pgrdg_cache.results");
-					$.remove_storage("pgrdg_cache.map");
-					$.show_summary($.get_storage_selected_forms());
 				});
-			});
+			}
 		}
 		$.manage_url("Forms");
 
@@ -865,7 +872,8 @@
 						$.remove_storage("pgrdg_cache.summary");
 						$.remove_storage("pgrdg_cache.results");
 						$.remove_storage("pgrdg_cache.map");
-						console.log("ok");
+
+						$.activate_form_btns();
 						//$.show_summary([]);
 					});
 				}
@@ -1229,7 +1237,7 @@
 
 			// Autocomplete
 			var kAPI = {};
-			kAPI.storage_group = "summary";
+			kAPI.storage_group = "search.criteria.grouping.loaded";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -1594,9 +1602,11 @@
 			var ids = [],
 			kAPI = {};
 
-			$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
-				ids.push(data.id);
-			});
+			if(storage.isSet("pgrdg_cache.search.criteria.grouping")) {
+				$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
+					ids.push(data.id);
+				});
+			}
 
 			kAPI.storage_group = "summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
@@ -1617,11 +1627,15 @@
 
 			$.ask_to_service(kAPI, function(res) {
 				if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
-					$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
-						storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
-						storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
+					// if(storage.isSet("pgrdg_cache.search.criteria.grouping")) {
+					// 	$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
+					// 		storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
+					// 		storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
+					// 	});
+					// }
+					$.activate_panel("summary", {res: res}, function(){
+						$.restore_stage();
 					});
-					$.activate_panel("summary", {res: res});
 				} else {
 					apprise("No results for this search", {"title": "No data", "icon": "warning"});
 				}
@@ -1826,7 +1840,7 @@
 		$.group_tag_by = function(storage_id, id, tag, name, contains, info) {
 			var selected = [];
 			if(storage.isSet("pgrdg_cache.search.criteria.grouping") && storage.isSet("pgrdg_cache.search.criteria.grouping." + storage_id)) {
-				selected = storage.get("pgrdg_cache.search.criteria.grouping." + storage_id);
+				//selected = storage.get("pgrdg_cache.search.criteria.grouping." + storage_id);
 				if($.inArray(id, storage.get("pgrdg_cache.search.criteria.grouping." + storage_id)) === -1) {
 					selected.push(id);
 				} else {
@@ -1861,37 +1875,6 @@
 			storage.set("pgrdg_cache.search.criteria.grouping." + storage_id, selected);
 		};
 
-		/**
-		* Re-open filters dialogs and let user to add or remove others
-		*/
-		$.fn.edit_filter = function() {
-			var response = storage.get("pgrdg_cache.summary." + $(this).attr("data-storage-id") + ".response"),
-			tag = {},
-			exclude_tags = [],
-			lll = "",
-			contains = "";
-			$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
-			$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
-				if(data[kAPI_PARAM_TAG] !== undefined) {
-					tag[id] = data[kAPI_PARAM_TAG];
-					exclude_tags.push(data[kAPI_PARAM_TAG]);
-
-					if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
-						contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
-					}
-					lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
-				}
-			});
-			$("#summary_ordering").find(".modal-body ul").html(lll);
-			$("#summary_ordering").modal("show");
-
-			$("#summary_ordering .modal-body .fa-ul a").hover(function(){
-				$(this).next().find("a.unclickable").addClass("active");
-			}, function() {
-				$(this).next().find("a.unclickable").removeClass("active");
-			});
-		};
-
 
 		/*=======================================================================================
 		*	FILTERS STAGE
@@ -1906,13 +1889,12 @@
 						$("#summary #summary-body").addClass("disabled");
 					}
 					$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
-						console.log(k, v);
 						$("#group_by_btn").append('<small class="label label-danger" style="position: absolute; top: -6px; right: -6px;">' + $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering")) + '</small>');
 
 						if($.obj_len(v) > 0) {
 							var id = v.id, tag = v.tag, storage_id = v.storage;
-							if(storage.isSet("pgrdg_cache.summary." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
-								var res = storage.get("pgrdg_cache.summary." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
+							if(storage.isSet("pgrdg_cache.search.criteria.grouping." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
+								var res = storage.get("pgrdg_cache.search.criteria.grouping.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
 								name = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME],
 								info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
 								a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" id="' + $.md5(id) + '" data-id="' + id + '" data-tag="' + tag + '" data-storage-id="' + storage_id + '">');
@@ -2050,6 +2032,38 @@
 			};
 
 			/**
+			* Re-open filters dialogs and let user to add or remove others
+			*/
+			$.fn.edit_filter = function() {
+				var response = storage.get("pgrdg_cache.search.criteria.grouping.loaded." + $(this).attr("data-storage-id") + ".response"),
+				tag = {},
+				exclude_tags = [],
+				lll = "",
+				contains = "";
+
+				$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
+				$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
+					if(data[kAPI_PARAM_TAG] !== undefined) {
+						tag[id] = data[kAPI_PARAM_TAG];
+						exclude_tags.push(data[kAPI_PARAM_TAG]);
+
+						if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+							contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
+						}
+						lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
+					}
+				});
+				$("#summary_ordering").find(".modal-body ul").html(lll);
+				$("#summary_ordering").modal("show");
+
+				$("#summary_ordering .modal-body .fa-ul a").hover(function(){
+					$(this).next().find("a.unclickable").addClass("active");
+				}, function() {
+					$(this).next().find("a.unclickable").removeClass("active");
+				});
+			};
+
+			/**
 			* Restore a previous removed filter from stage
 			*/
 			$.restore_deleted_filter = function(id) {
@@ -2165,16 +2179,31 @@
 			$.update_ordering = function() {
 				var st = [];
 
-				if(!$("#summary #summary-body").hasClass("disabled")) {
-					$("#summary #summary-body").addClass("disabled");
-				}
 				$.each($("#filter_stage > a:visible"), function(k, item) {
 					var stid = $(this).attr("data-id"),
 					stag = $(this).attr("data-tag"),
+					sname = $(this).find("h4:not(.text-muted)").text(),
+					sinfo = $(this).find("h4 + p").text(),
+					scontains = $(this).find("h4.text-muted").text(),
 					ststorage_id = $(this).attr("data-storage-id");
-					st.push({"id": stid, "tag": stag, "storage": ststorage_id});
+					st.push({"id": stid, "tag": stag, "name": sname, "info": sinfo, "contains": scontains, "storage": ststorage_id});
 				});
 				storage.set("pgrdg_cache.search.criteria.grouping._ordering", st);
+
+				$.update_ordering_on_the_stage(st);
+			};
+
+			/**
+			* Update the ordering on the stage
+			*/
+			$.update_ordering_on_the_stage = function(st) {
+				if(st === undefined || st.length === 0) {
+					st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
+				}
+
+				if(!$("#summary #summary-body").hasClass("disabled")) {
+					$("#summary #summary-body").addClass("disabled");
+				}
 
 				if(st.length > 0) {
 					if($("#group_by_btn .label-danger").length === 0) {
@@ -2183,6 +2212,27 @@
 						$("#group_by_btn .label-danger").text(st.length);
 					}
 					$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
+					$.each(st, function(k, v) {
+						if($("#filter_stage #" + $.md5(v.id)).length === 0) {
+							var already_selected = false,
+							panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" class="list-group-item list-group-item-success" id="' + $.md5(v.id) + '" data-id="' + v.id + '" data-tag="' + v.tag + '" data-storage-id="' + v.storage + '">');
+
+							panel.html('<h4 class="list-group-item-heading">' + v.name + '</h4>');
+							if(v.info !== undefined && v.info !== null && v.info.length > 0) {
+								panel.append('<p class="list-group-item-text">' + v.info + '</p>');
+							}
+							if(v.contains !== undefined && v.contains !== null && v.contains !== "") {
+								panel.append('<h4 style="padding-left: 15px;" class="text-muted">' + v.contains + '</h4>');
+							}
+							if($("#filter_stage").html().length === 0) {
+								$("#filter_stage_panel").fadeIn(300);
+								$("#filter_group_title").text("Add another group field");
+							}
+
+							// Move on the stage
+							$("#filter_stage").append(panel);
+						}
+					});
 				} else {
 					storage.remove("pgrdg_cache.search.criteria.grouping._ordering");
 					$("#summary_order_cancel_btn, #summary_order_reorder_btn").addClass("disabled");
@@ -2194,23 +2244,17 @@
 			* Call Service and reorder results summary
 			*/
 			$.exec_ordering = function() {
-				$.get_storage_selected_forms = function() {
-					var qc = {};
-					$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, query) {
-						$.each(query.active_forms, function(k, v) {
-							qc[k] = v;
-						});
-					});
-					return qc;
-				};
 				var ids = [],
 				objp = {};
+				$.update_ordering_on_the_stage();
 
 				$("#summary #summary-body").removeClass("disabled");
 				$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
 					ids.push(data.id);
 				});
-				$("#collapsed_group_form").collapse("hide");
+				if($("#collapsed_group_form").hasClass("in")) {
+					$("#collapsed_group_form").collapse("hide");
+				}
 
 				objp.storage_group = "summary";
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
@@ -2243,6 +2287,7 @@
 						res.level = 0;
 						res.history = [];
 
+						$("#summary-body").removeClass("disabled");
 						$("#summary-body .content-body").html("");
 						$.generate_tree_summaries(res, "", function(result_panel){
 							$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
@@ -3082,7 +3127,7 @@ $(document).ready(function() {
 			$.resize_forms_mask();
 		});
 		if($.obj_len(query) > 0) {
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering") && storage.get("pgrdg_cache.search.criteria.grouping._ordering").length > 0) {
+			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering") && $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering")) > 0) {
 			 	$.restore_stage();
 			} else {
 				$.search_fulltext(query.q);
