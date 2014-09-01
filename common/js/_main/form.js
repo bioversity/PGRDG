@@ -856,11 +856,30 @@
 					$("#forms").fadeIn(300);
 					if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
 						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+							var names = [], nn = "";
+							if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+								nn = ', <i class="text-muted">grouped by ';
+								$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
+									names.push(v.name);
+								});
+								for (var g = 0; g < names.length; g++) {
+									nn += names[g];
+									if(g < (names.length - 2)) {
+										nn += ", ";
+									} else {
+										if(g < (names.length - 1)) {
+											nn += " and ";
+										}
+									}
+								}
+								nn += '</i>';
+							}
+							console.log(nn);
 							$("#forms-body .content-body").addCollapsible({
 								id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 								class: "fulltext_search",
 								icon: "fa fa-edit",
-								title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+								title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>' + nn,
 								show_json: false,
 								content: ""
 							});
@@ -1721,7 +1740,7 @@
 				result_panel = $('<div class="result panel tree_summary">'),
 				result_h4 = $('<h4 style="border-color: ' + item_colour + '">'),
 				// "data-parent" attribute was removed here
-				result_title = $('<a class="btn btn-unstyled" data-toggle="collapse" href="#' + item_id + '" class="title" onclick="$.title_behaviour($(this));">'),
+				result_title = $('<a class="btn btn-unstyled" data-toggle="collapse" href="#' + item_id + '" class="title" style="margin-left: 5px;" onclick="$.title_behaviour($(this));">'),
 				result_description = $('<small class="help-block">'),
 				result_content_container = $('<div class="row collapse" id="' + item_id + '">'),
 				result_description_ul_results = $('<div class="children">'),
@@ -1757,9 +1776,9 @@
 					}
 					result_description_ul_results.appendTo(result_content_container);
 				}
-				result_title.html('<span class="fa fa-chevron-right text-muted"></span> ' + $.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + ((!has_child) ? child_counts : $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN])) + '</sup>').appendTo(result_h4);
+				result_title.html('' + $.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ' <sup class="text-danger">' + ((!has_child) ? child_counts : $.obj_len(values[kAPI_PARAM_RESPONSE_CHILDREN])) + '</sup>').appendTo(result_h4);
 				if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
-					result_description.html('<span style="margin-left: 25px;">' + values[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</span>').appendTo(result_h4);
+					result_description.html('<span style="margin-left: 5px;">' + values[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</span>').appendTo(result_h4);
 				}
 				result_h4.appendTo(result_panel);
 				result_content_container.appendTo(result_panel);
@@ -1780,7 +1799,7 @@
 				$.fn.to_html = function() {
 					return $('<div></div>').html($(this).clone()).html();
 				};
-				var list = $('<li>'),
+				var list = $('<li class="level_' + level + '">'),
 				lists = "",
 				name = "",
 				info = "",
@@ -1802,18 +1821,21 @@
 				}
 				$.each(data, function(d, v){
 					if(d !== kAPI_PARAM_TAG) {
-						if(d == kAPI_PARAM_RESPONSE_CHILDREN) {
-							var ul = $('<ul class="fa-ul level2">');
-
-							ul.append($.iterate_childrens(v, (level +1), storage_id, id, tag, contains));
-							list.append(ul);
-						} else {
+						// if(d == kAPI_PARAM_RESPONSE_CHILDREN) {
+						// 	var ul = $('<ul class="fa-ul level2">');
+						//
+						// 	//list.prepend($.iterate_childrens(v, (level +1), storage_id, id, tag, contains));
+						// 	//list.append(ul);
+						// } else {
 							if(v !== undefined && v !== null) {
 								if(d == kAPI_PARAM_RESPONSE_FRMT_NAME) {
 									if(level === 0) {
-										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5 class="row"><span class="col-md-11 vcenter">' + v + '</span><span class="fa fa-fw fa-angle-right col-md-1 vcenter"></span></h5></a>');
+										var children = (data[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) ? ' <span class="text-muted">(' + data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME] + ')</span>' : "",
+										related = (data[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) ? "related " : "";
+										list.addClass(related);
+										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5 class="row"><span class="col-md-11 vcenter">' + v + children + '</span><span class="fa fa-fw fa-angle-right col-md-1 vcenter"></span></h5></a>');
 									} else {
-										list.html('<a onclick="" href="javascript: void(0);" class="btn unclickable ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5>' + v + '</h5></a>');
+										//list.html('<a onclick="" href="javascript: void(0);" class="btn unclickable ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5>' + v + '</h5></a>');
 									}
 									name = v;
 								}
@@ -1828,7 +1850,7 @@
 							}
 						}
 						lists = list.to_html();
-					}
+					// }
 				});
 				return lists;
 			}
@@ -2293,6 +2315,7 @@
 							$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
 						});
 					} else {
+						$("#collapsed_group_form").collapse("show");
 						apprise("No results for this combination", {"title": "Ooops...", "icon": "fa-bug", "titleClass": "text-warning", "fa_icon": "fa-warning"});
 						$("#summary-body").addClass("disabled");
 					}
