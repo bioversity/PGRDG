@@ -776,8 +776,12 @@
 								});
 							});
 							// Create forms
-							var forms = $.create_form(response);
-							$("#forms-head .content-title").html('Output of your last search');
+							var forms = $.create_form(response),
+							grouping_no = 0;
+							if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+								grouping_no = $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering"));
+							}
+							$("#forms-head .content-title").html('Output of your last search ' + ((grouping_no > 0) ? ' <sup><a title="Change grouping filters" href="javascript: void(0);" onclick="$.show_summary($.get_storage_selected_forms(), false, function() { $(\'#collapsed_group_form\').collapse(\'show\'); });"><small class="text-danger" style="font-family: Arial, Helvetica;">' + grouping_no + ' groups</small></a></sup>' : ""));
 							if($("#forms-head div.clearfix + .help-block").length === 0) {
 								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 							}
@@ -1616,15 +1620,21 @@
 		/**
 		* Show summary content pane
 		* @param  {object} active_forms
+		* @param  {bool} with_grouping
 		*/
-		$.show_summary = function(active_forms) {
+		$.show_summary = function(active_forms, with_grouping, callback) {
+			if(with_grouping === undefined || with_grouping === null || with_grouping === "") {
+				with_grouping = true;
+			}
 			var ids = [],
 			kAPI = {};
 
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
-				$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
-					ids.push(data.id);
-				});
+			if(with_grouping) {
+				if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+					$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
+						ids.push(data.id);
+					});
+				}
 			}
 			kAPI.storage_group = "summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
@@ -1652,11 +1662,21 @@
 					// 	});
 					// }
 					$.activate_panel("summary", {res: res}, function(){
-						$.restore_stage();
+						$.restore_stage(callback);
 					});
 				} else {
 					if($("#apprise.no-results:visible").length === 0) {
-						apprise("No results for this search", {"class": "no-results", "title": "No data", "icon": "warning"});
+						if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering") && $.obj_len(("pgrdg_cache.search.criteria.grouping._ordering")) > 0) {
+							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": "No results for this search", "icon": "warning", "confirm": true}, function(r) {
+								$.show_summary(active_forms, false, function() {
+									setTimeout(function() {
+										$("#summary-body.disabled").addClass("moved");
+									}, 600);
+								});
+							});
+						} else {
+							apprise("No results for this search", {"class": "no-results", "title": "No data", "icon": "warning"});
+						}
 					}
 				}
 			});
@@ -1906,7 +1926,7 @@
 			/**
 			* Generate stage buttons reading selected filters on the storage
 			*/
-			$.restore_stage = function() {
+			$.restore_stage = function(callback) {
 				if(storage.isSet("pgrdg_cache.search.criteria.grouping") && storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
 					if(!$("#summary #summary-body").hasClass("disabled")) {
 						$("#summary #summary-body").addClass("disabled");
@@ -1936,7 +1956,7 @@
 						}
 						$("#summary_order_cancel_btn, #summary_order_reorder_btn").removeClass("disabled");
 					});
-					$.exec_ordering();
+					$.exec_ordering(callback);
 				}
 			};
 
@@ -2266,7 +2286,7 @@
 			/**
 			* Call Service and reorder results summary
 			*/
-			$.exec_ordering = function() {
+			$.exec_ordering = function(callback) {
 				var ids = [],
 				objp = {};
 				$.update_ordering_on_the_stage();
@@ -2315,9 +2335,15 @@
 						$.generate_tree_summaries(res, "", function(result_panel){
 							$("#summary-body .content-body").attr("id", res[kAPI_PARAM_ID]).append(result_panel);
 						});
+
+						if (jQuery.type(callback) == "function") {
+							callback.call(this);
+						}
 					} else {
 						$("#collapsed_group_form").collapse("show");
-						apprise("No results for this combination", {"title": "Ooops...", "icon": "fa-bug", "titleClass": "text-warning", "fa_icon": "fa-warning"});
+						if($("#apprise.no-results").length === 0) {
+							apprise("No results for this combination", {"class": "no-results", "title": "Ooops...", "icon": "fa-bug", "titleClass": "text-warning", "fa_icon": "fa-warning"});
+						}
 						$("#summary-body").addClass("disabled");
 					}
 				});

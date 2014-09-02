@@ -937,6 +937,23 @@ section #se_p .panel_content-body.disabled:before {
 	width: 100%;
 	z-index: 1;
 }
+section #summary .panel_content-body.moved:before,
+section #se_p .panel_content-body.moved:before {
+	background-color: rgba(255, 255, 255, 0.75);
+	color: #aaa;
+	content: "Press \"Group\" button to show summary...";
+	cursor: default;
+	display: inline-block;
+	font-family: "HelveticaNeueW01-45Ligh";
+	font-size: 2em;
+	height: 100%;
+	position: absolute;
+	text-align: center;
+	margin-left: -315px;
+	text-indent: 315px;
+	width: 100%;
+	z-index: 1;
+}
 
 section.container > #contents {
 	height: 100%;

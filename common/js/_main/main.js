@@ -369,6 +369,10 @@
 						});
 					} else {
 						$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": "15px"}, 200, function() {
+							$("#section #summary .panel_content-body.disabled:before, section #se_p .panel_content-body.disabled:before").css({
+								"margin-left": "-15px",
+								"text-indent": "15px"
+							});
 							if(document.location.hash !== "#Map") {
 								//$("#left_panel .folder_menu").animate({"right": "-165px"}, 200);
 							}
@@ -436,7 +440,10 @@
 						});
 						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
 					});
-					$("#contents > .panel_content .panel_content-head, #contents > .panel_content .panel_content-body, #contents > .panel_content .panel_content-footer, #start > div").animate({"padding-left": (movement + 15) + "px"}, 150);
+					$("#contents > .panel_content .panel_content-head, #contents > .panel_content .panel_content-body, #contents > .panel_content .panel_content-footer, #start > div").animate({
+						"padding-left": (movement + 15) + "px"
+					}, 150);
+
 					// Save the left_panel position
 					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
 					break;
@@ -521,7 +528,7 @@
 				// Remove all other pages if user returns to the forms page
 				if(hash.toLowerCase() == "forms") {
 					//$.remove_breadcrumb("summary");
-					//$.reset_contents("summary", true);
+					$.reset_contents("summary", true);
 					$.remove_breadcrumb("results");
 					$.reset_contents("results", true);
 					$.remove_breadcrumb("map");
