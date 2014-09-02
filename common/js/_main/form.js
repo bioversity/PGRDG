@@ -658,8 +658,7 @@
 						}
 					}
 				});
-				is_autocompleted = true;
-				return false;
+				return true;
 				break;
 			case "input":
 				if($("#main_search").val().length >= 3) {
@@ -730,7 +729,6 @@
 							}
 						});
 					}
-					is_autocompleted = false;
 				}
 				return false;
 				break;
@@ -779,7 +777,7 @@
 							});
 							// Create forms
 							var forms = $.create_form(response);
-							$("#forms-head .content-title").html('Output for the last search');
+							$("#forms-head .content-title").html('Output of your last search');
 							if($("#forms-head div.clearfix + .help-block").length === 0) {
 								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 							}
@@ -849,7 +847,7 @@
 						$("#breadcrumb").fadeIn(200);
 					}
 
-					$("#forms-head .content-title").html('Output for the last search');
+					$("#forms-head .content-title").html('Output of your last search');
 					if($("#forms-head div.clearfix + .help-block").length === 0) {
 						$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
 					}
@@ -874,7 +872,6 @@
 								}
 								nn += '</i>';
 							}
-							console.log(nn);
 							$("#forms-body .content-body").addCollapsible({
 								id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 								class: "fulltext_search",
@@ -1035,7 +1032,8 @@
 		user_input,
 		is_autocompleted = false,
 		selected_label_key = "",
-		selected_label_value = "";
+		selected_label_value = ""
+		autocompleted = false;
 
 		$.each(options.op, function(k, v) {
 			if(!v.main) {
@@ -1098,17 +1096,19 @@
 		}, {
 			displayKey: "value",
 			source: remoteAutocomplete.ttAdapter()
-		}).on("typeahead:selected", function(){
-			// Autocomplete
-			storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "autocomplete"});
-			$.exec_autocomplete("autocomplete");
 		}).bind("keydown", "return", function(event) {
 			$(this).trigger("typeahead:_changed");
 			return false;
+		}).on("typeahead:selected", function(e){
+			// Autocomplete
+			storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "autocomplete"});
+			is_autocompleted = $.exec_autocomplete("autocomplete");
 		}).on("typeahead:_changed", function(e) {
 			// User input
-			storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
-			$.exec_autocomplete("input");
+			if(!is_autocompleted) {
+				storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
+				$.exec_autocomplete("input");
+			}
 		}).bind("keydown", "alt+left", function(e) {
 			$.left_panel("close", "", function() {
 				$("#main_search").blur();
@@ -1621,12 +1621,11 @@
 			var ids = [],
 			kAPI = {};
 
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping")) {
+			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
 				$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
 					ids.push(data.id);
 				});
 			}
-
 			kAPI.storage_group = "summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			kAPI.parameters = {};
@@ -1656,7 +1655,9 @@
 						$.restore_stage();
 					});
 				} else {
-					apprise("No results for this search", {"title": "No data", "icon": "warning"});
+					if($("#apprise.no-results:visible").length === 0) {
+						apprise("No results for this search", {"class": "no-results", "title": "No data", "icon": "warning"});
+					}
 				}
 			});
 

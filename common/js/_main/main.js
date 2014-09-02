@@ -520,8 +520,8 @@
 			} else {
 				// Remove all other pages if user returns to the forms page
 				if(hash.toLowerCase() == "forms") {
-					$.remove_breadcrumb("summary");
-					$.reset_contents("summary", true);
+					//$.remove_breadcrumb("summary");
+					//$.reset_contents("summary", true);
 					$.remove_breadcrumb("results");
 					$.reset_contents("results", true);
 					$.remove_breadcrumb("map");
