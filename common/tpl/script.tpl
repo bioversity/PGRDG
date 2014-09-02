@@ -30,6 +30,23 @@
 
 	<!-- Core scripts -->
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/_main/params.js"></script>
+	<script type="text/javascript">
+	function load_firebug() {
+		var fileref;
+		if(developer_mode) {
+			document.body.style.cursor = "wait";
+			fileref = document.createElement("script");
+			fileref.setAttribute("type", "text/javascript");
+			fileref.setAttribute("src", "<?php print $domain; ?>/common/js/firebug-lite/build/firebug-lite-debug.js");
+			fileref.innerHTML = '{ saveCookies: true, startOpened: false, startInNewWindow: false, showIconWhenHidden: true, overrideConsole: true, ignoreFirebugElements: true, disableXHRListener: false, disableWhenFirebugActive: true, enableTrace: false, enablePersistent: false }';
+
+			var head = document.getElementsByTagName("head")[0];
+			head.appendChild(fileref);
+
+			document.body.style.cursor = "default";
+		}
+	}
+	</script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/_main/main.js"></script>
 	<?php
 	if(strtolower($page) == "map" || strtolower($page) == "search" || strtolower($page) == "advanced_search") {

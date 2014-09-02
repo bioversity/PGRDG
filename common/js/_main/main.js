@@ -1367,6 +1367,20 @@ $(document).ready(function() {
 					});
 				});
 				$.get_operators_list();
+
+				if(developer_mode) {
+					var li_dev = $('<li class="btn-group">'),
+					a_dev = $('<a class="btn btn-link" data-toggle="dropdown" href="javascript: void(0);"><span class="fa fa-wrench"></span> Developer <span class="caret"></span>'),
+					sub_ul_dev = $('<ul role="menu" class="dropdown-menu">')
+					li_divider_dev = $('<li class="divider">');
+
+					sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="storage.remove(\'pgrdg_cache\'); location.reload();"><span class="fa fa-eraser"></span>&nbsp;Reset storage</a></li>');
+					sub_ul_dev.append('<li class="divider"></li>');
+					sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="load_firebug();"><span class="fa fa-bug"></span>&nbsp;Load Firebug-Lite</a></li>');
+						li_dev.append(a_dev);
+					li_dev.append(sub_ul_dev);
+					$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev)
+				}
 			}
 			$.check_logged_user();
 			if(current_path == "Profile") {
