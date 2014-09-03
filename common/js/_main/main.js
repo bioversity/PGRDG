@@ -74,6 +74,7 @@
 				response.extra_data = opt.extra;
 				callback(response);
 			} else {
+				$("#loader").fadeOut(0);
 				if(developer_mode) {
 					alert("There's an error in the response:<br />See the console for more informations");
 					console.group("The Service has returned an error");
@@ -94,13 +95,14 @@
 			if(typeof(opt.loaderType) == "string") {
 				if(!$("#marker_content").is(":visible")) {
 					if(!$("#apprise.service_coffee").is(":visible")) {
-						if($("#apprise.ask_service").length === 0) {
-							apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
-						} else {
-							if($("#apprise.ask_service").css("display") == "none") {
-								$("#apprise.ask_service").modal("show");
-							}
-						}
+						$("#loader").fadeIn(0);
+						// if($("#apprise.ask_service").length === 0) {
+						// 	apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
+						// } else {
+						// 	if($("#apprise.ask_service").css("display") == "none") {
+						// 		$("#apprise.ask_service").modal("show");
+						// 	}
+						// }
 					}
 				}
 			} else {
@@ -164,13 +166,15 @@
 							}
 						}
 						if(typeof(opt.loaderType) == "string") {
-							$("#apprise.ask_service").modal("hide");
+							$("#loader").fadeOut(0);
+							// $("#apprise.ask_service").modal("hide");
 							callback(response);
 						} else {
 							$element.html(element_data);
 							callback(response);
 						}
 					} else {
+						$("#loader").fadeOut(0);
 						if(developer_mode) {
 							console.warn("!!!", param_nob64, response);
 							alert("There's an error in the response:<br />See the console for more informations");
@@ -186,6 +190,7 @@
 					}
 				},
 				error: function(x, t, response) {
+					$("#loader").fadeOut(0);
 					$.display_error_msg("There was an error in your request, please try again later");
 					if(t === "timeout") {
 						if(developer_mode) {
@@ -203,7 +208,8 @@
 								console.dir(response);
 							console.groupEnd();
 						}
-						$("#apprise.ask_service").modal("destroy");
+						$("#loader").fadeOut(0);
+						// $("#apprise.ask_service").modal("destroy");
 						$.service_coffee();
 						setTimeout(function() {
 							$.ask_to_service(options, callback);
@@ -527,7 +533,7 @@
 			} else {
 				// Remove all other pages if user returns to the forms page
 				if(hash.toLowerCase() == "forms") {
-					//$.remove_breadcrumb("summary");
+					$.remove_breadcrumb("summary");
 					$.reset_contents("summary", true);
 					$.remove_breadcrumb("results");
 					$.reset_contents("results", true);

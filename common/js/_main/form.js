@@ -1109,7 +1109,7 @@
 			is_autocompleted = $.exec_autocomplete("autocomplete");
 		}).on("typeahead:_changed", function(e) {
 			// User input
-			if(!is_autocompleted) {
+			if(!is_autocompleted && $("#main_search").val().length > 3) {
 				storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
 				$.exec_autocomplete("input");
 			}
@@ -1227,80 +1227,82 @@
 			$(this).trigger("typeahead:_changed");
 			return false;
 		}).on("typeahead:selected typeahead:_changed", function(){
-			var exclude = [];
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
-				st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
-				$.each(st, function(k, v) {
-					exclude.push(v.tag);
+			if($("#" + options.id).val().length > 3) {
+				var exclude = [];
+				if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+					st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
+					$.each(st, function(k, v) {
+						exclude.push(v.tag);
+					});
+					exclude = $.array_unique(exclude);
+				}
+				/*
+				if($("#autocomplete .input-group #autocomplete_undo_btn").length === 0) {
+					$("#autocomplete .input-group").append('<span class="input-group-btn"><a class="btn btn-default-grey" id="autocomplete_undo_btn" href="javascript:void(0);"><span class="fa fa-reply"></span>Undo</a></span>');
+				}
+				$("#autocomplete_undo_btn").on("click", function() {
+					apprise("Are you sure to remove all defined group filters?", {confirm: true}, function(r) {
+						if(r) {
+							$("#summary #summary-body").removeClass("disabled");
+							$("#filter_stage").html("");
+							$("#autocomplete_undo_btn").closest("span").remove();
+							$("#filter_stage_panel").fadeOut(300, function() {
+								$("#filter_search_summary").val("").focus();
+							});
+						}
+					});
 				});
-				exclude = $.array_unique(exclude);
-			}
-			/*
-			if($("#autocomplete .input-group #autocomplete_undo_btn").length === 0) {
-				$("#autocomplete .input-group").append('<span class="input-group-btn"><a class="btn btn-default-grey" id="autocomplete_undo_btn" href="javascript:void(0);"><span class="fa fa-reply"></span>Undo</a></span>');
-			}
-			$("#autocomplete_undo_btn").on("click", function() {
-				apprise("Are you sure to remove all defined group filters?", {confirm: true}, function(r) {
-					if(r) {
-						$("#summary #summary-body").removeClass("disabled");
-						$("#filter_stage").html("");
-						$("#autocomplete_undo_btn").closest("span").remove();
-						$("#filter_stage_panel").fadeOut(300, function() {
-							$("#filter_search_summary").val("").focus();
+				*/
+				/*
+				if (jQuery.type(callback) == "function") {
+					callback.call(this);
+				}
+				*/
+
+				// Autocomplete
+				var kAPI = {};
+				kAPI.storage_group = "search.criteria.grouping.loaded";
+				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
+				kAPI.parameters = {};
+				kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_EXCLUDED_TAGS] = exclude;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
+				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
+				$.ask_to_service(kAPI, function(response) {
+					if($.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0){
+						var tag = {},
+						exclude_tags = [],
+						lll = "",
+						contains = "";
+						//console.log(response[kAPI_RESPONSE_RESULTS]);
+						$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
+						$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
+							if(data[kAPI_PARAM_TAG] !== undefined) {
+								tag[id] = data[kAPI_PARAM_TAG];
+								exclude_tags.push(data[kAPI_PARAM_TAG]);
+
+								if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
+									contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
+								}
+								lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
+							}
+						});
+						$("#summary_ordering").find(".modal-body ul").html(lll);
+						$("#summary_ordering").modal("show");
+
+						$("#summary_ordering .modal-body .fa-ul a").hover(function(){
+							$(this).next().find("a.unclickable").addClass("active");
+						}, function() {
+							$(this).next().find("a.unclickable").removeClass("active");
 						});
 					}
 				});
-			});
-			*/
-			/*
-			if (jQuery.type(callback) == "function") {
-				callback.call(this);
+				is_autocompleted = true;
 			}
-			*/
-
-			// Autocomplete
-			var kAPI = {};
-			kAPI.storage_group = "search.criteria.grouping.loaded";
-			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
-			kAPI.parameters = {};
-			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 50;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_EXCLUDED_TAGS] = exclude;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#" + options.id).val();
-			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$" + $("#" + options.id + "_operator").attr("class"), ($("#filter_search_summary_operator_i").is(":checked") ? '$i' : '""')];
-			$.ask_to_service(kAPI, function(response) {
-				if($.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0){
-					var tag = {},
-					exclude_tags = [],
-					lll = "",
-					contains = "";
-					//console.log(response[kAPI_RESPONSE_RESULTS]);
-					$("#summary_ordering").find(".modal-body").html('<ul class="fa-ul">');
-					$.each(response[kAPI_RESPONSE_RESULTS], function(id, data){
-						if(data[kAPI_PARAM_TAG] !== undefined) {
-							tag[id] = data[kAPI_PARAM_TAG];
-							exclude_tags.push(data[kAPI_PARAM_TAG]);
-
-							if(data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) {
-								contains = data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME];
-							}
-							lll += $.iterate_childrens(data[kAPI_PARAM_RESPONSE_CHILDREN], 0, response.id, id, data[kAPI_PARAM_TAG], contains);
-						}
-					});
-					$("#summary_ordering").find(".modal-body ul").html(lll);
-					$("#summary_ordering").modal("show");
-
-					$("#summary_ordering .modal-body .fa-ul a").hover(function(){
-						$(this).next().find("a.unclickable").addClass("active");
-					}, function() {
-						$(this).next().find("a.unclickable").removeClass("active");
-					});
-				}
-			});
-			is_autocompleted = true;
 			return false;
 		});
 	};
@@ -1854,7 +1856,7 @@
 										var children = (data[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) ? ' <span class="text-muted">(' + data[kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME] + ')</span>' : "",
 										related = (data[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined) ? "related " : "";
 										list.addClass(related);
-										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5 class="row"><span class="col-md-11 vcenter">' + v + children + '</span><span class="fa fa-fw fa-angle-right col-md-1 vcenter"></span></h5></a>');
+										list.html('<a onclick="" href="javascript: void(0);" class="btn ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5 class="row"><span class="col-xs-10 col-sm-11 col-md-11 vcenter">' + v + children + '</span><span class="fa fa-fw fa-angle-right col-md-1 vcenter"></span></h5></a>');
 									} else {
 										//list.html('<a onclick="" href="javascript: void(0);" class="btn unclickable ' + ((already_selected) ? "btn-default" : "btn-default-white") + '"><h5>' + v + '</h5></a>');
 									}
@@ -1893,7 +1895,7 @@
 
 			if($("#filter_stage #" + $.md5(id)).length === 0) {
 				var already_selected = false,
-				panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" class="list-group-item list-group-item-success" id="' + $.md5(id) + '" data-id="' + id + '" data-tag="' + tag + '" data-storage-id="' + storage_id + '">');
+				panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" ondblclick="$(this).addClass(\'active\'); $(\'#filter_stage a.active\').edit_filter();" class="list-group-item list-group-item-success" id="' + $.md5(id) + '" data-id="' + id + '" data-tag="' + tag + '" data-storage-id="' + storage_id + '">');
 
 				panel.html('<h4 class="list-group-item-heading">' + name + '</h4>');
 				if(info !== undefined && info !== null && info.length > 0) {
@@ -1940,7 +1942,7 @@
 								var res = storage.get("pgrdg_cache.search.criteria.grouping.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
 								name = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME],
 								info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
-								a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" id="' + $.md5(id) + '" data-id="' + id + '" data-tag="' + tag + '" data-storage-id="' + storage_id + '">');
+								a = $('<a class="list-group-item list-group-item-success" href="javascript:void(0);" onclick="$.select_group_filter($(this));" ondblclick="$(this).addClass(\'active\'); $(\'#filter_stage a.active\').edit_filter();" id="' + $.md5(id) + '" data-id="' + id + '" data-tag="' + tag + '" data-storage-id="' + storage_id + '">');
 								a.html('<h4 class="list-group-item-heading">' + name + '</h4>');
 								if(info !== undefined && info.length > 0) {
 									a.append('<p class="list-group-item-text">' + info + '</p>');
@@ -2258,7 +2260,7 @@
 					$.each(st, function(k, v) {
 						if($("#filter_stage #" + $.md5(v.id)).length === 0) {
 							var already_selected = false,
-							panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" class="list-group-item list-group-item-success" id="' + $.md5(v.id) + '" data-id="' + v.id + '" data-tag="' + v.tag + '" data-storage-id="' + v.storage + '">');
+							panel = $('<a href="javascript:void(0);" onclick="$.select_group_filter($(this));" ondblclick="$(this).addClass(\'active\'); $(\'#filter_stage a.active\').edit_filter();" class="list-group-item list-group-item-success" id="' + $.md5(v.id) + '" data-id="' + v.id + '" data-tag="' + v.tag + '" data-storage-id="' + v.storage + '">');
 
 							panel.html('<h4 class="list-group-item-heading">' + v.name + '</h4>');
 							if(v.info !== undefined && v.info !== null && v.info.length > 0) {
