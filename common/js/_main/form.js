@@ -1338,6 +1338,7 @@
 					}
 					$.remove_storage("pgrdg_cache.search.criteria.traitAutocomplete");
 					$.remove_storage("pgrdg_cache.search.criteria.forms." + search_id);
+					$.remove_storage("pgrdg_cache.search.criteria.selected_forms." + search_id);
 					$.remove_storage("pgrdg_cache.search.criteria.local.forms_data." + search_id);
 				});
 			}
@@ -2505,12 +2506,39 @@
 		 * Highlight text for more readability
 		 */
 		$.highlight = function(string) {
+			$.searched_words = function(text) {
+				if(current_path == "Search") {
+					var subj = [],
+					text_search = $("#search_form").val(),
+					re = new RegExp(text_search, "gi");
+
+					var quotes = text_search.match(/("[^"]+"|[^"\s]+)/gi);
+					$.each(quotes, function(k, v) {
+						if(v !== undefined) {
+							if(v.charAt(0) == "-") {
+								quotes.splice(k, 1);
+							}
+							if(v.charAt(0) == '"') {
+								quotes[k] = v.replace(/^[^"]*"|".*/gi, "");
+							}
+						}
+					});
+					$.each(quotes, function(k, v) {
+						if(text.toLowerCase() == v.toLowerCase()) {
+							text = text.replace(text, '<span class="text-danger">' + text + '</span>');
+						}
+					});
+
+					return text;
+				}
+			};
+
 			if($.isNumeric(string)) {
 				return '<span style="color: #099;">' + string + '</span>';
 			} else if (Date.parse("some string")) {
 				return '<span style="color: #800000;">' + string + '</span>';
 			} else {
-				return $.linkify(string);
+				return $.searched_words($.linkify(string));
 			}
 		};
 
