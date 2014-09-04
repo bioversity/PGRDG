@@ -636,7 +636,7 @@
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
 										icon: "fa fa-edit",
-										title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										show_json: false,
 										content: ""
 									});
@@ -705,7 +705,7 @@
 												id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 												class: "fulltext_search",
 												icon: "fa fa-edit",
-												title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+												title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 												show_json: false,
 												content: ""
 											});
@@ -792,7 +792,7 @@
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
 										icon: "fa fa-edit",
-										title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>',
+										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										show_json: false,
 										content: ""
 									});
@@ -880,7 +880,7 @@
 								id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 								class: "fulltext_search",
 								icon: "fa fa-edit",
-								title: '<span class="text-info">Full-text search:</span> <span style="color: #dd1144">"' + storage.get("pgrdg_cache.search.criteria.fulltext") + '"</span>' + nn,
+								title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>' + nn,
 								show_json: false,
 								content: ""
 							});
@@ -3127,11 +3127,11 @@
 			var selected_enums = [],
 			selected_enums_terms = [],
 			id = item.replace("_term", ""),
-			$item_val = $("#" + item).val(),
-			$item_label_val = $("#" + item.replace("_term", "_label")).val();
+			item_val = $("#" + item).val(),
+			item_label_val = $("#" + item.replace("_term", "_label")).val();
 
-			if($item_val !== "") { selected_enums = $item_val.split(","); }
-			if($item_label_val !== "") { selected_enums_terms = $item_label_val.split(","); }
+			if(item_val !== "") { selected_enums = item_val.split(","); }
+			if(item_label_val !== "") { selected_enums_terms = item_label_val.split(","); }
 			if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
 				selected_enums.push(term);
 				selected_enums_terms.push(label);
@@ -3142,7 +3142,7 @@
 			$("#" + item).val(selected_enums);
 			$("#" + item.replace("_term", "_label")).val(selected_enums_terms);
 			$("#" + id).attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
-			$("#" +id + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums_terms.length + " items selected" : ((selected_enums_terms.length === 0) ? "Choose..." : selected_enums_terms.join(", "))));
+			$("#" + id + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums_terms.length + " items selected" : ((selected_enums_terms.length === 0) ? "Choose..." : selected_enums_terms.join(", "))));
 		};
 
 		/**

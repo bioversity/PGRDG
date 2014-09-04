@@ -1409,7 +1409,7 @@ $(document).ready(function() {
 		}
 	});
 
-	if(current_path !== "Advanced_search") {
+	if(current_path !== "Search" && current_path !== "Advanced_search") {
 		if(storage.isSet("pgrdg_cache.search.criteria") && $.obj_len(storage.get("pgrdg_cache.search.criteria")) > 0) {
 			var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
 			breadcrumb_ol = $('<ol class="breadcrumb">'),
@@ -1419,5 +1419,8 @@ $(document).ready(function() {
 			breadcrumb_ol.appendTo(breadcrumb_div);
 			$("section.container").prepend(breadcrumb_div);
 		}
+	}
+	if(current_path == "Search" && $("#breadcrumb").length > 0) {
+		$("#breadcrumb .breadcrumb").prepend('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
 	}
 });

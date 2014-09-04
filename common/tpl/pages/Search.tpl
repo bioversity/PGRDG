@@ -25,14 +25,14 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
         <?php
 } else {
         ?>
+        <div id="breadcrumb" style="left: 0;">
+                <ol class="breadcrumb">
+                        <li id="goto_summary_btn"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
+                        <li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>
+                        <li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> <span class="txt">Map<span></li>
+                </ol>
+        </div>
         <div id="se_p">
-                <div id="breadcrumb">
-                        <ol class="breadcrumb">
-                                <li id="goto_summary_btn"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
-                                <li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>
-                                <li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> <span class="txt">Map<span></li>
-                        </ol>
-                </div>
                 <div id="se_results">
                         <form method="get" action="" onsubmit="if($('#search_form').val().length < 3) { return false; }">
                                 <div class="input-group">
