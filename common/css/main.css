@@ -51,7 +51,7 @@ a:focus sup {
 
 #loader:before {
 	color: rgba(255, 255, 255, 0);
-	content: "Extracting data...";
+	content: "Processing data...";
 	font-size: 2em;
 	height: 100%;
 	left: 0;
@@ -67,6 +67,9 @@ a:focus sup {
 	-moz-animation: pulseFade 1s infinite;
 	-o-animation: pulseFade 1s infinite;
 	animation: pulseFade 1s infinite;
+}
+#loader.system:before {
+	content: "Loading interface";
 }
 	@-webkit-keyframes pulseFade {
 		0%   { color: rgba(255, 255, 255, 0.6); }
@@ -102,7 +105,7 @@ a:focus sup {
 #loader div {
 	background-color: rgba(0, 255, 120, 0.5);
 	border-radius: 4px;
-	box-shadow: 0 0 15px 1px rgba(0, 255, 120, 0.898);
+	box-shadow: 0 0 15px 1px rgba(0, 255, 120, 0.9);
 	height: 2px;
 	left: 51%;
 	position: absolute;
@@ -115,6 +118,17 @@ a:focus sup {
 	-o-animation: moveRight 3s infinite;
 	animation: moveRight 3s infinite;
 }
+#loader.system div {
+	height: 2px;
+	left: 0%;
+	background-color: rgba(230, 255, 0, 0.5);
+	box-shadow: 0 0 15px 1px rgba(230, 255, 0, 0.9);
+
+	-webkit-animation: moveAround 3s infinite;
+	-moz-animation: moveAround 3s infinite;
+	-o-animation: moveAround 3s infinite;
+	animation: moveAround 3s infinite;
+}
 #loader div + div {
 	left: 40%;
 
@@ -123,6 +137,42 @@ a:focus sup {
 	-o-animation: moveLeft 3s infinite;
 	animation: moveLeft 3s infinite;
 }
+#loader.system div + div {
+	height: 5px;
+	left: 99.9%;
+	top: 99.9%;
+	background-color: rgba(230, 255, 0, 0.5);
+	box-shadow: 0 0 15px 1px rgba(230, 255, 0, 0.9);
+
+	-webkit-animation: moveAround2 3s infinite;
+	-moz-animation: moveAround2 3s infinite;
+	-o-animation: moveAround2 3s infinite;
+	animation: moveAround2 3s infinite;
+}
+
+	@-moz-keyframes moveAround {
+		0%   { left: 0%; }
+		25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+		25.5%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+		50%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
+		50.5%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
+		75%   { height: 2px; width: 10%; left: -9.9%; top: 99.9%; }
+		75.5%   { height: 10%; width: 2px; left: 0%; top: 99.9%; }
+		99.5%   { height: 10%; width: 2px; left: 0%; top: -9.9%; }
+		100%   { height: 2px; width: 10%; left: 0%; top: 0%; }
+	}
+	@-moz-keyframes moveAround2 {
+		0%   { height: 5px; width: 10%; left: 99.9%; top: 99.9%; }
+		25%   { height: 5px; width: 10%; left: -9.9%; top: 99.9%; }
+		25.5%   { height: 10%; width: 5px; left: 0%; top: 99.9%; }
+		50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
+		50.5%   { height: 5px; width: 10%; left: 0%; top: 0%; }
+		75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
+		75.5%   { height: 10%; width: 5px; left: 99.9%; top: 0%; }
+		99.5%   { height: 10%; width: 5px; left: 99.9%; top: 99.9%; }
+		100%   { height: 10%; width: 5px; left: 99.9%; top: 99.9%; }
+	}
+
 	@-webkit-keyframes moveRight {
 		0%   { left: 50%; }
 		15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }

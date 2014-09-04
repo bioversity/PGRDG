@@ -35,7 +35,7 @@
                                         </div>
                                 </div>
                                 <div class="btn-group pull-right">
-                                        <a href="javascript: void(0);" onclick="$.reset_ordering();" id="summary_order_cancel_btn" class="btn btn-default-grey disabled"><span class="ionicons ion-trash-b"></span>Reset all</a>
+                                        <a href="javascript: void(0);" onclick="$.reset_ordering();" id="summary_order_cancel_btn" class="btn btn-default-grey disabled"><span class="ionicons ion-trash-b"></span>Remove all</a>
                                         <a href="javascript: void(0);" onclick="$.exec_ordering();" id="summary_order_reorder_btn" class="btn btn-orange disabled">Group <span class="fa fa-indent"></span></a>
                                 </div>
                         </div>

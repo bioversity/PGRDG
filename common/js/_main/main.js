@@ -95,6 +95,11 @@
 			if(typeof(opt.loaderType) == "string") {
 				if(!$("#marker_content").is(":visible")) {
 					if(!$("#apprise.service_coffee").is(":visible")) {
+						if(opt.storage_group == "local" || opt.storage_group == "ask") {
+							$("#loader").addClass("system");
+						} else {
+							$("#loader").removeClass("system");
+						}
 						$("#loader").fadeIn(0);
 						// if($("#apprise.ask_service").length === 0) {
 						// 	apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});

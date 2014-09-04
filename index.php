@@ -32,7 +32,7 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
 	<body>
-		<div id="loader">
+		<div id="loader" class="system">
 			<div></div>
 			<div></div>
 		</div>
