@@ -43,8 +43,13 @@ a > span.fa,
 a > span.ionicons {
 	margin-right: 5px;
 }
+a > span.fa.text-center,
+a > span.ionicons.text-center {
+	margin: 0;
+}
+
 a sup,
-a:hover su	p,
+a:hover sup,
 a:focus sup {
 	text-decoration: none !important;
 }
@@ -293,7 +298,7 @@ header > div.container {
 header {
 	position: fixed;
 	width: 100%;
-	z-index: 2;
+	z-index: 3;
 	background-image: linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: -moz-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
 	background-image: webkit-linear-gradient(to top, #f9f9f9, #fff, #fff) !important;
@@ -616,7 +621,7 @@ section.container {
 	position: fixed;
 	top: 75px;
 	width: 100%;
-	z-index: 1;
+	z-index: 2;
 }
 
 #breadcrumb .breadcrumb {

@@ -259,6 +259,46 @@
 		}
 	};
 
+	/**
+	 *
+	 */
+	$.show_storage_data = function(subject) {
+		$.recurse_obj = function(obj) {
+			console.log(obj);
+			var ul = $('<ul>'),
+			li = $('<li>');
+
+			if($.type(obj) == "obj") {
+				$.each(obj, function(k, v) {
+					li.html(k);
+					// if($.type(v) == "object") {
+					// 	li.append($.recurse_obj(v));
+					// } else if($.type(v) == "array"){
+					// 	li.append(v.split(", "));
+					// } else {
+					// 	li.append(v);
+					// }
+					ul.append(li);
+				});
+			} else if($.type(obj) == "array") {
+				li.html(obj.split(", "));
+				ul.append(li);
+			} else {
+				li.html(obj);
+				ul.append(li);
+			}
+		};
+		if(storage.isSet("pgrdg_cache." + subject) && $.obj_len(storage.get("pgrdg_cache." + subject)) > 0) {
+			$("#saved_history").html("");
+			$.each(storage.get("pgrdg_cache." + subject), function(k, v) {
+				// if(k == "forms") {
+				// 	//$("#saved_history").append('<h5>' + $.ucfirst(k) + '</h5>');
+				// })
+				$("#saved_history").append('<h4>' + $.ucfirst(k) + '</h4><p>' + $.recurse_obj(v) + '</p>');
+			});
+			$("#storage").modal("show");
+		}
+	};
 
 	/**
 	* Load site configurations
@@ -554,8 +594,9 @@
 						break;
 				}
 			}
-			$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
-				var item_id = $(this).attr("id"),
+			$.each($("#breadcrumb .breadcrumb li:visible:not(:last-child)"), function(i, v) {
+				var $this = $(v);
+				var item_id = $this.attr("id"),
 				ttext = item_id.replace("goto_", "").replace("_btn", "");
 
 				if(hash.length > 0) {
@@ -606,9 +647,8 @@
 	};
 
 	/**
-	 * Remove storage checking before if exists or is empty
+	 * Remove given storage checking before if exists or is empty
 	 */
-
 	$.remove_storage = function(name) {
 		/*
 		var a = "",
@@ -630,6 +670,18 @@
 			storage.remove(name);
 		}
 	};
+
+	/**
+	 * Reset the entire storage and reload current page
+	 */
+	$.clear_history = function() {
+		apprise("Are you sure you want to clear the history?", {title: "Warning", icon: "warning", confirm: true}, function(r) {
+			if(r) {
+				storage.remove("pgrdg_cachesearch.criteria");
+				location.reload();
+			}
+		});
+	}
 
 	/**
 	 * Check the latest version on Github an compare it with its own.
@@ -991,7 +1043,7 @@
 				// }
 
 				// window.onbeforeunload = function() {
-				// 	apprise("Are you sure that you want to leave this page?", {"confirm": "true"}, function(r) {
+				// 	apprise("Are you sure you want to leave this page?", {"confirm": "true"}, function(r) {
 				// 		if(r) {
 				// 			return false;
 				// 		}
@@ -999,7 +1051,7 @@
 				// };
 				/*
 				window.onbeforeunload = function() {
-					return "You have unsaved changes\nAre you sure that you want to leave this page?";
+					return "You have unsaved changes\nAre you sure you want to leave this page?";
 				};
 				*/
 				$("#personal_form").generate_personal_form(user_data);
@@ -1417,15 +1469,28 @@ $(document).ready(function() {
 		}
 	});
 
-	if(current_path !== "Search" && current_path !== "Advanced_search") {
-		if(storage.isSet("pgrdg_cache.search.criteria") && $.obj_len(storage.get("pgrdg_cache.search.criteria")) > 0) {
-			var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
-			breadcrumb_ol = $('<ol class="breadcrumb">'),
-			breadcrumb_li = $('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
+	if(storage.isSet("pgrdg_cache.search.criteria") && $.obj_len(storage.get("pgrdg_cache.search.criteria")) > 0) {
+		if($("#breadcrumb").length > 0) {
+			var li_no_divider = $('<li class="no-divider pull-right">'),
+			btn_group = $('<div class="btn-group">'),
+			a_show_history = $('<a class="btn btn-xs btn-default-grey disabled" href="javascript: void(0);" onclick="$.show_storage_data(\'search.criteria\');" title="Manage search history"><span class="fa fa-fw fa-list text-center"></span></a>'),
+			a_reset_history = $('<a class="btn btn-xs btn-default-grey" href="javascript: void(0);" onclick="$.clear_history();" title="Reset all search history"><span class="fa fa-fw fa-times text-center text-danger"></span></a>');
 
-			breadcrumb_li.appendTo(breadcrumb_ol);
-			breadcrumb_ol.appendTo(breadcrumb_div);
-			$("section.container").prepend(breadcrumb_div);
+			a_show_history.appendTo(btn_group);
+			a_reset_history.appendTo(btn_group);
+			btn_group.appendTo(li_no_divider);
+			$("#breadcrumb .breadcrumb").append(li_no_divider);
+		}
+		if(current_path !== "Search" && current_path !== "Advanced_search") {
+			if($("#breadcrumb").length === 0) {
+				var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
+				breadcrumb_ol = $('<ol class="breadcrumb">'),
+				breadcrumb_li = $('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
+
+				breadcrumb_li.appendTo(breadcrumb_ol);
+				breadcrumb_ol.appendTo(breadcrumb_div);
+				$("section.container").prepend(breadcrumb_div);
+			}
 		}
 	}
 	if(current_path == "Search" && $("#breadcrumb").length > 0) {
