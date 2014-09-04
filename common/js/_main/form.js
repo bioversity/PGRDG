@@ -3113,7 +3113,7 @@
 				checkbox_inline += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
-				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="nav nav-list tree"></ul></li>';
+				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="tree"></ul></li>';
 			} else {
 				content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
 			}

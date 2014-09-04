@@ -757,6 +757,21 @@ div.back_indent a {
   position: absolute;
   right: 40px;
 }
+ul.tree.open {
+	margin-left: 23px;
+	border-bottom: #ddd 1px solid;
+	padding: 0;
+}
+.tree.open li {
+	margin: 0;
+	overflow: hidden;
+	padding: 0;
+	text-overflow: ellipsis;
+	white-space: pre;
+}
+.tree.open .checkbox {
+	margin: 5px 0;
+}
 span.info {
 	color: #829ea5;
 	text-decoration: underline;
