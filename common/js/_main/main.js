@@ -537,13 +537,21 @@
 				}
 			} else {
 				// Remove all other pages if user returns to the forms page
-				if(hash.toLowerCase() == "forms") {
-					$.remove_breadcrumb("summary");
-					$.reset_contents("summary", true);
-					$.remove_breadcrumb("results");
-					$.reset_contents("results", true);
-					$.remove_breadcrumb("map");
-					$.reset_contents("map", true);
+				switch(hash.toLowerCase()) {
+					case "forms":
+						$.remove_breadcrumb("summary");
+						$.reset_contents("summary", true);
+						$.remove_breadcrumb("results");
+						$.reset_contents("results", true);
+						$.remove_breadcrumb("map");
+						$.reset_contents("map", true);
+						break;
+					case "summary":
+						$.remove_breadcrumb("results");
+						$.reset_contents("results", true);
+						$.remove_breadcrumb("map");
+						$.reset_contents("map", true);
+						break;
 				}
 			}
 			$.each($("#breadcrumb .breadcrumb li:visible"), function(i, v) {
