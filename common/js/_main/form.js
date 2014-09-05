@@ -572,6 +572,7 @@
 										forms: $(this).find("form").serializeObject(),
 										active_forms: active_forms
 									});
+									$.breadcrumb_right_buttons();
 								});
 							} else {
 								storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
@@ -580,6 +581,7 @@
 									forms: {},
 									active_forms: active_forms
 								});
+								$.breadcrumb_right_buttons();
 							}
 						});
 						$("#goto_results_btn, #goto_map_btn").hide();
@@ -592,7 +594,7 @@
 			}
 		}
 		$.manage_url("Forms");
-
+		$.breadcrumb_right_buttons();
 		var is_autocompleted = false;
 
 		switch(type) {
@@ -611,6 +613,7 @@
 				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_PATTERN] = $("#main_search").val();
 				kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR] = ["$EQ"];
 				$.execTraitAutocomplete(kAPI, function(response) {
+					$.breadcrumb_right_buttons();
 					if($("#accordion > #" + response.id).length === 0) {
 						var the_title = "";
 						if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
@@ -987,6 +990,7 @@
 										forms: $(this).find("form").serializeObject(),
 										active_forms: active_forms
 									});
+									$.breadcrumb_right_buttons();
 								});
 							});
 
@@ -1106,11 +1110,13 @@
 		}).on("typeahead:selected", function(e){
 			// Autocomplete
 			storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "autocomplete"});
+			$.breadcrumb_right_buttons();
 			is_autocompleted = $.exec_autocomplete("autocomplete");
 		}).on("typeahead:_changed", function(e) {
 			// User input
-			if(!is_autocompleted && $("#main_search").val().length > 3) {
+			if(!is_autocompleted) {
 				storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
+				$.breadcrumb_right_buttons();
 				$.exec_autocomplete("input");
 			}
 		}).bind("keydown", "alt+left", function(e) {
@@ -1301,6 +1307,7 @@
 						});
 					}
 				});
+				$.breadcrumb_right_buttons();
 				is_autocompleted = true;
 			}
 			return false;
@@ -1318,7 +1325,8 @@
 		apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				if($this.closest(".panel").hasClass("fulltext_search")) {
-					storage.set("pgrdg_cache.search.criteria.fulltext", "")
+					storage.set("pgrdg_cache.search.criteria.fulltext", "");
+					$.breadcrumb_right_buttons();
 				}
 				$($this).parents(".panel").fadeOut(300, function() {
 					$(this).remove(); $("#main_search").focus();
@@ -1683,7 +1691,6 @@
 					}
 				}
 			});
-
 		};
 
 		/**
@@ -1919,6 +1926,7 @@
 			}
 
 			storage.set("pgrdg_cache.search.criteria.grouping." + storage_id, selected);
+			$.breadcrumb_right_buttons();
 		};
 
 
@@ -2124,6 +2132,7 @@
 
 					selected.push(item_id);
 					storage.set("pgrdg_cache.search.criteria.grouping." + storage_id, selected);
+					$.breadcrumb_right_buttons();
 				});
 				$.update_ordering();
 			};
@@ -2220,7 +2229,7 @@
 			};
 
 			/**
-			* Update the ordering in the storage
+			* Update the ordering on the storage
 			*/
 			$.update_ordering = function() {
 				var st = [];
@@ -2235,8 +2244,8 @@
 					st.push({"id": stid, "tag": stag, "name": sname, "info": sinfo, "contains": scontains, "storage": ststorage_id});
 				});
 				storage.set("pgrdg_cache.search.criteria.grouping._ordering", st);
-
 				$.update_ordering_on_the_stage(st);
+				$.breadcrumb_right_buttons();
 			};
 
 			/**
