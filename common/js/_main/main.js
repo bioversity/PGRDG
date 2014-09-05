@@ -52,16 +52,16 @@
 		var param, param_nob64, verbose_param, object_param = {};
 		if(typeof(options) == "string") {
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-			param_nob64 = "http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-			verbose_param = "http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + " BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+			param_nob64 = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+			verbose_param = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + " BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 
 			object_param[kAPI_REQUEST_OPERATION] = options;
 			object_param[kAPI_REQUEST_LANGUAGE] = lang;
 			object_param[kAPI_REQUEST_PARAMETERS] = {};
 		} else {
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
-			param_nob64 = "http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
-			verbose_param = "http://pgrdg.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]) + "))";
+			param_nob64 = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
+			verbose_param = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]) + "))";
 
 			object_param[kAPI_REQUEST_OPERATION] = opt[kAPI_REQUEST_OPERATION];
 			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
@@ -78,12 +78,12 @@
 				if(developer_mode) {
 					alert("There's an error in the response:<br />See the console for more informations");
 					console.group("The Service has returned an error");
-						console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 						console.warn(param);
 						console.warn(param_nob64);
 						console.warn(verbose_param);
 						console.warn(object_param);
 						console.dir(response);
+						console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 					console.groupEnd();
 				}
 
@@ -184,12 +184,12 @@
 							console.warn("!!!", param_nob64, response);
 							alert("There's an error in the response:<br />See the console for more informations");
 							console.group("The Service has returned an error");
-								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 								console.warn(param);
 								console.warn(param_nob64);
 								console.warn(verbose_param);
 								console.warn(object_param);
 								console.dir(response);
+								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 							console.groupEnd();
 						}
 					}
@@ -205,12 +205,12 @@
 						if(developer_mode) {
 							console.warn("!!!", response);
 							console.group("The Service has returned an error");
-								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 								console.warn(param);
 								console.warn(param_nob64);
 								console.warn(verbose_param);
 								console.warn(object_param);
 								console.dir(response);
+								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 							console.groupEnd();
 						}
 						$("#loader").fadeOut(0);
@@ -320,7 +320,7 @@
 				url: "common/include/conf/site.json",
 				dataType: "json",
 				success: function(site) {
-					if(site.maintainance === true) {
+					if(site.maintainance) {
 						$.service_coffee({
 							message: "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over.",
 							title: "Under maintainance",

@@ -68,7 +68,7 @@
 
 			if($.browser_cookie_status()) {
 				if(storage.isEmpty("pgrdg_cache.local." + $.md5(name))) {
-					// http://pgrdg.grinfo.private/Service.php?op={name}
+					// http://gateway.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
 						storage.set("pgrdg_cache.local." + $.md5(name), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": name, "response": system_constants});
 						$.get_operators_list(system_constants, function(oprts){
@@ -1180,7 +1180,9 @@
 				}
 			}
 		});
-		$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
+		if($("#autocomplete").length === 0) {
+			$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
+		}
 
 		remoteAutocomplete = new Bloodhound({
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
@@ -3125,7 +3127,7 @@
 
 					$form.find("#" + id + "_label").val(selected_enums.join(","));
 					$form.find("#" + id + "_term").val(selected_enums_term.join(","));
-					
+
 					$form.find("a.treeselect").attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
 					$form.find("a.treeselect > span:first-child").text(((selected_enums.length > 1) ? selected_enums.length + " items selected" : ((selected_enums.length === 0) ? "Choose..." : selected_enums.join(", "))));
 				} else {

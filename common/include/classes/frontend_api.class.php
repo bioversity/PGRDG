@@ -80,7 +80,7 @@ class frontend_api {
 		if(base64_decode($base64_url, true)) {
 			$service_conf = parse_ini_file("../common/include/conf/service.ini");
 			$service_url = $service_conf["url"] . "/Service.php";
-			// $service_url = "../pgrdg.grinfo.private/Service.php";
+			// $service_url = "../gateway.grinfo.private/Service.php";
 			$url = str_replace("{SERVICE_URL}", $service_url, base64_decode(rawurldecode($base64_url)));
 		} else {
 			$url = $base64_url;
