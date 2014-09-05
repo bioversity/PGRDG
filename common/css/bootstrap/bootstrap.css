@@ -531,6 +531,12 @@ a.text-warning:hover {
 a.text-danger:hover {
   color: #843534;
 }
+.text-default {
+  color: #333;
+}
+a.text-default:hover {
+  color: #666;
+}
 .bg-primary {
   color: #fff;
   background-color: #3c9332;
@@ -1779,11 +1785,11 @@ input[type="date"] {
 .radio-inline,
 .checkbox-inline {
   display: inline-block;
-  padding-left: 20px;
+  /*padding-left: 20px;*/
   margin-bottom: 0;
   font-weight: normal;
   vertical-align: middle;
-  cursor: pointer;
+  cursor: default;
 }
 .radio-inline + .radio-inline,
 .checkbox-inline + .checkbox-inline {

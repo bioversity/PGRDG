@@ -612,6 +612,7 @@ section.container {
 	padding: 75px 0 0 0;
 	position: fixed;
 	width: 100%;
+	background-color: #fff;
 }
 
 #breadcrumb {
@@ -758,14 +759,17 @@ div.back_indent a {
 	padding-right: 20px;
 }
 .btn.treeselect .caret {
-  margin-top: 0.6em;
-  position: absolute;
-  right: 40px;
+	margin-top: 0.6em;
+	position: absolute;
+	right: 40px;
 }
 ul.tree.open {
-	margin-left: 23px;
-	border-bottom: #ddd 1px solid;
-	padding: 0;
+  border-bottom: 1px dashed #ddd;
+  border-left: 1px dashed #ddd;
+  margin-bottom: 0;
+  margin-left: 9px;
+  margin-top: 5px;
+  padding: 0 0 10px 16px;
 }
 .tree.open li {
 	margin: 0;
@@ -773,9 +777,18 @@ ul.tree.open {
 	padding: 0;
 	text-overflow: ellipsis;
 	white-space: pre;
+	line-height: 0;
 }
+.tree.open li a.btn.disabled {
+	padding: 2px;
+}
+
 .tree.open .checkbox {
-	margin: 5px 0;
+	margin: 0 0 5px;
+	padding-left: 5px;
+}
+.list-group .checkbox {
+	padding-left: 5px;
 }
 span.info {
 	color: #829ea5;
@@ -2059,7 +2072,7 @@ label.checkbox {
 }
 #accordion .list-group-item,
 .popover .list-group-item {
-	padding: 0;
+	padding: 5px 0;
 	border: 0px none;
 }
 #accordion .list-group-item-heading,

@@ -307,7 +307,7 @@
 		treeselect_id = $(this).find("a.treeselect").attr("id"),
 		treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
 		//treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
-		treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
+		treeselect_content = '<div class="dropdown-content"><ul class="list-group"></ul></div>';
 
 		$item.addClass("disabled");
 		$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
@@ -325,7 +325,7 @@
 
 		$.ask_to_service(kapi_obj, function(res) {
 			$.each(res[kAPI_RESPONSE_RESULTS], function(k, v) {
-				$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $(this)));
+				$form.find(".dropdown-menu .dropdown-content > ul").append($.create_tree(v, $item));
 			});
 			$item.removeClass("disabled");
 			$form.find(".dropdown-toggle").dropdown("toggle");
@@ -1347,6 +1347,7 @@
 					$.remove_storage("pgrdg_cache.search.criteria.traitAutocomplete");
 					$.remove_storage("pgrdg_cache.search.criteria.forms." + search_id);
 					$.remove_storage("pgrdg_cache.search.criteria.selected_forms." + search_id);
+					$.remove_storage("pgrdg_cache.search.criteria.selected_enums");
 					$.remove_storage("pgrdg_cache.search.criteria.local.forms_data." + search_id);
 				});
 			}
@@ -1486,6 +1487,7 @@
 			if(content == "forms") {
 				$.remove_storage("pgrdg_cache.search.criteria.forms");
 				$.remove_storage("pgrdg_cache.search.criteria.selected_forms");
+				$.remove_storage("pgrdg_cache.search.criteria.selected_enums");
 				$.remove_storage("pgrdg_cache.search.criteria.fulltext");
 				$.remove_storage("pgrdg_cache.search.criteria.traitAutocomplete");
 				//$.remove_storage("pgrdg_cache.search.criteria.grouping");
@@ -3107,24 +3109,43 @@
 			};
 
 			var $panel = item,
-			panel_input_term_id = $panel.find('input[name="term"]').attr("id"),
+			panel_input_term_id = $panel.attr("id") + "_term",
+			$form = $panel.closest("form"),
+			item_id = $form.closest(".panel-success").prev().attr("id"),
+			id = $form.find("input.reference").attr("data-id"),
 			content = "",
 			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></span></a>',
+			checked = false;
+
+			if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + item_id) && $.obj_len(storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id)) > 0) {
+				if($.inArray(v.label, storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label")) !== -1) {
+					checked = true;
+					selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label");
+					selected_enums_term = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".term");
+
+					$form.find("#" + id + "_label").val(selected_enums.join(","));
+					$form.find("#" + id + "_term").val(selected_enums_term.join(","));
+					
+					$form.find("a.treeselect").attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
+					$form.find("a.treeselect > span:first-child").text(((selected_enums.length > 1) ? selected_enums.length + " items selected" : ((selected_enums.length === 0) ? "Choose..." : selected_enums.join(", "))));
+				} else {
+					checked = false;
+				}
+			}
 			checkbox = '<div class="checkbox">';
-				checkbox += '<label class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'text-muted' : '') + '">';
-				checkbox += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" ';
-					if(v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) {
-						checkbox += 'disabled="disabled"';
-					}
-				checkbox += ' /> {LABEL}</label></div>';
+				checkbox += '<a href="javascript: void(0);" class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'btn text-muted disabled' : '') + '" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + $.rawurlencode(JSON.stringify(v)) + '\', \'' + panel_input_term_id + '\');">';
+				checkbox += '<span class="fa"><big class="fa ' + ((checked) ? "fa-check-square-o" : "fa-square-o") + '"></big></span> {LABEL}</a></div>';
+
+
 			var checkbox_inline = '<div class="checkbox-inline">';
-				checkbox_inline += '<label>';
-				checkbox_inline += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\');" /> {LABEL}</label></div>';
+				checkbox_inline += '<a href="javascript: void(0);" class="text-default" data-count="' + v.count + '" data-value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + $.rawurlencode(JSON.stringify(v)) + '\', \'' + panel_input_term_id + '\');"><span class="fa"><big class="fa fa-fw ' + ((checked) ? "fa-check-square-o" : "fa-square-o") + '"></big></span> {LABEL}</a></div>';
+				// checkbox_inline += '<label>';
+				// checkbox_inline += '<input type="checkbox" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + v.term + '\', \'' + v.label + '\', \'' + panel_input_term_id + '\', \'' + $.md5(v.term) + '_checkbox\');" /> {LABEL}</label></div>';
 
 			if (v.children !== undefined && v.children > 0) {
-				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="tree"></ul></li>';
+				content += '<li class="list-group-item">' + triangle + '<span title="' + $.get_title(v) + '"> ' + ((v.value !== undefined && v.value) ? checkbox_inline.replace("{LABEL}", v.label) : '<a class="btn btn-text disabled" href="javascript: void(0);" onclick="$.get_node(\'' + v.node + '\'); return false;">' + v.label + '</a>') + '</span><ul id="node_' + v.node + '" style="display: none;" class="tree"></ul></li>';
 			} else {
-				content += '<li class="list-group-item" value="' + v.term + '" title="' + $.get_title(v) + '">' + ((v.value !== undefined && v.value) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn-text" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
+				content += '<li class="" value="' + v.term + '" title="' + $.get_title(v) + '"> ' + ((v.value !== undefined && v.value) ? checkbox.replace("{LABEL}", v.label) : '<a class="btn btn-text disabled" href="javascript: void(0);">' + v.label + '</a>') + '</li>';
 			}
 			return content;
 		};
@@ -3132,26 +3153,109 @@
 		/**
 		* Manage checkbox tree
 		*/
-		$.manage_tree_checkbox = function(term, label, item) {
-			var selected_enums = [],
-			selected_enums_terms = [],
-			id = item.replace("_term", ""),
-			item_val = $("#" + item).val(),
-			item_label_val = $("#" + item.replace("_term", "_label")).val();
+		$.manage_tree_checkbox = function(obj, panel) {
+			// Disabled function (too low -> crash the user browser)
+			// Keep warning when call
+			$.iterate_childrens = function(item) {
+				var $form = $this.closest("form"),
+				label_input = $form.find("input.reference").attr("data-id"),
+				$label_input_label = $("#" + label_input + "_label"),
+				$label_input_term = $("#" + label_input + "_term"),
+				selected_enums, selected_enums_term;
+				// Get the storage
+				if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + label_input) && $.obj_len("pgrdg_cache.search.criteria.selected_enums." + label_input) > 0) {
+					selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + label_input + ".label");
+					selected_enums_term = storage.get("pgrdg_cache.search.criteria.selected_enums." + label_input + ".term");
+				} else {
+					selected_enums = [];
+					selected_enums_term = [];
+				}
 
-			if(item_val !== "") { selected_enums = item_val.split(","); }
-			if(item_label_val !== "") { selected_enums_terms = item_label_val.split(","); }
-			if($("#" + $.md5(term) + "_checkbox").is(":checked")) {
-				selected_enums.push(term);
-				selected_enums_terms.push(label);
-			} else {
-				selected_enums.splice($.inArray(term, selected_enums), 1);
-				selected_enums_terms.splice($.inArray(label, selected_enums_terms), 1);
+				$("#loader").addClass("system").fadeIn(300, function() {
+					var $this = item;
+
+					$.each($this.find("ul li"), function(k, v) {
+						var $li = $(this);
+
+						if($li.find("a.tree-toggler").length > 0) {
+							$li.find("a.tree-toggler").click();
+						}
+						if($li.find("span > div > a:not(.disabled) > big").hasClass("fa-square-o")) {
+							selected_enums.push(v.label);
+							selected_enums_term.push(v.term);
+							$this.addClass("checked").find("big").removeClass("fa-square-o").addClass("fa-check-square-o");
+
+							// Set the storage
+							storage.set("pgrdg_cache.search.criteria.selected_enums." + label_input, {label: selected_enums, term: selected_enums_term});
+							$.iterate_childrens($this.closest("li"));
+						} else {
+							selected_enums.splice($.inArray(v.label, selected_enums), 1);
+							selected_enums_term.splice($.inArray(v.term, selected_enums_term), 1);
+
+							// Set the storage
+							storage.set("pgrdg_cache.search.criteria.selected_enums." + label_input, {label: selected_enums, term: selected_enums_term});
+						}
+					});
+					setTimeout(function(){
+						$("#loader").fadeOut(0).removeClass("system");
+					}, 1000);
+
+				});
 			}
-			$("#" + item).val(selected_enums);
-			$("#" + item.replace("_term", "_label")).val(selected_enums_terms);
-			$("#" + id).attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
-			$("#" + id + " span:first-child").text(((selected_enums_terms.length > 1) ? selected_enums_terms.length + " items selected" : ((selected_enums_terms.length === 0) ? "Choose..." : selected_enums_terms.join(", "))));
+
+			var i = 0,
+			v = JSON.parse($.rawurldecode(obj)),
+			id = $.md5(v.term),
+			$this = $("#" + id + "_checkbox"),
+			$form = $this.closest("form"),
+			item_id = $form.closest(".panel-success").prev().attr("id"),
+			label_input = $form.find("input.reference").attr("data-id"),
+			$label_input_label = $("#" + label_input + "_label"),
+			$label_input_term = $("#" + label_input + "_term"),
+			selected_enums, selected_enums_term;
+			// Get the storage
+			if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + item_id) && $.obj_len("pgrdg_cache.search.criteria.selected_enums." + item_id) > 0) {
+				selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label");
+				selected_enums_term = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".term");
+			} else {
+				selected_enums = [];
+				selected_enums_term = [];
+			}
+
+			if($this.find("big").hasClass("fa-square-o")) {
+				selected_enums.push(v.label);
+				selected_enums_term.push(v.term);
+				$this.addClass("checked").find("big").removeClass("fa-square-o").addClass("fa-check-square-o");
+
+				$.each($this.closest("li").find("ul > li a > big.fa-check-square-o"), function(index) {
+					i++;
+				});
+				if(v.node !== undefined && i === 0) {
+					$.get_node(v.node);
+				}
+
+				// Set the storage
+				storage.set("pgrdg_cache.search.criteria.selected_enums." + item_id, {label: selected_enums, term: selected_enums_term});
+			} else {
+				selected_enums.splice($.inArray(v.label, selected_enums), 1);
+				selected_enums_term.splice($.inArray(v.term, selected_enums_term), 1);
+				$this.removeClass("checked").find("big").removeClass("fa-check-square-o").addClass("fa-square-o");
+
+				$.each($this.closest("li").find("ul > li a > big.fa-check-square-o"), function(index) {
+					i++;
+				});
+				if(v.node !== undefined && i === 0 && !$this.find("big").hasClass("fa-check-square-o")) {
+					$.get_node(v.node);
+				}
+				// Set the storage
+				storage.set("pgrdg_cache.search.criteria.selected_enums." + item_id, {label: selected_enums, term: selected_enums_term});
+			}
+
+			// $this.val(selected_enums);
+			$label_input_label.val(selected_enums);
+			$label_input_term.val(selected_enums_term);
+			$form.find("a.treeselect").attr("title", selected_enums.join(", ")).attr("data-title", selected_enums.join(", ")).tooltip();
+			$form.find("a.treeselect > span:first-child").text(((selected_enums.length > 1) ? selected_enums.length + " items selected" : ((selected_enums.length === 0) ? "Choose..." : selected_enums.join(", "))));
 		};
 
 		/**
@@ -3196,7 +3300,7 @@
 			if (jQuery.type(callback) == "function") {
 				callback.call(this);
 			}
-			return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input type="hidden" id="' + options.id + '_label" value="" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
+			return '<input type="hidden" data-id="' + options.id + '" class="reference" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_ENUM + '" /><input type="hidden" id="' + options.id + '_label" value="" /><input id="' + options.id + '_term" type="hidden" name="' + kAPI_RESULT_ENUM_TERM + '" value="" />' + select;
 		};
 
 
