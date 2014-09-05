@@ -721,7 +721,11 @@
 		apprise("Are you sure you want to clear all searches?", {title: "Warning", icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				storage.remove("pgrdg_cache.search.criteria");
-				document.location.reload();
+				if(current_path == "Search" && $.obj_len(query) > 0) {
+					window.location.href = "./Search";
+				} else {
+					document.location.reload();
+				}
 			}
 		});
 	}
