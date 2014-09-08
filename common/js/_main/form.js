@@ -2537,19 +2537,27 @@
 						}
 					});
 					$.each(quotes, function(k, v) {
+						console.log(v);
+						console.warn(text.toLowerCase())
+						//if (v.match(re)) {
+						//	text = text.replace(text, '<span class="text-danger">' + text + '</span>');
+						//}
+					//console.warn(v, text);
 						if(text.toLowerCase() == v.toLowerCase()) {
 							text = text.replace(text, '<span class="text-danger">' + text + '</span>');
 						}
 					});
 
 					return text;
+				} else {
+					return text;
 				}
 			};
 
 			if($.isNumeric(string)) {
 				return '<span style="color: #099;">' + string + '</span>';
-			} else if (Date.parse("some string")) {
-				return '<span style="color: #800000;">' + string + '</span>';
+			} else if (Date.parse(string)) {
+				return '<span style="color: #7c4a4a;">' + string + '</span>';
 			} else {
 				return $.searched_words($.linkify(string));
 			}

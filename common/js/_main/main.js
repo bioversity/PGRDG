@@ -72,6 +72,13 @@
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
 				response.extra_data = opt.extra;
+				response.query = {
+					effective: param,
+					nob64: param_nob64,
+					verbose: verbose_param,
+					obj: object_param
+				};
+				
 				callback(response);
 			} else {
 				$("#loader").fadeOut(0);
@@ -122,6 +129,11 @@
 			$.cryptAjax({
 				url: "API/",
 				dataType: "json",
+				// dataFilter: function(data, type) {
+				// 	if(type !== "json") {
+				// 		return JSON.parse(data);
+				// 	}
+				// },
 				type: "POST",
 				timeout: 30000,
 				data: {
@@ -131,6 +143,13 @@
 				success: function(response) {
 					response.id = $.md5(param);
 					response.extra_data = opt.extra;
+					response.query = {
+						effective: param,
+						nob64: param_nob64,
+						verbose: verbose_param,
+						obj: object_param
+					};
+
 					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 						if(options.colour !== undefined && options.colour !== null && options.colour === true) {
 							var rgba = {r:255, g:0, b:0, a:1},
