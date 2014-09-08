@@ -14,3 +14,5 @@
 <link href="<?php print $domain; ?>/common/css/ionicons-1.4.1/css/ionicons.css" rel="stylesheet" />
 <link href="<?php print $domain; ?>/common/css/PICOL-font/css/picol.css" rel="stylesheet" />
 <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet">
+
+<link rel="search" type="application/opensearchdescription+xml" title="PGRDG" href="osd.xml" />

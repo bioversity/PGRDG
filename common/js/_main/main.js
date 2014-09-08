@@ -78,7 +78,7 @@
 					verbose: verbose_param,
 					obj: object_param
 				};
-				
+
 				callback(response);
 			} else {
 				$("#loader").fadeOut(0);
@@ -760,15 +760,19 @@
 			storage.set("pgrdg_cache.version", last_version);
 		};
 
-		$.get("https://api.github.com/repos/bioversity/PGRDG/tags", function(v){
-			last_version = v[0].name;
+		$.ajax({
+			url: "https://api.github.com/repos/bioversity/PGRDG/tags",
+			dataType: "json",
+			success: function(v){
+				last_version = v[0].name;
 
-			if(storage.isSet("pgrdg_cache.version")) {
-				if(storage.get("pgrdg_cache.version") !== last_version) {
+				if(storage.isSet("pgrdg_cache.version")) {
+					if(storage.get("pgrdg_cache.version") !== last_version) {
+						$.reset_storage(last_version);
+					}
+				} else {
 					$.reset_storage(last_version);
 				}
-			} else {
-				$.reset_storage(last_version);
 			}
 		});
 	};

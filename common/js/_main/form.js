@@ -2537,14 +2537,14 @@
 						}
 					});
 					$.each(quotes, function(k, v) {
-						console.log(v);
-						console.warn(text.toLowerCase())
-						//if (v.match(re)) {
-						//	text = text.replace(text, '<span class="text-danger">' + text + '</span>');
-						//}
-					//console.warn(v, text);
+						var ree = new RegExp(v, "gi");
+						if (text.search(ree) > -1) {
+							text = text.replace(ree, function(matched) {
+								return '<strong class="text-danger">' + matched + '</strong>';
+							});
+						}
 						if(text.toLowerCase() == v.toLowerCase()) {
-							text = text.replace(text, '<span class="text-danger">' + text + '</span>');
+							text = text.replace(text, '<strong class="text-danger">' + text + '</strong>');
 						}
 					});
 
@@ -2553,11 +2553,12 @@
 					return text;
 				}
 			};
-
+			// Is a number or a digit
 			if($.isNumeric(string)) {
 				return '<span style="color: #099;">' + string + '</span>';
+			// Is a date
 			} else if (Date.parse(string)) {
-				return '<span style="color: #7c4a4a;">' + string + '</span>';
+				return '<span style="color: #7c4a4a;">' + string + '</span> <sup class="text-muted"><span class="fa fa-clock-o"></span></sup>';
 			} else {
 				return $.searched_words($.linkify(string));
 			}
