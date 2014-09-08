@@ -718,34 +718,38 @@
         /**
          * Markers, clusters and popup
          */
-                $.add_heatmap = function(options) {
+                $.add_heatmap = function(options, heatdata) {
                         options = $.extend({
-                                radius: 30,
-                                opacity: 40,
-                                gradient: {
-                                        0.45: "rgb(0, 0, 255)",
-                                        0.55: "rgb(0, 255, 255)",
-                                        0.65: "rgb(0, 255, 0)",
-                                        0.95: "yellow",
-                                        1.0: "rgb(255, 0, 0)"
-                                }
+                                radius: 20,
+                                blur: 15,
+                                maxZoom: 17
                         });
-                        var vector = new ol.layer.Heatmap({
-                                source: new ol.source.KML({
-                                        projection: 'EPSG:3857',
-                                        url: 'http://192.168.20.208/API/?proxy=true&address=http://ol3js.org/en/master/examples/data/kml/2012_Earthquakes_Mag5.kml'
-                                }),
-                                radius: options.radius
-                        });
-                        vector.getSource().on('addfeature', function(event) {
-                                // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
-                                // standards-violating <magnitude> tag in each Placemark.  We extract it from
-                                // the Placemark's name instead.
-                                var name = event.feature.get('name');
-                                var magnitude = parseFloat(name.substr(2));
-                                event.feature.set('weight', magnitude - 5);
-                        });
-                        map.addOverlay(vector);
+                        if(heatdata === undefined) {
+                                heatdata = [
+                                        [-37.8210922667, 175.2209316333, "2"],
+                                        [-37.8210819833, 175.2213903167, "3"],
+                                        [-37.8210881833, 175.2215004833, "3A"],
+                                        [-37.8211946833, 175.2213655333, "1"],
+                                        [-37.8209458667, 175.2214051333, "5"],
+                                        [-37.8208292333, 175.2214374833, "7"],
+                                        [-37.8325816, 175.2238798667, "537"],
+                                        [-37.8315855167, 175.2279767, "454"],
+                                        [-37.8096336833, 175.2223743833, "176"],
+                                        [-37.80970685, 175.2221815833, "178"],
+                                        [-37.8102146667, 175.2211562833, "190"],
+                                        [-37.8088037167, 175.2242227, "156"],
+                                        [-37.8112330167, 175.2193425667, "210"],
+                                        [-37.8116368667, 175.2193005167, "212"],
+                                        [-37.80812645, 175.2255449333, "146"],
+                                        [-37.8080231333, 175.2286383167, "125"],
+                                        [-37.8089538667, 175.2222222333, "174"],
+                                        [-37.8080905833, 175.2275400667, "129"],
+                                        [-37.8194342167, 175.22322975, "9"]
+                                ];
+                        };
+                        var heat = L.heatLayer(heatdata, options);
+                        map.addLayer(heat);
+                        console.log("Heatmap added. Visible?");
                 };
 
                 /**
@@ -1031,7 +1035,7 @@
                         $.reset_map_toolbox();
                         $("#map_toolbox_help").modal("show");
                 }
-                //$.add_heatmap();
+                $.add_heatmap();
         };
 
 

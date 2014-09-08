@@ -19,6 +19,10 @@ if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 				print $api->ask_service($_GET["query"], true);
 			}
 			break;
+		case "github":
+			$api->set_content_type("text");
+			print $api->browse($_GET["address"]);
+			break;
 		default:
 			print $api->browse($_GET["address"]);
 			break;

@@ -9,6 +9,8 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery.jcryption.3.0.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery-md5/jquery.md5.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/jquery.sha1.js"></script>
+<!-- d3js -->
+<script src="<?php print $domain; ?>/common/js/d3/d3.min.js" charset="utf-8"></script>
 <!-- Purl (A JavaScript URL parser) -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/purl/purl.js"></script>
 <!-- Jquery Choosen -->
@@ -73,6 +75,8 @@
 			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/leaflet/plugin/Leaflet.markercluster/dist/MarkerCluster.css" />
 			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/leaflet/plugin/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
 			<script type="text/javascript" src="<?php print $domain; ?>/common/js/leaflet/plugin/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+			<!-- Heatmap -->
+			<script type="text/javascript" src="<?php print $domain; ?>/common/js/leaflet/plugin/leaflet-heat.js"></script>
 
 			<link href="<?php print $domain; ?>/common/js/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 			<script src="<?php print $domain; ?>/common/js/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
