@@ -839,7 +839,8 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 	display: block;
 }
 #start h1[unselectable], #se h1[unselectable],
-#se h1[unselectable] + h2 {
+#se h1[unselectable] + h2,
+div[unselectable] {
 	color: #d0d0d0;
 	font-family: "HelveticaNeueW01-45Ligh";
 	font-size: 2.3em;
@@ -1701,6 +1702,9 @@ ul.list-group.transparent ul {
 #map_toolbox a.disabled {
 	cursor: not-allowed !important;
 }
+#lock_view_btn > span {
+	margin: 0;
+}
 #lock_view_btn.pulse {
 	-webkit-animation: pulse 2s infinite;
 	-moz-animation: pulse 2s infinite;
@@ -1960,7 +1964,7 @@ ul.list-group.transparent ul {
 	border-radius: 3px;
 	display: none;
 	float: left;
-	margin: 0 10px 0 0 !important;
+	margin: -2px 10px 0 0 !important;
 	padding: 4px !important;
 	font-size: 12px !important;
 }
@@ -1975,6 +1979,7 @@ ul.list-group.transparent ul {
 	border-radius: 20px;
 	padding: 1px 4px !important;
 	margin-top: 3px;
+	padding: 0  2px 2px;
 	float: right;
 }
 .ol-scale-line,
@@ -1982,6 +1987,15 @@ ul.list-group.transparent ul {
 	background-color: rgba(0, 0, 0, 0.7) !important;
 	margin-left: 10px;
 	position: fixed;
+}
+.leaflet-control-attribution {
+	padding: 0 2px !important;
+}
+.leaflet-control-attribution a {
+	margin: 3px 2px !important;
+}
+.leaflet-control-attribution a span {
+	margin: 0;
 }
 .custom-mouse-position {
 	color: #fff;

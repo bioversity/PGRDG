@@ -8,14 +8,14 @@
 	print $site_config->menu("map_toolbox", "menu");
 	?>
 </div>
-<div id="selected_zone"></div>
-<div id="information_zone"></div>
-	<div id="guides">
-		<div id="gx"></div>
-		<div id="gxx"></div>
-		<div id="gy"></div>
-		<div id="gyy"></div>
-	</div>
+<div id="selected_zone" unselectable="true"></div>
+<div id="information_zone" unselectable="true"></div>
+<div id="guides">
+	<div id="gx"></div>
+	<div id="gxx"></div>
+	<div id="gy"></div>
+	<div id="gyy"></div>
+</div>
 <div id="map_sub_toolbox">
 	<div id="previous_selected_layer"></div>
 	<div id="find_location" class="level0">

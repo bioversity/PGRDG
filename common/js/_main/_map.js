@@ -84,7 +84,7 @@
                                 map.invalidateSize();
                                 map.setMaxBounds([[85, -190], [-190, 190]]);
 
-                                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
+                                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
 
                                 map.on("zoomend", function() {
                                         var current_layer_data = $.get_current_layer_options(),
@@ -118,7 +118,7 @@
                 $("#pgrdg_map").remove();
                 $('<div id="pgrdg_map" style="display: none;">').insertAfter("#map");
 
-        //        $.init_map();
+                //$.init_map();
         };
 
 /*=======================================================================================
@@ -336,7 +336,7 @@
                 l[selected_layer_name].setZIndex(selected_layer_obj.zindex);
                 storage.set("pgrdg_cache.map_data.layers", {"current_layer": selected_layer_obj});
 
-                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').fadeToggle().parent(\'div\').toggleClass(\'open\');"><span class="fa fa-info-circle"></span></a>');
+                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
         };
 
         /**
@@ -390,6 +390,8 @@
                                 $.hide_layer(selected_layer_obj.name);
                         }
                 }
+                $(".leaflet-control-attribution.leaflet-control").find("a.info").html("");
+                $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
                 $.sub_toolbox('change_map');
         };
 
@@ -415,6 +417,19 @@
                         * Re-enable disabled toolbox buttons
                         */
                         $.enable_map_toolbox = function() { $("#map_toolbox li, #map_toolbox a").removeClass("disabled"); };
+
+                        /**
+                         * Toggle visibility of layer description
+                         */
+                        $.fn.toggle_layer_description = function() {
+                                if($(this).is(":visible")) {
+                                        $(this).stop().fadeOut();
+                                } else {
+                                        $(this).fadeIn(100, function() {
+                                                $(this).delay(5000).fadeOut();
+                                        });
+                                }
+                        };
 
                         /**
                         * Generate right subtoolbox panel
@@ -524,13 +539,15 @@
                         var current_view = $.get_current_bbox();
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $(".leaflet-control-zoom").animate({"left": "-50px"}, 300);
-                                $(".leaflet-control-attribution").animate({"margin-right": "-120px"}, 300);
+                                $(".leaflet-control-attribution div.attribution").stop().fadeOut(0, function() {
+                                        $(".leaflet-control-attribution").animate({"margin-right": "-120px"}, 300);
+                                });
                                 $("#pgrdg_map").removeClass("grabbing");
                                 $("#pgrdg_map").addClass("locked");
                                 $("#lock_view_btn").addClass("pulse");
                                 $.reset_map_toolbox();
                                 $.disable_map_toolbox();
-                                $("#selected_zone").text("Map locked").show();
+                                $("#selected_zone").text("Map locked").stop().show();
                                 $("#goto_map_btn").append('<sup class="lock"> <span class="fa fa-lock text-danger"></span></sup>');
 
                                 map.dragging.disable();
@@ -546,7 +563,7 @@
                                 $("#pgrdg_map").removeClass("locked");
                                 $("#lock_view_btn").removeClass("pulse");
                                 $.enable_map_toolbox();
-                                $("#selected_zone").text("Map unlocked").show().delay(2000).fadeOut(600);
+                                $("#selected_zone").text("Map unlocked").show().delay(5000).hide();
                                 $("#goto_map_btn").find("sup.lock").remove();
 
                                 map.dragging.enable();
