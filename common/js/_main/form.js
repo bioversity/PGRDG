@@ -1505,6 +1505,7 @@
 	$.activate_panel = function(type, options, callback) {
 		options = $.extend({
 			res: "",
+			id: "",
 			label: ""
 		}, options);
 		$.manage_url($.ucfirst(type));
@@ -1614,11 +1615,11 @@
 				map = $.init_map(function(map) {
 					$.remove_storage("pgrdg_cache.map");
 					$.reset_all_markers(map, markers);
-					$.add_geojson_cluster(options.res);
+					$.add_geojson_cluster({id: options.id, geojson: options.res});
 				});
 			} else {
 				$.reset_all_markers(map, markers);
-				$.add_geojson_cluster(options.res);
+				$.add_geojson_cluster({id: options.id, geojson: options.res});
 			}
 			$("#pgrdg_map").fadeIn(600);
 		}
@@ -1710,9 +1711,23 @@
 			h = "";
 			if(options.history !== undefined) {
 				h = JSON.stringify(options.history);
+			} else {
+				h = "";
 			}
 
 			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
+				if(h === "") {
+					var history = [],
+					hobj = {};
+					hobj.is_patch = true;
+					hobj[values[kAPI_PARAM_OFFSETS]] = values[kAPI_PARAM_PATTERN];
+					hobj[kAPI_PARAM_RESPONSE_FRMT_NAME] = values[kAPI_PARAM_RESPONSE_FRMT_NAME];
+					if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
+						hobj[kAPI_PARAM_RESPONSE_FRMT_INFO] = values[kAPI_PARAM_RESPONSE_FRMT_INFO];
+					}
+					history.push(hobj);
+					h = JSON.stringify(history);
+				}
 				var result_panel = $('<div class="result panel" style="border-color: ' + $.get_domain_colour(domain) + '">'),
 				result_h4 = $('<h4 class="">'),
 				result_title = $('<span class="title">'),
@@ -1736,7 +1751,9 @@
 				if (jQuery.type(callback) == "function") {
 					callback.call(this, result_panel);
 				}
+				h = "";
 			});
+			return false;
 		};
 
 		/**
@@ -1768,6 +1785,10 @@
 				//console.log(options.level, [values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]);
 				var hobj = {};
 				hobj[values[kAPI_PARAM_OFFSETS]] = values[kAPI_PARAM_PATTERN];
+				hobj[kAPI_PARAM_RESPONSE_FRMT_NAME] = values[kAPI_PARAM_RESPONSE_FRMT_NAME];
+				if(values[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) {
+					hobj[kAPI_PARAM_RESPONSE_FRMT_INFO] = values[kAPI_PARAM_RESPONSE_FRMT_INFO];
+				}
 				options.history[options.level] = hobj;
 
 				var item_colour = (colour !== undefined && colour !== "") ? colour : $.set_colour("random", 0.7),
@@ -2598,10 +2619,28 @@
 		* @param  {string} domain Domain
 		*/
 		$.show_data_on_map = function(id, domain, grouped_data) {
+			var grouped = {},
+			uobj_id = "";
 			if(grouped_data === undefined || grouped_data === null || grouped_data === "") {
+				uobj_id = $.md5(domain);
 				grouped_data = {};
 			} else {
-				grouped_data = $.parseJSON($.rawurldecode(grouped_data));
+				$.each($.parseJSON($.rawurldecode(grouped_data)), function(k, v) {
+					uobj_id = $.md5(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + domain);
+					if(v.is_patch !== undefined && v.is_patch === true) {
+						grouped = {};
+					} else {
+						grouped[k] = {};
+						$.each(v, function(kk, vv) {
+							if(kk !== kAPI_PARAM_RESPONSE_FRMT_NAME && kk !== kAPI_PARAM_RESPONSE_FRMT_INFO) {
+								grouped[k][kk] = vv;
+							}
+						});
+					}
+				});
+				if($.obj_len(grouped_data) > 0) {
+					grouped_data = $.parseJSON($.rawurldecode(grouped_data));
+				}
 			}
 
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
@@ -2609,6 +2648,7 @@
 			arr = $.get_current_bbox_pgrdg();
 
 			geometry.push(arr);
+
 
 			var objp = {};
 				objp.storage_group = "map";
@@ -2620,7 +2660,7 @@
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA];
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped_data;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped;
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_MARKER;
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE;
 				//objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE] = {};
@@ -2630,7 +2670,28 @@
 			$.ask_to_service(objp, function(res) {
 				// console.log(res);
 				if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-					$.activate_panel("map", {res: res.results, shape: kTAG_GEO_SHAPE});
+					if(!storage.isSet("pgrdg_cache.map_data.user_layers." + uobj_id)) {
+						// Save on the user map layers
+						var uobj = {},
+						uobj_criteria = {};
+						if(storage.isSet("pgrdg_cache.map_data.user_layers") && $.obj_len(storage.get("pgrdg_cache.map_data.user_layers")) > 0) {
+							uobj = storage.get("pgrdg_cache.map_data.user_layers");
+						}
+
+						uobj_criteria = storage.get("pgrdg_cache.search.criteria");
+						uobj_criteria.node = grouped_data;
+						uobj[uobj_id] = {
+							show: true,
+							criteria: uobj_criteria,
+							domain: domain,
+							query: objp,
+							results: res.results
+						};
+						storage.set("pgrdg_cache.map_data.user_layers", uobj);
+					}
+					$.activate_panel("map", {res: res.results, id: uobj_id, shape: kTAG_GEO_SHAPE}, function() {
+						$.get_generated_layers();
+					});
 					if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
 						var alert_title = "Displayed " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " of " + res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] + " markers";
 						setTimeout(function() {

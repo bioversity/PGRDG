@@ -24,6 +24,9 @@
 	<div id="change_map" class="level1">
 		<span id="selected_map" style="display: none;"><?php print $map_config->json_conf["map"]["default_map_layer"]; ?></span>
 	</div>
+	<div id="user_layers" class="level2">
+		<ul id="selected_layer" class="list-unstyled"></ul>
+	</div>
 	<div id="tools" class="level3">
 		<?php
 		print $site_config->menu("tools", "list-unstyled text-center");

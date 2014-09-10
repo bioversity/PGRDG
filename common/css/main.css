@@ -1702,7 +1702,7 @@ ul.list-group.transparent ul {
 #map_toolbox a.disabled {
 	cursor: not-allowed !important;
 }
-#lock_view_btn > span {
+#map_toolbox span.fa {
 	margin: 0;
 }
 #lock_view_btn.pulse {
@@ -1755,7 +1755,7 @@ ul.list-group.transparent ul {
 @media only screen and (max-height:720px) {
 	#map_sub_toolbox > div {
 		max-height: 70%;
-		overflow-y: scroll;
+		overflow-y: auto;
 	}
 }
 @media only screen and (max-height:350px) {

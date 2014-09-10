@@ -35,7 +35,7 @@ class parse_json_config {
 					$menu_list .= '	<li' . (isset($map_toolbox["childs"]) ? ' class="btn-group"' : '') . '><a ';
 					$menu_list .= implode(" ", $this->extract_attributes($map_toolbox)) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . (isset($map_toolbox["childs"]) ? ' <span class="caret"></span>' : '') . '</a>' . (isset($map_toolbox["childs"]) ? '<ul class="dropdown-menu" role="menu">' . $this->build_menu($map_toolbox, "childs") . '</ul>' : '') . '</li>' . "\n";
 					if(isset($map_toolbox["divider"])) {
-						$menu_list .= '	<li class="vertical-divider"></li>' . "\n";
+						$menu_list .= '	<li class="divider"></li>' . "\n";
 					}
 				}
 			}

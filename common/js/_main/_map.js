@@ -11,7 +11,7 @@
  *	CORE ENGINE
  *======================================================================================*/
 
-        var lon, lat, zoom, default_bbox = [], map, control, current_layer, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers, markers;
+        var map, lon, lat, zoom, default_bbox = [], control, current_layer, user_layers, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers, markers;
 
         /**
          * Extract configuration from map config file
@@ -80,6 +80,8 @@
                                 zoomAnimation: true,
                                 markerZoomAnimation: true
                         });
+                        user_layers = new L.LayerGroup();
+                        user_layers.addTo(map);
                         L.control.scale().addTo(map);
                         // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
                         if($.obj_len(storage_layer) > 0 && storage_layer.layer !== map_data.map.layers.defaultLayer.layer) {
@@ -117,10 +119,7 @@
                                         if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
                                                 if(storage.isSet("pgrdg_cache.map_data.layers.current.overlay." + v.layer.replace(/\./g, "~")) && $.obj_len(storage.get("pgrdg_cache.map_data.layers.current.overlay." + v.layer.replace(/\./g, "~"))) > 0) {
                                                         $("#change_map ul").append('<li class="keep_open selected" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-square"></span>&nbsp;&nbsp;' + v.name + '</a>');
-                                                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                                        //        $.change_map_layer($.utf8_to_b64(JSON.stringify(v)));
                                                         $.show_layer($.utf8_to_b64(JSON.stringify(v)));
-                                                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                 } else {
                                                         $("#change_map ul").append('<li class="keep_open" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-square-o"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                 }
@@ -140,13 +139,14 @@
 
                         $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
 
-                        map.on("zoomend", function() {
+                                console.log(map);
+                        map.on("zoomend", function(e) {
                                 var current_layer_data = $.get_current_layer_options(),
                                 selected_layer_obj = storage.get("pgrdg_cache.map_data.layers.current.layer"),
                                 min_zoom_for_this_layer = (selected_layer_obj.min_zoom !== undefined) ? selected_layer_obj.min_zoom : current_layer_data.minZoom,
                                 max_zoom_for_this_layer = (selected_layer_obj.max_zoom !== undefined) ? selected_layer_obj.max_zoom : parseInt(current_layer_data.maxZoom - 4);
-                                map.options.minZoom = min_zoom_for_this_layer;
-                                map.options.maxZoom = max_zoom_for_this_layer;
+                                e.target.options.minZoom = min_zoom_for_this_layer;
+                                e.target.options.maxZoom = max_zoom_for_this_layer;
                         });
 
                         if (callback) {
@@ -164,6 +164,7 @@
                         $.contextMenu(false);
                 }
                 $("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
+                $.get_generated_layers();
         };
 
         $.reset_map = function() {
@@ -332,6 +333,35 @@
 /*=======================================================================================
  *	LAYERS
  *======================================================================================*/
+
+        /**
+         * Get generated layer and build relative menu
+         */
+        $.get_generated_layers = function(selected) {
+                //console.dir(user_layers.getLayers());
+                if(storage.isSet("pgrdg_cache.map_data.user_layers") && $.obj_len(storage.get("pgrdg_cache.map_data.user_layers")) > 0) {
+                        var label = "";
+                        $("#selected_layer").html("");
+                        $.each(storage.get("pgrdg_cache.map_data.user_layers"), function(id, search_data) {
+                                if(search_data[kAPI_PARAM_CRITERIA].fulltext !== undefined && search_data[kAPI_PARAM_CRITERIA].fulltext !== "") {
+                                        label = 'Search: "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
+                                }
+                                if(search_data[kAPI_PARAM_CRITERIA].node !== undefined && $.obj_len(search_data[kAPI_PARAM_CRITERIA].node) > 0) {
+                                        $.each(search_data[kAPI_PARAM_CRITERIA].node, function(gk, gv) {
+                                                if(gv.is_patch === undefined || gv.is_patch !== true) {
+                                                        label += " in " + gv.name;
+                                                } else {
+                                                        label += " " + gv.name.toLowerCase() + "s";
+                                                }
+                                        });
+                                }
+                                console.log(search_data);
+                                // Check all loaded layers and compare with current
+                                $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" title="Switch on/off this data"><span class="fa fa-square-o"></span>' + label + '</a></li>');
+                        });
+                        $("#user_level_btn").show();
+                }
+        };
 
         /**
          * Retrieve the level data
@@ -579,6 +609,8 @@
                                                                 }
                                                                 //$(".change_map_btn." + $("#selected_map").text().replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
                                                                 break;
+                                                        case "user_layers":
+                                                                break;
                                                         case "tools":
                                                                 break;
                                                 }
@@ -593,6 +625,8 @@
                                                         case "find_location":
                                                                 break;
                                                         case "change_map":
+                                                                break;
+                                                        case "user_layers":
                                                                 break;
                                                         case "tools":
                                                                 break;
@@ -998,13 +1032,18 @@
                  * Add cluster on the map from given geojson
                  * @param {object} geojson The geojson object with markers and polygons
                  */
-                $.add_geojson_cluster = function(geojson, callback) {
-                        markers = L.markerClusterGroup();
-                        geoJsonLayer = L.geoJson(geojson);
+                $.add_geojson_cluster = function(options, callback) {
+                        options = $.extend({
+                                geojson: "",
+                                id: ""
+                        }, options);
+
+                        var markers = L.markerClusterGroup(),
+                        geoJsonLayer = L.geoJson(options.geojson);
 
         		markers.addLayer(geoJsonLayer);
 
-        		map.addLayer(markers);
+        		user_layers.addLayer(markers);
                         var marker_position = markers.getBounds().getCenter();
                         var bbx = {};
                         bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
@@ -1040,7 +1079,6 @@
                                         }
                                         i++;
                                 });
-                                console.log(i);
                         });
                 };
 
@@ -1146,6 +1184,10 @@ $(document).ready(function() {
                 $("#pgrdg_map, .panel_content").fadeIn(600);
                 $("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 
+                $("#breadcrumb .breadcrumb li.pull-right").hide();
+
                 $.init_map();
+        } else {
+                $("#breadcrumb .breadcrumb li.pull-right").show();
         }
 });

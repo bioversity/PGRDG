@@ -202,6 +202,21 @@ $menu["menu"]["map_toolbox"] = array(
 			"title" => "Change map type (ALT+T)"
 		)
 	),
+	"User_layers" => array(
+		"content" => array(
+			"icon" => "ion-map",
+			"text" => ""
+		),
+		"attributes" => array(
+			"onclick" => "$.sub_toolbox('user_layers');",
+			"href" => "javascript:void(0);",
+			"class" => "btn",
+			"style" => "disaply: none;",
+			"id" => "user_level_btn",
+			"title" => "Show/hide your data"
+		),
+		"divider" => "divider"
+	),
 	"Lock_view" => array(
 		"content" => array(
 			"icon" => "fa fa-lock",
