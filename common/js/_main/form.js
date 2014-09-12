@@ -619,7 +619,7 @@
 						if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 							$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
 							if($("#forms-head div.clearfix + .help-block").length === 0) {
-								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+								$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 							}
 							$.each(operators, function(ck, cv) {
 								if(cv.key == kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_OPERATOR][0]) {
@@ -699,7 +699,7 @@
 									var forms = $.create_form(response);
 									$("#forms-head .content-title").html('Output for "' + $("#main_search").val() + '"');
 									if($("#forms-head div.clearfix + .help-block").length === 0) {
-										$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+										$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 									}
 									$("#forms").fadeIn(300);
 									if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
@@ -786,7 +786,7 @@
 							}
 							$("#forms-head .content-title").html('Output of your last search ' + ((grouping_no > 0) ? ' <sup><a title="Change grouping filters" href="javascript: void(0);" onclick="$.show_summary($.get_storage_selected_forms(), false, function() { $(\'#collapsed_group_form\').collapse(\'show\'); });"><small class="text-danger" style="font-family: Arial, Helvetica;">' + grouping_no + ' groups</small></a></sup>' : ""));
 							if($("#forms-head div.clearfix + .help-block").length === 0) {
-								$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+								$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 							}
 							$("#forms").fadeIn(300);
 							if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
@@ -856,7 +856,7 @@
 
 					$("#forms-head .content-title").html('Output of your last search');
 					if($("#forms-head div.clearfix + .help-block").length === 0) {
-						$("#forms-head").append('<div class="help-block">' + form_help_text + '</div>');
+						$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 					}
 					$("#forms").fadeIn(300);
 					if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
@@ -1070,10 +1070,10 @@
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
 			queryTokenizer: Bloodhound.tokenizers.whitespace,
 			remote: {
-				url: service_url + "%QUERY",
+				url: config.service.url + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
 				filter: function (parsedResponse) {
@@ -1188,7 +1188,7 @@
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
 			queryTokenizer: Bloodhound.tokenizers.whitespace,
 			remote: {
-				url: service_url + "%QUERY",
+				url: config.service.url + "%QUERY",
 				replace: function(url, query) {
 					var exclude = [];
 					if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
@@ -1198,8 +1198,8 @@
 						});
 						exclude = $.array_unique(exclude);
 					}
-					var state = "true&query=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					//var state = "true&address=" + $.utf8_to_b64("{SERVICE_URL}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
 				filter: function (parsedResponse) {
@@ -2999,9 +2999,9 @@
 		}
 
 		var root_node = $('<div id="' + options.id + '" class="panel panel-default ' + options.class + '">'),
-		json_data = ((developer_mode && options.show_json) ? '<div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div>' : ''),
+		json_data = ((config.site.developer_mode && options.show_json) ? '<div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div>' : ''),
 			node_heading = $('<div class="panel-heading">'),
-				node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-1 col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="' + ((developer_mode && options.show_json) ? 'col-lg-6 pull-left' : 'col-sm-11 pull-left') + '"><span class="' + options.icon + '"></span>&nbsp;&nbsp;' + ((options.content !== "") ? '<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a>' : options.title) + '</div>' + json_data + '</h4>'),
+				node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-1 col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="' + ((config.site.developer_mode && options.show_json) ? 'col-lg-6 pull-left' : 'col-sm-11 pull-left') + '"><span class="' + options.icon + '"></span>&nbsp;&nbsp;' + ((options.content !== "") ? '<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a>' : options.title) + '</div>' + json_data + '</h4>'),
 			node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 				node_body = $('<div class="panel-body">' + options.content + '</div>');
 

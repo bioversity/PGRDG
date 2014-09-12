@@ -18,6 +18,7 @@ function apprise(string, args, callback) {
 		"showHeader": true,
 		"showFooter": true,
 		"invertedBtns": false,
+		"okBtnClass": "btn-primary",		// Ok button class
 		"textOk": "Ok", 			// Ok button default text
 		"textCancel": "Cancel",		// Cancel button default text
 		"textYes": "Si", 			// Yes button default text
@@ -28,7 +29,8 @@ function apprise(string, args, callback) {
 		"titleClass": "text-primary",
 		"progress": false,
 		"allowExit": true,
-		"class": ""
+		"class": "",
+		"tag": "h4"
 	}
 	if (args) {
 		for (var index in default_args) {
@@ -37,7 +39,7 @@ function apprise(string, args, callback) {
 	} else {
 		args = default_args;
 	}
-	
+
 	var modal = $('<div class="modal fade' + ((args !== undefined) ? " " + args["class"] : "") + '" id="apprise" tabindex="-1" role="dialog" aria-labelledby="appriseLabel" aria-hidden="true"' + ((args !== undefined && !args["allowExit"]) ? ' data-backdrop="static" data-keyboard="false"' : '') + '></div>'),
 	dialog = $('<div class="modal-dialog">'),
 	content = $('<div class="modal-content">'),
@@ -100,7 +102,7 @@ function apprise(string, args, callback) {
 			if(string.length > 0) {
 				row.appendTo(body);
 				if(args["showHeader"] && args["showFooter"]) {
-					panel.append('<h4>' + string + '</h4>').appendTo(row);
+					panel.append('<' + args["tag"] + '>' + string + '</' + args["tag"] + '>').appendTo(row);
 				} else {
 					panel.append('<div style="text-align: center;">' + string + '</div>').appendTo(row);
 				}
@@ -157,23 +159,23 @@ function apprise(string, args, callback) {
 				args["textCancel"] = "No";
 			}
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args["textCancel"] + '</button>');
-			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textOk"] + '</button>');
+			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args["okBtnClass"] + ' right">' + args["textOk"] + '</button>');
 			btn_group.appendTo(footer);
 		} else if (args["invertedBtns"]) {
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-default">' + args["textOk"] + '</button>');
-			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-primary right">' + args["textCancel"] + '</button>');
+			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args["okBtnClass"] + ' right">' + args["textCancel"] + '</button>');
 			btn_group.appendTo(footer);
 		} else if (args["verify"]) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args["textNo"] + '</button>');
-			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-primary right">' + args["textYes"] + '</button>');
+			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args["okBtnClass"] + ' right">' + args["textYes"] + '</button>');
 			btn_group.appendTo(footer);
 		} else if(args["progress"]) {
 			footer.append('<div class="progress progress-striped active" style="margin: 0;"><div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div>');
 		} else {
-			footer.append('<button value="ok" data-dismiss="modal" class="btn btn-default right">' + args["textOk"] + '</button>');
+			footer.append('<button value="ok" data-dismiss="modal" class="btn ' + args["okBtnClass"] + ' right">' + args["textOk"] + '</button>');
 		}
 	} else {
-		footer.append('<button value="ok" data-dismiss="modal" class="btn btn-default right">Ok</button>');
+		footer.append('<button value="ok" data-dismiss="modal" class="btn ' + args["okBtnClass"] + ' right">Ok</button>');
 		$("#apprise .modal-footer, #apprise .progress").css({"margin": "0px"});
 	}
 

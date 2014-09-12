@@ -11,25 +11,6 @@
 *======================================================================================*/
 
 	/**
-	* Encrypt asynchronous requests with jCryption
-	*
-	* Usage: call $.cryptAjax instead of simple $.ajax function
-	*
-	* @param {string} url     The request target
-	* @param {object} options Request params
-	*/
-	$.cryptAjax = function(url, options) {
-		if(!auth) {
-			$.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
-				auth = true;
-				$.ajax(url, options);
-			});
-		} else {
-			$.ajax(url, options);
-		}
-	};
-
-	/**
 	* Creates and send the request to Service
 	* @param  {void}  options  String or object of the request to Service
 	* @param  {Function} callback
@@ -52,16 +33,16 @@
 		var param, param_nob64, verbose_param, object_param = {};
 		if(typeof(options) == "string") {
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-			param_nob64 = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
-			verbose_param = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + " BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+			param_nob64 = "http://localhost/Service/Service.php?" + kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
+			verbose_param = "http://localhost/Service/Service.php?" + kAPI_REQUEST_OPERATION + " BASE64(" + options + ") &" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 
 			object_param[kAPI_REQUEST_OPERATION] = options;
 			object_param[kAPI_REQUEST_LANGUAGE] = lang;
 			object_param[kAPI_REQUEST_PARAMETERS] = {};
 		} else {
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
-			param_nob64 = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
-			verbose_param = "http://gateway.grinfo.private/Service.php?" + kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]) + "))";
+			param_nob64 = "http://localhost/Service/Service.php?" + kAPI_REQUEST_OPERATION + "=" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "=" + encodeURI(JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]));
+			verbose_param = "http://localhost/Service/Service.php?" + kAPI_REQUEST_OPERATION + "= BASE64(" + opt[kAPI_REQUEST_OPERATION] + "&" + kAPI_REQUEST_LANGUAGE + "=" + opt.parameters[kAPI_REQUEST_LANGUAGE] + "&" + kAPI_REQUEST_PARAMETERS + "= URL_ENCODED(" + JSON.stringify(opt.parameters[kAPI_REQUEST_PARAMETERS]) + "))";
 
 			object_param[kAPI_REQUEST_OPERATION] = opt[kAPI_REQUEST_OPERATION];
 			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
@@ -82,7 +63,7 @@
 				callback(response);
 			} else {
 				$("#loader").fadeOut(0);
-				if(developer_mode) {
+				if(config.site.developer_mode) {
 					alert("There's an error in the response:<br />See the console for more informations");
 					console.group("The Service has returned an error");
 						console.warn(param);
@@ -122,7 +103,7 @@
 				element_data = $element.html();
 				$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span>' + ((opt.loaderText !== "") ? opt.loaderText : ""));
 			}
-			if(developer_mode) {
+			if(config.site.developer_mode) {
 				console.log("Fetching:\n", param);
 				console.log("(", param_nob64, ")");
 			}
@@ -182,7 +163,7 @@
 								},
 								"response": response
 							});
-							if(developer_mode) {
+							if(config.site.developer_mode) {
 								console.group("Storage \"" + opt.storage_group + "\" saved...");
 								console.warn("id: ", $.md5(param));
 								console.warn(param_nob64);
@@ -199,7 +180,7 @@
 						}
 					} else {
 						$("#loader").fadeOut(0);
-						if(developer_mode) {
+						if(config.site.developer_mode) {
 							console.warn("!!!", param_nob64, response);
 							alert("There's an error in the response:<br />See the console for more informations");
 							console.group("The Service has returned an error");
@@ -217,11 +198,11 @@
 					$("#loader").fadeOut(0);
 					$.display_error_msg("There was an error in your request, please try again later");
 					if(t === "timeout") {
-						if(developer_mode) {
+						if(config.site.developer_mode) {
 							console.log("got timeout");
 						}
 				        } else {
-						if(developer_mode) {
+						if(config.site.developer_mode) {
 							console.warn("!!!", response);
 							console.group("The Service has returned an error");
 								console.warn(param);
@@ -250,32 +231,6 @@
 	$.display_error_msg = function(message) {
 		$("#apprise").modal("destroy");
 		apprise(message, {"icon": "error"});
-	};
-
-	/**
-	* Display the coffee message
-	*/
-	$.service_coffee = function(options) {
-		options = $.extend({
-			message: "The Service is temporarily unavailable.<br />Try again later...",
-			class: "service_coffee",
-			title: "Taking coffee...",
-			titleClass: "text-warning",
-			icon: "fa-coffee"
-		}, options);
-
-		if($("#apprise.service_coffee").length === 0) {
-			apprise(options.message, {
-				class: options.class,
-				title: options.title,
-				titleClass: options.titleClass,
-				icon: options.icon,
-				progress: true,
-				allowExit: false
-			});
-		} else {
-			$("#apprise.service_coffee").modal("show");
-		}
 	};
 
 	/**
@@ -327,40 +282,6 @@
 				$("#saved_history").append('<h4>' + $.ucfirst(k) + '</h4>' + $.recurse_obj(v));
 			});
 			$("#storage").modal("show");
-		}
-	};
-
-	/**
-	* Load site configurations
-	*/
-	$.site_conf = function(callback) {
-		if(!developer_mode) {
-			$.cryptAjax({
-				url: "common/include/conf/site.json",
-				dataType: "json",
-				success: function(site) {
-					if(site.maintainance) {
-						$.service_coffee({
-							message: "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over.",
-							title: "Under maintainance",
-							titleClass: "text-danger",
-							icon: "fa-wrench"
-						});
-					} else {
-						if($("#apprise.service_coffee").length > 0) {
-							$("#apprise.service_coffee").modal("hide");
-						}
-						if (typeof callback == "function") {
-							callback.call(this);
-						}
-					}
-					setTimeout(function() {
-						$.site_conf(callback);
-					}, 30000);
-				}
-			});
-		} else {
-			callback.call(this);
 		}
 	};
 
@@ -754,27 +675,18 @@
 	 * Note that if you want to reset the user storage, you need to update Github repo's version tag
 	 */
 	$.check_version = function() {
-		var local_version = "";
 		$.reset_storage = function(last_version) {
 			storage.remove("pgrdg_cache");
 			storage.set("pgrdg_cache.version", last_version);
 		};
 
-		$.ajax({
-			url: "https://api.github.com/repos/bioversity/PGRDG/tags",
-			dataType: "json",
-			success: function(v){
-				last_version = v[0].name;
-
-				if(storage.isSet("pgrdg_cache.version")) {
-					if(storage.get("pgrdg_cache.version") !== last_version) {
-						$.reset_storage(last_version);
-					}
-				} else {
-					$.reset_storage(last_version);
-				}
+		if(storage.isSet("pgrdg_cache.version")) {
+			if(storage.get("pgrdg_cache.version") !== config.site.version) {
+				$.reset_storage(config.site.version);
 			}
-		});
+		} else {
+			$.reset_storage(config.site.version);
+		}
 	};
 
 
@@ -1456,91 +1368,81 @@
 /*======================================================================================*/
 
 $(document).ready(function() {
-	$.site_conf(function() {
-		$.check_version();
+	/*if(!load) {
+		return false;
+	}
+	if(load) {*/
+		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
+		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
+			$(this).tooltip("hide");
+		});
 
-		if(!$.browser_cookie_status()) {
-			apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
-		} else {
-			// Use bootstrap apprise instead javascript's alert
-			window.alert = function(string, args, callback) {
-				if(args === undefined) {
-					args = [];
-					args.title = "Warning";
-					args.icon = "warning";
-				}
-				return apprise(string, args, callback);
-			};
-			$("nav a[title]").tooltip({placement: "bottom", container: "body"});
-			$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
-				$(this).tooltip("hide");
+		$.shortcuts();
+		$("#login").on("shown.bs.modal", function(e) {
+			e.preventDefault();
+			$("#login_btn").removeClass("disabled").attr("disabled", false);
+			$("#login-username").focus();
+
+			$("#login_btn").on("click", function() {
+				$.login();
 			});
+		});
 
-			$.shortcuts();
-			$("#login").on("shown.bs.modal", function(e) {
-				e.preventDefault();
-				$("#login_btn").removeClass("disabled").attr("disabled", false);
-				$("#login-username").focus();
+		if(current_path == "Search") {
+			$.get_statistics();
 
-				$("#login_btn").on("click", function() {
-					$.login();
-				});
-			});
-
-			if(current_path == "Search") {
-				$.get_statistics();
-
-				if($.obj_len(query) > 0) {
-					if($("#breadcrumb").css("display") == "none") {
-						$("#breadcrumb").fadeIn(200);
-					}
-
-					$.search_fulltext(query.q);
+			if($.obj_len(query) > 0) {
+				if($("#breadcrumb").css("display") == "none") {
+					$("#breadcrumb").fadeIn(200);
 				}
-			}
-			if(current_path == "Search" || current_path == "Advanced_search") {
-				document.location.hash = "";
-				window.onhashchange = function() {
-					$.manage_url(document.location.hash.replace("#", ""));
-				};
-				$.manage_url();
 
-				$("#search_tips").click(function(){
-					apprise('To search all occurrences of words, separate them with a space, for instance:<br /><kbd>Forest area managed for wood production</kbd> will select all records containing any of the following words: <i>forest</i>, <i>area</i>, <i>managed</i>, <i>wood</i> and <i>production</i>.<p>To search all occurrences matching a specific phrase, enclose it in double quotes <kbd><b style="color: #ff0000 !important;">&quot;</b></kbd>, for instance:<br /><kbd><b style="color: #ff0000 !important;">&quot;</b>forest area managed for wood production<b style="color: #ff0000 !important;">&quot;</b></kbd> will select all records matching the full phrase.</p><p>To exclude a term from the results prefix it with a minus <kbd><b style="color: #ff0000 !important;">-</b></kbd> sign, for instance:<br /><kbd>forest <b style="color: #ff0000 !important;">-</b>wood</kbd> will select all records matching the word <i>forest</i> and not matching the word <i>wood</i>.</p><p>The same is true for phrases, for instance:<br /><kbd><b style="color: #ff0000 !important;">-</b>&quot;research organization&quot; genebank</kbd> will select all records containing the word <i>genebank</i> but not the phrase <i>research organization</i>.</p><p>The search is case insensitive.</p>', {
-						title: "Search tips",
-						icon: "fa-keyboard-o",
-						titleClass: "text-info",
-						textOk: "Ok",
-						allowExit: true
-					});
-				});
-				$.get_operators_list();
-
-				if(developer_mode) {
-					var li_dev = $('<li class="btn-group">'),
-					a_dev = $('<a class="btn btn-link" data-toggle="dropdown" href="javascript: void(0);"><span class="fa fa-wrench"></span> Developer <span class="caret"></span>'),
-					sub_ul_dev = $('<ul role="menu" class="dropdown-menu">')
-					li_divider_dev = $('<li class="divider">');
-
-					sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="storage.remove(\'pgrdg_cache\'); location.reload();"><span class="fa fa-eraser"></span>&nbsp;Reset storage</a></li>');
-					sub_ul_dev.append('<li class="divider"></li>');
-					sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="load_firebug();"><span class="fa fa-bug"></span>&nbsp;Load Firebug-Lite</a></li>');
-						li_dev.append(a_dev);
-					li_dev.append(sub_ul_dev);
-					$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev)
-				}
-			}
-			$.check_logged_user();
-			if(current_path == "Profile") {
-				if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
-					//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
-				}
+				$.search_fulltext(query.q);
 			}
 		}
-	});
+		if(current_path == "Search" || current_path == "Advanced_search") {
+			document.location.hash = "";
+			window.onhashchange = function() {
+				$.manage_url(document.location.hash.replace("#", ""));
+			};
+			$.manage_url();
 
-	$.breadcrumb_right_buttons();
-	if(current_path == "Search" && $("#breadcrumb").length > 0) {
-		$("#breadcrumb .breadcrumb").prepend('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
-	}
+			$("#search_tips").click(function(){
+				apprise(i18n[lang].interface.search_tips, {
+					tag: "p",
+					title: "Search tips",
+					icon: "fa-keyboard-o",
+					titleClass: "text-info",
+					textOk: "Close",
+					okBtnClass: "btn-default-grey",
+					allowExit: true
+				});
+			});
+			$.get_operators_list();
+
+			if(config.site.developer_mode) {
+				var li_dev = $('<li class="btn-group">'),
+				a_dev = $('<a class="btn btn-link" data-toggle="dropdown" href="javascript: void(0);"><span class="fa fa-wrench"></span> Developer <span class="caret"></span>'),
+				sub_ul_dev = $('<ul role="menu" class="dropdown-menu">')
+				li_divider_dev = $('<li class="divider">');
+
+				sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="storage.remove(\'pgrdg_cache\'); location.reload();"><span class="fa fa-eraser"></span>&nbsp;Reset storage</a></li>');
+				sub_ul_dev.append('<li class="divider"></li>');
+				sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="load_firebug();"><span class="fa fa-bug"></span>&nbsp;Load Firebug-Lite</a></li>');
+					li_dev.append(a_dev);
+				li_dev.append(sub_ul_dev);
+				$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev)
+			}
+		}
+		$.check_logged_user();
+		if(current_path == "Profile") {
+			if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
+				//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
+			}
+		}
+
+		$.breadcrumb_right_buttons();
+		if(current_path == "Search" && $("#breadcrumb").length > 0) {
+			$("#breadcrumb .breadcrumb").prepend('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
+		}
+	// }
 });

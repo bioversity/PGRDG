@@ -8,6 +8,8 @@ require_once("common/include/classes/parse_json_config.class.php");
 
 $site_config = new parse_json_config();
 $map_config = new parse_json_config("common/include/conf/map.json");
+$i18n_config = new parse_json_config("common/include/conf/interface/i18n.js");
+$i18n = $i18n_config->parse_i18n();
 //print_r($site_config->menu("map_toolbox", "menu"));
 //exit();
 function is_home() {

@@ -31,6 +31,8 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/TouchSwipe/jquery.touchSwipe.min.js"></script>
 
 	<!-- Core scripts -->
+	<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/i18n.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/site.js"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/_main/params.js"></script>
 	<script type="text/javascript">
 	function load_firebug() {

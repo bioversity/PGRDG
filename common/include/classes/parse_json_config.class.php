@@ -119,4 +119,8 @@ class parse_json_config {
 		$menu_list .= "</ul>";
 		return $menu_list;
 	}
+
+	public function parse_i18n() {
+		return json_decode(trim(str_replace(array('var i18n = {};', 'i18n = ', '};'), array('', '', '}'), file_get_contents($this->json_conf))), 1);
+	}
 }

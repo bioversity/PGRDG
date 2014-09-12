@@ -97,8 +97,7 @@
          * @param  {array}      The array to parse
          * @return {array}      The filtered array
          */
-        $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); });
-}
+        $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); }); };
 
 /**
 * Return if browser has cookie allowed
@@ -189,26 +188,139 @@ $.parse_params = function(query) {
  * Detect touch device
  * @return {Boolean}
  */
-$.is_touch_device = function() {
-        return "ontouchstart" in window || "onmsgesturechange" in window;
+$.is_touch_device = function() { return "ontouchstart" in window || "onmsgesturechange" in window; };
+
+/**
+* Encrypt asynchronous requests with jCryption
+*
+* Usage: call $.cryptAjax instead of simple $.ajax function
+*
+* @param {string} url     The request target
+* @param {object} options Request params
+*/
+$.cryptAjax = function(url, options) {
+        if(!auth) {
+                $.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
+                        auth = true;
+                        $.ajax(url, options);
+                });
+        } else {
+                $.ajax(url, options);
+        }
 };
+
+/**
+* Display the coffee message
+*/
+$.service_coffee = function(options) {
+        options = $.extend({
+                message: "The Service is temporarily unavailable.<br />Try again later...",
+                class: "service_coffee",
+                title: "Taking coffee...",
+                titleClass: "text-warning",
+                icon: "fa-coffee"
+        }, options);
+
+        if($("#apprise.service_coffee").length === 0) {
+                apprise(options.message, {
+                        class: options.class,
+                        title: options.title,
+                        titleClass: options.titleClass,
+                        icon: options.icon,
+                        progress: true,
+                        allowExit: false
+                });
+        } else {
+                $("#apprise.service_coffee").modal("show");
+        }
+};
+
+/**
+* Load site configurations
+*/
+$.site_conf = function(callback) {
+        if(config.site.developer_mode) {
+                console.log("Check maintenance status...");
+        }
+        $.cryptAjax({
+                url: "common/include/conf/interface/maintenance.json",
+                dataType: "json",
+                success: function(maintenance) {
+                        if(maintenance.status) {
+                                $.service_coffee({
+                                        titleClass: "text-danger",
+                                        icon: "fa-wrench",
+                                        title: i18n[lang].maintenance.title,
+                                        message: i18n[lang].maintenance.message
+                                });
+                                setTimeout(function() {
+                                        $.site_conf(callback);
+                                }, maintenance.check_time.true_state);
+
+                                load = false;
+                                return false;
+                        } else {
+                                if($("#apprise.service_coffee").length > 0) {
+                                        $("#apprise.service_coffee").modal("hide");
+                                }
+                                if (typeof callback == "function") {
+                                        if(!load) {
+                                                load = true;
+                                                callback.call(this);
+                                        }
+                                }
+                                setTimeout(function() {
+                                        $.site_conf(callback);
+                                }, maintenance.check_time.false_state);
+                        }
+                },
+                error: function() {
+                        setTimeout(function() {
+                                $.site_conf(callback);
+                        }, maintenance.check_time.true_state);
+
+                        load = false;
+                        return false;
+                }
+        });
+};
+
 
 /*=======================================================================================
 *	GLOBAL VARIABLES
 *======================================================================================*/
-var lang = "en",
-service_url = "API/?type=service&proxy=",
-system_constants,
+// System
+//
+var system_constants,
+storage = $.localStorage,
+lang = ((storage.isSet("pgrdg_cache.lang") && storage.get("pgrdg_cache.lang") !== undefined && storage.get("pgrdg_cache.lang") !== "") ? storage.get("pgrdg_cache.lang") : config.site.default_language),
 operators = [],
 password = $.makeid(),
-auth = false,
-storage = $.localStorage,
+load = false, // Default status for continue to load javascript, do not edit
+auth = false, // Default status for jcryption authentication, do not edit
 url = $.url().attr(),
 url_paths = url.path.split("/"),
 query = $.parse_params(url.query),
-current_path = url_paths[url_paths.length - 1],
-last_version = "",
-local_version = "",
-developer_mode = true,
+current_path = url_paths[url_paths.length - 1];
 
-form_help_text = "Click on the green rectangle to activate the field: if you press the search button the system will select all data <em>containing</em> the selected field, regardless of its value.<br />To search for specific field values, fill the field search value or select the provided options.";
+$.site_conf(function() {
+        if(!load) {
+                return false;
+        } else {
+                $.check_version();
+
+                if(!$.browser_cookie_status()) {
+                        apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
+                } else {
+                        // Use bootstrap apprise instead javascript's alert
+                        window.alert = function(string, args, callback) {
+                                if(args === undefined) {
+                                        args = [];
+                                        args.title = "Warning";
+                                        args.icon = "warning";
+                                }
+                                return apprise(string, args, callback);
+                        };
+                }
+        }
+});
