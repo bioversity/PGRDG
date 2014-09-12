@@ -1428,7 +1428,7 @@
 						$("#group_by_btn").removeClass("disabled");
 					});
 				} else {
-					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> No results for this search');
+					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> ' + i18n[en].messages.no_search_results.message);
 					$("#search_form").focus();
 				}
 			});
@@ -1691,7 +1691,7 @@
 								});
 							});
 						} else {
-							apprise("No results for this search", {"class": "no-results", "title": "No data", "icon": "warning"});
+							apprise(i18n[lang].messages.no_search_results.message, {"class": "no-results", "title": i18n[lang].messages.no_search_results.title, "icon": "warning"});
 						}
 					}
 				}
@@ -2693,9 +2693,13 @@
 						$.get_generated_layers();
 					});
 					if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
-						var alert_title = "Displayed " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " of " + res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] + " markers";
+						var alert_title = i18n[lang].messages.map_limit_display.title;
+							alert_title.replace("{N}", objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
+							alert_title.replace("{TOT}", res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]);
+						var alert_message = i18n[lang].messages.map_limit_display.message
+							alert_message.replace(/\{X\}/g, objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
 						setTimeout(function() {
-							apprise("The map cannot currently display more than " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points.<br />This means that it contains only the first " + objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] + " points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection.", {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+							apprise(alert_message, {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
 						}, 4000);
 					}
 				} else {
