@@ -1070,9 +1070,9 @@
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
 			queryTokenizer: Bloodhound.tokenizers.whitespace,
 			remote: {
-				url: config.service.url + "%QUERY",
+				url: config.service.proxy + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64(config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
@@ -1188,7 +1188,7 @@
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
 			queryTokenizer: Bloodhound.tokenizers.whitespace,
 			remote: {
-				url: config.service.url + "%QUERY",
+				url: config.service.proxy + "%QUERY",
 				replace: function(url, query) {
 					var exclude = [];
 					if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
@@ -1198,7 +1198,7 @@
 						});
 						exclude = $.array_unique(exclude);
 					}
-					var state = "true&query=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					var state = "true&query=" + $.utf8_to_b64(config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
@@ -1428,7 +1428,7 @@
 						$("#group_by_btn").removeClass("disabled");
 					});
 				} else {
-					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> ' + i18n[en].messages.no_search_results.message);
+					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> ' + i18n[lang].messages.no_search_results.message);
 					$("#search_form").focus();
 				}
 			});

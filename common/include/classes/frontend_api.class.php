@@ -238,14 +238,12 @@ class frontend_api {
 	public function ask_service($address) {
 		$this->set_content_type("json");
 		$url = $this->build_url_for_service($address);
-
 		if($this->debug) {
 			/**
 			* Screen output
 			*/
 			print "URL: " . $url . "\n";
-		}
-		if($this->debug) {
+
 			/**
 			* Screen output
 			*/

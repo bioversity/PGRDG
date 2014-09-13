@@ -9,7 +9,7 @@ i18n = {
                         "map_limit_display": {
                                 "title": "Displayed {N} of {TOT} markers",
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."
-                        }
+                        },
                         "no_search_results": {
                                 "title": "No data",
                                 "message": "No results for this search"
