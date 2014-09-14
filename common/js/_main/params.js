@@ -100,6 +100,13 @@
         $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); }); };
 
 /**
+ * Clean an array from empty fields
+ * @param  {array}      The array to clean
+ * @return {array}      The array cleaned
+ */
+$.array_clean = function(array) { return array.filter(function(v){ return v !== ""; }); };
+
+/**
 * Return if browser has cookie allowed
 * @return {bool}   Browser cookie permission
 */

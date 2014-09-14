@@ -288,9 +288,9 @@
 	 * Restore a previous generated form
 	 */
 	$.restore_form = function() {
-		if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria")) {
-			if(storage.isSet("pgrdg_cache.search.criteria.forms") && $.obj_len(storage.get("pgrdg_cache.search.criteria.forms")) > 0 || storage.isSet("pgrdg_cache.search.criteria.fulltext") && $.obj_len(storage.get("pgrdg_cache.search.criteria.fulltext")) > 0) {
-				if(storage.isSet("pgrdg_cache.search.criteria.traitAutocomplete")) {
+		if($.storage_exists("search.criteria")) {
+			if($.storage_exists("search.criteria.forms") || $.storage_exists("search.criteria.fulltext")) {
+				if($.storage_exists("search.criteria.traitAutocomplete")) {
 					$("#main_search").val(storage.get("pgrdg_cache.search.criteria.traitAutocomplete.text"));
 				}
 				$.exec_autocomplete("restore");
@@ -599,7 +599,7 @@
 
 		switch(type) {
 			case "autocomplete":
-				//if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.forms")) {
+				//if($.storage_exists("search.criteria.forms")) {
 
 				var kAPI = {};
 				kAPI.storage_group = "search.criteria.forms";
@@ -633,7 +633,7 @@
 
 							// Create forms
 							var forms = $.create_form(response);
-							if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+							if($.storage_exists("search.criteria.fulltext")) {
 								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
@@ -702,7 +702,7 @@
 										$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 									}
 									$("#forms").fadeIn(300);
-									if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+									if($.storage_exists("search.criteria.fulltext")) {
 										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
 											$("#forms-body .content-body").addCollapsible({
 												id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
@@ -738,7 +738,7 @@
 			case "restore":
 				var form_data = {},
 				btn_disabled = "";
-				if(storage.isSet("pgrdg_cache.search.criteria.forms") && $.obj_len(storage.get("pgrdg_cache.search.criteria.forms")) > 0) {
+				if($.storage_exists("search.criteria.forms")) {
 					$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(row_id, results) {
 						var the_title = "",
 						response = results.response;
@@ -781,7 +781,7 @@
 							// Create forms
 							var forms = $.create_form(response),
 							grouping_no = 0;
-							if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+							if($.storage_exists("search.criteria.grouping._ordering")) {
 								grouping_no = $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering"));
 							}
 							$("#forms-head .content-title").html('Output of your last search ' + ((grouping_no > 0) ? ' <sup><a title="Change grouping filters" href="javascript: void(0);" onclick="$.show_summary($.get_storage_selected_forms(), false, function() { $(\'#collapsed_group_form\').collapse(\'show\'); });"><small class="text-danger" style="font-family: Arial, Helvetica;">' + grouping_no + ' groups</small></a></sup>' : ""));
@@ -789,7 +789,7 @@
 								$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 							}
 							$("#forms").fadeIn(300);
-							if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+							if($.storage_exists("search.criteria.fulltext")) {
 								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
@@ -816,7 +816,7 @@
 							$.resize_forms_mask();
 							$("#autocomplete .typeahead").trigger("blur");
 
-							if(storage.isSet("pgrdg_cache.search.criteria.selected_forms") && $.obj_len(storage.get("pgrdg_cache.search.criteria.selected_forms")) > 0) {
+							if($.storage_exists("search.criteria.selected_forms")) {
 								$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, row_data){
 									var $panel = $("#" + $.md5(row_data.forms.tags)).next(".panel"),
 									$item = $panel.find("a.treeselect");
@@ -835,7 +835,7 @@
 							$.activate_form_btns();
 						}
 					});
-				} else if(storage.isSet("pgrdg_cache.search.criteria.fulltext") && $.obj_len(storage.get("pgrdg_cache.search.criteria.fulltext")) > 0) {
+				} else if($.storage_exists("search.criteria.fulltext")) {
 					if($(window).width() < 420) {
 						$.left_panel("close");
 					}
@@ -859,10 +859,10 @@
 						$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 					}
 					$("#forms").fadeIn(300);
-					if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext") && storage.get("pgrdg_cache.search.criteria.fulltext").length > 0) {
+					if($.storage_exists("search.criteria.fulltext")) {
 						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
 							var names = [], nn = "";
-							if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+							if($.storage_exists("search.criteria.grouping._ordering")) {
 								nn = ', <i class="text-muted">grouped by ';
 								$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
 									names.push(v.name);
@@ -1191,7 +1191,7 @@
 				url: config.service.proxy + "%QUERY",
 				replace: function(url, query) {
 					var exclude = [];
-					if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+					if($.storage_exists("search.criteria.grouping._ordering")) {
 						st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
 						$.each(st, function(k, v) {
 							exclude.push(v.tag);
@@ -1237,7 +1237,7 @@
 		}).on("typeahead:selected typeahead:_changed", function(){
 			if($("#" + options.id).val().length > 3) {
 				var exclude = [];
-				if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+				if($.storage_exists("search.criteria.grouping._ordering")) {
 					st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
 					$.each(st, function(k, v) {
 						exclude.push(v.tag);
@@ -1646,7 +1646,7 @@
 			kAPI = {};
 
 			if(with_grouping) {
-				if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+				if($.storage_exists("search.criteria.grouping._ordering")) {
 					$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, data) {
 						ids.push(data.id);
 					});
@@ -1660,7 +1660,7 @@
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = active_forms;
-				if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria") && storage.isSet("pgrdg_cache.search.criteria.fulltext")) {
+				if($.storage_exists("search.criteria.fulltext")) {
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = storage.get("pgrdg_cache.search.criteria.fulltext");
@@ -1671,7 +1671,7 @@
 
 			$.ask_to_service(kAPI, function(res) {
 				if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
-					// if(storage.isSet("pgrdg_cache.search.criteria.grouping")) {
+					// if($.storage_exists("search.criteria.grouping")) {
 					// 	$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
 					// 		storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
 					// 		storage.set("pgrdg_cache.search.criteria.grouping._ordering." + k, res.id);
@@ -1682,8 +1682,8 @@
 					});
 				} else {
 					if($("#apprise.no-results:visible").length === 0) {
-						if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering") && $.obj_len(("pgrdg_cache.search.criteria.grouping._ordering")) > 0) {
-							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": "No results for this search", "icon": "warning", "confirm": true}, function(r) {
+						if($.storage_exists("search.criteria.grouping._ordering")) {
+							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": i18n[lang].messages.no_search_results.message, "icon": "warning", "confirm": true}, function(r) {
 								$.show_summary(active_forms, false, function() {
 									setTimeout(function() {
 										$("#summary-body.disabled").addClass("moved");
@@ -1865,7 +1865,7 @@
 					level = 0;
 				}
 				var as = [];
-				if(storage.isSet("pgrdg_cache.search.criteria.grouping") && storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+				if($.storage_exists("search.criteria.grouping._ordering")) {
 					$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
 						if(id == v.id) {
 							as.push(id);
@@ -1917,7 +1917,7 @@
 		*/
 		$.group_tag_by = function(storage_id, id, tag, name, contains, info) {
 			var selected = [];
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping") && storage.isSet("pgrdg_cache.search.criteria.grouping." + storage_id)) {
+			if($.storage_exists("search.criteria.grouping." + storage_id)) {
 				//selected = storage.get("pgrdg_cache.search.criteria.grouping." + storage_id);
 				if($.inArray(id, storage.get("pgrdg_cache.search.criteria.grouping." + storage_id)) === -1) {
 					selected.push(id);
@@ -1963,7 +1963,7 @@
 			* Generate stage buttons reading selected filters on the storage
 			*/
 			$.restore_stage = function(callback) {
-				if(storage.isSet("pgrdg_cache.search.criteria.grouping") && storage.isSet("pgrdg_cache.search.criteria.grouping._ordering")) {
+				if($.storage_exists("search.criteria.grouping._ordering")) {
 					if(!$("#summary #summary-body").hasClass("disabled")) {
 						$("#summary #summary-body").addClass("disabled");
 					}
@@ -1972,7 +1972,7 @@
 
 						if($.obj_len(v) > 0) {
 							var id = v.id, tag = v.tag, storage_id = v.storage;
-							if(storage.isSet("pgrdg_cache.search.criteria.grouping." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
+							if($.storage_exists("search.criteria.grouping." + storage_id + ".response." + kAPI_RESPONSE_RESULTS)) {
 								var res = storage.get("pgrdg_cache.search.criteria.grouping.loaded." + storage_id + ".response." + kAPI_RESPONSE_RESULTS),
 								name = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_NAME],
 								info = res[id][kAPI_PARAM_RESPONSE_CHILDREN][kAPI_PARAM_RESPONSE_FRMT_INFO],
@@ -2105,6 +2105,9 @@
 						$("#modal_messages").removeClass("alert-danger").addClass("alert-success").find("div.text-left").text('"' + name + '" added');
 						$("#modal_messages").show().delay(1500).fadeOut(300);
 					}
+				}
+				if(!multiple) {
+					$("#summary_ordering").modal("hide");
 				}
 				$.update_ordering();
 
@@ -2314,7 +2317,7 @@
 						}
 					});
 				} else {
-					storage.remove("pgrdg_cache.search.criteria.grouping._ordering");
+					$.remove_storage("pgrdg_cache.search.criteria.grouping._ordering");
 					$("#summary_order_cancel_btn, #summary_order_reorder_btn").addClass("disabled");
 					$("#group_by_btn .label-danger").remove();
 				}
@@ -2348,11 +2351,11 @@
 					objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
 					objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = $.trim($("#search_form").val());
 				} else {
-					if(storage.isSet("pgrdg_cache.search") && storage.isSet("pgrdg_cache.search.criteria")) {
-						if(storage.isSet("pgrdg_cache.search.criteria.selected_forms")) {
+					if($.storage_exists("search.criteria")) {
+						if($.storage_exists("search.criteria.selected_forms")) {
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = $.get_storage_selected_forms();
 						}
-						if(storage.isSet("pgrdg_cache.search.criteria.fulltext")) {
+						if($.storage_exists("search.criteria.fulltext")) {
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = storage.get("pgrdg_cache.search.criteria.fulltext");
@@ -2670,11 +2673,11 @@
 			$.ask_to_service(objp, function(res) {
 				// console.log(res);
 				if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-					if(!storage.isSet("pgrdg_cache.map_data.user_layers." + uobj_id)) {
+					if(!$.storage_exists("map_data.user_layers." + uobj_id)) {
 						// Save on the user map layers
 						var uobj = {},
 						uobj_criteria = {};
-						if(storage.isSet("pgrdg_cache.map_data.user_layers") && $.obj_len(storage.get("pgrdg_cache.map_data.user_layers")) > 0) {
+						if($.storage_exists("map_data.user_layers")) {
 							uobj = storage.get("pgrdg_cache.map_data.user_layers");
 						}
 
@@ -3193,7 +3196,7 @@
 			triangle = '<a class="tree-toggler text-muted" onclick="$.get_node(\'' + v.node + '\'); return false;" id="' + v.node + '_toggler" href="javascript: void(0);"><span class="fa fa-fw fa-caret-right"></span></a>',
 			checked = false;
 
-			if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + item_id) && $.obj_len(storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id)) > 0) {
+			if($.storage_exists("search.criteria.selected_enums." + item_id)) {
 				if($.inArray(v.label, storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label")) !== -1) {
 					checked = true;
 					selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label");
@@ -3239,7 +3242,7 @@
 				$label_input_term = $("#" + label_input + "_term"),
 				selected_enums, selected_enums_term;
 				// Get the storage
-				if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + label_input) && $.obj_len("pgrdg_cache.search.criteria.selected_enums." + label_input) > 0) {
+				if($.storage_exists("search.criteria.selected_enums." + label_input)) {
 					selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + label_input + ".label");
 					selected_enums_term = storage.get("pgrdg_cache.search.criteria.selected_enums." + label_input + ".term");
 				} else {
@@ -3290,7 +3293,7 @@
 			$label_input_term = $("#" + label_input + "_term"),
 			selected_enums, selected_enums_term;
 			// Get the storage
-			if(storage.isSet("pgrdg_cache.search.criteria.selected_enums." + item_id) && $.obj_len("pgrdg_cache.search.criteria.selected_enums." + item_id) > 0) {
+			if($.storage_exists("search.criteria.selected_enums." + item_id)) {
 				selected_enums = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".label");
 				selected_enums_term = storage.get("pgrdg_cache.search.criteria.selected_enums." + item_id + ".term");
 			} else {
@@ -3396,7 +3399,7 @@ $(document).ready(function() {
 			$.resize_forms_mask();
 		});
 		if($.obj_len(query) > 0) {
-			if(storage.isSet("pgrdg_cache.search.criteria.grouping._ordering") && $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering")) > 0) {
+			if($.storage_exists("search.criteria.grouping._ordering")) {
 			 	$.restore_stage();
 			} else {
 				$.search_fulltext(query.q);
@@ -3419,7 +3422,7 @@ $(document).ready(function() {
 	$(".panel-body form").submit(false);
 	$(".panel-body form:submit").attr("disabled", "disabled");
 	// Restore the previous content of Search page
-	// if(storage.isSet("pgrdg_cache.html") && storage.get("pgrdg_cache.html") !== undefined) {
+	// if($.storage_exists("html") && storage.get("pgrdg_cache.html") !== undefined) {
 	// 	$("body").html($.b64_to_utf8(storage.get("pgrdg_cache.html")));
 	// }
 });

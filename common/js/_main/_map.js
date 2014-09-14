@@ -11,7 +11,7 @@
  *	CORE ENGINE
  *======================================================================================*/
 
-        var map, lon, lat, zoom, default_bbox = [], control, current_layer, user_layers, layers = [], l = {}, defaultLayer, baseLayers, overlayLayers, markers;
+        var map, lon, lat, zoom, default_bbox = [], control, current_layer, user_layers, user_search_layers, layers = [], l = {}, markerMap = {}, defaultLayer, baseLayers, overlayLayers, markers;
 
         /**
          * Extract configuration from map config file
@@ -19,7 +19,7 @@
         $.get_map_config = function(callback) {
                 var layer_index = {};
 
-                if(storage.isSet("pgrdg_cache.map_data") && storage.isSet("pgrdg_cache.map_data.config")) {
+                if($.storage_exists("map_data.config")) {
                         if(typeof(callback) == "function") {
                                 callback.call(this, storage.get("pgrdg_cache.map_data.config"));
                         }
@@ -30,7 +30,7 @@
                                 success: function(map_data) {
                                         if(typeof(callback) == "function") {
                                                 storage.set("pgrdg_cache.map_data.config", map_data);
-                                                if(!storage.isSet("pgrdg_cache.map_data.index")) {
+                                                if(!$.storage_exists("map_data.index")) {
                                                         $.each(map_data.map.layers, function(ltype, ldata) {
                                                                 if(ltype !== "defaultLayer") {
                                                                         $.each(ldata, function(tag, data) {
@@ -59,8 +59,8 @@
          */
         $.init_map = function(callback) {
                 var zindex = 0,
-                storage_layer = (storage.isSet("pgrdg_cache.map_data.layers.current.layer")) ? storage.get("pgrdg_cache.map_data.layers.current.layer") : {},
-                storage_overlays = (storage.isSet("pgrdg_cache.map_data.layers.current.layer.overlay")) ? storage.get("pgrdg_cache.map_data.layers.current.layer.overlay") : {};
+                storage_layer = ($.storage_exists("map_data.layers.current.layer")) ? storage.get("pgrdg_cache.map_data.layers.current.layer") : {},
+                storage_overlays = ($.storage_exists("map_data.layers.current.layer.overlay")) ? storage.get("pgrdg_cache.map_data.layers.current.layer.overlay") : {};
 
                 $.get_map_config(function(map_data) {
                         lon = map_data.map.default.coordinates.lon;
@@ -81,7 +81,9 @@
                                 markerZoomAnimation: true
                         });
                         user_layers = new L.LayerGroup();
+                        user_search_layers = new L.LayerGroup();
                         user_layers.addTo(map);
+                        user_search_layers.addTo(map);
                         L.control.scale().addTo(map);
                         // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
                         if($.obj_len(storage_layer) > 0 && storage_layer.layer !== map_data.map.layers.defaultLayer.layer) {
@@ -117,7 +119,7 @@
                                 i++;
                                 $.each(layers_list, function(k, v) {
                                         if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
-                                                if(storage.isSet("pgrdg_cache.map_data.layers.current.overlay." + v.layer.replace(/\./g, "~")) && $.obj_len(storage.get("pgrdg_cache.map_data.layers.current.overlay." + v.layer.replace(/\./g, "~"))) > 0) {
+                                                if($.storage_exists("map_data.layers.current.overlay." + v.layer.replace(/\./g, "~"))) {
                                                         $("#change_map ul").append('<li class="keep_open selected" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-square"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                         $.show_layer($.utf8_to_b64(JSON.stringify(v)));
                                                 } else {
@@ -139,7 +141,7 @@
 
                         $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
 
-                                console.log(map);
+                                //console.log(map);
                         map.on("zoomend", function(e) {
                                 var current_layer_data = $.get_current_layer_options(),
                                 selected_layer_obj = storage.get("pgrdg_cache.map_data.layers.current.layer"),
@@ -167,6 +169,9 @@
                 $.get_generated_layers();
         };
 
+        /**
+         * Reset a previous generated map
+         */
         $.reset_map = function() {
                 //$("#pgrdg_map").html("");
                 $("#pgrdg_map").remove();
@@ -178,12 +183,6 @@
 /*=======================================================================================
  *	POSITIONING AND CENTERING
  *======================================================================================*/
-
-        /**
-         * Wrap longitude or latitude value
-         * @param {[type]} value) { return value - (Math.floor((value + 180) / 360) * 360 [description]
-         */
-//        $.wrapLon = function(value) { return value - (Math.floor((value + 180) / 360) * 360); };
 
         /**
          * Return current boundingbox
@@ -226,7 +225,20 @@
         /**
          * Center map on given boundingbox
          */
-//        $.set_center_bbox = function(a, b, c, d) { view.setCenter($.set_lonlat_bbox(a, b, c, d)); };
+        $.set_center_bbox = function(boundingbox) {
+                var minLat = boundingbox[0],
+                maxLat = boundingbox[1],
+                minLng = boundingbox[2],
+                maxLng = boundingbox[3],
+                southWest = new L.LatLng(minLat, minLng),
+                northEast = new L.LatLng(maxLat, maxLng);
+
+                bounds = new L.LatLngBounds(southWest, northEast);
+                map.fitBounds(bounds, {
+                        maxZoom: 10
+                });
+                //map.setZoom(map.getZoom() - 2);
+        };
 
         /**
         * Center map on a defined place
@@ -339,27 +351,39 @@
          */
         $.get_generated_layers = function(selected) {
                 //console.dir(user_layers.getLayers());
-                if(storage.isSet("pgrdg_cache.map_data.user_layers") && $.obj_len(storage.get("pgrdg_cache.map_data.user_layers")) > 0) {
+                if($.storage_exists("map_data.user_layers")) {
                         var label = "";
                         $("#selected_layer").html("");
-                        $.each(storage.get("pgrdg_cache.map_data.user_layers"), function(id, search_data) {
-                                if(search_data[kAPI_PARAM_CRITERIA].fulltext !== undefined && search_data[kAPI_PARAM_CRITERIA].fulltext !== "") {
-                                        label = 'Search: "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
-                                }
-                                if(search_data[kAPI_PARAM_CRITERIA].node !== undefined && $.obj_len(search_data[kAPI_PARAM_CRITERIA].node) > 0) {
-                                        $.each(search_data[kAPI_PARAM_CRITERIA].node, function(gk, gv) {
-                                                if(gv.is_patch === undefined || gv.is_patch !== true) {
-                                                        label += " in " + gv.name;
-                                                } else {
-                                                        label += " " + gv.name.toLowerCase() + "s";
+                        if($.storage_exists("map_data.user_layers.results")) {
+                                $.each(storage.get("pgrdg_cache.map_data.user_layers.results"), function(id, search_data) {
+                                        if(search_data[kAPI_PARAM_CRITERIA].fulltext !== undefined && search_data[kAPI_PARAM_CRITERIA].fulltext !== "") {
+                                                label = 'Search: "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
+                                        }
+                                        if(search_data[kAPI_PARAM_CRITERIA].node !== undefined && $.obj_len(search_data[kAPI_PARAM_CRITERIA].node) > 0) {
+                                                $.each(search_data[kAPI_PARAM_CRITERIA].node, function(gk, gv) {
+                                                        if(gv.is_patch === undefined || gv.is_patch !== true) {
+                                                                label += " in " + gv.name;
+                                                        } else {
+                                                                label += " " + gv.name.toLowerCase() + "s";
+                                                        }
+                                                });
+                                        }
+                                        // Check all loaded layers and compare with current
+                                        $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa fa-square-o"></span> ' + label + '</a></li>');
+                                });
+                        } else if($.storage_exists("map_data.user_layers.map")) {
+                                if($.storage_exists("map_data.user_layers.map.searches")) {
+                                        $.each(storage.get("pgrdg_cache.map_data.user_layers.map.searches"), function(id, search_data) {
+                                                if(search_data.input !== undefined && search_data.input !== "") {
+                                                        label = 'Search in map: "' + search_data.input + '"';
                                                 }
+                                                $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" onclick="$.search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa fa-search"></span> ' + label + '</a></li>');
                                         });
                                 }
-                                console.log(search_data);
-                                // Check all loaded layers and compare with current
-                                $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" title="Switch on/off this data"><span class="fa fa-square-o"></span>' + label + '</a></li>');
-                        });
+                        }
                         $("#user_level_btn").show();
+                } else {
+                        $("#user_level_btn").hide();
                 }
         };
 
@@ -388,6 +412,9 @@
          */
         $.current_layer = function() { return current_layer; };
 
+        /**
+         * Return the index of a given layer
+         */
         $.get_layer_index = function(identifier) {
                 var index = storage.get("pgrdg_cache.map_data.index");
                 return index[identifier];
@@ -405,7 +432,7 @@
                 overlay_exists = false;
 
                 if(selected_layer_index.type !== "baseLayers") {
-                        if(storage.isSet("pgrdg_cache.map_data.layers.current.overlay")) {
+                        if($.storage_exists("map_data.layers.current.overlay")) {
                                 overlay = storage.get("pgrdg_cache.map_data.layers.current.overlay");
                         }
                 }
@@ -487,7 +514,7 @@
                                 } else {
                                         $("#change_map a." + selected_layer_obj.layer.replace(".", "_")).parent("li").removeClass("selected").find("span").removeClass("fa-check-square").addClass("fa-square-o");
                                         $.hide_layer(selected_layer_obj.name);
-                                        storage.remove("pgrdg_cache.map_data.layers.current.overlay." + selected_layer_obj.layer.replace(/\./g, "~"));
+                                        $.remove_storage("pgrdg_cache.map_data.layers.current.overlay." + selected_layer_obj.layer.replace(/\./g, "~"));
                                         current_layer = storage_layer;
                                 }
                         }
@@ -791,56 +818,119 @@
                 * @return {object}       The results of search in Nominatim OpenStreetmap
                 */
                 $.search_location = function(input) {
-                        if(input.length > 0) {
-                                $("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
-                                $.ajax({
-                                        url: "API/",
-                                        type: "get",
-                                        format: "json",
-                                        crossDomain: true,
-                                        data: {
-                                                proxy: "true",
-                                                type: "get",
-                                                header: "text/json",
-                                                address: "http://nominatim.openstreetmap.org/search.php?q=" + encodeURIComponent(input) + "&format=json&addressdetails=true&bounded=true&limit=10&polygon_geojson=true"
-                                        },
-                                        error: function(data) {
-                                                alert("An error occurred while communicating with the OpenLS service. Please try again.");
-                                                $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
-                                        },
-                                        success: function(data) {
-                                                datap = $.parseJSON(data);
-                                                $("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600);
-                                                $("#information_zone").html(datap[0].address.city + ", " + ((datap[0].address.county !== undefined) ? "(" + datap[0].address.county + ") " : "") + datap[0].address.state + " - " + datap[0].address.country);
-
-                                                var minLat = datap[0].boundingbox[0],
-                                                maxLat = datap[0].boundingbox[1],
-                                                minLng = datap[0].boundingbox[2],
-                                                maxLng = datap[0].boundingbox[3];
-
-                                                //console.log(datap[0].lon, datap[0].lat);
-                                                //console.log(typeof(datap[0].lon));
-                                                //$.set_zoom(7);
-                                                //view.fitExtent([minLat, maxLat, minLng, maxLng], map.getSize());
-
-                                                //var textent = ol.extent.transform([minLat, minLng, maxLat, maxLng], ol.proj.getTransform('EPSG:4326', 'EPSG:3857'));
-                                                //console.log(textent);
-                                                $.each(datap, function(k, v) {
-                                                        var mc;
-                                                        //console.log(datap[k].lon, datap[k].lat);
-                                                        if(k === 0) {
-                                                                mc = "primary";
-                                                        } else {
-                                                                mc = "secondary";
-                                                        }
-                                                        $.add_marker({uuid: datap[k].place_id, lon: datap[k].lon, lat: datap[k].lat, marker_class: mc, name: datap[k].display_name, title: "Search: \"" + input + "\"", content: datap[k].display_name});
-                                                });
-                                                $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
-                                                $("#" + datap[0].place_id).popover("show");
-                                                $.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
+                        $.show_results = function(datap) {
+                                $("#information_zone").html('<h3>' + i18n[lang].interface.results_for.replace("{X}", input) + '</h3><ul class="list-unstyled"></ul>');
+                                $.each(datap, function(k, v) {
+                                        var mc,
+                                        title = "Search of \"" + input + "\"",
+                                        content = v.display_name;
+                                        //console.log(datap[k].lon, datap[k].lat);
+                                        if(k === 0) {
+                                                mc = "primary";
+                                        } else {
+                                                mc = "secondary";
                                         }
+                                        if(v.geojson !== undefined && $.obj_len(v.geojson) > 0) {
+                                                $.add_geojson_cluster({
+                                                        id: v.place_id,
+                                                        geojson: v.geojson,
+                                                        lon: v.lon,
+                                                        lat: v.lat,
+                                                        service: false,
+                                                        name: v.display_name,
+                                                        title: title,
+                                                        content: content
+                                                });
+                                        } else {
+                                                $.add_marker({
+                                                        uuid: v.place_id,
+                                                        lon: v.lon,
+                                                        lat: v.lat,
+                                                        marker_class: mc,
+                                                        name: v.display_name,
+                                                        title: title,
+                                                        content: content
+                                                });
+                                        }
+
+                                        $("#information_zone ul").append('<li><a href="javascript: void(0);" onclick="$.select_marker({marker_id: \'' + v.place_id + '\', title: \'' + title.replace(/"/g, "&quot;") + '\', content: \'' + content.replace(/"/g, "&quot;") + '\'});" title="' + v.display_name + '">' + v.display_name + '</a></li>');
+
+                                        markerMap[v.place_id] = v;
                                 });
+
+                                $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
+                                $("#find_location input").prop("disabled", false);
+                                $("#" + datap[0].place_id).popover("show");
+                                //$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
+                                $.set_center_bbox(datap[0].boundingbox);
+                        };
+
+                        if(input.length > 0) {
+                                user_search_layers.clearLayers();
+                                map.closePopup();
+                                $("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
+                                $("#find_location input").attr("disabled", true);
+                                $("#information_zone").html("");
+                                $("#selected_zone").html(i18n[lang].interface.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
+
+                                if(!$.storage_exists("map_data.user_layers.map.searches." + $.md5(input))) {
+                                        $.ajax({
+                                                url: "API/",
+                                                type: "get",
+                                                format: "json",
+                                                crossDomain: true,
+                                                data: {
+                                                        proxy: "true",
+                                                        type: "get",
+                                                        header: "text/json",
+                                                        address: "http://nominatim.openstreetmap.org/search.php?q=" + encodeURIComponent(input) + "&format=json&addressdetails=true&bounded=true&limit=10&polygon_geojson=true"
+                                                },
+                                                success: function(data) {
+                                                        var datap = $.parseJSON(data);
+
+                                                        if($.obj_len(datap) > 0) {
+                                                                storage.set("pgrdg_cache.map_data.user_layers.map.searches." + $.md5(input), {input: input, results: datap});
+
+                                                                $("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600);
+
+                                                                $.show_results(datap);
+                                                                $.get_generated_layers();
+                                                        } else {
+                                                                $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600);
+                                                                $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
+                                                                $("#find_location input").prop("disabled", false);
+                                                        }
+                                                },
+                                                error: function(data) {
+                                                        $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600);
+                                                        $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
+                                                        $("#find_location input").prop("disabled", false);
+                                                }
+                                        });
+                                } else {
+                                        $.show_results(storage.get("pgrdg_cache.map_data.user_layers.map.searches." + $.md5(input) + ".results"));
+                                }
                         }
+                };
+
+
+                $.select_marker = function(options) {
+                        options = $.extend({
+                                marker_id: "",
+                                title: "",
+                                content: ""
+                        }, options);
+
+                        var ma = markerMap[options.marker_id],
+                        popup = L.popup()
+                            .setLatLng(L.latLng((ma.lat + 10), ma.lon))
+                            .setContent('<h4 class="text-info"><span class="fa-map-marker text-danger fa fa-lg"></span> ' + options.title + '</h4>' + '<p>' + options.content + '</p>')
+                            .openOn(map);
+
+                        //$.each($(this).closest("ul").find("li"), function(k, v) {
+                        //        $(this).find("a").text($(this).find("a").text());
+                        //});
+                        $.set_center_bbox(ma.boundingbox);
                 };
 
 
@@ -1035,15 +1125,22 @@
                 $.add_geojson_cluster = function(options, callback) {
                         options = $.extend({
                                 geojson: "",
-                                id: ""
+                                id: "",
+                                service: true,
+                                name: "",
+                                title: "",
+                                content: ""
                         }, options);
 
                         var markers = L.markerClusterGroup(),
                         geoJsonLayer = L.geoJson(options.geojson);
 
         		markers.addLayer(geoJsonLayer);
-
-        		user_layers.addLayer(markers);
+                        if(options.service) {
+                                user_layers.addLayer(markers);
+                        } else {
+                                user_search_layers.addLayer(markers);
+                        }
                         var marker_position = markers.getBounds().getCenter();
                         var bbx = {};
                         bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
@@ -1053,32 +1150,47 @@
 
 
                         markers.on("click", function(m) {
-                                var i = 0;
-                                var $marker_body = $("#marker_content").find(".modal-body");
-                                $marker_body.html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Extracting data</center>');
-                                $("#marker_content").modal("show").on("shown.bs.modal", function(){
-                                        if(i === 0) {
-                                                var objp = {};
-                                                objp.storage_group = "results";
-                                                objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
-                                                objp.parameters = {};
-                                                objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-                                                objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
-                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
-                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
-                                                objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
-                                                $.ask_to_service(objp, function(marker_content) {
-                                                        $("#marker_content .modal-title").html('<span class="fa-map-marker text-danger fa fa-lg"></span> ' + '<span class="text-primary">' + m.layer.feature.properties.id + '</span>');
-                                                        $.each(marker_content.results, function(domain, rows) {
-                                                                //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
-                                                                $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
+                                //console.log(m);
+                                var i = 0,
+                                $marker_title = $("#marker_content").find(".modal-header"),
+                                $marker_body = $("#marker_content").find(".modal-body");
+
+                                if(options.service) {
+                                        $marker_body.html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Extracting data</center>');
+                                        $("#marker_content").modal("show").on("shown.bs.modal", function(){
+                                                if(i === 0) {
+                                                        var objp = {};
+                                                        objp.storage_group = "results";
+                                                        objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
+                                                        objp.parameters = {};
+                                                        objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+                                                        objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
+                                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = "true";
+                                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_ID] = m.layer.feature.properties.id;
+                                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_FORMAT;
+                                                        objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = m.layer.feature.properties.domain;
+                                                        $.ask_to_service(objp, function(marker_content) {
+                                                                $("#marker_content .modal-title").html('<span class="fa-map-marker text-danger fa fa-lg"></span> ' + '<span class="text-primary">' + m.layer.feature.properties.id + '</span>');
+                                                                $.each(marker_content.results, function(domain, rows) {
+                                                                        //$("#marker_content").find(".modal-title").html(rows[7].name + " " + domain);
+                                                                        $("#marker_content").find(".modal-body").html($.parse_row_content(rows));
+                                                                });
                                                         });
-                                                });
-                                                $("#marker_content a.text-info").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
-                                        }
-                                        i++;
-                                });
+                                                        $("#marker_content a.text-info").popover({
+                                                                container: "body",
+                                                                placement: "auto",
+                                                                html: "true",
+                                                                trigger: "hover"
+                                                        });
+                                                }
+                                                i++;
+                                        });
+                                } else {
+                                        var popup = L.popup()
+                                            .setLatLng(L.latLng(options.lat, options.lon))
+                                            .setContent('<h4 class="text-info"><span class="fa-map-marker text-danger fa fa-lg"></span> ' + options.title + '</h4>' + '<p>' + options.content + '</p>')
+                                            .openOn(map);
+                                }
                         });
                 };
 

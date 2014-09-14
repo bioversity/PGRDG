@@ -48,7 +48,7 @@
 			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
 			object_param[kAPI_REQUEST_PARAMETERS] = opt.parameters[kAPI_REQUEST_PARAMETERS];
 		}
-		if(!storage.isEmpty("pgrdg_cache." + opt.storage_group) && storage.isSet("pgrdg_cache." + opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
+		if(!$.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
@@ -146,7 +146,7 @@
 								rgba.g = g;
 								rgba.b = b;
 								v.colour = $.set_colour({colour: rgba});
-								if(!storage.isSet("pgrdg_cache.search")) {
+								if(!$.storage_exists("search")) {
 									storage.set("pgrdg_cache.search", {});
 								}
 								storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
@@ -273,7 +273,7 @@
 			}
 			return container.html();
 		};
-		if(storage.isSet("pgrdg_cache." + subject) && $.obj_len(storage.get("pgrdg_cache." + subject)) > 0) {
+		if($.storage_exists(subject.replace("pgrdg_cache", ""))) {
 			$("#saved_history").html("");
 			$.each(storage.get("pgrdg_cache." + subject), function(k, v) {
 				// if(k == "forms") {
@@ -394,7 +394,7 @@
 				case "check":
 					// Check the last left_panel saved position and restore it
 					var left_panel_status = "open";
-					if(storage.isSet("pgrdg_cache.interface")) {
+					if($.storage_exists("interface")) {
 						left_panel_status = storage.get("pgrdg_cache.interface.left_panel.status");
 					}
 					if(left_panel_status == "open") {
@@ -457,7 +457,7 @@
 	 * Add right buttons on the breadcrumb
 	 */
 	$.breadcrumb_right_buttons = function() {
-		if(storage.isSet("pgrdg_cache.search.criteria") && $.obj_len(storage.get("pgrdg_cache.search.criteria")) > 0) {
+		if($.storage_exists("search.criteria")) {
 			if($("#breadcrumb").length > 0) {
 				if($("#breadcrumb .breadcrumb li.no-divider.pull-right").length === 0) {
 					var li_no_divider = $('<li class="no-divider pull-right">'),
@@ -471,7 +471,7 @@
 					$("#breadcrumb .breadcrumb").append(li_no_divider);
 				}
 			} else {
-				console.log($.obj_len(query), current_path);
+				//console.log($.obj_len(query), current_path);
 				if((current_path == "Search" && $.obj_len(query) > 0) && current_path !== "Advanced_search") {
 					var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
 					breadcrumb_ol = $('<ol class="breadcrumb">'),
@@ -645,11 +645,11 @@
 			} else {
 				a += "." + names[k];
 			}
-			if(storage.isSet(a) || storage.isSet(a) && storage.isEmpty(a)) {
+			if($.storage_exists(a) || $.storage_exists(a) && storage.isEmpty(a)) {
 				storage.remove(a);
 			}
 		});*/
-		if(storage.isSet(name)) {
+		if($.storage_exists(name)) {
 			storage.remove(name);
 		}
 	};
@@ -671,22 +671,54 @@
 	}
 
 	/**
-	 * Check the latest version on Github an compare it with its own.
-	 * Note that if you want to reset the user storage, you need to update Github repo's version tag
+	 * Check the latest version on config and compare it with saved.
+	 * Note that if you want to reset the user storage, you need to update the site's config file
 	 */
 	$.check_version = function() {
 		$.reset_storage = function(last_version) {
-			storage.remove("pgrdg_cache");
+			//storage.remove("pgrdg_cache");
 			storage.set("pgrdg_cache.version", last_version);
 		};
 
-		if(storage.isSet("pgrdg_cache.version")) {
+		if($.storage_exists("version")) {
 			if(storage.get("pgrdg_cache.version") !== config.site.version) {
 				$.reset_storage(config.site.version);
 			}
 		} else {
 			$.reset_storage(config.site.version);
 		}
+	};
+
+
+	/**
+	 * Split and iterate a given storage address and return false if encounter a non-existing level
+	 */
+	$.storage_exists = function(path) {
+		path = path.replace("pgrdg_cache", "");
+		var all_path = $.array_clean(path.split(".")),
+		vv = "",
+		is_set = true;
+		for(var i = 0; i < all_path.length; i++) {
+			vv += ((i === 0) ? "" : ".") + all_path[i];
+			if(storage.isSet("pgrdg_cache." + vv)) {
+				if($.type(storage.get("pgrdg_cache." + vv)) == "object") {
+					if($.obj_len(storage.get("pgrdg_cache." + vv)) > 0) {
+						is_set = true;
+					} else {
+						is_set = false;
+					}
+				} else {
+					if(storage.get("pgrdg_cache." + vv) !== "") {
+						is_set = true;
+					} else {
+						is_set = false;
+					}
+				}
+			} else {
+				is_set = false;
+			}
+		}
+		return is_set;
 	};
 
 
@@ -857,9 +889,9 @@
 										// ALT [keydown]
 		}).bind("keydown", "alt", function(e) {
 			if($("header").hasClass("map")) {
-				e.preventDefault();
+				/*e.preventDefault();
 				$("#information_zone").html('<table><tr><th><tt>ALT<small style="font-weight: normal;">+</small>F</tt></th><td>Search a location inside a map</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>L</tt></th><td>Lock/unlock map navigation</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>T</tt></th><td>Open/close map background layer preferences</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>+</tt></th><td><br />Zoom in</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>-</tt></th><td>Zoom out</td></tr><tr><th><br /><tt>ALT<small style="font-weight: normal;">+</small>0</tt></th><td><br />Entire world</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>1</tt></th><td>Africa</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>2</tt></th><td>Antarctica</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>3</tt></th><td>Asia</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>4</tt></th><td>Europe</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>5</tt></th><td>North America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>6</tt></th><td>Oceania</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>7</tt></th><td>South America</td></tr><tr><th><tt>ALT<small style="font-weight: normal;">+</small>9</tt></th><td>User position</td></tr></table>');
-				$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });
+				$("#selected_zone").delay(1000).fadeOut(600, function() { $(this).text(""); });*/
 			}
 										// ALT [keyup]
 		}).bind("keyup", "alt", function(e) {
@@ -1001,7 +1033,7 @@
 		user_data = "",
 		roles_groups = [];
 		if(username !== undefined && username !== null && username !== "null" && username !== "") {
-			if(storage.isSet("pgrdg_cache.session." + username)) {
+			if($.storage_exists("session." + username)) {
 				user_data = storage.get("pgrdg_cache.session." + username + ".data");
 				$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v){
 					roles_groups.push(k, v.charAt(0));
@@ -1368,81 +1400,76 @@
 /*======================================================================================*/
 
 $(document).ready(function() {
-	/*if(!load) {
-		return false;
+	$("nav a[title]").tooltip({placement: "bottom", container: "body"});
+	$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
+		$(this).tooltip("hide");
+	});
+
+	$.shortcuts();
+	$("#login").on("shown.bs.modal", function(e) {
+		e.preventDefault();
+		$("#login_btn").removeClass("disabled").attr("disabled", false);
+		$("#login-username").focus();
+
+		$("#login_btn").on("click", function() {
+			$.login();
+		});
+	});
+
+	if(current_path == "Search") {
+		$.get_statistics();
+
+		if($.obj_len(query) > 0) {
+			if($("#breadcrumb").css("display") == "none") {
+				$("#breadcrumb").fadeIn(200);
+			}
+
+			$.search_fulltext(query.q);
+		}
 	}
-	if(load) {*/
-		$("nav a[title]").tooltip({placement: "bottom", container: "body"});
-		$("#map_toolbox a, #map_sub_toolbox a").tooltip({placement: "left", container: "body"}).click(function() {
-			$(this).tooltip("hide");
-		});
+	if(current_path == "Search" || current_path == "Advanced_search") {
+		document.location.hash = "";
+		window.onhashchange = function() {
+			$.manage_url(document.location.hash.replace("#", ""));
+		};
+		$.manage_url();
 
-		$.shortcuts();
-		$("#login").on("shown.bs.modal", function(e) {
-			e.preventDefault();
-			$("#login_btn").removeClass("disabled").attr("disabled", false);
-			$("#login-username").focus();
-
-			$("#login_btn").on("click", function() {
-				$.login();
+		$("#search_tips").click(function(){
+			apprise(i18n[lang].interface.search_tips, {
+				tag: "p",
+				title: "Search tips",
+				icon: "fa-keyboard-o",
+				titleClass: "text-info",
+				textOk: "Close",
+				okBtnClass: "btn-default-grey",
+				allowExit: true
 			});
 		});
+		$.get_operators_list();
 
-		if(current_path == "Search") {
-			$.get_statistics();
+		if(config.site.developer_mode) {
+			var li_dev = $('<li class="btn-group">'),
+			a_dev = $('<a class="btn btn-link" data-toggle="dropdown" href="javascript: void(0);"><span class="fa fa-wrench"></span> Developer <span class="caret"></span>'),
+			sub_ul_dev = $('<ul role="menu" class="dropdown-menu">')
+			li_divider_dev = $('<li class="divider">');
 
-			if($.obj_len(query) > 0) {
-				if($("#breadcrumb").css("display") == "none") {
-					$("#breadcrumb").fadeIn(200);
-				}
-
-				$.search_fulltext(query.q);
-			}
+			sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="storage.remove(\'pgrdg_cache\'); location.reload();"><span class="fa fa-eraser"></span>&nbsp;Reset storage</a></li>');
+			sub_ul_dev.append('<li class="divider"></li>');
+			sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="load_firebug();"><span class="fa fa-bug"></span>&nbsp;Load Firebug-Lite</a></li>');
+				li_dev.append(a_dev);
+			li_dev.append(sub_ul_dev);
+			$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev)
 		}
-		if(current_path == "Search" || current_path == "Advanced_search") {
-			document.location.hash = "";
-			window.onhashchange = function() {
-				$.manage_url(document.location.hash.replace("#", ""));
-			};
-			$.manage_url();
-
-			$("#search_tips").click(function(){
-				apprise(i18n[lang].interface.search_tips, {
-					tag: "p",
-					title: "Search tips",
-					icon: "fa-keyboard-o",
-					titleClass: "text-info",
-					textOk: "Close",
-					okBtnClass: "btn-default-grey",
-					allowExit: true
-				});
-			});
-			$.get_operators_list();
-
-			if(config.site.developer_mode) {
-				var li_dev = $('<li class="btn-group">'),
-				a_dev = $('<a class="btn btn-link" data-toggle="dropdown" href="javascript: void(0);"><span class="fa fa-wrench"></span> Developer <span class="caret"></span>'),
-				sub_ul_dev = $('<ul role="menu" class="dropdown-menu">')
-				li_divider_dev = $('<li class="divider">');
-
-				sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="storage.remove(\'pgrdg_cache\'); location.reload();"><span class="fa fa-eraser"></span>&nbsp;Reset storage</a></li>');
-				sub_ul_dev.append('<li class="divider"></li>');
-				sub_ul_dev.append('<li><a href="javascript: void(0);" onclick="load_firebug();"><span class="fa fa-bug"></span>&nbsp;Load Firebug-Lite</a></li>');
-					li_dev.append(a_dev);
-				li_dev.append(sub_ul_dev);
-				$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev)
-			}
+	}
+	$.check_logged_user();
+	if(current_path == "Profile") {
+		if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
+			//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
 		}
-		$.check_logged_user();
-		if(current_path == "Profile") {
-			if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
-				//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
-			}
-		}
+	}
 
-		$.breadcrumb_right_buttons();
-		if(current_path == "Search" && $("#breadcrumb").length > 0) {
-			$("#breadcrumb .breadcrumb").prepend('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
-		}
-	// }
+	$.breadcrumb_right_buttons();
+	if(current_path == "Search" && $("#breadcrumb").length > 0) {
+		$("#breadcrumb .breadcrumb").prepend('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
+	}
 });

@@ -7,6 +7,9 @@ if(empty($_GET) && empty($_POST)) {
 	print "May the force be with you...!\n\n";
 	exit();
 }
+if(isset($_GET["header"]) && trim($_GET["header"]) !== "") {
+	$api->set_content_type($_get["header"]);
+}
 if(isset($_GET["proxy"]) && trim($_GET["proxy"]) == "true") {
 	if($_GET["debug"] == "true") {
 		$api->debug();

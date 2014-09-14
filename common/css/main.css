@@ -835,6 +835,13 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 	margin-top: 10px;
 }
 
+#map {
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
+
 #start {
 	display: block;
 }
@@ -1615,18 +1622,31 @@ ul.list-group.transparent ul {
 	left: 20px;
 	position: absolute;
 	text-align: left;
+	text-indent: 0;
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
 	width: 18%;
 	z-index: 2;
-
+}
+#information_zone a {
+	color: #fff;
+	text-decoration: underline;
+}
+#information_zone a:hover {
+	text-decoration: none;
+}
+#information_zone ul {
+	margin: 0;
 }
 #information_zone td {
 	padding-left: 10px;
 }
-#information_zone p, #information_zone td, #information_zone th,
+#information_zone th,
+#information_zone td,
+#information_zone p,
 #information_zone li {
 	color: rgba(255, 255, 255, 0.8);
 }
+
 .olForeignContainer {
 	background-color: #000 !important;
 }
