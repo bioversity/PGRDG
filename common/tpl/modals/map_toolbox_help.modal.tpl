@@ -55,10 +55,10 @@
 									<th><kbd>ALT<small style="font-weight: normal;">+</small>5</kbd></th><td>North America</td>
 								</tr>
 								<tr>
-									<th><kbd>ALT<small style="font-weight: normal;">+</small>6</kbd></th><td>Oceania</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>6</kbd></th><td>South America</td>
 								</tr>
 								<tr>
-									<th><kbd>ALT<small style="font-weight: normal;">+</small>7</kbd></th><td>South America</td>
+									<th><kbd>ALT<small style="font-weight: normal;">+</small>7</kbd></th><td>Oceania</td>
 								</tr>
 							</table>
 						</div>

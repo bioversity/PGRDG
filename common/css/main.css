@@ -1629,10 +1629,16 @@ ul.list-group.transparent ul {
 }
 #information_zone a {
 	color: #fff;
-	text-decoration: underline;
+	font-weight: normal !important;
+	padding: 3px 0;
 }
 #information_zone a:hover {
-	text-decoration: none;
+	text-decoration: underline;
+}
+#information_zone a.disabled {
+	font-weight: bold !important;
+	font-size: 1.2em;
+	padding: 5px;
 }
 #information_zone ul {
 	margin: 0;
