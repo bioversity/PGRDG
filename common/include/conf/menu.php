@@ -159,6 +159,7 @@ $menu["menu"]["top"] = array(
 		),
 		"divider" => "vertical-divider"
 	),
+	*/,
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-refresh fa-spin",
@@ -172,7 +173,6 @@ $menu["menu"]["top"] = array(
 			"class" => "btn btn-link disabled"
 		)
 	)
-	*/
 );
 $menu["menu"]["map_toolbox"] = array(
 	"Find_location" => array(

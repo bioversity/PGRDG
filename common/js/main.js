@@ -48,7 +48,7 @@
 			object_param[kAPI_REQUEST_LANGUAGE] = opt.parameters[kAPI_REQUEST_LANGUAGE];
 			object_param[kAPI_REQUEST_PARAMETERS] = opt.parameters[kAPI_REQUEST_PARAMETERS];
 		}
-		if(!$.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
+		if($.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
 			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
@@ -668,7 +668,7 @@
 				}
 			}
 		});
-	}
+	};
 
 	/**
 	 * Check the latest version on config and compare it with saved.

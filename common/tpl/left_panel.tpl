@@ -14,7 +14,7 @@
 		</ul>
 	</div>
 	<div class="panel-body autocomplete"></div>
-	<h4><i style="text-muted"><?php print $i18n["en"]["interface"]["static_form_help_text"]; ?></i></h4>
+	<h4><i style="text-muted"><?php print $i18n[$lang]["interface"]["static_form_help_text"]; ?></i></h4>
 	<div class="panel-body contents">
 		<div>
 			<div><?php require_once("common/tpl/predefined_search.tpl"); ?></div>

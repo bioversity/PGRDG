@@ -33,7 +33,11 @@ class parse_json_config {
 			if($obj !== "_comment") {
 				if(!isset($map_toolbox["show_on_page"]) || $map_toolbox["show_on_page"] == $_GET["p"]) {
 					$menu_list .= '	<li' . (isset($map_toolbox["childs"]) ? ' class="btn-group"' : '') . '><a ';
-					$menu_list .= implode(" ", $this->extract_attributes($map_toolbox)) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . (isset($map_toolbox["childs"]) ? ' <span class="caret"></span>' : '') . '</a>' . (isset($map_toolbox["childs"]) ? '<ul class="dropdown-menu" role="menu">' . $this->build_menu($map_toolbox, "childs") . '</ul>' : '') . '</li>' . "\n";
+					$menu_list .= implode(" ", $this->extract_attributes($map_toolbox)) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . (isset($map_toolbox["childs"]) ? ' <span class="caret"></span>' : '') . '</a>';
+					if(isset($map_toolbox["childs"])) {
+						$menu_list .= '<ul class="dropdown-menu" role="menu">' . $this->build_menu($map_toolbox, "childs") . '</ul>';
+					}
+					$menu_list .= '</li>' . "\n";
 					if(isset($map_toolbox["divider"])) {
 						$menu_list .= '	<li class="divider"></li>' . "\n";
 					}
@@ -120,7 +124,7 @@ class parse_json_config {
 		return $menu_list;
 	}
 
-	public function parse_i18n() {
-		return json_decode(trim(str_replace(array('var i18n = {};', 'i18n = ', '};'), array('', '', '}'), file_get_contents($this->json_conf))), 1);
+	public function parse_js_config($variable) {
+		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
 	}
 }

@@ -38,17 +38,20 @@
 	<script type="text/javascript">
 	function load_firebug() {
 		var fileref;
-		if(developer_mode) {
-			document.body.style.cursor = "wait";
-			fileref = document.createElement("script");
-			fileref.setAttribute("type", "text/javascript");
-			fileref.setAttribute("src", "<?php print $domain; ?>/common/js/plugins/firebug-lite/build/firebug-lite-debug.js");
-			fileref.innerHTML = '{ saveCookies: true, startOpened: false, startInNewWindow: false, showIconWhenHidden: true, overrideConsole: true, ignoreFirebugElements: true, disableXHRListener: false, disableWhenFirebugActive: true, enableTrace: false, enablePersistent: false }';
+		if(config.site.developer_mode) {
+			$("#loader").addClass("system").fadeIn(300, function() {
+				document.body.style.cursor = "wait";
+				fileref = document.createElement("script");
+				fileref.setAttribute("type", "text/javascript");
+				fileref.setAttribute("src", "<?php print $domain; ?>/common/js/plugins/firebug-lite/build/firebug-lite-debug.js");
+				fileref.innerHTML = '{ saveCookies: true, startOpened: false, startInNewWindow: false, showIconWhenHidden: true, overrideConsole: true, ignoreFirebugElements: true, disableXHRListener: false, disableWhenFirebugActive: true, enableTrace: false, enablePersistent: false }';
 
-			var head = document.getElementsByTagName("head")[0];
-			head.appendChild(fileref);
+				var head = document.getElementsByTagName("head")[0];
+				head.appendChild(fileref);
 
-			document.body.style.cursor = "default";
+				document.body.style.cursor = "default";
+				$("#loader").fadeOut(0);
+			});
 		}
 	}
 	</script>

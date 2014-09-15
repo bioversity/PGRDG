@@ -247,7 +247,7 @@ $.service_coffee = function(options) {
 */
 $.site_conf = function(callback) {
         if(config.site.developer_mode) {
-                console.log("Check maintenance status...");
+                //console.log("Check maintenance status...");
         }
         $.cryptAjax({
                 url: "common/include/conf/interface/maintenance.json",
@@ -300,7 +300,7 @@ $.site_conf = function(callback) {
 //
 var system_constants,
 storage = $.localStorage,
-lang = ((storage.isSet("pgrdg_cache.lang") && storage.get("pgrdg_cache.lang") !== undefined && storage.get("pgrdg_cache.lang") !== "") ? storage.get("pgrdg_cache.lang") : config.site.default_language),
+lang = (($.cookie("lang") !== undefined && $.cookie("lang") !== null && $.cookie("lang") !== "") ? $.cookie("lang") : config.site.default_language),
 operators = [],
 password = $.makeid(),
 load = false, // Default status for continue to load javascript, do not edit
@@ -315,7 +315,6 @@ $.site_conf(function() {
                 return false;
         } else {
                 $.check_version();
-
                 if(!$.browser_cookie_status()) {
                         apprise('Your browser has cookies disabled.<br />Please, activate your cookies to let the system works properly, and then <a href="javascript:void(0);" onclick="location.reload();">reload the page</a>.', {title: "Enable yor cookie", icon: "warning", progress: true, allowExit: false});
                 } else {

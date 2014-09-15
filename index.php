@@ -9,9 +9,15 @@ require_once("common/include/classes/parse_json_config.class.php");
 $site_config = new parse_json_config();
 $map_config = new parse_json_config("common/include/conf/map.json");
 $i18n_config = new parse_json_config("common/include/conf/interface/i18n.js");
-$i18n = $i18n_config->parse_i18n();
-//print_r($site_config->menu("map_toolbox", "menu"));
-//exit();
+$interface_config = new parse_json_config("common/include/conf/interface/site.js");
+$i18n = $i18n_config->parse_js_config("i18n");
+$interface = $interface_config->parse_js_config("config");
+if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
+	$lang = $_COOKIE["lang"];
+} else {
+	$lang = $interface["site"]["default_language"];
+}
+
 function is_home() {
 	return ($_GET["p"] == "" || strtolower($_GET["p"]) == "home") ? true : false;
 }

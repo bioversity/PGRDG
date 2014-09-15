@@ -1,11 +1,17 @@
-var i18n = {};
-i18n = {
+var i18n = {
         "en": {
                 "maintenance": {
                         "title": "Under maintainance",
                         "message": "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over."
                 },
                 "messages": {
+                        "login": {
+                                "remember_me": "Remember me",
+                                "dont_have_account": "Don't have an account?",
+                                "sign_here": "Sign up here",
+                                "sign_in": "Sign in",
+                                "sign_in_btn": "Sign in"
+                        },
                         "map_limit_display": {
                                 "title": "Displayed {N} of {TOT} markers",
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."
