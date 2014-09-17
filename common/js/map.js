@@ -375,8 +375,14 @@
                                                         }
                                                 });
                                         }
+                                        console.log(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME], search_data[kAPI_PARAM_DOMAIN]);
+                                        if(selected == $.md5(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + search_data[kAPI_PARAM_DOMAIN])) {
+                                                icon = "fa-check-square";
+                                        } else {
+                                                icon = "fa-circle-o";
+                                        }
                                         // Check all loaded layers and compare with current
-                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '"class="btn pull-left" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa fa-square-o"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
+                                        $("#selected_layer").append('<li class="keep_open"><a id="' + selected + '" class="btn pull-left" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + selected + '\', \'map_data.user_layers.results\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
                                 });
                                 $("#user_level_btn").show();
                         } else if($.storage_exists("map_data.user_layers.searches")) {
@@ -389,7 +395,7 @@
                                         } else {
                                                 icon = "fa-circle-o";
                                         }
-                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '" class="btn pull-left" href="javascript: void(0);" onclick="$(this).search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
+                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '" class="btn pull-left" href="javascript: void(0);" onclick="$(this).search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\', \'map_data.user_layers.searches\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
                                 });
                                 $("#user_level_btn").show();
                         } else {
@@ -953,17 +959,20 @@
                 /**
                  * Remove a given search id from map and storage
                  */
-                $.remove_selected_search = function(id) {
+                $.remove_selected_search = function(id, storage_path) {
                         if($("a#" + id).find("span").hasClass("fa-check-circle")) {
                                 user_search_layers.clearLayers();
                                 map.closePopup();
                         }
+                        if($("a#" + id).find("span").hasClass("fa-check-square")) {
+                                user_layers.clearLayers();
+                                map.closePopup();
+                        }
                         $("a#" + id).closest("li").remove();
-                        $.remove_storage("pgrdg_cache.map_data.user_layers.searches." + id);
-
-                        if($.obj_len(storage.get("pgrdg_cache.map_data.user_layers.searches")) === 0) {
-
-                                $.remove_storage("pgrdg_cache.map_data.user_layers.searches");
+                        $.remove_storage("pgrdg_cache." + storage_path + "." + id);
+                        console.log("pgrdg_cache." + storage_path + "." + id);
+                        if($.obj_len(storage.get("pgrdg_cache." + storage_path)) === 0) {
+                                $.remove_storage("pgrdg_cache." + storage_path);
                                 $("#user_level_btn").hide();
                                 $("#user_layers").hide();
                         }

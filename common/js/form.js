@@ -2623,13 +2623,15 @@
 		*/
 		$.show_data_on_map = function(id, domain, grouped_data) {
 			var grouped = {},
-			uobj_id = "";
+			uobj_id = "",
+			name = "";
 			if(grouped_data === undefined || grouped_data === null || grouped_data === "") {
 				uobj_id = $.md5(domain);
 				grouped_data = {};
 			} else {
 				$.each($.parseJSON($.rawurldecode(grouped_data)), function(k, v) {
 					uobj_id = $.md5(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + domain);
+					name = v[kAPI_PARAM_RESPONSE_FRMT_NAME];
 					if(v.is_patch !== undefined && v.is_patch === true) {
 						grouped = {};
 					} else {
@@ -2673,12 +2675,12 @@
 			$.ask_to_service(objp, function(res) {
 				// console.log(res);
 				if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-					if(!$.storage_exists("map_data.user_layers." + uobj_id)) {
+					if(!$.storage_exists("map_data.user_layers.results." + uobj_id)) {
 						// Save on the user map layers
 						var uobj = {},
 						uobj_criteria = {};
-						if($.storage_exists("map_data.user_layers")) {
-							uobj = storage.get("pgrdg_cache.map_data.user_layers");
+						if($.storage_exists("map_data.user_layers.results")) {
+							uobj = storage.get("pgrdg_cache.map_data.user_layers.results");
 						}
 
 						uobj_criteria = storage.get("pgrdg_cache.search.criteria");
@@ -2686,14 +2688,15 @@
 						uobj[uobj_id] = {
 							show: true,
 							criteria: uobj_criteria,
+							name: name,
 							domain: domain,
 							query: objp,
 							results: res.results
 						};
-						storage.set("pgrdg_cache.map_data.user_layers", uobj);
+						storage.set("pgrdg_cache.map_data.user_layers.results", uobj);
 					}
 					$.activate_panel("map", {res: res.results, id: uobj_id, shape: kTAG_GEO_SHAPE}, function() {
-						$.get_generated_layers();
+						$.get_generated_layers(uobj_id);
 					});
 					if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
 						var alert_title = i18n[lang].messages.map_limit_display.title;
