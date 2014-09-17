@@ -131,67 +131,79 @@
 						obj: object_param
 					};
 
-					if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-						if(options.colour !== undefined && options.colour !== null && options.colour === true) {
-							var rgba = {r:255, g:0, b:0, a:1},
-							g = 0,
-							b = 0,
-							h = $.obj_len(response[kAPI_RESPONSE_RESULTS]);
-							i = 0;
-							$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
-								g = Math.round(i/($.obj_len(response[kAPI_RESPONSE_RESULTS]) - 1) * 255);
-								b = Math.round(h/($.obj_len(response[kAPI_RESPONSE_RESULTS])) * 100);
-								h--;
-								i++;
-								rgba.g = g;
-								rgba.b = b;
-								v.colour = $.set_colour({colour: rgba});
-								if(!$.storage_exists("search")) {
-									storage.set("pgrdg_cache.search", {});
+					if($.type(response) == "object") {
+						if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+							if(options.colour !== undefined && options.colour !== null && options.colour === true) {
+								var rgba = {r:255, g:0, b:0, a:1},
+								g = 0,
+								b = 0,
+								h = $.obj_len(response[kAPI_RESPONSE_RESULTS]);
+								i = 0;
+								$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
+									g = Math.round(i/($.obj_len(response[kAPI_RESPONSE_RESULTS]) - 1) * 255);
+									b = Math.round(h/($.obj_len(response[kAPI_RESPONSE_RESULTS])) * 100);
+									h--;
+									i++;
+									rgba.g = g;
+									rgba.b = b;
+									v.colour = $.set_colour({colour: rgba});
+									if(!$.storage_exists("search")) {
+										storage.set("pgrdg_cache.search", {});
+									}
+									storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
+								});
+							}
+							if(opt.storage_group !== "") {
+								storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
+									"date": {"utc": new Date(), "timestamp": $.now()},
+									"query": {
+										"effective": param,
+										"nob64": param_nob64,
+										"verbose": verbose_param,
+										"obj": object_param
+									},
+									"response": response
+								});
+								if(config.site.developer_mode) {
+									console.group("Storage \"" + opt.storage_group + "\" saved...");
+									console.warn("id: ", $.md5(param));
+									console.warn(param_nob64);
+									console.groupEnd();
 								}
-								storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
-							});
-						}
-						if(opt.storage_group !== "") {
-							storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
-								"date": {"utc": new Date(), "timestamp": $.now()},
-								"query": {
-									"effective": param,
-									"nob64": param_nob64,
-									"verbose": verbose_param,
-									"obj": object_param
-								},
-								"response": response
-							});
+							}
+							if(typeof(opt.loaderType) == "string") {
+								$("#loader").fadeOut(0);
+								// $("#apprise.ask_service").modal("hide");
+								callback(response);
+							} else {
+								$element.html(element_data);
+								callback(response);
+							}
+						} else {
+							$("#loader").fadeOut(0);
 							if(config.site.developer_mode) {
-								console.group("Storage \"" + opt.storage_group + "\" saved...");
-								console.warn("id: ", $.md5(param));
-								console.warn(param_nob64);
+								console.warn("!!!", param_nob64, response);
+								alert("There's an error in the response:<br />See the console for more informations");
+								console.group("The Service has returned an error");
+									console.warn(param);
+									console.warn(param_nob64);
+									console.warn(verbose_param);
+									console.warn(object_param);
+									console.dir(response);
+									console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
 								console.groupEnd();
 							}
 						}
-						if(typeof(opt.loaderType) == "string") {
-							$("#loader").fadeOut(0);
-							// $("#apprise.ask_service").modal("hide");
-							callback(response);
-						} else {
-							$element.html(element_data);
-							callback(response);
-						}
 					} else {
-						$("#loader").fadeOut(0);
-						if(config.site.developer_mode) {
-							console.warn("!!!", param_nob64, response);
-							alert("There's an error in the response:<br />See the console for more informations");
-							console.group("The Service has returned an error");
-								console.warn(param);
-								console.warn(param_nob64);
-								console.warn(verbose_param);
-								console.warn(object_param);
-								console.dir(response);
-								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
-							console.groupEnd();
-						}
+						console.warn("!!!", param_nob64, response);
+						alert("There's an error in the response:<br />See the console for more informations");
+						console.group("The Service has returned an error");
+							console.warn(param);
+							console.warn(param_nob64);
+							console.warn(verbose_param);
+							console.warn(object_param);
+							console.dir(response);
+						console.groupEnd();
 					}
 				},
 				error: function(x, t, response) {
@@ -209,8 +221,7 @@
 								console.warn(param_nob64);
 								console.warn(verbose_param);
 								console.warn(object_param);
-								console.dir(response);
-								console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
+								console.warn(response);
 							console.groupEnd();
 						}
 						$("#loader").fadeOut(0);
@@ -231,58 +242,6 @@
 	$.display_error_msg = function(message) {
 		$("#apprise").modal("destroy");
 		apprise(message, {"icon": "error"});
-	};
-
-	/**
-	 * Show all data of searches saved on the storage.
-	 * Function disabled, only for future purposes
-	 */
-	$.show_storage_data = function(subject) {
-		$.recurse_obj = function(obj) {
-			var container = $('<div>'),
-			ul = $('<ul class="list-unstyled">'),
-			li = $('<li>'),
-			p = $('<p>'),
-			hr = $('<hr />');
-
-			switch($.type(obj)) {
-				case "object":
-					$.each(obj, function(k, v) {
-						if($.type(v) == "object") {
-							li.append($.recurse_obj(v));
-						} else if($.type(v) == "array"){
-							li.html(v.join(", "));
-						} else {
-							li.html(v);
-						}
-						if(li.length > 0 && li.html() !== "") {
-							ul.append(li);
-						}
-					});
-					container.html(ul).append(hr);
-					break;
-				case "array":
-					li.html(obj.join(", "));
-					ul.append(li);
-					container.append(ul);
-					break;
-				default:
-					p.html(obj);
-					container.html(p).append(hr);
-					break;
-			}
-			return container.html();
-		};
-		if($.storage_exists(subject.replace("pgrdg_cache", ""))) {
-			$("#saved_history").html("");
-			$.each(storage.get("pgrdg_cache." + subject), function(k, v) {
-				// if(k == "forms") {
-				// 	//$("#saved_history").append('<h5>' + $.ucfirst(k) + '</h5>');
-				// })
-				$("#saved_history").append('<h4>' + $.ucfirst(k) + '</h4>' + $.recurse_obj(v));
-			});
-			$("#storage").modal("show");
-		}
 	};
 
 	/**
@@ -630,31 +589,6 @@
 	};
 
 	/**
-	 * Remove given storage checking before if exists or is empty
-	 */
-	$.remove_storage = function(name) {
-		/*
-		var a = "",
-		names = name.split(".");
-		if(names[0] == "pgrdg_cache") {
-			names.shift();
-		}
-		$.each(names, function(k, v) {
-			if(k === 0) {
-				a = "pgrdg_cache." + v;
-			} else {
-				a += "." + names[k];
-			}
-			if($.storage_exists(a) || $.storage_exists(a) && storage.isEmpty(a)) {
-				storage.remove(a);
-			}
-		});*/
-		if($.storage_exists(name)) {
-			storage.remove(name);
-		}
-	};
-
-	/**
 	 * Reset the entire storage and reload current page
 	 */
 	$.clear_history = function() {
@@ -690,9 +624,13 @@
 	};
 
 
+/*=======================================================================================
+*	STORAGE
+*======================================================================================*/
+
 	/**
-	 * Split and iterate a given storage address and return false if encounter a non-existing level
-	 */
+	* Split and iterate a given storage address and return false if encounter a non-existing level
+	*/
 	$.storage_exists = function(path) {
 		path = path.replace("pgrdg_cache", "");
 		var all_path = $.array_clean(path.split(".")),
@@ -719,6 +657,67 @@
 			}
 		}
 		return is_set;
+	};
+
+	/**
+	* Remove given storage checking before if exists or is empty
+	*/
+	$.remove_storage = function(name) {
+		if($.storage_exists(name)) {
+			storage.remove(name);
+		}
+	};
+
+	/**
+	* Show all data of searches saved on the storage.
+	* Function disabled, only for future purposes
+	*/
+	$.show_storage_data = function(subject) {
+		$.recurse_obj = function(obj) {
+			var container = $('<div>'),
+			ul = $('<ul class="list-unstyled">'),
+			li = $('<li>'),
+			p = $('<p>'),
+			hr = $('<hr />');
+
+			switch($.type(obj)) {
+				case "object":
+					$.each(obj, function(k, v) {
+						if($.type(v) == "object") {
+							li.append($.recurse_obj(v));
+						} else if($.type(v) == "array"){
+							li.html(v.join(", "));
+						} else {
+							li.html(v);
+						}
+						if(li.length > 0 && li.html() !== "") {
+							ul.append(li);
+						}
+					});
+					container.html(ul).append(hr);
+					break;
+				case "array":
+					li.html(obj.join(", "));
+					ul.append(li);
+					container.append(ul);
+					break;
+				default:
+					p.html(obj);
+					container.html(p).append(hr);
+					break;
+			}
+			return container.html();
+		};
+		if($.storage_exists(subject.replace("pgrdg_cache", ""))) {
+			$("#saved_history").html("");
+			$.each(storage.get("pgrdg_cache." + subject), function(k, v) {
+				// if(k == "forms") {
+				// 	//$("#saved_history").append('<h5>' + $.ucfirst(k) + '</h5>');
+				// })
+				$("#saved_history").append('<h4>' + $.ucfirst(k) + '</h4>' + $.recurse_obj(v));
+			});
+			$("#storage").modal("show");
+		}
 	};
 
 

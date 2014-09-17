@@ -257,6 +257,6 @@ $.shortcuts = function() {
 	 */
         $("#find_location input").bind("keydown", "return", function() {
                 //$.sub_toolbox("find_location");
-                $.search_location($(this).val());
+                $(this).search_location($(this).val());
         });
 };

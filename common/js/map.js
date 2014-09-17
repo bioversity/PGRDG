@@ -83,7 +83,7 @@
                         user_layers = new L.LayerGroup();
                         user_search_layers = new L.LayerGroup();
                         user_layers.addTo(map);
-                        user_search_layers.addTo(map);
+                        user_search_layers.addTo(user_layers);
                         L.control.scale().addTo(map);
                         // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
                         if($.obj_len(storage_layer) > 0 && storage_layer.layer !== map_data.map.layers.defaultLayer.layer) {
@@ -359,7 +359,7 @@
         $.get_generated_layers = function(selected) {
                 //console.dir(user_layers.getLayers());
                 if($.storage_exists("map_data.user_layers")) {
-                        var label = "";
+                        var label = "", icon = "";
                         $("#selected_layer").html("");
                         if($.storage_exists("map_data.user_layers.results")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.results"), function(id, search_data) {
@@ -376,19 +376,25 @@
                                                 });
                                         }
                                         // Check all loaded layers and compare with current
-                                        $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa fa-square-o"></span> ' + label + '</a></li>');
+                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '"class="btn pull-left" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa fa-square-o"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
                                 });
-                        } else if($.storage_exists("map_data.user_layers.map")) {
-                                if($.storage_exists("map_data.user_layers.map.searches")) {
-                                        $.each(storage.get("pgrdg_cache.map_data.user_layers.map.searches"), function(id, search_data) {
-                                                if(search_data.input !== undefined && search_data.input !== "") {
-                                                        label = 'Search in map: "' + search_data.input + '"';
-                                                }
-                                                $("#selected_layer").append('<li class="keep_open"><a class="btn" href="javascript: void(0);" onclick="$.search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa fa-search"></span> ' + label + '</a></li>');
-                                        });
-                                }
+                                $("#user_level_btn").show();
+                        } else if($.storage_exists("map_data.user_layers.searches")) {
+                                $.each(storage.get("pgrdg_cache.map_data.user_layers.searches"), function(id, search_data) {
+                                        if(search_data.input !== undefined && search_data.input !== "") {
+                                                label = 'Search in map: "' + search_data.input + '"';
+                                        }
+                                        if(selected == $.md5(search_data.input)) {
+                                                icon = "fa-check-circle";
+                                        } else {
+                                                icon = "fa-circle-o";
+                                        }
+                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '" class="btn pull-left" href="javascript: void(0);" onclick="$(this).search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
+                                });
+                                $("#user_level_btn").show();
+                        } else {
+                                $("#user_level_btn").hide();
                         }
-                        $("#user_level_btn").show();
                 } else {
                         $("#user_level_btn").hide();
                 }
@@ -824,8 +830,9 @@
                 * @param  {string} input The location to search
                 * @return {object}       The results of search in Nominatim OpenStreetmap
                 */
-                $.search_location = function(input) {
-                        $.show_results = function(datap) {
+                $.fn.search_location = function(input) {
+                        $.show_results = function(datap, callback) {
+                                var place_id = "";
                                 $("#information_zone").html('<h3>' + i18n[lang].interface.results_for.replace("{X}", input) + '</h3><ul class="fa-ul"></ul>');
                                 $.each(datap, function(k, v) {
                                         var mc,
@@ -859,64 +866,106 @@
                                                         content: content
                                                 });
                                         }
-
                                         $("#information_zone ul").append('<li><a class="btn ' + ((k === 0) ? 'disabled' : '') + '" href="javascript: void(0);" onclick="$(this).select_marker({marker_id: \'' + v.place_id + '\', title: \'' + title.replace(/"/g, "&quot;") + '\', content: \'' + content.replace(/"/g, "&quot;") + '\'});" title="' + v.display_name + '"><span class="fa fa-fw fa-angle-right"></span>' + v.display_name + '</a></li>');
 
                                         markerMap[v.place_id] = v;
                                 });
-
                                 $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
                                 $("#find_location input").prop("disabled", false);
                                 $("#" + datap[0].place_id).popover("show");
                                 //$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
                                 $.set_center_bbox(datap[0].boundingbox);
+
+                                if (typeof(callback) == "function") {
+                                        callback.call(this, place_id);
+                                }
                         };
 
-                        if(input.length > 0) {
-                                user_search_layers.clearLayers();
-                                map.closePopup();
-                                $("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
-                                $("#find_location input").attr("disabled", true);
+                        $("#loader").show();
+                        user_search_layers.clearLayers();
+                        map.closePopup();
+                        if($(this).find("a:first-child").length > 0 && $(this).find("a:first-child").hasClass("fa-check-circle")) {
                                 $("#information_zone").html("");
-                                $("#selected_zone").html(i18n[lang].interface.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
+                                $("#selected_zone").stop().hide();
 
-                                if(!$.storage_exists("map_data.user_layers.map.searches." + $.md5(input))) {
-                                        $.ajax({
-                                                url: "API/",
-                                                type: "get",
-                                                format: "json",
-                                                crossDomain: true,
-                                                data: {
-                                                        proxy: "true",
+                                $(this).find("a:first-child span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                $("#loader").hide();
+                        } else {
+                                $.each($(this).closest("ul").find("li"), function(k, v) {
+                                        $(this).find("a:first-child span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                });
+                                if($(this).find("span").length > 0 && $(this).find("span").hasClass("fa-circle-o")) {
+                                        $(this).find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
+                                }
+                                if(input.length > 0) {
+                                        $("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
+                                        $("#find_location input").attr("disabled", true);
+                                        $("#information_zone").html("");
+                                        $("#selected_zone").html(i18n[lang].interface.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
+
+                                        if(!$.storage_exists("map_data.user_layers.searches." + $.md5(input))) {
+                                                $.ajax({
+                                                        url: "API/",
                                                         type: "get",
-                                                        header: "text/json",
-                                                        address: "http://nominatim.openstreetmap.org/search.php?q=" + encodeURIComponent(input) + "&format=json&addressdetails=true&bounded=true&limit=10&polygon_geojson=true"
-                                                },
-                                                success: function(data) {
-                                                        var datap = $.parseJSON(data);
+                                                        format: "json",
+                                                        crossDomain: true,
+                                                        data: {
+                                                                proxy: "true",
+                                                                type: "get",
+                                                                header: "text/json",
+                                                                address: "http://nominatim.openstreetmap.org/search.php?q=" + encodeURIComponent(input) + "&format=json&addressdetails=true&bounded=true&limit=10&polygon_geojson=true"
+                                                        },
+                                                        success: function(data) {
+                                                                var datap = $.parseJSON(data);
+                                                                if($.obj_len(datap) > 0) {
+                                                                        storage.set("pgrdg_cache.map_data.user_layers.searches." + $.md5(input), {input: input, results: datap});
 
-                                                        if($.obj_len(datap) > 0) {
-                                                                storage.set("pgrdg_cache.map_data.user_layers.map.searches." + $.md5(input), {input: input, results: datap});
+                                                                        $("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600).stop();
 
-                                                                $("#selected_zone").text(datap[0].display_name).fadeIn(300).delay(5000).fadeOut(600);
-
-                                                                $.show_results(datap);
-                                                                $.get_generated_layers();
-                                                        } else {
+                                                                        $.show_results(datap, function(place_id) {
+                                                                                $("#selected_zone").stop().hide();
+                                                                                $("#loader").hide();
+                                                                        });
+                                                                        $.get_generated_layers($.md5(input));
+                                                                } else {
+                                                                        $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600).stop();
+                                                                        $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
+                                                                        $("#find_location input").prop("disabled", false);
+                                                                }
+                                                        },
+                                                        error: function(data) {
                                                                 $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600);
                                                                 $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
                                                                 $("#find_location input").prop("disabled", false);
                                                         }
-                                                },
-                                                error: function(data) {
-                                                        $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600);
-                                                        $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
-                                                        $("#find_location input").prop("disabled", false);
-                                                }
-                                        });
-                                } else {
-                                        $.show_results(storage.get("pgrdg_cache.map_data.user_layers.map.searches." + $.md5(input) + ".results"));
+                                                });
+                                        } else {
+                                                $.show_results(storage.get("pgrdg_cache.map_data.user_layers.searches." + $.md5(input) + ".results"), function(place_id) {
+                                                        $("#selected_zone").stop().hide();
+                                                        $("#loader").hide();
+                                                });
+                                        }
                                 }
+                        }
+                };
+
+
+                /**
+                 * Remove a given search id from map and storage
+                 */
+                $.remove_selected_search = function(id) {
+                        if($("a#" + id).find("span").hasClass("fa-check-circle")) {
+                                user_search_layers.clearLayers();
+                                map.closePopup();
+                        }
+                        $("a#" + id).closest("li").remove();
+                        $.remove_storage("pgrdg_cache.map_data.user_layers.searches." + id);
+
+                        if($.obj_len(storage.get("pgrdg_cache.map_data.user_layers.searches")) === 0) {
+
+                                $.remove_storage("pgrdg_cache.map_data.user_layers.searches");
+                                $("#user_level_btn").hide();
+                                $("#user_layers").hide();
                         }
                 };
 
@@ -943,6 +992,7 @@
                         //$.each($(this).closest("ul").find("li"), function(k, v) {
                         //        $(this).find("a").text($(this).find("a").text());
                         //});
+                        $("#selected_zone").html(options.content).show().stop().delay(5000).hide();
                         $.set_center_bbox(ma.boundingbox);
                 };
 
@@ -1147,11 +1197,11 @@
 
                         var markers = L.markerClusterGroup(),
                         geoJsonLayer = L.geoJson(options.geojson);
-
-        		markers.addLayer(geoJsonLayer);
                         if(options.service) {
+                                markers.addLayer(geoJsonLayer);
                                 user_layers.addLayer(markers);
                         } else {
+                                markers.addLayer(geoJsonLayer);
                                 user_search_layers.addLayer(markers);
                         }
                         var marker_position = markers.getBounds().getCenter();

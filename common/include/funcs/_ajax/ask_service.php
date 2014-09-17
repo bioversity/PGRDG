@@ -1,15 +1,16 @@
 <?php
 require_once("../common/include/classes/frontend_api.class.php");
+require_once("../common/include/classes/parse_json_config.class.php");
 require_once("Service/Library/definitions/Api.inc.php");
 
-$service_conf = parse_ini_file("../common/include/conf/service.ini");
-$service_url = $service_conf["url"] . "Service.php?debug=true&" . kAPI_REQUEST_OPERATION . "=";
-//$service_url = "../pgrdg.grinfo.private/Service.php?" . kAPI_REQUEST_OPERATION . "=";
+$interface_config = new parse_json_config("../common/include/conf/interface/site.js");
+$interface = $interface_config->parse_js_config("config");
+$service_url = $interface["service"]["url"] . "Service.php?debug=true&" . kAPI_REQUEST_OPERATION . "=";
 $op = base64_decode($output[kAPI_REQUEST_OPERATION]);
 
-//$parsed_address = parse_url($service_url . $op);
-//print $service_url . $op . "\n\n";
-//exit();
+// $parsed_address = parse_url($service_url . $op);
+// print_r(base64_decode($output[kAPI_REQUEST_OPERATION]));
+// exit();
 // print $service_url . $op;
 // exit();
 if($output["debug"] == "true") {

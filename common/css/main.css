@@ -1843,8 +1843,9 @@ ul.list-group.transparent ul {
 #map_toolbox li:hover:not(.disabled),
 #map_sub_toolbox li.selected,
 #map_sub_toolbox li a.selected,
-#map_sub_toolbox li:hover {
-	background-color: #333;
+#map_sub_toolbox li:hover,
+#map_sub_toolbox #selected_layer li a:hover {
+	background-color: #333 !important;
 	/*border-left: 1px solid #ccc;*/
 	/*border-right: 1px solid #ccc;*/
 	border-radius: 0;
