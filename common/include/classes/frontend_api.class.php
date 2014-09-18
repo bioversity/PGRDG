@@ -10,8 +10,11 @@
 
 class frontend_api {
 	function __construct($input = array()) {
+		require_once("../common/include/classes/parse_json_config.class.php");
+		$this->interface_config = new parse_json_config("../common/include/conf/interface/site.js");
 		$this->input = $input;
 		$this->debug = false;
+		$this->external_definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions";
 
 		$this->check_rsa();
 	}
@@ -142,8 +145,7 @@ class frontend_api {
 
 	public function get_github_service_definitions($type) {
 		$def_file = $this->get_definition_file($type);
-		$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
-		return $this->browse($definitions_url);
+		return $this->browse($this->external_definitions_url . DIRECTORY_SEPARATOR . $def_file);
 	}
 
 	/**
@@ -166,8 +168,7 @@ class frontend_api {
 		$def_file = $this->get_definition_file($type);
 		$global_constants = $this->getUserDefinedConstants();
 		if($keep_update) {
-			$definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions/" . $def_file;
-			$milko_script = $this->browse($definitions_url);
+			$milko_script = $this->browse($this->external_definitions_url . DIRECTORY_SEPARATOR . $def_file);
 			preg_match_all("/\"([^\s+].*)\".*,.*\t([^\s].*)\s\)\;.*$/msU", $milko_script, $matches);
 
 			for($i = 0; $i <= count($matches[0]); $i++) {
@@ -175,8 +176,10 @@ class frontend_api {
 			}
 			$script_constants = array_filter($defined_constants);
 		} else {
-			$definitions_dir = "Service/Library/definitions/";
-			include($definitions_dir . $def_file);
+			$interface = $this->interface_config->parse_js_config("config");
+			$definitions_dir = $interface["service"]["definitions_dir"];
+
+			include($definitions_dir . DIRECTORY_SEPARATOR . $def_file);
 			$after_include_constants = $this->getUserDefinedConstants();
 
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);

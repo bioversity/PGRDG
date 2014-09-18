@@ -1,7 +1,8 @@
 var config = {
         "service": {
                 "url": "http://gateway.grinfo.private/",
-                "proxy": "API/?type=service&proxy="
+                "proxy": "API/?type=service&proxy=",
+                "definitions_dir": "Service/Library/definitions"
         },
         "site": {
                 "version": 1.4,

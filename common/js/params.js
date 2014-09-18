@@ -281,7 +281,7 @@ $.site_conf = function(callback) {
                                 }, maintenance.check_time.false_state);
                         }
                 },
-                error: function() {
+                error: function(maintenance) {
                         setTimeout(function() {
                                 $.site_conf(callback);
                         }, maintenance.check_time.true_state);

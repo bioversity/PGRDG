@@ -315,7 +315,7 @@ header.main {
 header.map {
 	background-color: rgba(255, 255, 255, 0.9);
 	background-image: none !important;
-	height: 76px;
+	height: 75px;
 }
 header,
 footer {
@@ -609,10 +609,12 @@ section.container {
 	max-width: 100%;
 	min-width: 280px !important;
 	overflow: hidden;
-	padding: 75px 0 0 0;
+	padding: 0;
 	position: fixed;
 	width: 100%;
-	background-color: #fff;
+	background-color: transparent;
+	top: 75px;
+	z-index: 2;
 }
 
 #breadcrumb {
@@ -636,6 +638,10 @@ section.container {
 	margin: 0;
 	padding-top: 10px;
 	padding-bottom: 10px;
+}
+#breadcrumb .breadcrumb li.pull-right a.btn-default-grey {
+	margin-right: -5px;
+	margin-top: -7px;
 }
 
 .panel_content {
@@ -836,10 +842,12 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 }
 
 #map {
+	background-color: transparent;
 	left: 0;
 	position: fixed;
 	top: 0;
-	width: 100%;
+	width: 0;
+	z-index: 2;
 }
 
 #start {
@@ -1606,7 +1614,7 @@ ul.list-group.transparent ul {
 	bottom: 5px;
 	left: 50%;
 	margin-left: -40%;
-	position: absolute;
+	position: fixed;
 	text-align: center;
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
 	width: 80%;
@@ -1620,7 +1628,7 @@ ul.list-group.transparent ul {
 	bottom: 40px;
 	/*left: 40px;*/
 	left: 20px;
-	position: absolute;
+	position: fixed;
 	text-align: left;
 	text-indent: 0;
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);

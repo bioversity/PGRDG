@@ -83,7 +83,7 @@
                         user_layers = new L.LayerGroup();
                         user_search_layers = new L.LayerGroup();
                         user_layers.addTo(map);
-                        user_search_layers.addTo(user_layers);
+                        user_search_layers.addTo(map);
                         L.control.scale().addTo(map);
                         // For a complete list of available layers see https://github.com/leaflet-extras/leaflet-providers/blob/master/index.html
                         if($.obj_len(storage_layer) > 0 && storage_layer.layer !== map_data.map.layers.defaultLayer.layer) {
@@ -167,6 +167,8 @@
                 }
                 $("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
                 $.get_generated_layers();
+
+                return map;
         };
 
         /**
@@ -358,13 +360,14 @@
          */
         $.get_generated_layers = function(selected) {
                 //console.dir(user_layers.getLayers());
+                var icon = "", item_id = "", show = false;
                 if($.storage_exists("map_data.user_layers")) {
-                        var label = "", icon = "";
-                        $("#selected_layer").html("");
                         if($.storage_exists("map_data.user_layers.results")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.results"), function(id, search_data) {
+                                        var label = i18n[lang].interface.search;
+                                        item_id = $.md5(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + search_data[kAPI_PARAM_DOMAIN]);
                                         if(search_data[kAPI_PARAM_CRITERIA].fulltext !== undefined && search_data[kAPI_PARAM_CRITERIA].fulltext !== "") {
-                                                label = 'Search: "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
+                                                label += ': "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
                                         }
                                         if(search_data[kAPI_PARAM_CRITERIA].node !== undefined && $.obj_len(search_data[kAPI_PARAM_CRITERIA].node) > 0) {
                                                 $.each(search_data[kAPI_PARAM_CRITERIA].node, function(gk, gv) {
@@ -375,32 +378,59 @@
                                                         }
                                                 });
                                         }
-                                        console.log(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME], search_data[kAPI_PARAM_DOMAIN]);
-                                        if(selected == $.md5(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + search_data[kAPI_PARAM_DOMAIN])) {
-                                                icon = "fa-check-square";
-                                        } else {
-                                                icon = "fa-circle-o";
-                                        }
                                         // Check all loaded layers and compare with current
-                                        $("#selected_layer").append('<li class="keep_open"><a id="' + selected + '" class="btn pull-left" href="javascript: void(0);" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + selected + '\', \'map_data.user_layers.results\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
+                                        if($("li#" + item_id).length === 0) {
+                                                var $li = $('<li>'),
+                                                $a1 = $('<a>'),
+                                                $a2 = $('<a>'),
+                                                $span1 = $('<span>'),
+                                                $span2 = $('<span>');
+
+                                                $li.attr("id", item_id).addClass("keep_open");
+                                                $a1.addClass("btn pull-left").attr({
+                                                        href: "javascript: void(0);",
+                                                        onclick: '$(this).toggle_layer_btn(\'' + item_id + '\');',
+                                                        title: i18n[lang].messages.search.switch_layer
+                                                });
+                                                $a2.addClass("btn pull-right").attr({
+                                                        href: "javascript: void(0);",
+                                                        onclick: '$.remove_selected_search(\'' + item_id + '\', \'map_data.user_layers.results\', \'true\');',
+                                                        title: i18n[lang].messages.search.remove_search
+                                                });
+                                                $span1.addClass("fa " + ((selected == item_id) ? "fa-check-square" : "fa-square-o"));
+                                                $span2.addClass("fa fa-trash");
+                                                $a1.html($span1);
+                                                $a1.append(" " + label);
+                                                $a2.html($span2);
+                                                $li.html($a1);
+                                                $li.append($a2);
+                                                $("#selected_layer").append($li);
+                                        }
                                 });
-                                $("#user_level_btn").show();
-                        } else if($.storage_exists("map_data.user_layers.searches")) {
+                                show = true;
+                        }
+                        if($.storage_exists("map_data.user_layers.searches")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.searches"), function(id, search_data) {
+                                        var label = i18n[lang].interface.search;
                                         if(search_data.input !== undefined && search_data.input !== "") {
-                                                label = 'Search in map: "' + search_data.input + '"';
+                                                label += ' in map: "' + search_data.input + '"';
                                         }
                                         if(selected == $.md5(search_data.input)) {
                                                 icon = "fa-check-circle";
                                         } else {
                                                 icon = "fa-circle-o";
                                         }
-                                        $("#selected_layer").append('<li class="keep_open"><a id="' + $.md5(search_data.input) + '" class="btn pull-left" href="javascript: void(0);" onclick="$(this).search_location(\'' + search_data.input + '\');" title="Switch on/off this layer"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\', \'map_data.user_layers.searches\');" class="btn pull-right" title="Remove this search"><span class="fa fa-trash"></span></a></li>');
+                                        if($("li#" + $.md5(search_data.input)).length === 0) {
+                                                $("#selected_layer").append('<li id="' + $.md5(search_data.input) + '" class="keep_open"><a class="btn pull-left" href="javascript: void(0);" onclick="$(this).search_location(\'' + search_data.input + '\');" title="' + i18n[lang].messages.search.switch_layer + '"><span class="fa ' + icon + '"></span> ' + label + '</a><a href="javascript: void(0);" onclick="$.remove_selected_search(\'' + $.md5(search_data.input) + '\', \'map_data.user_layers.searches\');" class="btn pull-right" title="' + i18n[lang].messages.search.remove_search + '"><span class="fa fa-trash"></span></a></li>');
+                                        }
                                 });
-                                $("#user_level_btn").show();
-                        } else {
-                                $("#user_level_btn").hide();
+                                show = true;
                         }
+                } else {
+                        show = false;
+                }
+                if(show) {
+                        $("#user_level_btn").show();
                 } else {
                         $("#user_level_btn").hide();
                 }
@@ -839,7 +869,7 @@
                 $.fn.search_location = function(input) {
                         $.show_results = function(datap, callback) {
                                 var place_id = "";
-                                $("#information_zone").html('<h3>' + i18n[lang].interface.results_for.replace("{X}", input) + '</h3><ul class="fa-ul"></ul>');
+                                $("#information_zone").html('<h3>' + i18n[lang].messages.search.results_for.replace("{X}", input) + '</h3><ul class="fa-ul"></ul>');
                                 $.each(datap, function(k, v) {
                                         var mc,
                                         title = "Search of \"" + input + "\"",
@@ -890,15 +920,17 @@
                         $("#loader").show();
                         user_search_layers.clearLayers();
                         map.closePopup();
-                        if($(this).find("a:first-child").length > 0 && $(this).find("a:first-child").hasClass("fa-check-circle")) {
+                        if($(this).find("span").length > 0 && $(this).find("span").hasClass("fa-check-circle")) {
                                 $("#information_zone").html("");
                                 $("#selected_zone").stop().hide();
 
-                                $(this).find("a:first-child span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                $(this).find("span").removeClass("fa-check-circle").addClass("fa-circle-o");
                                 $("#loader").hide();
                         } else {
                                 $.each($(this).closest("ul").find("li"), function(k, v) {
-                                        $(this).find("a:first-child span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                        if($(this).find("a.pull-left span").length > 0 && $(this).find("a.pull-left span").hasClass("fa-check-circle")) {
+                                                $(this).find("a.pull-left span").removeClass("fa-check-circle").addClass("fa-circle-o");
+                                        }
                                 });
                                 if($(this).find("span").length > 0 && $(this).find("span").hasClass("fa-circle-o")) {
                                         $(this).find("span").removeClass("fa-circle-o").addClass("fa-check-circle");
@@ -907,7 +939,7 @@
                                         $("#map_toolbox #find_location_btn span").removeClass("ion-search").addClass("ion-loading-c").parent("a").addClass("disabled");
                                         $("#find_location input").attr("disabled", true);
                                         $("#information_zone").html("");
-                                        $("#selected_zone").html(i18n[lang].interface.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
+                                        $("#selected_zone").html(i18n[lang].messages.search.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
 
                                         if(!$.storage_exists("map_data.user_layers.searches." + $.md5(input))) {
                                                 $.ajax({
@@ -934,13 +966,13 @@
                                                                         });
                                                                         $.get_generated_layers($.md5(input));
                                                                 } else {
-                                                                        $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600).stop();
+                                                                        $("#selected_zone").text(i18n[lang].messages.search.no_search_results.message).delay(5000).fadeOut(600).stop();
                                                                         $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
                                                                         $("#find_location input").prop("disabled", false);
                                                                 }
                                                         },
                                                         error: function(data) {
-                                                                $("#selected_zone").text(i18n[lang].messages.no_search_results.message).delay(5000).fadeOut(600);
+                                                                $("#selected_zone").text(i18n[lang].messages.search.no_search_results.message).delay(5000).fadeOut(600);
                                                                 $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
                                                                 $("#find_location input").prop("disabled", false);
                                                         }
@@ -959,22 +991,59 @@
                 /**
                  * Remove a given search id from map and storage
                  */
-                $.remove_selected_search = function(id, storage_path) {
-                        if($("a#" + id).find("span").hasClass("fa-check-circle")) {
-                                user_search_layers.clearLayers();
-                                map.closePopup();
+                $.remove_selected_search = function(id, storage_path, confirm) {
+                        $.exec_removal = function() {
+                                if($("li#" + id).find("span:first-child").hasClass("fa-check-circle")) {
+                                        user_search_layers.clearLayers();
+                                        map.closePopup();
+                                }
+                                if($("li#" + id).find("span:first-child").hasClass("fa-check-square")) {
+                                        user_layers.clearLayers();
+                                        map.closePopup();
+                                        $.each($("li#" + id).closest("ul").find("li"), function(k, v) {
+                                                if($(this).find("a.pull-left span").hasClass("fa fa-check-square")) {
+                                                        if($(this).attr("id") !== id) {
+                                                                if($.storage_exists("map_data.user_layers.results." + $(this).attr("id"))) {
+                                                                        $.add_geojson_cluster({
+                                                                                id: $(this).attr("id"),
+                                                                                geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id") + ".results"),
+                                                                                title: "OK",
+                                                                                content: "Yeah"
+                                                                        });
+                                                                }
+                                                        }
+                                                }
+                                        });
+                                }
+                                $("li#" + id).remove();
+                                $("#information_zone").fadeOut(300, function() { $(this).html(""); });
+                                $.remove_storage("pgrdg_cache." + storage_path + "." + id, function() {
+                                        if($.obj_len(storage.get("pgrdg_cache." + storage_path)) === 0) {
+                                                $.remove_storage({
+                                                        check: false,
+                                                        name: "pgrdg_cache." + storage_path
+                                                }, function() {
+                                                        $("#user_layers").hide();
+                                                        if($.obj_len(storage.get("pgrdg_cache.map_data.user_layers")) === 0) {
+                                                                $("#user_level_btn").hide();
+                                                        }
+                                                });
+                                        }
+                                });
+                        };
+
+                        var remove = false;
+                        if(confirm === undefined) {
+                                confirm = false;
                         }
-                        if($("a#" + id).find("span").hasClass("fa-check-square")) {
-                                user_layers.clearLayers();
-                                map.closePopup();
-                        }
-                        $("a#" + id).closest("li").remove();
-                        $.remove_storage("pgrdg_cache." + storage_path + "." + id);
-                        console.log("pgrdg_cache." + storage_path + "." + id);
-                        if($.obj_len(storage.get("pgrdg_cache." + storage_path)) === 0) {
-                                $.remove_storage("pgrdg_cache." + storage_path);
-                                $("#user_level_btn").hide();
-                                $("#user_layers").hide();
+                        if(confirm) {
+                                apprise(i18n[lang].messages.search.are_you_sure.message, {title: i18n[lang].messages.search.are_you_sure.title, icon: "warning", confirm: true}, function(r) {
+                                        if(r) {
+                                                $.exec_removal();
+                                        }
+                                });
+                        } else {
+                                $.exec_removal();
                         }
                 };
 
@@ -1005,6 +1074,38 @@
                         $.set_center_bbox(ma.boundingbox);
                 };
 
+                /**
+                 * Toggle visibility of a given layer by button
+                 */
+                $.fn.toggle_layer_btn = function(selected_layer) {
+                        if($(this).find("span").hasClass("fa-square-o")) {
+                                $(this).find("span").removeClass("fa-square-o").addClass("fa-check-square");
+                                if($.storage_exists("map_data.user_layers.results." + selected_layer)) {
+                                        $.add_geojson_cluster({
+                                                id: selected_layer,
+                                                geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + selected_layer + ".results"),
+                                                title: "OK",
+                                                content: "Yeah"
+                                        });
+                                }
+                        } else {
+                                $(this).find("span").removeClass("fa-check-square").addClass("fa-square-o");
+                                user_layers.clearLayers();
+                                map.closePopup();
+                                $.each($(this).closest("ul").find("li"), function(k, v) {
+                                        if($(this).find("a.pull-left span").hasClass("fa fa-check-square")) {
+                                                if($.storage_exists("map_data.user_layers.results." + $(this).attr("id"))) {
+                                                        $.add_geojson_cluster({
+                                                                id: selected_layer,
+                                                                geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id") + ".results"),
+                                                                title: "OK",
+                                                                content: "Yeah"
+                                                        });
+                                                }
+                                        }
+                                });
+                        }
+                };
 
         /**
          * Markers, clusters and popup
@@ -1370,7 +1471,7 @@ $(document).ready(function() {
 
                 $("#breadcrumb .breadcrumb li.pull-right").hide();
 
-                $.init_map();
+                map = $.init_map();
         } else {
                 $("#breadcrumb .breadcrumb li.pull-right").show();
         }

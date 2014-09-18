@@ -559,6 +559,8 @@
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 				$("#contents .panel_content:not(#loader_bg)").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
+
+				$("#breadcrumb").css("width", ($(window).width() - 50) + "px");
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
@@ -662,9 +664,31 @@
 	/**
 	* Remove given storage checking before if exists or is empty
 	*/
-	$.remove_storage = function(name) {
-		if($.storage_exists(name)) {
-			storage.remove(name);
+	$.remove_storage = function(options, callback) {
+		opt = {};
+		if(typeof(options) == "string") {
+			opt.name = options;
+		} else {
+			opt = options;
+		}
+		opt = $.extend({
+			name: "",
+			check: true
+		}, opt);
+		if(opt.check) {
+			if($.storage_exists(opt.name)) {
+				storage.remove(opt.name);
+
+				if(typeof(callback) == "function") {
+					callback.call(this);
+				}
+			}
+		} else {
+			storage.remove(opt.name);
+
+			if(typeof(callback) == "function") {
+				callback.call(this);
+			}
 		}
 	};
 

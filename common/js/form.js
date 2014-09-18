@@ -1324,7 +1324,7 @@
 		var $this = search,
 		search_id = $this.closest(".panel").attr("id");
 
-		apprise("Are you sure to remove this search?<br />", {title: "Warning", icon: "warning", confirm: true}, function(r) {
+		apprise(i18n[lang].messages.search.are_you_sure.message, {title: i18n[lang].messages.search.are_you_sure.title, icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				if($this.closest(".panel").hasClass("fulltext_search")) {
 					storage.set("pgrdg_cache.search.criteria.fulltext", "");
@@ -1733,8 +1733,8 @@
 				result_title = $('<span class="title">'),
 				result_description = $('<p>'),
 				result_content_container = $('<div class="row">'),
-				result_description_span_muted = $('<span class="col-lg-6 col-xs-3">'),
-				result_description_span_right = $('<span class="col-lg-6 col-xs-9 text-right">');
+				result_description_span_muted = $('<span class="col-lg-3 col-xs-3">'),
+				result_description_span_right = $('<span class="col-lg-9 col-xs-9 text-right">');
 
 				result_title.html($.trim(values[kAPI_PARAM_RESPONSE_FRMT_NAME]) + ((values[kAPI_PARAM_RESPONSE_COUNT] !== undefined) ? ' <sup class="text-danger">' + values[kAPI_PARAM_RESPONSE_COUNT] + '</sup>' : "")).appendTo(result_h4);
 				result_h4.appendTo(result_panel);
