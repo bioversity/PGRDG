@@ -1428,7 +1428,7 @@
 						$("#group_by_btn").removeClass("disabled");
 					});
 				} else {
-					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> ' + i18n[lang].messages.no_search_results.message);
+					$("#se_loader").addClass("text-warning").html('<span class="fa fa-times"></span> ' + i18n[lang].messages.search.no_search_results.message);
 					$("#search_form").focus();
 				}
 			});
@@ -2402,12 +2402,29 @@
 		* @param  {int}    limit  Limit
 		*/
 		$.show_raw_data = function(id, domain, skip, limit, grouped_data) {
+			var grouped = {},
+			uobj_id = "",
+			name = "";
 			if(skip === undefined || skip === null || skip === "") { skip = 0; }
 			if(limit === undefined || limit === null || limit === "") { limit = 50; }
 			if(grouped_data === undefined || grouped_data === null || grouped_data === "") {
+				uobj_id = $.md5(domain);
 				grouped_data = {};
 			} else {
-				grouped_data = $.parseJSON($.rawurldecode(grouped_data));
+				$.each($.parseJSON($.rawurldecode(grouped_data)), function(k, v) {
+					uobj_id = $.md5(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + domain);
+					name = v[kAPI_PARAM_RESPONSE_FRMT_NAME];
+					if(v.is_patch !== undefined && v.is_patch === true) {
+						grouped = {};
+					} else {
+						grouped[k] = {};
+						$.each(v, function(kk, vv) {
+							if(kk !== kAPI_PARAM_RESPONSE_FRMT_NAME && kk !== kAPI_PARAM_RESPONSE_FRMT_INFO) {
+								grouped[k][kk] = vv;
+							}
+						});
+					}
+				});
 			}
 
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
@@ -2423,7 +2440,7 @@
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA];
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;
 				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_COLUMN;
-				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped_data;
+				objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped;
 			$.ask_to_service(objp, function(res) {
 				$.activate_panel("results", {title: $("#" + id + " .panel-heading span.title").text(), domain: domain, res: res});
 			});
@@ -2624,13 +2641,15 @@
 		$.show_data_on_map = function(id, domain, grouped_data) {
 			var grouped = {},
 			uobj_id = "",
-			name = "";
+			name = "",
+			summaries_data = storage.get("pgrdg_cache.summary." + id),
+			geometry = [],
+			arr = $.get_current_bbox_pgrdg();
 			if(grouped_data === undefined || grouped_data === null || grouped_data === "") {
 				uobj_id = $.md5(domain);
 				grouped_data = {};
 			} else {
 				$.each($.parseJSON($.rawurldecode(grouped_data)), function(k, v) {
-					uobj_id = $.md5(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + domain);
 					name = v[kAPI_PARAM_RESPONSE_FRMT_NAME];
 					if(v.is_patch !== undefined && v.is_patch === true) {
 						grouped = {};
@@ -2642,15 +2661,14 @@
 							}
 						});
 					}
+					uobj_id = $.md5(summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] + domain);
+					console.log("Not working... you must generate an MD5(CRITERIA + DOMAIN)... See map.js on line 2665");
+					console.log(summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA], uobj_id);
 				});
 				if($.obj_len(grouped_data) > 0) {
 					grouped_data = $.parseJSON($.rawurldecode(grouped_data));
 				}
 			}
-
-			var summaries_data = storage.get("pgrdg_cache.summary." + id),
-			geometry = [],
-			arr = $.get_current_bbox_pgrdg();
 
 			geometry.push(arr);
 

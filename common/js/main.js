@@ -560,7 +560,7 @@
 				$("#contents .panel_content:not(#loader_bg)").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
 
-				$("#breadcrumb").css("width", ($(window).width() - 50) + "px");
+				$("#breadcrumb").css("width", (parseInt($(window).width()) - 50) + "px");
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
@@ -586,6 +586,7 @@
 						storage.set("pgrdg_cache.search.criteria.fulltext", $("#search_form").val());
 					}
 				}
+				$("#breadcrumb").css("width", parseInt($(window).width()) + "px");
 			}
 		}
 	};
@@ -1259,6 +1260,10 @@ $(document).ready(function() {
 			}
 
 			$.search_fulltext(query.q);
+		} else {
+			if($.storage_exists("search.criteria.fulltext")) {
+				$("#search_form").val(storage.get("pgrdg_cache.search.criteria.fulltext"));
+			}
 		}
 	}
 	if(current_path == "Search" || current_path == "Advanced_search") {

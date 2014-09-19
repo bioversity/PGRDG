@@ -21,6 +21,7 @@ var i18n = {
                                 "remove_search": "Remove this search",
                                 "results_for": "Results for search \"{X}\"",
                                 "map_search_place": "Searching \"{X}\"...",
+                                "search_of": "Search of {X}...",
 
                                 "no_search_results": {
                                         "title": "No data",

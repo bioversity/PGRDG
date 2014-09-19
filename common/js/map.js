@@ -166,7 +166,6 @@
                         $.contextMenu(false);
                 }
                 $("#pgrdg_map.locked canvas").on("dragstart touchmove", function(e) { e.preventDefault(); return false; });
-                $.get_generated_layers();
 
                 return map;
         };
@@ -226,7 +225,6 @@
                 if(zoom === undefined) {
                         zoom = 0;
                 }
-                console.log("Centering to:", parseFloat(lat), parseFloat(lon));
                 map.panTo(L.latLng(parseFloat(lat), parseFloat(lon)), {animate: false});
                 if(zoom !== 0) {
                         $.set_zoom(parseFloat(zoom));
@@ -246,9 +244,8 @@
 
                 bounds = new L.LatLngBounds(southWest, northEast);
                 map.fitBounds(bounds, {
-                        maxZoom: 10
+                        maxZoom: 9
                 });
-                //map.setZoom(map.getZoom() - 2);
         };
 
         /**
@@ -365,9 +362,11 @@
                         if($.storage_exists("map_data.user_layers.results")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.results"), function(id, search_data) {
                                         var label = i18n[lang].interface.search;
-                                        item_id = $.md5(search_data[kAPI_PARAM_RESPONSE_FRMT_NAME] + search_data[kAPI_PARAM_DOMAIN]);
+                                        console.log("Not working... you must generate an MD5(CRITERIA + DOMAIN)... See form.js on line 365");
+                                        console.warn(search_data);
+                                        item_id = $.md5(search_data[kAPI_PARAM_CRITERIA] + search_data[kAPI_PARAM_DOMAIN]);
                                         if(search_data[kAPI_PARAM_CRITERIA].fulltext !== undefined && search_data[kAPI_PARAM_CRITERIA].fulltext !== "") {
-                                                label += ': "' + search_data[kAPI_PARAM_CRITERIA].fulltext + '"';
+                                                label += ': "' + search_data[kAPI_PARAM_CRITERIA].fulltext.replace(/"/g, "") + '"';
                                         }
                                         if(search_data[kAPI_PARAM_CRITERIA].node !== undefined && $.obj_len(search_data[kAPI_PARAM_CRITERIA].node) > 0) {
                                                 $.each(search_data[kAPI_PARAM_CRITERIA].node, function(gk, gv) {
@@ -379,33 +378,41 @@
                                                 });
                                         }
                                         // Check all loaded layers and compare with current
-                                        if($("li#" + item_id).length === 0) {
-                                                var $li = $('<li>'),
-                                                $a1 = $('<a>'),
-                                                $a2 = $('<a>'),
-                                                $span1 = $('<span>'),
-                                                $span2 = $('<span>');
+                                        var $li = $('<li>'),
+                                        $a1 = $('<a>'),
+                                        $a2 = $('<a>'),
+                                        $span1 = $('<span>'),
+                                        $span2 = $('<span>');
 
-                                                $li.attr("id", item_id).addClass("keep_open");
-                                                $a1.addClass("btn pull-left").attr({
-                                                        href: "javascript: void(0);",
-                                                        onclick: '$(this).toggle_layer_btn(\'' + item_id + '\');',
-                                                        title: i18n[lang].messages.search.switch_layer
-                                                });
-                                                $a2.addClass("btn pull-right").attr({
-                                                        href: "javascript: void(0);",
-                                                        onclick: '$.remove_selected_search(\'' + item_id + '\', \'map_data.user_layers.results\', \'true\');',
-                                                        title: i18n[lang].messages.search.remove_search
-                                                });
-                                                $span1.addClass("fa " + ((selected == item_id) ? "fa-check-square" : "fa-square-o"));
-                                                $span2.addClass("fa fa-trash");
-                                                $a1.html($span1);
-                                                $a1.append(" " + label);
-                                                $a2.html($span2);
-                                                $li.html($a1);
-                                                $li.append($a2);
+                                        $li.attr("id", item_id).addClass("keep_open");
+                                        $a1.addClass("btn pull-left").attr({
+                                                href: "javascript: void(0);",
+                                                onclick: '$(this).toggle_layer_btn(\'' + item_id + '\');',
+                                                title: i18n[lang].messages.search.switch_layer
+                                        });
+                                        $a2.addClass("btn pull-right").attr({
+                                                href: "javascript: void(0);",
+                                                onclick: '$.remove_selected_search(\'' + item_id + '\', \'map_data.user_layers.results\', \'true\');',
+                                                title: i18n[lang].messages.search.remove_search
+                                        });
+                                        $span1.addClass("fa " + ((selected == item_id) ? "fa-check-square" : "fa-square-o"));
+                                        $span2.addClass("fa fa-trash");
+                                        $a1.html($span1);
+                                        $a1.append(" " + label);
+                                        $a2.html($span2);
+                                        $li.html($a1);
+                                        $li.append($a2);
+
+                                        $.each($("#user_layers li"), function(k, v) {
+                                                $(this).find("a.pull-left span").removeClass("fa-check-square").addClass("fa-square-o");
+                                        });
+                                        if(selected == item_id) {
+                                                $("li#" + item_id).find("a.pull-left span").removeClass("fa-square-o").addClass("fa-check-square");
+                                        }
+                                        if($("li#" + item_id).length === 0) {
                                                 $("#selected_layer").append($li);
                                         }
+                                        console.log(item_id, $("li#" + item_id).length, selected);
                                 });
                                 show = true;
                         }
@@ -685,7 +692,7 @@
                                                                 }
                                                                 //$(".change_map_btn." + $("#selected_map").text().replace(" ", "_") + " span").removeClass("fa-circle-o").addClass("fa-check-circle").closest("li").addClass("selected");
                                                                 break;
-                                                        case "user_layers":
+                                                        case "user_level":
                                                                 break;
                                                         case "tools":
                                                                 break;
@@ -699,12 +706,16 @@
                                                 $("#" + action + "_btn").parent("li").removeClass("selected");
                                                 switch(action) {
                                                         case "find_location":
+                                                                $("#" + action).fadeOut(300);
                                                                 break;
                                                         case "change_map":
+                                                                $("#" + action).fadeOut(300);
                                                                 break;
-                                                        case "user_layers":
+                                                        case "user_level":
+                                                                $("#" + action).fadeOut(300);
                                                                 break;
                                                         case "tools":
+                                                                $("#" + action).fadeOut(300);
                                                                 break;
                                                         default:
                                                                 $("#" + action).fadeOut(300, function() {
@@ -872,7 +883,7 @@
                                 $("#information_zone").html('<h3>' + i18n[lang].messages.search.results_for.replace("{X}", input) + '</h3><ul class="fa-ul"></ul>');
                                 $.each(datap, function(k, v) {
                                         var mc,
-                                        title = "Search of \"" + input + "\"",
+                                        title = i18n[lang].messages.search.search_of.replace("{X}", '"' + input + '"'),
                                         content = v.display_name;
                                         //console.log(datap[k].lon, datap[k].lat);
                                         if(k === 0) {
@@ -889,7 +900,8 @@
                                                         service: false,
                                                         name: v.display_name,
                                                         title: title,
-                                                        content: content
+                                                        content: content,
+                                                        center: false
                                                 });
                                         } else {
                                                 $.add_marker({
@@ -908,9 +920,13 @@
                                 });
                                 $("#map_toolbox span.ion-loading-c").removeClass("ion-loading-c").addClass("ion-search").parent("a").removeClass("disabled");
                                 $("#find_location input").prop("disabled", false);
+
+                                map.fitBounds([
+                                        [parseFloat(datap[0].boundingbox[0]), parseFloat(datap[0].boundingbox[2])],
+                                        [parseFloat(datap[0].boundingbox[1]), parseFloat(datap[0].boundingbox[3])]
+                                ]);
                                 $("#" + datap[0].place_id).popover("show");
-                                //$.set_center(Math.floor(datap[0].lon), Math.floor(datap[0].lat));
-                                $.set_center_bbox(datap[0].boundingbox);
+                                map.invalidateSize();
 
                                 if (typeof(callback) == "function") {
                                         callback.call(this, place_id);
@@ -1064,14 +1080,23 @@
                         var ma = markerMap[options.marker_id],
                         popup = L.popup()
                             .setLatLng(L.latLng((ma.lat + 10), ma.lon))
-                            .setContent('<h4 class="text-info"><span class="fa-map-marker text-danger fa fa-lg"></span> ' + options.title + '</h4>' + '<p>' + options.content + '</p>')
-                            .openOn(map);
+                            .setContent('<h4 class="text-info"><span class="fa-map-marker text-danger fa fa-lg"></span> ' + options.title + '</h4>' + '<p>' + options.content + '</p>');
 
                         //$.each($(this).closest("ul").find("li"), function(k, v) {
                         //        $(this).find("a").text($(this).find("a").text());
                         //});
                         $("#selected_zone").html(options.content).show().stop().delay(5000).hide();
-                        $.set_center_bbox(ma.boundingbox);
+                        map.closePopup();
+                        if(ma.geojson.type == "Point") {
+                                $.set_center(ma.lon, ma.lat, 10);
+                                map.invalidateSize();
+                        } else {
+                                map.fitBounds([
+                                        [parseFloat(ma.boundingbox[0]), parseFloat(ma.boundingbox[2])],
+                                        [parseFloat(ma.boundingbox[1]), parseFloat(ma.boundingbox[3])]
+                                ]);
+                                map.invalidateSize();
+                        }
                 };
 
                 /**
@@ -1302,7 +1327,8 @@
                                 service: true,
                                 name: "",
                                 title: "",
-                                content: ""
+                                content: "",
+                                center: true,
                         }, options);
 
                         var markers = L.markerClusterGroup(),
@@ -1314,13 +1340,15 @@
                                 markers.addLayer(geoJsonLayer);
                                 user_search_layers.addLayer(markers);
                         }
-                        var marker_position = markers.getBounds().getCenter();
-                        var bbx = {};
-                        bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
-                        bbx.northeast = [markers.getBounds().getNorthEast().lat, markers.getBounds().getNorthEast().lng];
-                        //$.set_center(marker_position.lng, marker_position.lat);
-        	        //map.fitBounds([bbx.southwest, bbx.northeast]);
+                        if(options.center) {
+                                var marker_position = markers.getBounds().getCenter();
+                                var bbx = {};
+                                bbx.southwest = [markers.getBounds().getSouthWest().lat, markers.getBounds().getSouthWest().lng];
+                                bbx.northeast = [markers.getBounds().getNorthEast().lat, markers.getBounds().getNorthEast().lng];
 
+                                // $.set_center_bbox(marker_position.lng, marker_position.lat);
+                	        map.fitBounds([bbx.southwest, bbx.northeast]);
+                        }
 
                         markers.on("click", function(m) {
                                 //console.log(m);
@@ -1471,7 +1499,9 @@ $(document).ready(function() {
 
                 $("#breadcrumb .breadcrumb li.pull-right").hide();
 
-                map = $.init_map();
+                map = $.init_map(function() {
+                        $.get_generated_layers("storage");
+                });
         } else {
                 $("#breadcrumb .breadcrumb li.pull-right").show();
         }
