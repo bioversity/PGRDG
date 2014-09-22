@@ -14,10 +14,18 @@
 		</ul>
 	</div>
 	<div class="panel-body autocomplete"></div>
-	<h4><i style="text-muted"><?php print $i18n[$lang]["interface"]["static_form_help_text"]; ?></i></h4>
 	<div class="panel-body contents">
+		<h4><i style="text-muted"><?php print $i18n[$lang]["interface"]["static_form_help_text"]; ?></i></h4>
 		<div>
-			<div><?php require_once("common/tpl/predefined_search.tpl"); ?></div>
+			<div id="static_forms"></div>
+		</div>
+	</div>
+	<div class="panel-body contents">
+		<div class="title panel-heading" style="padding: 0; height: 60px;"></div>
+		<hr />
+		<div id="static_forms_list" style="padding: 0 15px;">
+			<div id="static_forms_loader"><span class="fa fa-refresh fa-spin"></span> Loading...</span></div>
+			<?php /*require_once("common/tpl/predefined_search.tpl");*/ ?>
 		</div>
 	</div>
 </div>

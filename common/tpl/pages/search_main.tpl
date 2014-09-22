@@ -11,4 +11,4 @@
 <br />
 <br />
 <br />
-<h2 class="text-center text-warning" style="opacity: 0.3;"><span class="fa fa-times"></span> No contents for this page.</h2>
+<h2 class="text-center text-warning" style="opacity: 0.3;" unselectable="on"><span class="fa fa-times"></span> No contents for this page.</h2>

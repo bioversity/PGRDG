@@ -4870,6 +4870,9 @@ a.list-group-item:focus {
   text-decoration: none;
   background-color: #f5f5f5;
 }
+a.list-group-item > span.help-block {
+        margin-top: 2.5px;
+}
 a.list-group-item.active,
 a.list-group-item.active:hover,
 a.list-group-item.active:focus {
@@ -4877,6 +4880,9 @@ a.list-group-item.active:focus {
   color: #fff;
   background-color: #3c9332;
   border-color: #3c9332;
+}
+a.list-group-item.active > span.help-block {
+        color: #dedede;
 }
 a.list-group-item.active .list-group-item-heading,
 a.list-group-item.active:hover .list-group-item-heading,

@@ -1,3 +1,14 @@
+*[unselectable="on"] {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+
 input::-moz-focus-inner, * {
 	outline: 0 !important;
 }
@@ -858,16 +869,11 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 div[unselectable] {
 	color: #d0d0d0;
 	font-family: "HelveticaNeueW01-45Ligh";
-	font-size: 2.3em;
+	font-size: 1.5em;
+	margin-top: 53px;
+	margin-bottom: 5px;
+	max-width: 35%;
 	text-indent: -20px;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-
-	/* Rules below not implemented in browsers yet */
-	-o-user-select: none;
-	user-select: none;
-	cursor: default;
 }
 #loader_bg {
 	bottom: 0;
@@ -1296,6 +1302,7 @@ section.container > #contents .carousel-inner {
 	left: -1000px;
 	height: 100%;
 	/*overflow-y: hidden;*/
+	overflow: hidden;
 	background-color: transparent;
 	background-image: linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	background-image: -moz-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
@@ -1307,15 +1314,16 @@ section.container > #contents .carousel-inner {
 }
 #left_panel div.contents {
 	height: 100%;
-	padding: 5px 1px 250px 5px !important;
+	padding: 5px 1px 283px 5px !important;
 }
+
 @media only screen and (max-width:420px) {
 	#left_panel div.contents {
 		padding-bottom: 175px !important;
 	}
 }
 #left_panel div.contents > div {
-	overflow-y: scroll;
+	overflow-y: auto;
 	height: 100%;
 	padding: 0 10px;
 }
@@ -1401,6 +1409,28 @@ section.container > #contents .carousel-inner {
 }
 #left_panel tr:last-child div.panel-body > div {
 	/*padding-bottom: 200px;*/
+}
+#left_panel div.contents a h4 {
+	padding: 0 13px 0 0;
+}
+#left_panel div.contents a h4 small {
+	margin-left: 15px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+#left_panel div.panel-heading a > h4 > span {
+	margin-right: 10px !important;
+}
+#left_panel div.panel-body.contents {
+	position: absolute;
+	width: 100%;
+}
+#left_panel div.panel-body.contents:last-child {
+	left: 300px;
+}
+#left_panel #static_forms_list ul {
+  padding: 0;
 }
 
 .folder_menu {
@@ -2479,7 +2509,9 @@ label.checkbox {
 	position: relative;
 	z-index: 0;
 }
-#summary_ordering ul li + li.related {
+#summary_ordering ul li + li.related,
+a.list-group.related,
+a.list-group-item.related {
 	margin-left: 30px;
 }
 #summary_ordering #modal_messages {

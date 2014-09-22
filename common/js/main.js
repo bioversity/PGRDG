@@ -381,7 +381,7 @@
 							}
 						}
 						if($(window).width() > 420) {
-							$("#start h1[unselectable]").animate({"margin-left": "15px"}, 200);
+							$("#start h1[unselectable]").animate({"margin-left": "7px"}, 200);
 						}
 						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
