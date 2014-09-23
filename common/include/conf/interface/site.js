@@ -6,7 +6,7 @@ var config = {
         },
         "site": {
                 "version": 1.4,
-                "developer_mode": true,
+                "developer_mode": false,
                 "default_language": "en",
                 "allow_signin": false
         }

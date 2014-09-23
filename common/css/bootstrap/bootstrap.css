@@ -587,6 +587,7 @@ ol ol {
 .list-unstyled {
   padding-left: 0;
   list-style: none;
+  margin-left: 0;
 }
 .list-inline {
   padding-left: 0;
@@ -2070,6 +2071,9 @@ fieldset[unclickable] .btn {
 	/* PERSONALIZATIONS
 	*/
 
+        .btn-text {
+                padding: 0 !important;
+        }
 	/* BTN GREEN-BIOVERSITY */
 	.btn-default {
 	  color: #333;

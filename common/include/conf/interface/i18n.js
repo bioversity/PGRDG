@@ -31,6 +31,9 @@ var i18n = {
                                         "title": "Confirm removal",
                                         "message": "Are you sure to remove this search?<br />"
                                 }
+                        },
+                        "static_forms": {
+                                "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
                         }
                 },
                 "interface": {

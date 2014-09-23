@@ -1314,7 +1314,7 @@ section.container > #contents .carousel-inner {
 }
 #left_panel div.contents {
 	height: 100%;
-	padding: 5px 1px 283px 5px !important;
+	padding: 0 1px 268px 5px !important;
 }
 
 @media only screen and (max-width:420px) {
@@ -1430,7 +1430,15 @@ section.container > #contents .carousel-inner {
 	left: 300px;
 }
 #left_panel #static_forms_list ul {
-  padding: 0;
+	padding: 0;
+}
+#left_panel #static_forms_list > li,
+#left_panel #static_forms_list li a {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	text-align: left;
 }
 
 .folder_menu {
