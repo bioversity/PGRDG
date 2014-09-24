@@ -532,8 +532,12 @@
 						var $a = $('<a>'),
 						$span = $('<span>');
 
-						$a.attr("href", "javascript: void(0);");
-						$a.attr("onclick", "$(this).select_static_form(\'" + vv.node + "\');");
+						$a.attr({
+							"href": "javascript: void(0);",
+							"data-node": vv.node,
+							"id": vv.node + "_link",
+							"onclick": "$(this).select_static_form(\'" + vv.node + "\');"
+						});
 						$a.addClass("list-group-item");
 						$span.addClass("fa fa-angle-right pull-right help-block");
 						$a.html('<span data-info="' + vv[kAPI_PARAM_RESPONSE_FRMT_INFO] + '">' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</span>' + $span.html());
@@ -630,6 +634,7 @@
 
 			$a.attr({
 				"href": "javascript: void(0);",
+				"data-node": $this.attr("data-node"),
 				"onclick": "$(this).select_static_form(\'back\');",
 				"title": $this.find("span:first-child").attr("data-info")
 			}).css("padding", "0");
@@ -640,8 +645,16 @@
 				$(this).removeClass("list-group-item-success");
 			});
 			$this.addClass("list-group-item-success");
-			$this.closest(".panel-body.contents").animate({"left": "-300px"}, 300);
-			$this.closest(".panel-body.contents").next().animate({"left": "0px"}, 300);
+			if($this.closest(".panel-body.contents").css("left") == "-300px") {
+				$this.closest(".panel-body.contents").animate({"left": "0px"}, 300);
+				$this.closest(".panel-body.contents").next().animate({"left": "300px"}, 300, function() {
+					$this.closest(".panel-body.contents").delay(300).animate({"left": "-300px"}, 300);
+					$this.closest(".panel-body.contents").next().delay(300).animate({"left": "0px"}, 300);
+				});
+			} else {
+				$this.closest(".panel-body.contents").animate({"left": "-300px"}, 300);
+				$this.closest(".panel-body.contents").next().animate({"left": "0px"}, 300);
+			}
 			$this.closest(".panel-body.contents").next().find("div.title.panel-heading").html($a);
 
 			var objp = {};
@@ -681,7 +694,7 @@
 	 */
 	$.generate_static_form = function(tag) {
 		var kAPI = {};
-		kAPI.storage_group = "local.forms_data";
+		kAPI.storage_group = "search.criteria.forms";
 		// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_IDENTIFIER;
 		kAPI.parameters = {};
@@ -692,14 +705,39 @@
 		$.ask_to_service(kAPI, function(response) {
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 				if($("#accordion > #" + response.id).length === 0) {
-					var the_title = "";
+					var the_title = [];
 					if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+						$.manage_url("Forms");
+						$.breadcrumb_right_buttons();
+						if($(window).width() < 420) {
+							$.left_panel("close");
+						}
+						$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+							$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
+								$.reset_all_searches(true);
+							});
+						});
+						$("section.container").animate({"padding-top": "40px"});
+						$("#breadcrumb").animate({"top": "75px"});
+						if($("#forms-head .btn-group a.save_btn").length === 0) {
+							btn_disabled = "disabled";
+							$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">Search <span class="fa fa-chevron-right"></span></a>');
+							$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">Search <span class="fa fa-chevron-right"></span></a>');
+						}
+						if($("#breadcrumb").css("display") == "none") {
+							$("#breadcrumb").fadeIn(200);
+						}
+
 						if($("#" + $.md5(tag)).length === 0) {
 							var $link = $("#" + $.md5(tag) + "_link");
 							$link.addClass("disabled");
 							if($("#" + $.md5($link.closest("ul.static_child").prev("b").text())).length === 0) {
-								the_title = $link.closest("ul.static_root").attr("data-root") + ' <span class="fa fa-angle-right text-muted"></span>';
-								the_title += $link.closest("ul.static_child").prev("b").text();
+								var node = $link.closest("ul.static_root").attr("id"),
+								text = $link.closest("ul.static_root").attr("data-root");
+								the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
+								the_title.push($link.closest("ul.static_child").prev("b").text());
+								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.node", node);
+								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.text", text);
 							}
 							// Create forms
 							var forms = $.create_form(response, true);
@@ -715,15 +753,13 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
-										show_json: false,
 										content: ""
 									});
 								}
 							}
 							$("#forms-body .content-body").addCollapsible({
 								id: $.md5($link.closest("ul.static_child").prev("b").text()),
-								title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
-								show_json: true,
+								title: the_title.join('<span class="fa fa-fw fa-angle-right text-muted"></span>'),
 								content: forms
 							});
 							$("input.switch").bootstrapSwitch();
@@ -732,12 +768,32 @@
 							});
 							$("#forms-body .panel").tooltip();
 							$.resize_forms_mask();
+
+
+							if($.storage_exists("search.criteria.selected_forms")) {
+								$.each(storage.get("pgrdg_cache.search.criteria.selected_forms"), function(row_id, row_data){
+									var $panel = $("#" + $.md5(row_data.forms.tags)).next(".panel"),
+									$item = $panel.find("a.treeselect");
+
+									$("#" + $.md5(row_data.forms.tags)).addClass("unselectable").hide();
+									$panel.removeClass("disabled").find(".panel-heading a > span").removeClass("fa-square-o").addClass("fa-check-square-o");
+									$panel.find(".panel-heading h3 > span, .panel-body").addClass("disabled");
+									$panel.find("input").prop("disabled", false);
+									$panel.find("button").prop("disabled", false);
+									if($panel.find("a.treeselect").length > 0){
+										$panel.activate_treeselect(row_data.forms.tags);
+									}
+								});
+								$(".save_btn").removeClass("disabled");
+							}
+							$.activate_form_btns();
 						}
 					}
 				}
 			}
 		});
 	};
+
 
 /*=======================================================================================
 *	SEARCH FUNCTIONS
@@ -757,81 +813,86 @@
 	};
 
 	/**
-	* Execute the autocomplete
-	*/
-	$.exec_autocomplete = function(type) {
-		$.activate_form_btns = function() {
-			if($("#accordion > div.panel-default").length > 0) {
-				// Fires when user clicks on "Save" button
-				$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
-					$(this).on("click", function() {
-						var active_forms = {};
-						//form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
-						$.each($("#accordion > div.panel-default"), function(k, v) {
-							var af_obj = {}, rt = {};
-							frm_keys = $(this).attr("id");
-							if($(this).find("div.panel-success:not(.disabled)").length > 0) {
-								$.each($(this).find("div.panel-success:not(.disabled)"), function(i, vv) {
-									af_obj = $(this).find("form").serializeObject();
-									switch(af_obj["input-type"]) {
-										case kAPI_PARAM_INPUT_ENUM:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_RANGE:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
-											rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
-											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_STRING:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
-											rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
-											active_forms[af_obj.tags] = rt;
-											break;
-										case kAPI_PARAM_INPUT_SHAPE: break;
-										case kAPI_PARAM_INPUT_DEFAULT:
-											rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-											switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
-												case kTYPE_BOOLEAN:
-													rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
-													break;
-												default:
-													break;
-											}
-											active_forms[af_obj.tags] = rt;
-											break;
-									}
-									storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
-										request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
-										key: $(this).attr("id"),
-										forms: $(this).find("form").serializeObject(),
-										active_forms: active_forms
-									});
-									$.breadcrumb_right_buttons();
-								});
-							} else {
+	 * Activate the "search" form button
+	 */
+	$.activate_form_btns = function() {
+		if($("#accordion > div.panel-default").length > 0) {
+			// Fires when user clicks on "Save" button
+			$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
+				$(this).on("click", function() {
+					var active_forms = {};
+					//form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
+					$.each($("#accordion > div.panel-default"), function(k, v) {
+						var af_obj = {}, rt = {};
+						frm_keys = $(this).attr("id");
+						if($(this).find("div.panel-success:not(.disabled)").length > 0) {
+							$.each($(this).find("div.panel-success:not(.disabled)"), function(i, vv) {
+								af_obj = $(this).find("form").serializeObject();
+								switch(af_obj["input-type"]) {
+									case kAPI_PARAM_INPUT_ENUM:
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+										active_forms[af_obj.tags] = rt;
+										break;
+									case kAPI_PARAM_INPUT_RANGE:
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_PARAM_RANGE_MIN] = af_obj.from;
+										rt[kAPI_PARAM_RANGE_MAX] = af_obj.to;
+										rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+										active_forms[af_obj.tags] = rt;
+										break;
+									case kAPI_PARAM_INPUT_STRING:
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+										rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+										active_forms[af_obj.tags] = rt;
+										break;
+									case kAPI_PARAM_INPUT_SHAPE: break;
+									case kAPI_PARAM_INPUT_DEFAULT:
+										rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+										switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+											case kTYPE_BOOLEAN:
+												rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+												break;
+											default:
+												break;
+										}
+										active_forms[af_obj.tags] = rt;
+										break;
+								}
 								storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
-									request: {}, //storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+									request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
 									key: $(this).attr("id"),
-									forms: {},
+									forms: $(this).find("form").serializeObject(),
 									active_forms: active_forms
 								});
 								$.breadcrumb_right_buttons();
-							}
-						});
-						$("#goto_results_btn, #goto_map_btn").hide();
-						$.remove_storage("pgrdg_cache.summary");
-						$.remove_storage("pgrdg_cache.results");
-						$.remove_storage("pgrdg_cache.map");
-						$.show_summary($.get_storage_selected_forms());
+							});
+						} else {
+							storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
+								request: {}, //storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+								key: $(this).attr("id"),
+								forms: {},
+								active_forms: active_forms
+							});
+							$.breadcrumb_right_buttons();
+						}
 					});
+					$("#goto_results_btn, #goto_map_btn").hide();
+					$.remove_storage("pgrdg_cache.summary");
+					$.remove_storage("pgrdg_cache.results");
+					$.remove_storage("pgrdg_cache.map");
+					$.show_summary($.get_storage_selected_forms());
 				});
-			}
+			});
 		}
+	};
+
+	/**
+	* Execute the autocomplete
+	*/
+	$.exec_autocomplete = function(type) {
+
 		$.manage_url("Forms");
 		$.breadcrumb_right_buttons();
 		var is_autocompleted = false;
@@ -879,7 +940,6 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
-										show_json: false,
 										content: ""
 									});
 								}
@@ -887,8 +947,7 @@
 							$("#forms-body .content-body").addCollapsible({
 								id: response.id,
 								title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
-								show_json: true,
-								content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+								content: forms
 							});
 							$("input.switch").bootstrapSwitch();
 							$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
@@ -948,7 +1007,6 @@
 												class: "fulltext_search",
 												icon: "fa fa-edit",
 												title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
-												show_json: false,
 												content: ""
 											});
 										}
@@ -956,8 +1014,7 @@
 									$("#forms-body .content-body").addCollapsible({
 										id: response.id,
 										title: the_title.replace("@pattern@", '<span style="color: #dd1144">"' + $("#main_search").val() + '"</span>'),
-										show_json: true,
-										content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+										content: forms
 									});
 									$("input.switch").bootstrapSwitch();
 									$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
@@ -979,8 +1036,7 @@
 				btn_disabled = "";
 				if($.storage_exists("search.criteria.forms")) {
 					$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(row_id, results) {
-						var the_title = "",
-						response = results.response;
+						var response = results.response;
 						//console.log(response);
 						if(response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 							if($(window).width() < 420) {
@@ -991,7 +1047,7 @@
 									$.reset_all_searches(true);
 								});
 							});
-							$("section.container").animate({"padding-top": "115px"});
+							$("section.container").animate({"padding-top": "40px"});
 							$("#breadcrumb").animate({"top": "75px"});
 							if($("#forms-head .btn-group a.save_btn").length === 0) {
 								if($("#accordion .panel.fulltext_search").length > 0) {
@@ -1005,20 +1061,51 @@
 							if($("#breadcrumb").css("display") == "none") {
 								$("#breadcrumb").fadeIn(200);
 							}
-
-							$.each(operators, function(ck, cv) {
-								$.each(response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_OPERATOR], function(cck, ccv) {
-									if(ccv == cv.key) {
-										if(cv.main) {
-											the_title = cv.title;
-										} else {
-											the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+							if(response[kAPI_RESPONSE_REQUEST] !== undefined && $.obj_len(response[kAPI_RESPONSE_REQUEST]) > 0) {
+								var the_title = "",
+								titlee = "",
+								panel_id = response.id;
+								$.each(operators, function(ck, cv) {
+									$.each(response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_OPERATOR], function(cck, ccv) {
+										if(ccv == cv.key) {
+											if(cv.main) {
+												the_title = cv.title;
+											} else {
+												the_title += " " + '<i style="color: #666;">' + cv.title + '</i>';
+											}
+										}
+									});
+								});
+								titlee = the_title.replace("@pattern@", '<span style="color: #dd1144"> "' + response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_PATTERN] + '"</span>');
+							} else {
+								var the_title = [],
+								titlee = "",
+								panel_id = "",
+								i = 0;
+								$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(k, v) {
+									if($.obj_len(v.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG]) > 0) {
+										i++;
+										tag = v.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG];
+										var $link = $("#" + $.md5(tag) + "_link");
+										// Choose: error or correct title?
+										//$("#" + v.response.node + "_link").select_static_form(v.response.node);
+										panel_id = $.md5($link.closest("ul.static_child").prev("b").text());
+										$link.addClass("disabled");
+										if($("#" + $.md5($link.closest("ul.static_child").prev("b").text())).length === 0) {
+											var node = v.response.node,
+											text = v.response.text;
+											if(text !== undefined) {
+												the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
+											}
+											the_title.push($link.closest("ul.static_child").prev("b").text());
+										console.log($link);
+										titlee = $.array_unique($.array_clean(the_title)).join('<span class="fa fa-fw fa-angle-right text-muted"></span>');
 										}
 									}
 								});
-							});
+							}
 							// Create forms
-							var forms = $.create_form(response),
+							var forms = $.create_form(response, true),
 							grouping_no = 0;
 							if($.storage_exists("search.criteria.grouping._ordering")) {
 								grouping_no = $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering"));
@@ -1035,16 +1122,14 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
-										show_json: false,
 										content: ""
 									});
 								}
 							}
 							$("#forms-body .content-body").addCollapsible({
-								id: response.id,
-								title: the_title.replace("@pattern@", '<span style="color: #dd1144"> "' + response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_PATTERN] + '"</span>'),
-								show_json: true,
-								content: '<pre style="display: none;">' + JSON.stringify(response, null, "\t") + '</pre><br />' + forms
+								id: panel_id,
+								title: titlee,
+								content: forms
 							});
 							$("input.switch").bootstrapSwitch();
 							$("input.switch").on('switchChange.bootstrapSwitch', function(event, state) {
@@ -1083,7 +1168,7 @@
 							$.reset_all_searches(true);
 						});
 					});
-					$("section.container").animate({"padding-top": "115px"});
+					$("section.container").animate({"padding-top": "40px"});
 					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
 						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
@@ -1123,7 +1208,6 @@
 								class: "fulltext_search",
 								icon: "fa fa-edit",
 								title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>' + nn,
-								show_json: false,
 								content: ""
 							});
 						}
@@ -1162,7 +1246,7 @@
 							$.reset_all_searches(true);
 						});
 					});
-					$("section.container").animate({"padding-top": "115px"});
+					$("section.container").animate({"padding-top": "40px"});
 					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
 						if($("#accordion .panel.fulltext_search").length > 0) {
@@ -1608,7 +1692,7 @@
 			$("#forms-head #right_btn, #forms-head .save_btn, #forms-footer #right_btn, #forms-footer .save_btn").fadeOut(300, function() {
 				$("#forms-head .content-title, #forms-footer .content-title").text("");
 				$("#forms-body .content-body").html("");
-				$("section.container").animate({"padding-top": "75px"}, 300, function(){
+				$("section.container").animate({"padding-top": "0px"}, 300, function(){
 					// Reset breadcrumb and panels
 					$.reset_breadcrumb();
 					$.reset_contents("forms", true);
@@ -1922,7 +2006,7 @@
 				} else {
 					if($("#apprise.no-results:visible").length === 0) {
 						if($.storage_exists("search.criteria.grouping._ordering")) {
-							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": i18n[lang].messages.no_search_results.message, "icon": "warning", "confirm": true}, function(r) {
+							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": i18n[lang].messages.search.no_search_results.message, "icon": "warning", "confirm": true}, function(r) {
 								$.show_summary(active_forms, false, function() {
 									setTimeout(function() {
 										$("#summary-body.disabled").addClass("moved");
@@ -1930,7 +2014,7 @@
 								});
 							});
 						} else {
-							apprise(i18n[lang].messages.no_search_results.message, {"class": "no-results", "title": i18n[lang].messages.no_search_results.title, "icon": "warning"});
+							apprise(i18n[lang].messages.search.no_search_results.message, {"class": "no-results", "title": i18n[lang].messages.search.no_search_results.title, "icon": "warning"});
 						}
 					}
 				}
@@ -3253,7 +3337,6 @@
 		options = $.extend({
 			title: "Collapsible panel",
 			icon: "fa fa-search",
-			show_json: false,
 			content: "",
 			class: "",
 			id: $.makeid()
@@ -3273,12 +3356,23 @@
 			root_node = $("#" + options.id);
 		}
 		if($("#" + options.id).length === 0) {
-			var json_data = ((config.site.developer_mode && options.show_json) ? '<div class="col-sm-5"><a href="javascript:void(0);" onclick="$(\'#' + options.id + '_collapse > .panel-body > pre\').slideToggle()" class="text-info" title="Show/hide json source"><span class="fa fa-file-code-o"></span> json</div>' : ''),
-			node_heading = $('<div class="panel-heading">'),
-			node_heading_title = $('<h4 class="panel-title row"><div class="col-sm-1 col-md-1 text-right pull-right"><a title="Remove" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a></div><div class="' + ((config.site.developer_mode && options.show_json) ? 'col-lg-6 pull-left' : 'col-sm-11 pull-left') + '"><span class="' + options.icon + '"></span>&nbsp;&nbsp;' + ((options.content !== "") ? '<a data-toggle="collapse" data-parent="#accordion" href="#' + options.id + '_collapse">' + options.title + '</a>' : options.title) + '</div>' + json_data + '</h4>'),
+			var node_heading = $('<div class="panel-heading">'),
+			node_heading_title = $('<h4 class="panel-title row">'),
+				node_heading_title_content_right = $('<div class="col-sm-05 col-md-05 text-right pull-right"></div>'),
+				node_heading_title_content_left_btn_toggle = $('<a data-toggle="collapse" data-parent="#accordion" title="' + i18n[lang].interface.open_close_row_content + '" href="#' + options.id + '_collapse"><span class="fa fa-fw fa-sort text-muted"></span></a>'),
+				node_heading_title_right_btn_close = $('<a title="' + i18n[lang].interface.remove_row + '" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a>'),
+				node_heading_title_content_left = $('<div class="col-lg-10 pull-left"></div>'),
+				node_heading_title_content_left_title = $('<span class="' + options.icon + '"></span>'),
 			node_body_collapse = $('<div id="' + options.id + '_collapse" class="panel-collapse collapse in">'),
 			node_body = $('<div class="panel-body">' + options.content + '</div>');
 
+			//node_heading_title.html(json_data);
+			node_heading_title_content_left.html(node_heading_title_content_left_title);
+			node_heading_title_content_left.append("&nbsp;&nbsp;" + options.title);
+			node_heading_title_content_left.prepend(node_heading_title_content_left_btn_toggle);
+			node_heading_title_content_right.append(node_heading_title_right_btn_close);
+			node_heading_title.html(node_heading_title_content_left);
+			node_heading_title.append(node_heading_title_content_right);
 			node_heading_title.appendTo(node_heading);
 			node_heading.appendTo(root_node);
 			if(options.content !== "") {
@@ -3680,9 +3774,8 @@ $(document).ready(function() {
 		//$.remove_storage("pgrdg_cache.search.criteria.selected_forms");
 		//$.remove_storage("pgrdg_cache.local.forms_data");
 	} else if(current_path == "Advanced_search") {
-		$.restore_form();
-
 		$.get_static_forms();
+		$.restore_form();
 	}
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {

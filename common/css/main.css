@@ -872,8 +872,10 @@ div[unselectable] {
 	font-size: 1.5em;
 	margin-top: 53px;
 	margin-bottom: 5px;
-	max-width: 35%;
 	text-indent: -20px;
+}
+div[unselectable] {
+	max-width: 35%;
 }
 #loader_bg {
 	bottom: 0;
