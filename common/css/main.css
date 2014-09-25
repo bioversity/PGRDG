@@ -620,7 +620,7 @@ section.container {
 	max-width: 100%;
 	min-width: 280px !important;
 	overflow: hidden;
-	padding: 0;
+	padding: 0 0 75px 0;
 	position: fixed;
 	width: 100%;
 	background-color: transparent;
@@ -863,6 +863,10 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 
 #start {
 	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding-left: 15px;
 }
 #start h1[unselectable], #se h1[unselectable],
 #se h1[unselectable] + h2,
@@ -937,8 +941,7 @@ div[unselectable] {
 }
 @media only screen and (max-width:420px) {
 	#start h1[unselectable],
-		#se h1[unselectable] {
-		margin-top: 120px;
+	#se h1[unselectable] {
 		margin-left: 15px;
 	}
 	#se h1[unselectable] {
@@ -1316,12 +1319,17 @@ section.container > #contents .carousel-inner {
 }
 #left_panel div.contents {
 	height: 100%;
-	padding: 0 1px 268px 5px !important;
+	padding: 0 0 263px 0 !important;
 }
-
+#left_panel div.contents + div.contents {
+	padding-bottom: 281px !important;
+}
 @media only screen and (max-width:420px) {
 	#left_panel div.contents {
-		padding-bottom: 175px !important;
+		padding-bottom: 189px !important;
+	}
+	#left_panel div.contents + div.contents {
+		padding-bottom: 206px !important;
 	}
 }
 #left_panel div.contents > div {
@@ -1361,8 +1369,11 @@ section.container > #contents .carousel-inner {
 	border-bottom: #e0e0e0 1px solid;
 }
 #left_panel div.panel-header.controls {
-	padding: 0 5px;
+	padding: 2px 5px;
 	text-align: right;
+}
+#left_panel div#scrollable-dropdown-menu {
+	margin-top: -1px;
 }
 @media only screen and (min-width:420px) {
 	#left_panel div.panel-header.controls {
@@ -1413,7 +1424,7 @@ section.container > #contents .carousel-inner {
 	/*padding-bottom: 200px;*/
 }
 #left_panel div.contents a h4 {
-	padding: 0 13px 0 0;
+	padding: 0 13px;
 }
 #left_panel div.contents a h4 small {
 	margin-left: 15px;
@@ -1431,15 +1442,24 @@ section.container > #contents .carousel-inner {
 #left_panel div.panel-body.contents:last-child {
 	left: 300px;
 }
+#left_panel #static_forms_list h3 {
+	color: #999;
+	font-size: 1.1em;
+	font-weight: bold;
+}
 #left_panel #static_forms_list ul {
 	padding: 0;
+}
+#left_panel #static_forms_list > ul li.list-unstyled {
+	margin-left: -20px;
 }
 #left_panel #static_forms_list > li,
 #left_panel #static_forms_list li a {
 	overflow-x: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	width: 100%;
+	max-width: 100%;
+	padding-right: 10px !important;
 	text-align: left;
 }
 
@@ -2159,6 +2179,23 @@ label.checkbox {
 #accordion .panel .multiselect {
 	width: 100%;
 }
+#accordion .panel-heading a.pull-left span.fa:before {
+	background-color: #fff;
+	border-radius: 4px;
+	display: inline-block;
+	height: 16px;
+	position: relative;
+	width: 16px;
+}
+.panel-heading a.pull-left span.fa {
+	color: #676767;
+	font-size: 1.5em;
+	margin-right: 10px;
+}
+#accordion .panel-heading a.pull-left + h3 {
+	font-size: 1.3em;
+}
+
 #accordion .list-group-item,
 .popover .list-group-item {
 	padding: 5px 0;

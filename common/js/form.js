@@ -527,20 +527,24 @@
 
 				$.each(res, function(k, v) {
 					$("#static_forms").closest(".panel-body.contents").find("h4").html(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + '<small class="help-block">' + v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</small>');
-					//console.log(v.children);
 					$.each(v.children, function(kk, vv) {
 						var $a = $('<a>'),
 						$span = $('<span>');
-
 						$a.attr({
 							"href": "javascript: void(0);",
 							"data-node": vv.node,
 							"id": vv.node + "_link",
-							"onclick": "$(this).select_static_form(\'" + vv.node + "\');"
+							"onclick": "$(this).select_static_form(\'" + vv.node + "\');",
+							"data-toggle": "popover",
+							"title": (vv[kAPI_PARAM_RESPONSE_FRMT_INFO] === undefined) ? "" : vv[kAPI_PARAM_RESPONSE_FRMT_NAME],
+							"data-content": (vv[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? vv[kAPI_PARAM_RESPONSE_FRMT_INFO] : vv[kAPI_PARAM_RESPONSE_FRMT_NAME]
+						}).addClass("list-group-item").popover({
+							placement: ($(window).width() > 420) ? "right" : "top",
+							container: "body",
+							trigger: "hover"
 						});
-						$a.addClass("list-group-item");
-						$span.addClass("fa fa-angle-right pull-right help-block");
 						$a.html('<span data-info="' + vv[kAPI_PARAM_RESPONSE_FRMT_INFO] + '">' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</span>' + $span.html());
+						$span.addClass("fa fa-angle-right pull-right help-block");
 
 						$("#static_forms > div.list-group").append($a);
 					});
@@ -565,22 +569,23 @@
 					var $a = $('<a>');
 					$a.attr({
 						"href": "javascript: void(0);",
-						"class": "btn btn-link btn-text" + ((res[kAPI_PARAM_RESPONSE_COUNT] === 0) ? " disabled" : ""),
+						"class": "btn btn-text" + ((res[kAPI_PARAM_RESPONSE_COUNT] === 0) ? " disabled text-muted" : ""),
 						"onclick": "$.generate_static_form(\'" + res[kAPI_PARAM_TAG] + "\')",
 						"data-toggle": "popover",
-						"data-content": res[kAPI_PARAM_RESPONSE_FRMT_INFO],
-						"title": res[kAPI_PARAM_RESPONSE_FRMT_NAME],
+						"title": (res[kAPI_PARAM_RESPONSE_FRMT_INFO] === undefined) ? "" : res[kAPI_PARAM_RESPONSE_FRMT_NAME],
+						"data-content": (res[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? res[kAPI_PARAM_RESPONSE_FRMT_INFO] : res[kAPI_PARAM_RESPONSE_FRMT_NAME],
 						"id": $.md5(res[kAPI_PARAM_TAG]) + "_link"
 					}).text(res[kAPI_PARAM_RESPONSE_FRMT_NAME]).popover({
 						container: "body",
-						placement: "right",
+						placement: ($(window).width() > 420) ? "right" : "top",
 						trigger: "hover"
 					});
 
-					$(this).attr("title", res[kAPI_PARAM_RESPONSE_FRMT_NAME]).html($a);
+					$(this).html($a);
 				} else {
-					if(!is_root) {
-						$(this).attr("title", res[kAPI_PARAM_RESPONSE_FRMT_NAME]).html('<b>' + res[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</b>');
+					if(res[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined && $.obj_len(res[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
+						$(this).html('<h3>' + res[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</h3>');
+						$(this).addClass("list-unstyled");
 					} else {
 						$(this).attr("title", res[kAPI_PARAM_RESPONSE_FRMT_NAME]).html(res[kAPI_PARAM_RESPONSE_FRMT_NAME]);
 					}
@@ -620,6 +625,7 @@
 					});
 				} else {
 					$res_li.generate_link(res, true);
+
 				}
 			});
 			if($res_li.html() !== "") {
@@ -673,10 +679,21 @@
 					$("#static_forms_list").html("");
 					$("#static_forms_list").append('<ul id="' + parseInt(back) + '">');
 					if(rres[kAPI_PARAM_TAG] === undefined || $.obj_len(rres[kAPI_PARAM_TAG]) === 0) {
-						$("#static_forms_list ul#" + parseInt(back)).addClass("static_root list-unstyled").attr("data-root", $this.find("span:first-child").text());
+						$("#static_forms_list ul#" + parseInt(back)).addClass("static_root").attr("data-root", $this.find("span:first-child").text());
 					}
 					rres[0].root_node = rres[0][kAPI_PARAM_RESPONSE_FRMT_NAME];
 					$("#static_forms_list ul#" + parseInt(back)).html($.generate_tree(rres));
+
+					// Activate popover
+					$("#static_forms_list a:not(.disabled)").popover({
+						placement: ($(window).width() > 420) ? "right" : "top",
+						container: "body",
+						trigger: "hover"
+					});
+					$.each($("#accordion div.panel-mask"), function(k, v) {
+						var list_id = $(this).attr("id");
+						$("#" + list_id + "_link").addClass("text-warning disabled");
+					});
 				}
 			});
 		} else {
@@ -690,7 +707,7 @@
 	};
 
 	/**
-	 * Create the static form in the stage
+	 * Create the static form tree and append to the left panel
 	 */
 	$.generate_static_form = function(tag) {
 		var kAPI = {};
@@ -730,12 +747,12 @@
 
 						if($("#" + $.md5(tag)).length === 0) {
 							var $link = $("#" + $.md5(tag) + "_link");
-							$link.addClass("disabled");
-							if($("#" + $.md5($link.closest("ul.static_child").prev("b").text())).length === 0) {
+							$link.addClass("text-warning disabled");
+							if($("#" + $.md5($link.closest("ul.static_child").prev("h3").text())).length === 0) {
 								var node = $link.closest("ul.static_root").attr("id"),
 								text = $link.closest("ul.static_root").attr("data-root");
 								the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
-								the_title.push($link.closest("ul.static_child").prev("b").text());
+								the_title.push($link.closest("ul.static_child").prev("h3").text());
 								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.node", node);
 								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.text", text);
 							}
@@ -758,7 +775,7 @@
 								}
 							}
 							$("#forms-body .content-body").addCollapsible({
-								id: $.md5($link.closest("ul.static_child").prev("b").text()),
+								id: $.md5($link.closest("ul.static_child").prev("h3").text()),
 								title: the_title.join('<span class="fa fa-fw fa-angle-right text-muted"></span>'),
 								content: forms
 							});
@@ -1078,31 +1095,30 @@
 								});
 								titlee = the_title.replace("@pattern@", '<span style="color: #dd1144"> "' + response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_PATTERN] + '"</span>');
 							} else {
+								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								// Correct here:
+								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								console.log(response);
 								var the_title = [],
 								titlee = "",
-								panel_id = "",
-								i = 0;
-								$.each(storage.get("pgrdg_cache.search.criteria.forms"), function(k, v) {
-									if($.obj_len(v.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG]) > 0) {
-										i++;
-										tag = v.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG];
-										var $link = $("#" + $.md5(tag) + "_link");
-										// Choose: error or correct title?
-										//$("#" + v.response.node + "_link").select_static_form(v.response.node);
-										panel_id = $.md5($link.closest("ul.static_child").prev("b").text());
-										$link.addClass("disabled");
-										if($("#" + $.md5($link.closest("ul.static_child").prev("b").text())).length === 0) {
-											var node = v.response.node,
-											text = v.response.text;
-											if(text !== undefined) {
-												the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
-											}
-											the_title.push($link.closest("ul.static_child").prev("b").text());
-										console.log($link);
-										titlee = $.array_unique($.array_clean(the_title)).join('<span class="fa fa-fw fa-angle-right text-muted"></span>');
-										}
+								panel_id = "";
+								tag = response.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG];
+								var $link = $("#" + $.md5(tag) + "_link");
+								// Choose: error or correct title?
+								$("#" + response.node + "_link").select_static_form(response.node);
+								panel_id = $.md5($link.closest("ul.static_child").prev("h3").text());
+								$link.addClass("disabled");
+								console.warn($.md5(tag));
+								if($("#" + $.md5($link.closest("ul.static_child").prev("h3").text())).length === 0) {
+									var node = response.node,
+									text = response.text;
+									if(text !== undefined) {
+										the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
 									}
-								});
+									the_title.push($link.closest("ul.static_child").prev("h3").text());
+									titlee = $.array_unique($.array_clean(the_title)).join('<span class="fa fa-fw fa-angle-right text-muted"></span>');
+								}
+								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 							}
 							// Create forms
 							var forms = $.create_form(response, true),
@@ -1126,6 +1142,7 @@
 									});
 								}
 							}
+							console.log(titlee, panel_id)
 							$("#forms-body .content-body").addCollapsible({
 								id: panel_id,
 								title: titlee,
@@ -1646,13 +1663,18 @@
 	$.remove_search = function(search) {
 		var $this = search,
 		search_id = $this.closest(".panel").attr("id");
-
 		apprise(i18n[lang].messages.search.are_you_sure.message, {title: i18n[lang].messages.search.are_you_sure.title, icon: "warning", confirm: true}, function(r) {
 			if(r) {
 				if($this.closest(".panel").hasClass("fulltext_search")) {
 					storage.set("pgrdg_cache.search.criteria.fulltext", "");
 					$.breadcrumb_right_buttons();
 				}
+				$.each($this.closest(".panel").find("div.panel-mask"), function(k, v) {
+					var list_id = $(this).attr("id");
+					if($("#static_forms_list").length > 0 && $("#" + list_id + "_link").hasClass("disabled")) {
+						$("#" + list_id + "_link").removeClass("text-warning disabled");
+					}
+				});
 				$($this).parents(".panel").fadeOut(300, function() {
 					$(this).remove(); $("#main_search").focus();
 					if($("#accordion .panel").length === 0) {
@@ -3578,7 +3600,7 @@
 			}
 			checkbox = '<div class="checkbox">';
 				checkbox += '<a href="javascript: void(0);" class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'btn text-muted disabled' : '') + '" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + $.rawurlencode(JSON.stringify(v)) + '\', \'' + panel_input_term_id + '\');">';
-				checkbox += '<span class="fa"><big class="fa ' + ((checked) ? "fa-check-square-o" : "fa-square-o") + '"></big></span> {LABEL}</a></div>';
+				checkbox += '<span class="fa"><big class="fa fa-fw text-default ' + ((checked) ? "fa-check-square-o" : "fa-square-o") + '"></big></span>{LABEL}</a></div>';
 
 
 			var checkbox_inline = '<div class="checkbox-inline">';

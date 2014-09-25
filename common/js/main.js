@@ -377,11 +377,13 @@
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start > div").css("margin-top").replace("px", "") <= 120) {
 							if($(window).width() > 420) {
-								$("#start > div").animate({"margin-top": "50px"}, 200);
+								$("#start > div").animate({"padding-top": "80px"}, 200);
 							}
 						}
 						if($(window).width() > 420) {
-							$("#start h1[unselectable]").animate({"margin-left": "7px"}, 200);
+							$("#start h1[unselectable]").animate({
+								"margin-left": "7px"
+							}, 200);
 						}
 						$(".olControlZoom, .leaflet-control-zoom").animate({"left": width}, 200);
 						$("#left_panel").animate({"left": "0"}, 200, "easeOutExpo", function() {
