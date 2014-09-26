@@ -27,7 +27,7 @@
 	$.check_storage = function(cname, page, callback) {
 		$.operate = function(oprst){
 			if(page == "Advanced_search") {
-				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprst.results.title + '</h1></div>');
 				$("#left_panel div.panel-body.autocomplete").addTraitAutocomplete({
 					id: "main_search",
 					class: "",
@@ -41,7 +41,7 @@
 				});
 			}
 			if(page == "Search" || page == "Advanced_search"){
-				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprts.results.title + '</h1></div>');
+				//$("#left_panel div.panel-body:first-child").after('<div class="panel-header"><h1>' + oprst.results.title + '</h1></div>');
 				$("#collapsed_group_form .panel .autocomplete").addAutocomplete({
 					id: "filter_search_summary",
 					class: "",
@@ -67,7 +67,7 @@
 			var name = cname[q];
 
 			if($.browser_cookie_status()) {
-				if(storage.isEmpty("pgrdg_cache.local." + $.md5(name))) {
+				if($.storage_exists("pgrdg_cache.local." + $.md5(name))) {
 					// http://gateway.grinfo.private/Service.php?op={name}
 					$.ask_to_service(name, function(system_constants) {
 						storage.set("pgrdg_cache.local." + $.md5(name), {"date": {"utc": new Date(), "timestamp": $.now()}, "query": name, "response": system_constants});
@@ -155,8 +155,9 @@
 						switch(forms.type){
 							case kTYPE_FLOAT:
 							case kTYPE_INT:
+								return_key = false;
 								// RANGE
-								form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max});
+								form = $.add_range({type: forms.type, placeholder: [forms.min, forms.max], min: forms.min, max: forms.max, return_key: return_key});
 								forms.size = "double";
 								/*
 								for (kind = 0; kind < forms.kind.length; kind++) {
@@ -184,12 +185,12 @@
 									}
 								}
 								*/
-								return_key = false;
 								break;
 							case kTYPE_URL: // URL
 							case kTYPE_STRING: // String
+								return_key = false;
 								// STRING
-								form = $.add_input();
+								form = $.add_input({return_key: return_key});
 								/*
 								for (kind = 0; kind < forms.kind.length; kind++) {
 									//console.log(forms.kind[kind]);
@@ -218,10 +219,10 @@
 									}
 								}
 								*/
-								return_key = false;
 								break;
 							case kTYPE_ENUM: // Enum
 							case kTYPE_SET: // Enum-set
+								return_key = true;
 								// CHOSEN
 								form = $.add_multiselect({tree_checkbox: true}, function() {
 									/*
@@ -230,15 +231,14 @@
 									});
 									*/
 								});
-								return_key = true;
 								break;
 							case kTYPE_BOOLEAN:
-								form = $.add_switch();
 								return_key = false;
+								form = $.add_switch({return_key: return_key});
 								break;
 							default:
-								form = $.add_simple_input();
 								return_key = false;
+								form = $.add_simple_input({return_key: return_key});
 								break;
 						}
 					}
@@ -266,9 +266,8 @@
 					//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
-					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />',
-					info_box = (!return_key) ? '<small class="pull-right help-block"><span class="fa fa-warning"></span> Return button disabled</small>' : '';
-					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + info_box + '</form></div></div></div>';
+					secret_input = '<input type="hidden" name="type" value="' + forms.type + '" /><input type="hidden" name="kind" value="' + forms.kind + '" /><input type="hidden" name="tags" value="' + idv + '" />';
+					html_form += '<div class="' + form_size + " " + $.md5(idv) + ' vcenter">' + mask + '<div class="panel panel-success disabled" title="This item is disable"><div class="panel-heading">' + enable_disable_btn + '<h3 class="panel-title"><span class="disabled">' + forms.label + badge + help + '</span></h3></div><div class="panel-body">' /*'<p><tt>' + forms.type + "</tt><br /><tt>" + forms.kind + '</tt></p>' */ + '<form onsubmit="return false;">' + secret_input + form + '</form></div></div></div>';
 				});
 			});
 
@@ -382,8 +381,10 @@
 	$.toggle_form_item = function(item, tag) {
 		var $this = item,
 		data = [],
-		$panel, $panel_mask,
-		active_forms = {}, af_obj = {},
+		$panel,
+		$panel_mask,
+		active_forms = {},
+		af_obj = {},
 		frm_key = $this.closest("div.panel-collapse").parent().attr("id");
 
 		if($this.hasClass("panel-mask")) {
@@ -562,19 +563,21 @@
 		/**
 		 * Generate link depending on given object params
 		 */
-		$.fn.generate_link = function(res, is_root) {
-			//	console.log(res);
+		$.fn.generate_link = function(res, is_root, parent) {
+			var storage_id = $("#static_forms_list > ul.static_root").attr("data-storage");
 			if(res[kAPI_PARAM_RESPONSE_FRMT_NAME] !== undefined) {
 				if(res[kAPI_PARAM_TAG] !== undefined && $.obj_len(res[kAPI_PARAM_TAG]) > 0) {
 					var $a = $('<a>');
 					$a.attr({
 						"href": "javascript: void(0);",
+						"id": $.md5(res[kAPI_PARAM_TAG]) + "_link",
 						"class": "btn btn-text" + ((res[kAPI_PARAM_RESPONSE_COUNT] === 0) ? " disabled text-muted" : ""),
-						"onclick": "$.generate_static_form(\'" + res[kAPI_PARAM_TAG] + "\')",
-						"data-toggle": "popover",
+						"onclick": "$.generate_static_form(\'" + res[kAPI_PARAM_TAG] + "\', \'" + storage_id + "\')",
 						"title": (res[kAPI_PARAM_RESPONSE_FRMT_INFO] === undefined) ? "" : res[kAPI_PARAM_RESPONSE_FRMT_NAME],
+						"data-toggle": "popover",
 						"data-content": (res[kAPI_PARAM_RESPONSE_FRMT_INFO] !== undefined) ? res[kAPI_PARAM_RESPONSE_FRMT_INFO] : res[kAPI_PARAM_RESPONSE_FRMT_NAME],
-						"id": $.md5(res[kAPI_PARAM_TAG]) + "_link"
+						"data-parent": parent,
+						"data-storage": storage_id
 					}).text(res[kAPI_PARAM_RESPONSE_FRMT_NAME]).popover({
 						container: "body",
 						placement: ($(window).width() > 420) ? "right" : "top",
@@ -598,10 +601,9 @@
 		/**
 		 * Generate left panel list tree
 		 */
-		$.generate_tree = function(res) {
+		$.generate_tree = function(res, parent) {
 			var sub_list = "",
 			root_node = "",
-			parent = "",
 			$div = $('<div>'),
 			$res_li = $('<li>');
 			$.each(res, function(k, v) {
@@ -614,17 +616,18 @@
 							$ul = $('<ul class="static_child">');
 						}
 						$li = $('<li>');
-						$li.generate_link(vv, false);
+
+						$li.generate_link(vv, false, vv[kAPI_PARAM_RESPONSE_FRMT_NAME]);
 						$div.append($li);
 						if(vv[kAPI_PARAM_RESPONSE_CHILDREN] !== undefined && $.obj_len(vv[kAPI_PARAM_RESPONSE_CHILDREN]) > 0) {
 							$.each(vv[kAPI_PARAM_RESPONSE_CHILDREN], function(kkk, vvv) {
-								$ul.append($.generate_tree(vvv));
+								$ul.append($.generate_tree(vvv, vv[kAPI_PARAM_RESPONSE_FRMT_NAME]));
 							});
 							$li.append($ul);
 						}
 					});
 				} else {
-					$res_li.generate_link(res, true);
+					$res_li.generate_link(res, true, parent);
 
 				}
 			});
@@ -677,7 +680,7 @@
 					var rres = rr[kAPI_RESPONSE_RESULTS];
 					$("#static_forms_loader").hide();
 					$("#static_forms_list").html("");
-					$("#static_forms_list").append('<ul id="' + parseInt(back) + '">');
+					$("#static_forms_list").append('<ul id="' + parseInt(back) + '" data-storage="' + rr.id + '">');
 					if(rres[kAPI_PARAM_TAG] === undefined || $.obj_len(rres[kAPI_PARAM_TAG]) === 0) {
 						$("#static_forms_list ul#" + parseInt(back)).addClass("static_root").attr("data-root", $this.find("span:first-child").text());
 					}
@@ -690,6 +693,7 @@
 						container: "body",
 						trigger: "hover"
 					});
+					// Disable links of already loaded forms
 					$.each($("#accordion div.panel-mask"), function(k, v) {
 						var list_id = $(this).attr("id");
 						$("#" + list_id + "_link").addClass("text-warning disabled");
@@ -709,7 +713,7 @@
 	/**
 	 * Create the static form tree and append to the left panel
 	 */
-	$.generate_static_form = function(tag) {
+	$.generate_static_form = function(tag, storage_id) {
 		var kAPI = {};
 		kAPI.storage_group = "search.criteria.forms";
 		// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
@@ -748,14 +752,13 @@
 						if($("#" + $.md5(tag)).length === 0) {
 							var $link = $("#" + $.md5(tag) + "_link");
 							$link.addClass("text-warning disabled");
-							if($("#" + $.md5($link.closest("ul.static_child").prev("h3").text())).length === 0) {
-								var node = $link.closest("ul.static_root").attr("id"),
-								text = $link.closest("ul.static_root").attr("data-root");
-								the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
-								the_title.push($link.closest("ul.static_child").prev("h3").text());
-								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.node", node);
-								storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.text", text);
-							}
+							var node = $link.closest("ul.static_root").attr("id"),
+							text = $link.closest("ul.static_root").attr("data-root");
+							the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
+							the_title.push($link.closest("ul.static_child").prev("h3").text());
+							storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.storage_id", storage_id);
+							storage.set("pgrdg_cache.search.criteria.forms." + response.id + ".response.parent", $link.attr("data-parent"));
+
 							// Create forms
 							var forms = $.create_form(response, true);
 							$("#forms-head .content-title").html('Output for "' + $link.text() + '"');
@@ -769,6 +772,7 @@
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
 										icon: "fa fa-edit",
+										expandable: false,
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
@@ -877,6 +881,7 @@
 										active_forms[af_obj.tags] = rt;
 										break;
 								}
+										console.log("FRM", frm_keys)
 								storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
 									request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
 									key: $(this).attr("id"),
@@ -909,7 +914,6 @@
 	* Execute the autocomplete
 	*/
 	$.exec_autocomplete = function(type) {
-
 		$.manage_url("Forms");
 		$.breadcrumb_right_buttons();
 		var is_autocompleted = false;
@@ -956,6 +960,7 @@
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
 										icon: "fa fa-edit",
+										expandable: false,
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
@@ -1023,6 +1028,7 @@
 												id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 												class: "fulltext_search",
 												icon: "fa fa-edit",
+												expandable: false,
 												title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 												content: ""
 											});
@@ -1095,33 +1101,31 @@
 								});
 								titlee = the_title.replace("@pattern@", '<span style="color: #dd1144"> "' + response[kAPI_RESPONSE_REQUEST][kAPI_PARAM_PATTERN] + '"</span>');
 							} else {
-								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-								// Correct here:
-								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-								console.log(response);
-								var the_title = [],
-								titlee = "",
-								panel_id = "";
-								tag = response.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG];
-								var $link = $("#" + $.md5(tag) + "_link");
-								// Choose: error or correct title?
-								$("#" + response.node + "_link").select_static_form(response.node);
-								panel_id = $.md5($link.closest("ul.static_child").prev("h3").text());
-								$link.addClass("disabled");
-								console.warn($.md5(tag));
-								if($("#" + $.md5($link.closest("ul.static_child").prev("h3").text())).length === 0) {
-									var node = response.node,
-									text = response.text;
-									if(text !== undefined) {
-										the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
+								if(response.storage_id !== undefined && response.storage_id !== null && response.storage_id !== "") {
+									var tag = response.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_TAG],
+									$link = $("#" + $.md5(tag) + "_link"),
+									the_title = [],
+									titlee = "",
+									panel_id = "",
+									storage_id = response.storage_id;
+									var st = storage.get("pgrdg_cache.local.forms_data." + response.storage_id + ".response." + kAPI_RESPONSE_RESULTS);
+									var node = st[0][kAPI_RESULT_ENUM_NODE],
+									text = st[0][kAPI_PARAM_RESPONSE_FRMT_NAME],
+									parent = response.parent,
+									panel_id = $.md5(parent);
+
+									$link.addClass("disabled");
+									if($("#" + panel_id).length === 0) {
+										if(text !== undefined) {
+											the_title.push('<a title="' + i18n[lang].interface.jump_to_this_panel + '" href="javascript: void(0);" onclick="$(\'#' + node + '_link\').select_static_form(\'' + node + '\')">' + text + '</a>');
+										}
+										the_title.push(parent);
+										titlee = $.array_unique($.array_clean(the_title)).join('<span class="fa fa-fw fa-angle-right text-muted"></span>');
 									}
-									the_title.push($link.closest("ul.static_child").prev("h3").text());
-									titlee = $.array_unique($.array_clean(the_title)).join('<span class="fa fa-fw fa-angle-right text-muted"></span>');
 								}
-								//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 							}
 							// Create forms
-							var forms = $.create_form(response, true),
+							var forms = $.create_form(response, true);
 							grouping_no = 0;
 							if($.storage_exists("search.criteria.grouping._ordering")) {
 								grouping_no = $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering"));
@@ -1137,12 +1141,12 @@
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
 										icon: "fa fa-edit",
+										expandable: false,
 										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
 								}
 							}
-							console.log(titlee, panel_id)
 							$("#forms-body .content-body").addCollapsible({
 								id: panel_id,
 								title: titlee,
@@ -1176,6 +1180,7 @@
 							$.activate_form_btns();
 						}
 					});
+								return false;
 				} else if($.storage_exists("search.criteria.fulltext")) {
 					if($(window).width() < 420) {
 						$.left_panel("close");
@@ -1224,6 +1229,7 @@
 								id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 								class: "fulltext_search",
 								icon: "fa fa-edit",
+								expandable: false,
 								title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>' + nn,
 								content: ""
 							});
@@ -1520,49 +1526,50 @@
 				}
 			}
 		});
-		if($("#autocomplete").length === 0) {
-			$(this).prepend('<div id="autocomplete"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
+		if($("#" + options.id).length === 0) {
+			$(this).prepend('<div id="' + options.id + '"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><div id="scrollable-dropdown-menu"><input type="search" id="' + options.id + '" class="form-control typeahead' + ((options.class) ? " " + options.class : "") + '" placeholder="' + options.placeholder + '" /></div></div>' + checkbox + '</div>');
 		}
 
-		remoteAutocomplete = new Bloodhound({
-			datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
-			queryTokenizer: Bloodhound.tokenizers.whitespace,
-			remote: {
-				url: config.service.proxy + "%QUERY",
-				replace: function(url, query) {
-					var exclude = [];
-					if($.storage_exists("search.criteria.grouping._ordering")) {
-						st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
-						$.each(st, function(k, v) {
-							exclude.push(v.tag);
-						});
-						exclude = $.array_unique(exclude);
-					}
-					var state = "true&query=" + $.utf8_to_b64(config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
-					return url.replace("%QUERY", state);
-				},
-				filter: function (parsedResponse) {
-					var res = [];
-					$.each(parsedResponse, function(respType, v) {
-						if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-							if(respType == "results") {
-								for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
-									var re = [];
-									re.value = v[i];
-									res.push(re);
-								}
-							}
-						}
-					});
-					return res;
-				}
-			}
-		});
-		remoteAutocomplete.clearPrefetchCache();
-		remoteAutocomplete.initialize();
-
-		$("#" + options.id).typeahead({
+		// remoteAutocomplete = new Bloodhound({
+		// 	datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+		// 	queryTokenizer: Bloodhound.tokenizers.whitespace,
+		// 	remote: {
+		// 		url: config.service.proxy + "%QUERY",
+		// 		replace: function(url, query) {
+		// 			var exclude = [];
+		// 			if($.storage_exists("search.criteria.grouping._ordering")) {
+		// 				st = storage.get("pgrdg_cache.search.criteria.grouping._ordering");
+		// 				$.each(st, function(k, v) {
+		// 					exclude.push(v.tag);
+		// 				});
+		// 				exclude = $.array_unique(exclude);
+		// 			}
+		// 			var state = "true&query=" + $.utf8_to_b64(config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PARAM_LOG_REQUEST + '":true,"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_EXCLUDED_TAGS + '":[' + exclude + '],"' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+		// 			//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#" + options.id).val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#" + options.id + "_operator").attr("class") + '"' + ($("#filter_search_summary_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+		// 			return url.replace("%QUERY", state);
+		// 		},
+		// 		filter: function (parsedResponse) {
+		// 			var res = [];
+		// 			$.each(parsedResponse, function(respType, v) {
+		// 				if(((parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === undefined || parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE] === null) ? parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] : parsedResponse[kAPI_RESPONSE_STATUS][kAPI_STATUS_MESSAGE]) == "ok" && parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+		// 					if(respType == "results") {
+		// 						for (i = 0; i < parsedResponse[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]; i++) {
+		// 							var re = [];
+		// 							re.value = v[i];
+		// 							res.push(re);
+		// 						}
+		// 					}
+		// 				}
+		// 			});
+		// 			return res;
+		// 		}
+		// 	}
+		// });
+		// remoteAutocomplete.clearPrefetchCache();
+		// remoteAutocomplete.initialize();
+		//
+		console.log($("#" + options.id).length)
+		$("#" + options.id + " .typeahead").typeahead({
 			hint: true,
 			highlight: true,
 			minLength: 3,
@@ -1654,6 +1661,9 @@
 			}
 			return false;
 		});
+		if (typeof(callback) == "function") {
+			callback.call(this);
+		}
 	};
 
 	/**
@@ -1822,8 +1832,9 @@
 					if(content !== "summary") {
 						$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
 					} else {
+						console.log(content);
 						$(this).find("#" + content + "-head").children(":not(#group_by_accordion)").remove();
-						$(this).find("#" + content + "-head").prepend('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url(\'Summary\');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey"><span class="fa fa-sliders text-muted"></span>Group by...</a></div><div class="clearfix"></div>');
+						$(this).find("#" + content + "-head").prepend('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url(\'Summary\');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey"><span class="fa fa-sliders text-muted"></span>' + i18n[lang]["interface"]["btns"]["group_by"] + '</a></div><div class="clearfix"></div>');
 					}
 				}
 				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
@@ -2284,7 +2295,7 @@
 				}
 				if($("#filter_stage").html().length === 0) {
 					$("#filter_stage_panel").fadeIn(300);
-					$("#filter_group_title").text("Add another group field");
+					$("#filter_group_title").text(i18n[lang].messages.search.fulltext.add_another_group);
 				}
 
 				// Move on the stage
@@ -3245,7 +3256,8 @@
 			class: "form-control",
 			placeholder: "Enter value...",
 			type: "text",
-			disabled: true
+			disabled: true,
+			return_key: false
 		}, options);
 		var op_btn_list = "",
 		selected_label_key = "";
@@ -3272,7 +3284,9 @@
 				}
 			}
 		});
-		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_STRING + '" /><input id="' + options.id + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + checkbox + '';
+		var info_box = (!options.return_key) ? '<small class="pull-right help-block"><span class="fa fa-warning"></span> ' + i18n[lang].messages.forms.return_btn_disabled + '</small><div class="clearfix"></div>' : '';
+
+		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_STRING + '" /><input id="' + options.id + '_operator_type" type="hidden" name="operator" value="' + selected_label_key + '" /><div class="input-group"><div class="input-group-btn"><button ' + ((options.disabled) ? 'disabled="disabled"' : " ") + ' data-toggle="dropdown" class="btn btn-default-white dropdown-toggle" type="button"><span id="' + options.id + '_operator" class="' + selected_label_key.replace("$", "") + '">' + selected_label_value + '</span> <span class="caret"></span></button><ul class="dropdown-menu">' + op_btn_list + '</ul></div><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="stringselect" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/></div>' + info_box + checkbox + '';
 	};
 
 	/**
@@ -3285,7 +3299,8 @@
 			class: "form-control",
 			placeholder: "Enter value...",
 			type: "text",
-			disabled: true
+			disabled: true,
+			return_key: false
 		}, options);
 
 		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><input type="' + options.type + '" class="' + options.class + '" id="' + options.id + '" name="' + options.id + '" placeholder="' + options.placeholder + '" value="" ' + ((options.disabled) ? 'disabled="disabled"' : " ") + '/>';
@@ -3301,7 +3316,8 @@
 			size: "normal",
 			default: "on",
 			on_txt: "True",
-			off_txt: "False"
+			off_txt: "False",
+			return_key: false
 		});
 		return '<input type="hidden" name="' + kAPI_PARAM_INPUT_TYPE + '" value="' + kAPI_PARAM_INPUT_DEFAULT + '" /><div class="text-center"><input type="checkbox" class="switch"' + ((options.default == "on") ? ' checked="checked"' : '') + 'data-on-text="' + options.on_txt + '" data-off-text="' + options.off_txt + '" data-size="' + options.size + '" id="' + options.id + '" name="boolean" /></div>';
 	};
@@ -3318,7 +3334,8 @@
 			min: 0,
 			max: 0,
 			type: "",
-			disabled: true
+			disabled: true,
+			return_key: false
 		}, options);
 		var op_btn_list = "",
 		checkbox = "",
@@ -3361,6 +3378,7 @@
 			icon: "fa fa-search",
 			content: "",
 			class: "",
+			expandable: true,
 			id: $.makeid()
 		}, options);
 
@@ -3380,7 +3398,7 @@
 		if($("#" + options.id).length === 0) {
 			var node_heading = $('<div class="panel-heading">'),
 			node_heading_title = $('<h4 class="panel-title row">'),
-				node_heading_title_content_right = $('<div class="col-sm-05 col-md-05 text-right pull-right"></div>'),
+				node_heading_title_content_right = $('<div class="col-sm-2 col-md-2 text-right pull-right"></div>'),
 				node_heading_title_content_left_btn_toggle = $('<a data-toggle="collapse" data-parent="#accordion" title="' + i18n[lang].interface.open_close_row_content + '" href="#' + options.id + '_collapse"><span class="fa fa-fw fa-sort text-muted"></span></a>'),
 				node_heading_title_right_btn_close = $('<a title="' + i18n[lang].interface.remove_row + '" href="javascript:void(0);" onclick="$.remove_search($(this));"><span class="fa fa-times" style="color: #666;"></span></a>'),
 				node_heading_title_content_left = $('<div class="col-lg-10 pull-left"></div>'),
@@ -3391,7 +3409,9 @@
 			//node_heading_title.html(json_data);
 			node_heading_title_content_left.html(node_heading_title_content_left_title);
 			node_heading_title_content_left.append("&nbsp;&nbsp;" + options.title);
-			node_heading_title_content_left.prepend(node_heading_title_content_left_btn_toggle);
+			if(options.expandable) {
+				node_heading_title_content_left.prepend(node_heading_title_content_left_btn_toggle);
+			}
 			node_heading_title_content_right.append(node_heading_title_right_btn_close);
 			node_heading_title.html(node_heading_title_content_left);
 			node_heading_title.append(node_heading_title_content_right);
@@ -3446,7 +3466,8 @@
 			allow_single_deselect: true,
 			max_select: 1,
 			rtl: 0,
-			btn_menu: {}
+			btn_menu: {},
+			return_key: false
 		}, options);
 
 		var select = '<select id="' + options.id + '" class="chosen-select form-control' + ((options.rtl) ? " chosen-rtl" : "") + '" ' + ((options.multiple) ? " multiple " : "") + 'data-placeholder="' + options.placeholder + '">';
@@ -3599,7 +3620,7 @@
 				}
 			}
 			checkbox = '<div class="checkbox">';
-				checkbox += '<a href="javascript: void(0);" class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'btn text-muted disabled' : '') + '" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + $.rawurlencode(JSON.stringify(v)) + '\', \'' + panel_input_term_id + '\');">';
+				checkbox += '<a href="javascript: void(0);" class="' + ((v[kAPI_PARAM_RESPONSE_COUNT] === undefined || v[kAPI_PARAM_RESPONSE_COUNT] === 0) ? 'btn btn-text text-muted disabled' : '') + '" value="' + v.term + '" id="' + $.md5(v.term) + '_checkbox" onclick="$.manage_tree_checkbox(\'' + $.rawurlencode(JSON.stringify(v)) + '\', \'' + panel_input_term_id + '\');">';
 				checkbox += '<span class="fa"><big class="fa fa-fw text-default ' + ((checked) ? "fa-check-square-o" : "fa-square-o") + '"></big></span>{LABEL}</a></div>';
 
 

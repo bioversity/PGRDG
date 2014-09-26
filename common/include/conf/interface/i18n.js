@@ -22,6 +22,10 @@ var i18n = {
                                 "results_for": "Results for search \"{X}\"",
                                 "map_search_place": "Searching \"{X}\"...",
                                 "search_of": "Search of {X}...",
+                                "performing_search": "Performing your search...",
+                                "group_results": "Group results",
+                                "group_hierachy": "Group hierachy",
+                                "insert_filter": "Insert a filter",
 
                                 "no_search_results": {
                                         "title": "No data",
@@ -30,13 +34,34 @@ var i18n = {
                                 "are_you_sure": {
                                         "title": "Confirm removal",
                                         "message": "Are you sure to remove this search?<br />"
+                                },
+                                "fulltext": {
+                                        "add_another_group": "Add another group field"
                                 }
+                        },
+                        "forms": {
+                                "return_btn_disabled": "Return button disabled"
                         },
                         "static_forms": {
                                 "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
                         }
                 },
                 "interface": {
+                        "btns": {
+                                "add": "Add",
+                                "edit": "Edit",
+                                "remove": "Remove",
+                                "remove_all": "Remove all",
+                                "group": "Group",
+                                "search": "Search",
+                                "advanced_search": "Advanced search",
+                                "search_tips": "Search tips",
+                                "group_by": "Group by...",
+                                "move_top": "Move to top",
+                                "move_up": "Move up",
+                                "move_down": "Move down",
+                                "move_bottom": "Move to bottom"
+                        },
                         "zoom_in": "Zoom in",
                         "zoom_out": "Zoom out",
                         "world": "World",

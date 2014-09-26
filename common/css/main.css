@@ -660,6 +660,8 @@ section.container {
 	display: none;
 	height: 100%;
 	width: 100%;
+	position: relative;
+	top: 0;
 }
 
 #forms-head h1,
@@ -814,9 +816,13 @@ span.info {
 span.info:hover {
 	text-decoration: none;
 }
-td a.text-info, td span.text-info, td span.info,
-panel a.text-info, panel span.text-info,
-panel span.info, .modal a.text-info, .modal span.text-info,
+td a.text-info, td span.text-info,
+td span.info,
+panel a.text-info,
+panel span.text-info,
+panel span.info,
+.modal a.text-info,
+.modal span.text-info,
 .modal span.info {
 	cursor: help;
 }
@@ -826,7 +832,6 @@ panel span.info, .modal a.text-info, .modal span.text-info,
 	box-shadow: 0 0 19px #fff inset;
 	border-radius: 9px;
 	cursor: pointer !important;
-	font-size: 1.5em;
 	width: 19px;
 	height: 19px;
 	line-height: 22px;
@@ -2193,7 +2198,7 @@ label.checkbox {
 	margin-right: 10px;
 }
 #accordion .panel-heading a.pull-left + h3 {
-	font-size: 1.3em;
+	font-size: 16px;
 }
 
 #accordion .list-group-item,

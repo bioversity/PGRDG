@@ -8,15 +8,15 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                 <!--form onsubmit="$.search_fulltext($('#search_form').val()); return false;"-->
                 <form method="get" action="" onsubmit="if($('#search_form').val().length < 3) { return false; }">
                         <div class="input-group">
-                                <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." />
+                                <input type="text" name="q" class="form-control" id="search_form" placeholder="<?php print $i18n[$lang]["interface"]["btns"]["search"]; ?>..." />
                                 <span class="input-group-btn">
                                         <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
                                 </span>
                         </div>
                 </form>
                 <div id="statistics" class="help-block">
-                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
-                        <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span>Search tips</a>
+                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?> &rsaquo;</a></big>
+                        <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                         <br />
                         <br />
                         <small id="statistics_loader"></small>
@@ -36,17 +36,17 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                 <div id="se_results">
                         <form method="get" action="" onsubmit="if($('#search_form').val().length < 3) { return false; }">
                                 <div class="input-group">
-                                        <input type="text" name="q" class="form-control" id="search_form" placeholder="Search..." value="<?php print htmlentities(urldecode($_GET["q"])); ?>" />
+                                        <input type="text" name="q" class="form-control" id="search_form" placeholder="<?php print $i18n[$lang]["interface"]["btns"]["search"]; ?>..." value="<?php print htmlentities(urldecode($_GET["q"])); ?>" />
                                         <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
                                                 <a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url('Summary');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey disabled">
-                                                        <span class="fa fa-sliders text-muted"></span>Group by...
+                                                        <span class="fa fa-sliders text-muted"></span><?php print $i18n[$lang]["interface"]["btns"]["group_by"]; ?>
                                                 </a>
                                         </div>
                                 </div>
                                 <div id="statistics" class="help-block">
-                                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>">Advanced search &rsaquo;</a></big>
-                                        <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span>Search tips</a>
+                                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?> &rsaquo;</a></big>
+                                        <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                                 </div>
                         </form>
                         <?php
@@ -54,7 +54,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         require_once("common/tpl/search_panels/search_panel_result.tpl");
                         require_once("common/tpl/search_panels/search_panel_map.tpl");
                         ?>
-                        <h1 id="se_loader" unselectable="on"><span class="fa fa-gear fa-spin"></span> Performing your search...</h1>
+                        <h1 id="se_loader" unselectable="on"><span class="fa fa-gear fa-spin"></span> <?php print $i18n[$lang]["messages"]["search"]["performing_search"]; ?></h1>
                 </div>
         </div>
         <hr />
