@@ -2261,6 +2261,13 @@ fieldset[unclickable] .btn {
 	  color: #fff;
 	  background-color: #333;
 	}
+        .transparent, .transparent:active, .active.transparent {
+                background-color: transparent !important;
+                border-color: transparent !important;
+                -webkit-box-shadow: none !important;
+        	-moz-box-shadow: none !important;
+        	box-shadow: none !important;
+        }
 
 .btn-primary {
   color: #fff;

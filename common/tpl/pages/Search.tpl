@@ -15,7 +15,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         </div>
                 </form>
                 <div id="statistics" class="help-block">
-                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?> &rsaquo;</a></big>
+                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?>&nbsp;<small><span class="fa fa-angle-right text-muted"></span></small></a></big>
                         <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                         <br />
                         <br />
@@ -45,7 +45,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                                         </div>
                                 </div>
                                 <div id="statistics" class="help-block">
-                                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?> &rsaquo;</a></big>
+                                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?>&nbsp;<small><span class="fa fa-angle-right text-muted"></span></small></a></big>
                                         <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                                 </div>
                         </form>

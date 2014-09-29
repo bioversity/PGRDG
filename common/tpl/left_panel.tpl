@@ -8,10 +8,9 @@
 			<li><a data-original-title="Open/close left panel" onclick="$.left_panel('close');" href="javascript:void(0);" title=""><span class="fa fa-search"></span>&nbsp;Search</a></li>
 		</ul>
 	</div>
-	<div class="panel-header controls" id="close_left_panel_btn" style="display: none;">
-		<ul class="panel_btns">
-			<li><a href="javascript:void(0);" onclick="$.left_panel('close');" title="Close left panel" class="btn close_panel"><span class="text text-muted">Close</span> <span class="fa fa-caret-square-o-left text-muted"></span></a></li>
-		</ul>
+	<div class="panel-header controls clearfix">
+		<h4 class="panel_btns pull-left">Metadata search</h4>
+		<a href="javascript:void(0);" onclick="$.left_panel('close');"  id="close_left_panel_btn" title="Close left panel" style="display: none;" class="btn close_panel pull-right"><span class="text text-muted">Close</span> <span class="fa fa-caret-square-o-left text-muted"></span></a>
 	</div>
 	<div class="panel-body autocomplete"></div>
 	<div class="panel-body contents">

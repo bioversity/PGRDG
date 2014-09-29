@@ -1086,19 +1086,19 @@ section #se_results .result.panel.tree_summary,
 section #se_results .result.panel > h4,
 .result.panel > h4 {
 	margin: 0;
-	padding: 15px;
+	padding: 10px;
 }
 section #se_results .result.panel.tree_summary > h4,
 .result.panel.tree_summary > h4 {
 	border-left: 5px solid #FCC153;
 	border-bottom-style: solid;
 	border-bottom-width: 0;
-	padding: 10px;
+	padding: 1px 0 0 5px;
 }
 section #se_results .result.panel > p,
 .result.panel > p {
 	margin: 0;
-	padding: 0 0 0 15px;
+	padding: 0 0 0 10px;
 }
 section #se_results .result.panel > div.row,
 .result.panel > div.row {
@@ -1383,9 +1383,9 @@ section.container > #contents .carousel-inner {
 #left_panel.visible {
 	left: 0;
 }
-#left_panel div.panel-header {
-	padding: 0 20px 0 15px;
-	border-bottom: #e0e0e0 1px solid;
+#left_panel div.panel-header div.controls h4 {
+	margin: 0 !important;
+	padding: 7px 10px !important;
 }
 #left_panel div.panel-header.controls {
 	padding: 2px 5px;
@@ -1405,11 +1405,16 @@ section.container > #contents .carousel-inner {
 	margin: 0;
 	color: #666;
 }
-#left_panel div.panel-header ul.panel_btns {
+#left_panel div.panel-header .panel_btns {
 	margin: 0 !important;
 	padding: 0 !important;
 }
-#left_panel div.panel-header ul.panel_btns li {
+#left_panel div.panel-header {
+	height: 35px;
+	padding: 0 20px 0 15px;
+	border-bottom: #e0e0e0 1px solid;
+}
+#left_panel div.panel-header .panel_btns li {
 	display: inline;
 }
 #left_panel div.panel-body.autocomplete:after {
