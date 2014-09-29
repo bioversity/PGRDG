@@ -590,14 +590,20 @@
 				$(this).removeClass("list-group-item-success");
 			});
 			$this.addClass("list-group-item-success");
-			if($this.closest(".panel-body.contents").css("left") == "-300px") {
+			if($this.closest(".panel-body.contents").css("left") == "-300px" || $this.closest(".panel-body.contents").css("left") == "-324px") {
 				$this.closest(".panel-body.contents").animate({"left": "0px"}, 300);
-				$this.closest(".panel-body.contents").next().animate({"left": "300px"}, 300, function() {
-					$this.closest(".panel-body.contents").delay(300).animate({"left": "-300px"}, 300);
+				$this.closest(".panel-body.contents").next().animate({
+					"left": ($(window).width() < 420) ? "-324px" : "-300px"
+				}, 300, function() {
+					$this.closest(".panel-body.contents").delay(300).animate({
+						"left": ($(window).width() < 420) ? "-324px" : "-300px"
+					}, 300);
 					$this.closest(".panel-body.contents").next().delay(300).animate({"left": "0px"}, 300);
 				});
 			} else {
-				$this.closest(".panel-body.contents").animate({"left": "-300px"}, 300);
+				$this.closest(".panel-body.contents").animate({
+					"left": ($(window).width() < 420) ? "-324px" : "-300px"
+				}, 300);
 				$this.closest(".panel-body.contents").next().animate({"left": "0px"}, 300);
 			}
 			$this.closest(".panel-body.contents").next().find("div.title.panel-heading").html($a);
@@ -637,7 +643,9 @@
 				}
 			});
 		} else {
-			$this.closest(".panel-body.contents").animate({"left": "300px"}, 300);
+			$this.closest(".panel-body.contents").animate({
+				"left": ($(window).width() < 420) ? "324px" : "300px"
+			}, 300);
 			$this.closest(".panel-body.contents").prev().animate({"left": "0px"}, 300, function() {
 				$(this).find("h4.title").text("");
 				$("#static_forms_list").html("");
@@ -1402,12 +1410,12 @@
 				$.exec_autocomplete("input");
 			}
 		}).bind("keydown", "alt+left", function(e) {
-			$.left_panel("close", "", function() {
-				$("#main_search").blur();
-			});
+			// $.left_panel("close", "", function() {
+			// 	$("#main_search").blur();
+			// });
 			return false;
 		}).bind("keydown", "alt+right", function(e) {
-			$.left_panel("open");
+			// $.left_panel("open");
 			return false;
 		});
 
@@ -1667,6 +1675,8 @@
 				});
 				$("#contents #start").fadeIn(600);
 				$("input.typeahead.tt-input").val("").focus();
+
+				$.left_panel("open");
 			});
 		};
 

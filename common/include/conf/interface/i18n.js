@@ -60,7 +60,8 @@ var i18n = {
                                 "move_top": "Move to top",
                                 "move_up": "Move up",
                                 "move_down": "Move down",
-                                "move_bottom": "Move to bottom"
+                                "move_bottom": "Move to bottom",
+                                "close": "Close"
                         },
                         "zoom_in": "Zoom in",
                         "zoom_out": "Zoom out",

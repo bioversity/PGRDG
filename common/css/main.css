@@ -1334,6 +1334,7 @@ section.container > #contents .carousel-inner {
 	background-image: -ms-linear-gradient(to left, #ddd, rgba(255, 255, 255, 0.9) 6%, rgba(255, 255, 255, 0.9)) !important;
 	z-index: 10;
 	border-radius: 0px;
+	style: display: none;
 }
 #left_panel div.contents {
 	height: 100%;
@@ -1459,6 +1460,11 @@ section.container > #contents .carousel-inner {
 }
 #left_panel div.panel-body.contents:last-child {
 	left: 300px;
+}
+@media only screen and (max-width:420px) {
+	#left_panel div.panel-body.contents:last-child {
+		left: 324px;
+	}
 }
 #left_panel #static_forms_list h3 {
 	color: #999;

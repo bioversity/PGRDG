@@ -263,6 +263,7 @@
 
 		//if($.is_touch_device()) {
 			if($(window).width() < 420) {
+				$("#close_left_panel_btn").show();
 				$(window).swipe({
 					swipeStatus:function(event, phase, direction, distance, duration, fingerCount) {
 						if(direction == "left") {
@@ -296,6 +297,8 @@
 					},
 					treshold: 100
 				});
+			} else {
+				$("#close_left_panel_btn").hide();
 			}
 		//}
 		if($("#left_panel").hasClass("visible") && subject !== "open") {
@@ -330,7 +333,7 @@
 						});
 						$("#forms-body, #summary-body").animate({"padding-left": "0px"}, 200);
 					} else {
-						$(".panel_content-head, .panel_content-body:not(#forms-body, #summary-body), .panel_content-footer, #start > div").animate({"padding-left": "15px"}, 200, function() {
+						$(".panel_content-head, .panel_content-body, .panel_content-footer, #start > div").animate({"padding-left": "15px"}, 200, function() {
 							$("#section #summary .panel_content-body.disabled:before, section #se_p .panel_content-body.disabled:before").css({
 								"margin-left": "-15px",
 								"text-indent": "15px"
@@ -342,38 +345,16 @@
 					}
 					break;
 				case "is_closed":
-					return ($("#left_panel").css("left") !== "0px") ? true : false;
+					// return ($("#left_panel").css("left") !== "0px") ? true : false;
 				default:
-					$.left_panel("close");
+					// $.left_panel("close");
 					break;
 			}
 			// Save the left_panel position
-			storage.set("pgrdg_cache.interface.left_panel", {status: "closed"});
+			// storage.set("pgrdg_cache.interface.left_panel", {status: "closed"});
 		} else {
 			switch(subject) {
-				case "check":
-					// Check the last left_panel saved position and restore it
-					var left_panel_status = "open";
-					if($.storage_exists("interface")) {
-						left_panel_status = storage.get("pgrdg_cache.interface.left_panel.status");
-					}
-					if(left_panel_status == "open") {
-						$.left_panel("open");
-					} else {
-						$("#left_panel").addClass("visible").css({"left": "-" + width});
-						$.left_panel("close");
-					}
-					$.left_panel(left_panel_status);
-					break;
-				default:
-					//console.log("open");
-					// Move all document to the right
-					if($(window).width() < 420) {
-						if(current_path !== "Search") {
-							$("section #contents").animate({"left": width}, 200);
-						}
-					//	$("header").animate({"left": width}, 200);
-					}
+				case "open":
 					$("#left_panel .folder_menu").animate({"right": (parseInt(width) - 2) + "px"}, 200, function() {
 						$("#forms").animate({"left": "0"}, 200);
 						if($("#start > div").css("margin-top").replace("px", "") <= 120) {
@@ -403,15 +384,31 @@
 							}
 						});
 						$("#breadcrumb").animate({"padding-left": width}, 200).find(".breadcrumb").animate({"padding-left": "15px"}, 200);
-					});
-					$("#contents > .panel_content .panel_content-head, #contents > .panel_content .panel_content-body:not(#forms-body, #summary-body), #contents > .panel_content .panel_content-footer, #start > div").animate({
-						"padding-left": (movement + 15) + "px"
-					}, 150);
-					$("#forms-body, #summary-body").animate({"padding-left": movement + "px"}, 200);
 
-					// Save the left_panel position
-					storage.set("pgrdg_cache.interface.left_panel", {status: "open"});
+						$("#contents > .panel_content .panel_content-head, #contents > .panel_content .panel_content-body:not(#forms-body, #summary-body), #contents > .panel_content .panel_content-footer, #start > div").animate({
+							"padding-left": (movement + 15) + "px"
+						}, 150);
+						$("#forms-body, #summary-body").animate({"padding-left": movement + "px"}, 200);
+					});
 					break;
+
+				// default:
+				// 	console.log(subject);
+				// 	//console.log("open");
+				// 	// Move all document to the right
+				// 	if($(window).width() < 420) {
+				// 		$.left_panel("open");
+				// 		// $("#left_panel .panel-body").css("width", width + "px");
+				// 		// if(current_path !== "Search") {
+				// 		// 	$("section #contents").animate({"left": width}, 200);
+				// 		// }
+				// 		// $("header").animate({"left": width}, 200);
+				// 	}
+				//
+				//
+				// 	// Save the left_panel position
+				// 	// storage.set("pgrdg_cache.interface.left_panel", {status: "close"});
+				// 	break;
 			}
 		}
 	};
@@ -462,29 +459,22 @@
 			switch(hash) {
 				case "Forms":
 					//$.remove_storage("pgrdg_cache.interface.left_panel");
-					if($(window).width() < 420) {
-					//	$.left_panel("check");
-					}
+					$.left_panel("open");
 					break;
 				case "Summary":
-					if($(window).width() < 420) {
-						$.left_panel("close");
-					}
+					$.left_panel("open");
 					break;
 				case "Results":
-					if($(window).width() < 420) {
-						$.left_panel("close");
-					}
+					$.left_panel("close");
 					break;
 				case "Map":
-					if($(window).width() < 420) {
-						$.left_panel("tmp_close");
-					}
+					$.left_panel("close");
 					break;
 				default:
-					if($.left_panel("is_closed")) {
-						$.left_panel("check");
-					}
+					// if(//$.left_panel("is_closed")) {
+					// 	//$.left_panel("check");
+					// }
+					$.left_panel("close");
 					break;
 			}
 		};
@@ -558,7 +548,7 @@
 
 			});
 
-		//	$.left_panel_behaviour(hash);
+			$.left_panel_behaviour(hash);
 			if(hash == "Map") {
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
 				$("#contents .panel_content:not(#loader_bg)").hide();
@@ -1346,7 +1336,7 @@ $(document).ready(function() {
 				title: "Search tips",
 				icon: "fa-keyboard-o",
 				titleClass: "text-info",
-				textOk: "Close",
+				textOk: i18n[lang].interface.btns.close,
 				okBtnClass: "btn-default-grey",
 				allowExit: true
 			});
