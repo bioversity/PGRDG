@@ -701,6 +701,9 @@ div.back_indent a {
 	margin-top: 20px;
 	z-index: 0;
 }
+#forms-body .row {
+	margin: margin: 0 -5px;
+}
 #forms-body .row .panel .chosen-container {
 	display: block;
 	width: auto !important;
@@ -715,20 +718,26 @@ div.back_indent a {
 	border-color: #ddd;
 	color: #999;
 }
+#forms-body .vcenter {
+	padding: 8px;
+}
 #forms-body .panel-mask.unselectable {
 	background-color: rgba(255, 255, 255, 0.5);
 	box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
 }
 #forms-body .panel-mask {
 	background-color: rgba(230, 255, 230, 0.5);
-	box-shadow: 0 0 12px rgba(100, 255, 100, 0.5);
-	position: absolute;
-	height: 99%;
-	margin-top: 1px;
-	margin-left: 1px;
 	border-radius: 4px;
+	box-shadow: 0 0 12px rgba(100, 255, 100, 0.5);
 	color: transparent;
+	float: left;
+	left: 8px;
+	right: 8px;
+	margin: 1px 0;
+	position: absolute;
 	text-align: center;
+	top: 8px;
+	bottom: 8px;
 	z-index: 2;
 }
 #forms-body .panel-mask:not(.unselectable):hover {
@@ -742,17 +751,20 @@ div.back_indent a {
 	cursor: not-allowed;
 }
 #forms-body .panel-mask span {
-	font-size: 128px;
-	margin-top: -64px;
-	position: relative;
-	top: 35%;
 	display: block;
+	font-size: 6em;
+	height: 65%;
+	min-height: 60%;
+	position: relative;
+	top: 0;
 }
 .panel-mask small:before {
 	content: "";
 	display: block;
+	float: left;
 	margin-top: 15%;
-	padding-bottom: 0;
+	padding: 0 10px 0 0;
+	position: relative;
 }
 .panel-mask small {
 	display: block;
@@ -816,7 +828,8 @@ span.info {
 span.info:hover {
 	text-decoration: none;
 }
-td a.text-info, td span.text-info,
+td a.text-info,
+td span.text-info,
 td span.info,
 panel a.text-info,
 panel span.text-info,
@@ -853,8 +866,8 @@ panel span.info,
 #forms-body .row .panel-heading a > span {
 	height: 0;
 	padding: 0;
-	line-height: 0;
-	margin-top: 10px;
+	/*line-height: 0;
+	margin-top: 10px;*/
 }
 
 #map {
@@ -2189,7 +2202,9 @@ label.checkbox {
 	border-radius: 4px;
 	display: inline-block;
 	height: 16px;
+	line-height: 16px
 	position: relative;
+	top: 0;
 	width: 16px;
 }
 .panel-heading a.pull-left span.fa {

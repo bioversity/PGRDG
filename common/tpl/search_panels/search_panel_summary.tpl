@@ -9,7 +9,7 @@
                                                         <h4 id="filter_group_title" class="col-lg-2 text-muted"><?php print $i18n[$lang]["messages"]["search"]["insert_filter"]; ?></h4>
                                                         <div class="col-lg-10">
                                                                 <div class="panel">
-                                                                        <div id="filter_search_summary"></div>
+                                                                        <div id="filter_search_summary" class="autocomplete"></div>
                                                                 </div>
                                                         </div>
                                                 </div>
