@@ -196,9 +196,9 @@
 							form_size = "col-lg-3 col-md-6 col-sm-12";
 							break;
 					}
-					var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="Enable this item"><span class="fa fa-square-o"></span></a>',
+					var enable_disable_btn = '<a href="javascript:void(0);" onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="pull-left" title="' + i18n[lang].messages.enable_item + '"><span class="fa fa-square-o"></span></a>',
 					badge = '<span class="badge pull-right">' + ((forms.count !== undefined && forms.count > 0) ? forms.count : 0) + '</span>',
-					mask = ((forms.count !== undefined && forms.count > 0) ? '<div id="' + $.md5(idv) + '" onclick="$.toggle_form_item($(\'#' + $.md5(idv) + '\'), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>' : '<div class="panel-mask unselectable"></div>');
+					mask = ((forms.count !== undefined && forms.count > 0) ? '<div id="' + $.md5(idv) + '" onclick="$.toggle_form_item($(\'#' + $.md5(idv) + '\'), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>' + i18n[lang].interface.btns.activate + '</small></div>' : '<div class="panel-mask unselectable"></div>');
 					//mask = '<div onclick="$.toggle_form_item($(this), \'' + idv + '\');" class="panel-mask"><span class="fa fa-check"></span><small>activate</small></div>';
 
 					var help = '<small class="help-block" style="color: #999; margin-bottom: -3px;"><br />' + $.get_title(forms) + '</small>',
@@ -246,7 +246,7 @@
 		var $item = $(this).find("a.treeselect"),
 		$form = $item.closest("form"),
 		treeselect_id = $(this).find("a.treeselect").attr("id"),
-		treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="Filter" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
+		treeselect_title = '<div class="dropdown-header"><div class="input-group"><input type="text" class="form-control" placeholder="' + i18n[lang].interface.btns.filter + '" /><span class="input-group-addon"><span class="fa fa-search"></span></span></div></div>',
 		//treeselect_content = '<div class="dropdown-content"><ul></ul></div>';
 		treeselect_content = '<div class="dropdown-content"><ul class="list-group"></ul></div>';
 
@@ -299,7 +299,7 @@
 					//all tr elements are hidden
 					if(tableRowsClass.children(":visible").length === 0) {
 						if(tableBody.find(".search-sf").length === 0) {
-							tableBody.prepend('<div class="search-sf"><span class="text-muted">No entries found.</span></div>');
+							tableBody.prepend('<div class="search-sf"><span class="text-muted">' + i18n[lang].messages.no_entries_found + '</span></div>');
 						}
 					}
 					//$form.find(".dropdown-header input").focus();
@@ -415,7 +415,14 @@
 				$.ask_to_service(system_constants[kAPI_RESPONSE_RESULTS].kAPI_OP_LIST_OPERATORS, function(oprts) {
 					$.each(oprts.results, function(rx, rv) {
 						if(rv.label !== undefined) {
-							operators.push({"label": rv.label, "key": rv.key, "selected": rv.selected, "type": rv.type, "main": rv.main, "title": rv.title});
+							operators.push({
+								"label": rv.label,
+								"key": rv.key,
+								"selected": rv.selected,
+								"type": rv.type,
+								"main": rv.main,
+								"title": rv.title
+							});
 						} else {
 							if(rx == "label") {
 								operators.push({"label": rv});
@@ -677,7 +684,7 @@
 						if($(window).width() < 420) {
 							$.left_panel("close");
 						}
-						$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+						$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> ' + i18n[lang].interface.btns.reset_all).fadeIn(300, function() {
 							$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
 								$.reset_all_searches(true);
 							});
@@ -686,8 +693,8 @@
 						$("#breadcrumb").animate({"top": "75px"});
 						if($("#forms-head .btn-group a.save_btn").length === 0) {
 							btn_disabled = "disabled";
-							$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">Search <span class="fa fa-chevron-right"></span></a>');
-							$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">Search <span class="fa fa-chevron-right"></span></a>');
+							$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
+							$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
 						}
 						if($("#breadcrumb").css("display") == "none") {
 							$("#breadcrumb").fadeIn(200);
@@ -717,7 +724,7 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										expandable: false,
-										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
+										title: '<span class="text-info">' + i18n[lang].messages.search.fulltext.fulltext_search + ':</span> <a title="' + i18n[lang].messages.search.fulltext.goto_search + '" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
 								}
@@ -905,7 +912,7 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										expandable: false,
-										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
+										title: '<span class="text-info">' + i18n[lang].messages.search.fulltext.fulltext_search + ':</span> <a title="' + i18n[lang].messages.search.fulltext.goto_search + '" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
 								}
@@ -973,7 +980,7 @@
 												class: "fulltext_search",
 												icon: "fa fa-edit",
 												expandable: false,
-												title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
+												title: '<span class="text-info">' + i18n[lang].messages.search.fulltext.fulltext_search + ':</span> <a title="' + i18n[lang].messages.search.fulltext.goto_search + '" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 												content: ""
 											});
 										}
@@ -1009,7 +1016,7 @@
 							if($(window).width() < 420) {
 								$.left_panel("close");
 							}
-							$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+							$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> ' + i18n[lang].interface.btns.reset_all).fadeIn(300, function() {
 								$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
 									$.reset_all_searches(true);
 								});
@@ -1022,8 +1029,8 @@
 								} else {
 									btn_disabled = "disabled";
 								}
-								$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-								$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+								$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
+								$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
 							}
 							if($("#breadcrumb").css("display") == "none") {
 								$("#breadcrumb").fadeIn(200);
@@ -1074,7 +1081,7 @@
 							if($.storage_exists("search.criteria.grouping._ordering")) {
 								grouping_no = $.obj_len(storage.get("pgrdg_cache.search.criteria.grouping._ordering"));
 							}
-							$("#forms-head .content-title").html('Output of your last search ' + ((grouping_no > 0) ? ' <sup><a title="Change grouping filters" href="javascript: void(0);" onclick="$.show_summary($.get_storage_selected_forms(), false, function() { $(\'#collapsed_group_form\').collapse(\'show\'); });"><small class="text-danger" style="font-family: Arial, Helvetica;">' + grouping_no + ' groups</small></a></sup>' : ""));
+							$("#forms-head .content-title").html(i18n[lang].messages.search.output_last_search + ((grouping_no > 0) ? ' <sup><a title="' + i18n[lang].interface.btns.change_group_filters + '" href="javascript: void(0);" onclick="$.show_summary($.get_storage_selected_forms(), false, function() { $(\'#collapsed_group_form\').collapse(\'show\'); });"><small class="text-danger" style="font-family: Arial, Helvetica;">' + grouping_no + ' groups</small></a></sup>' : ""));
 							if($("#forms-head div.clearfix + .help-block").length === 0) {
 								$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 							}
@@ -1086,7 +1093,7 @@
 										class: "fulltext_search",
 										icon: "fa fa-edit",
 										expandable: false,
-										title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
+										title: '<span class="text-info">' + i18n[lang].messages.search.fulltext.fulltext_search + ':</span> <a title="' + i18n[lang].messages.search.fulltext.goto_search + '" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>',
 										content: ""
 									});
 								}
@@ -1129,7 +1136,7 @@
 					if($(window).width() < 420) {
 						$.left_panel("close");
 					}
-					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> ' + i18n[lang].interface.btns.reset_all).fadeIn(300, function() {
 						$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
 							$.reset_all_searches(true);
 						});
@@ -1137,14 +1144,14 @@
 					$("section.container").animate({"padding-top": "40px"});
 					$("#breadcrumb").animate({"top": "75px"});
 					if($("#forms-head .btn-group a.save_btn").length === 0) {
-						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
 					}
 					if($("#breadcrumb").css("display") == "none") {
 						$("#breadcrumb").fadeIn(200);
 					}
 
-					$("#forms-head .content-title").html('Output of your last search');
+					$("#forms-head .content-title").html(i18n[lang].messages.search.output_last_search);
 					if($("#forms-head div.clearfix + .help-block").length === 0) {
 						$("#forms-head").append('<div class="help-block">' + i18n[lang].interface.form_help_text + '</div>');
 					}
@@ -1174,7 +1181,7 @@
 								class: "fulltext_search",
 								icon: "fa fa-edit",
 								expandable: false,
-								title: '<span class="text-info">Full-text search:</span> <a title="Go to search" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>' + nn,
+								title: '<span class="text-info">' + i18n[lang].messages.search.fulltext.fulltext_search + ':</span> <a title="' + i18n[lang].messages.search.fulltext.goto_search + '" href="./Search?q=' + $.rawurlencode(storage.get("pgrdg_cache.search.criteria.fulltext")) + '"><span style="color: #dd1144">' + storage.get("pgrdg_cache.search.criteria.fulltext").replace(/"/g, "&quot;") + '</span></a>' + nn,
 								content: ""
 							});
 						}
@@ -1208,7 +1215,7 @@
 					if($(window).width() < 420) {
 						$.left_panel("close");
 					}
-					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> Reset all').fadeIn(300, function() {
+					$("#forms-head #right_btn, #forms-footer #right_btn").html('<span class="ionicons ion-trash-b"></span> ' + i18n[lang].interface.btns.reset_all).fadeIn(300, function() {
 						$("#forms-head #right_btn, #forms-footer #right_btn").on("click", function() {
 							$.reset_all_searches(true);
 						});
@@ -1221,8 +1228,8 @@
 						} else {
 							btn_disabled = "disabled";
 						}
-						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
-						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">Search <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-head .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
+						$("#forms-footer .btn-group").append('<a href="javascript: void(0);" class="btn btn-orange save_btn ' + btn_disabled + '" style="display: none;">' + i18n[lang].interface.btns.search + ' <span class="fa fa-chevron-right"></span></a>');
 					}
 					if($("#breadcrumb").css("display") == "none") {
 						$("#breadcrumb").fadeIn(200);
@@ -1293,7 +1300,10 @@
 					});
 					callback.call(this, response);
 				} else {
-					apprise("Entered text has produced 0 results", {title: "No results", icon: "warning"}, function(r) {
+					apprise(i18n[lang].messages.text_has_produced_zero_results, {
+						title: i18n[lang].messages.no_results,
+						icon: "warning"
+					}, function(r) {
 						if(r) {
 							$("#main_search").focus();
 						}
@@ -1321,7 +1331,7 @@
 		options = $.extend({
 			id: "",
 			class: "",
-			placeholder: "Choose...",
+			placeholder: i18n[lang].interface.btns.choose + "...",
 			operator: kAPI_OP_MATCH_TAG_LABELS
 		}, options);
 		var op_btn_list = "",
@@ -1330,7 +1340,8 @@
 		user_input,
 		is_autocompleted = false,
 		selected_label_key = "",
-		selected_label_value = ""
+		selected_label_value = "",
+		tags = [],
 		autocompleted = false;
 
 		$.each(options.op, function(k, v) {
@@ -1362,7 +1373,24 @@
 			remote: {
 				url: config.service.proxy + "%QUERY",
 				replace: function(url, query) {
-					var state = "true&query=" + $.utf8_to_b64(config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options.operator + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '":"' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
+					$.each($("#accordion div.panel.panel-success:not(.disabled)"), function() {
+						var tag = $(this).find("div.panel-body > form input[name='tags']").val();
+						if(tag !== undefined) {
+							tags.push(tag);
+						}
+					});
+					var query_obj = {};
+					query_obj[kAPI_PAGING_LIMIT] = 50;
+					query_obj[kAPI_PARAM_REF_COUNT] = kAPI_PARAM_COLLECTION_UNIT;
+					query_obj[kAPI_PARAM_PATTERN] = $("#main_search").val();
+					query_obj[kAPI_PARAM_EXCLUDED_TAGS] = $.array_unique(tags);
+					query_obj[kAPI_PARAM_OPERATOR] = [$("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "")];
+
+					url_query = config.service.url + "Service.php?";
+					url_query += kAPI_REQUEST_OPERATION + "=" + options.operator;
+					url_query += "&" + kAPI_REQUEST_LANGUAGE + "=" + lang;
+					url_query += "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode(JSON.stringify(query_obj));
+					var state = "true&query=" + $.utf8_to_b64(url_query);
 					//var state = "true&address=" + $.utf8_to_b64("{config.service.url}?" + kAPI_REQUEST_OPERATION + "=" + kAPI_OP_MATCH_TAG_LABELS + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "=" + $.rawurlencode('{"' + kAPI_PAGING_LIMIT + '":50,"' + kAPI_PARAM_REF_COUNT + '": "' + kAPI_PARAM_COLLECTION_UNIT + '","' + kAPI_PARAM_PATTERN + '":"'  + $("#main_search").val() + '","' + kAPI_PARAM_OPERATOR + '": ["$' + $("#main_search_operator").attr("class") + '"' + ($("#main_search_operator_i").is(":checked") ? ',"$i"' : "") + ']}'));
 					return url.replace("%QUERY", state);
 				},
@@ -1535,11 +1563,11 @@
 					exclude = $.array_unique(exclude);
 				}
 
-				if($("#autocomplete .input-group #autocomplete_undo_btn").length === 0) {
-					$("#autocomplete .input-group").append('<span class="input-group-btn"><a class="btn btn-default-grey" id="autocomplete_undo_btn" href="javascript:void(0);"><span class="fa fa-reply"></span>Undo</a></span>');
+				if($("#filter_search_summary .input-group #autocomplete_undo_btn").length === 0) {
+					$("#filter_search_summary .input-group").append('<span class="input-group-btn"><a class="btn btn-default-grey" id="autocomplete_undo_btn" href="javascript:void(0);"><span class="fa fa-reply"></span>' + i18n[lang].interface.btns.undo + '</a></span>');
 				}
 				$("#autocomplete_undo_btn").on("click", function() {
-					apprise("Are you sure to remove all defined group filters?", {confirm: true}, function(r) {
+					apprise(i18n[lang].messages.grouping.are_you_sure_to_remove, {confirm: true}, function(r) {
 						if(r) {
 							$("#summary #summary-body").removeClass("disabled");
 							$("#filter_stage").html("");
@@ -1614,7 +1642,11 @@
 	$.remove_search = function(search) {
 		var $this = search,
 		search_id = $this.closest(".panel").attr("id");
-		apprise(i18n[lang].messages.search.are_you_sure.message, {title: i18n[lang].messages.search.are_you_sure.title, icon: "warning", confirm: true}, function(r) {
+		apprise(i18n[lang].messages.search.are_you_sure_to_remove.this.message, {
+			title: i18n[lang].messages.search.are_you_sure_to_remove.this.title,
+			icon: "warning",
+			confirm: true
+		}, function(r) {
 			if(r) {
 				if($this.closest(".panel").hasClass("fulltext_search")) {
 					storage.set("pgrdg_cache.search.criteria.fulltext", "");
@@ -1685,7 +1717,12 @@
 			if($("#apprise.reset-all").length > 0) {
 				$("#apprise.reset-all").modal("show");
 			} else {
-				apprise("Are you sure?", {title: "Warning", icon: "warning", class: "reset-all", confirm: true}, function(r) {
+				apprise(i18n[lang].messages.search.are_you_sure_to_remove.all.message, {
+					title: i18n[lang].messages.search.are_you_sure_to_remove.all.title,
+					icon: "warning",
+					class: "reset-all",
+					confirm: true
+				}, function(r) {
 					if(r) {
 						$.reset();
 					}
@@ -1776,7 +1813,7 @@
 						$(this).find("#" + content + "-head").html('<h1 class="content-title"></h1>');
 					} else {
 						$(this).find("#" + content + "-head").children(":not(#group_by_accordion)").remove();
-						$(this).find("#" + content + "-head").prepend('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url(\'Summary\');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey"><span class="fa fa-sliders text-muted"></span>' + i18n[lang]["interface"]["btns"]["group_by"] + '</a></div><div class="clearfix"></div>');
+						$(this).find("#" + content + "-head").prepend('<h1 class="pull-left content-title"></h1><div class="btn-group pull-right"><a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url(\'Summary\');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey"><span class="fa fa-sliders text-muted"></span>' + i18n[lang].interface.btns.group_by + '</a></div><div class="clearfix"></div>');
 					}
 				}
 				$(this).find("#" + content + "-body").html('<div class="content-body"></div>');
@@ -1790,7 +1827,8 @@
 				$.remove_storage("pgrdg_cache.search.criteria.selected_enums");
 				$.remove_storage("pgrdg_cache.search.criteria.fulltext");
 				$.remove_storage("pgrdg_cache.search.criteria.traitAutocomplete");
-				//$.remove_storage("pgrdg_cache.search.criteria.grouping");
+				$.remove_storage("pgrdg_cache.search.criteria.grouping");
+				$.remove_storage("pgrdg_cache.map_data.user_layers");
 			}
 		}
 	};
@@ -1810,13 +1848,14 @@
 
 		if(type !== "map") {
 			if(type == "summary") {
+				///////////////////////////////////////////////////////////////////////////////////////
 				if(current_path == "Search") {
 					$("#" + type + "-head h1.content-title > span").html("Results " + type.toLowerCase());
 				} else {
 					$("#" + type + "-head h1.content-title").html("Results " + type.toLowerCase());
 				}
 			} else {
-				$("#" + type + "-head h1.content-title").html("Search " + type.toLowerCase());
+				$("#" + type + "-head h1.content-title").html(i18n[lang].interface.btns.search + " " + type.toLowerCase());
 			}
 
 			$("#" + type + "-body .content-body").html("");
@@ -1829,6 +1868,7 @@
 				var cols = options.res[kAPI_RESULTS_DICTIONARY][kAPI_DICTIONARY_LIST_COLS],
 				rows = options.res[kAPI_RESPONSE_RESULTS];
 				$("#" + type + "-body .content-body").append('<table id="' + options.res[kAPI_PARAM_ID] + '" class="table table-striped table-hover table-responsive"></table>');
+
 				/**
 				 * Parse cell content and display helps if present
 				 * @param  {string|object} disp The text or object that will be parsed
@@ -1857,7 +1897,7 @@
 						$icon.removeClass("fa-rotate-90");
 					} else {
 						// Row is opened
-						$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> Waiting...</center>');
+						$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> ' + i18n[lang].messages.waiting + '</center>');
 						$.show_raw_row_content(res_id, id);
 						$("#" + $.md5(id)).slideDown(600);
 						$icon.addClass("fa-rotate-90");
@@ -1981,7 +2021,12 @@
 				} else {
 					if($("#apprise.no-results:visible").length === 0) {
 						if($.storage_exists("search.criteria.grouping._ordering")) {
-							apprise("Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?", {"class": "no-results", "title": i18n[lang].messages.search.no_search_results.message, "icon": "warning", "confirm": true}, function(r) {
+							apprise(i18n[lang].messages.grouping.zero_results_remove_filter, {
+								"class": "no-results",
+								"title": i18n[lang].messages.search.no_search_results.message,
+								"icon": "warning",
+								"confirm": true
+							}, function(r) {
 								$.show_summary(active_forms, false, function() {
 									setTimeout(function() {
 										$("#summary-body.disabled").addClass("moved");
@@ -1989,7 +2034,11 @@
 								});
 							});
 						} else {
-							apprise(i18n[lang].messages.search.no_search_results.message, {"class": "no-results", "title": i18n[lang].messages.search.no_search_results.title, "icon": "warning"});
+							apprise(i18n[lang].messages.search.no_search_results.message, {
+								"class": "no-results",
+								"title": i18n[lang].messages.search.no_search_results.title,
+								"icon": "warning"
+							});
 						}
 					}
 				}
@@ -2078,6 +2127,7 @@
 					$item.find("span").removeClass("fa-chevron-right").addClass("fa-chevron-down");
 				}
 			};
+
 			$.each(options[kAPI_RESPONSE_RESULTS], function(domain, values) {
 				// GOOD
 				//console.log(options.level, [values[kAPI_PARAM_OFFSETS], values[kAPI_PARAM_PATTERN]]);
@@ -2383,7 +2433,7 @@
 
 					$("#filter_stage #" + $.md5(id)).remove_filter(true);
 					if(display_message) {
-						$("#modal_messages").removeClass("alert-success").addClass("alert-danger").find("div.text-left").text('"' + name + '" removed');
+						$("#modal_messages").removeClass("alert-success").addClass("alert-danger").find("div.text-left").text(i18n[lang].messages.item_removed.replace("{X}", '"' + name + '"'));
 						$("#modal_messages").show().delay(1500).fadeOut(300);
 					}
 				} else {
@@ -2400,7 +2450,7 @@
 					$(this).next().find("a.unclickable").removeClass("btn-default-white").addClass("btn-default");
 					$.group_tag_by(storage_id, id, tag, name, contains, info);
 					if(display_message) {
-						$("#modal_messages").removeClass("alert-danger").addClass("alert-success").find("div.text-left").text('"' + name + '" added');
+						$("#modal_messages").removeClass("alert-danger").addClass("alert-success").find("div.text-left").text(i18n[lang].messages.added.replace("{X}", '"' + name + '"'));
 						$("#modal_messages").show().delay(1500).fadeOut(300);
 					}
 				}
@@ -2490,7 +2540,7 @@
 					$.update_ordering();
 
 					if(!direct) {
-						$('<div id="' + $.md5(id) + '_restore" class="well well-sm text-muted">Removed \"' + $(this).find("h4").text() + '\".<a class="pull-right text-muted" href="javascript:void(0);" onclick="$.restore_deleted_filter(\'' + $(this).attr("id") +  '\')" title="Restore it"><small class="fa fa-reply"></small></a></div>').insertBefore($(this));
+						$('<div id="' + $.md5(id) + '_restore" class="well well-sm text-muted">' + i18n[lang].messages.removed_ITEM.replace("{X}", '"' + $(this).find("h4").text() + '"') + '<a class="pull-right text-muted" href="javascript:void(0);" onclick="$.restore_deleted_filter(\'' + $(this).attr("id") +  '\')" title="Restore it"><small class="fa fa-reply"></small></a></div>').insertBefore($(this));
 
 						$("#" + $.md5(id) + "_restore").fadeOut(10000, "easeInExpo", function() {
 							$("#" + $.md5(id) + "_restore").remove();
@@ -2544,7 +2594,11 @@
 				if(direct === undefined || direct === null || direct === "") { direct = false; }
 
 				if(!direct) {
-					apprise("Do you really want to cancel and remove all defined group filters?", {title: "Reset all group filters", icon: "warning", confirm: true}, function(r) {
+					apprise(i18n[lang].messages.grouping.reset_filters.message, {
+						title: i18n[lang].messages.grouping.reset_filters.title,
+						icon: "warning",
+						confirm: true
+					}, function(r) {
 						if(r) {
 							$.exec_reset_ordering();
 						}
@@ -2567,7 +2621,14 @@
 					sinfo = $(this).find("h4 + p").text(),
 					scontains = $(this).find("h4.text-muted").text(),
 					ststorage_id = $(this).attr("data-storage-id");
-					st.push({"id": stid, "tag": stag, "name": sname, "info": sinfo, "contains": scontains, "storage": ststorage_id});
+					st.push({
+						"id": stid,
+						"tag": stag,
+						"name": sname,
+						"info": sinfo,
+						"contains": scontains,
+						"storage": ststorage_id
+					});
 				});
 				storage.set("pgrdg_cache.search.criteria.grouping._ordering", st);
 				$.update_ordering_on_the_stage(st);
@@ -2607,7 +2668,7 @@
 							}
 							if($("#filter_stage").html().length === 0) {
 								$("#filter_stage_panel").fadeIn(300);
-								$("#filter_group_title").text("Add another group field");
+								$("#filter_group_title").text(i18n[lang].messages.add_another_group_field);
 							}
 
 							// Move on the stage
@@ -2680,7 +2741,13 @@
 					} else {
 						$("#collapsed_group_form").collapse("show");
 						if($("#apprise.no-results").length === 0) {
-							apprise("No results for this combination", {"class": "no-results", "title": "Ooops...", "icon": "fa-bug", "titleClass": "text-warning", "fa_icon": "fa-warning"});
+							apprise(i18n[lang].messages.grouping.no_combination_results.message, {
+								"title": i18n[lang].messages.grouping.no_combination_results.title,
+								"icon": "fa-bug",
+								"class": "no-results",
+								"titleClass": "text-warning",
+								"fa_icon": "fa-warning"
+							});
 						}
 						$("#summary-body").addClass("disabled");
 					}
@@ -2771,7 +2838,12 @@
 						var $item = $("#" + a_id).parent();
 						if($item.find("div").length === 0) {
 							$item.append($.parse_row_content(ress).replace('<div>', '<div style="display: none;">'));
-							$item.find("a").popover({container: "body", placement: "auto", html: "true", trigger: "hover"});
+							$item.find("a").popover({
+								container: "body",
+								placement: "auto",
+								html: "true",
+								trigger: "hover"
+							});
 						}
 						if($item.find("div").is(":visible")) {
 							$item.find("div").slideUp(300);
@@ -3021,7 +3093,12 @@
 						var alert_message = i18n[lang].messages.map_limit_display.message
 							alert_message.replace(/\{X\}/g, objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
 						setTimeout(function() {
-							apprise(alert_message, {class: "only_1k", title: alert_title, titleClass: "text-danger", icon: "fa-eye-slash"});
+							apprise(alert_message, {
+								class: "only_1k",
+								title: alert_title,
+								titleClass: "text-danger",
+								icon: "fa-eye-slash"
+							});
 						}, 4000);
 					}
 				} else {

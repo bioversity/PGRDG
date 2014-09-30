@@ -426,8 +426,8 @@
 					a_reset_history = $('<a class="btn btn-xs btn-default-grey text-danger" href="javascript: void(0);" onclick="$.clear_history();" title="Reset all search history"><span class="fa fa-fw fa-times text-center text-danger"></span>Reset all searches</a>');
 
 					//a_show_history.appendTo(btn_group);
-					a_reset_history.appendTo(btn_group);
-					btn_group.appendTo(li_no_divider);
+					a_reset_history.appendTo(li_no_divider);
+					//btn_group.appendTo(li_no_divider);
 					$("#breadcrumb .breadcrumb").append(li_no_divider);
 				}
 			} else {
@@ -551,10 +551,9 @@
 			$.left_panel_behaviour(hash);
 			if(hash == "Map") {
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
+				$("#breadcrumb").animate({"right": "50px"}, 300);
 				$("#contents .panel_content:not(#loader_bg)").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
-
-				$("#breadcrumb").css("width", (parseInt($(window).width()) - 50) + "px");
 			} else {
 				if(current_path !== "Search" && (current_path !== "Map" || hash !== "Map")) {
 					if(hash.length > 0) {
@@ -580,7 +579,6 @@
 						storage.set("pgrdg_cache.search.criteria.fulltext", $("#search_form").val());
 					}
 				}
-				$("#breadcrumb").css("width", parseInt($(window).width()) + "px");
 			}
 		}
 	};

@@ -5,6 +5,14 @@ var i18n = {
                         "message": "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over."
                 },
                 "messages": {
+                        "add_another_group_field": "Add another group field",
+                        "item_added": "{X} added",
+                        "item_removed": "{X} removed",
+                        "removed_item": "Removed {X}",
+                        "enable_item": "Enable this item",
+                        "no_entries_found": "No entries found",
+                        "no_results": "No results",
+                        "text_has_produced_zero_results": "Entered text has produced 0 results",
                         "login": {
                                 "remember_me": "Remember me",
                                 "dont_have_account": "Don't have an account?",
@@ -17,26 +25,47 @@ var i18n = {
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."
                         },
                         "search": {
-                                "switch_layer": "Switch on/off this layer",
+                                "group_hierachy": "Group hierachy",
+                                "group_results": "Group results",
+                                "insert_filter": "Insert a filter",
+                                "map_search_place": "Searching \"{X}\"...",
+                                "performing_search": "Performing your search...",
+                                "output_last_search": "Output of your last search",
                                 "remove_search": "Remove this search",
                                 "results_for": "Results for search \"{X}\"",
-                                "map_search_place": "Searching \"{X}\"...",
                                 "search_of": "Search of {X}...",
-                                "performing_search": "Performing your search...",
-                                "group_results": "Group results",
-                                "group_hierachy": "Group hierachy",
-                                "insert_filter": "Insert a filter",
+                                "switch_layer": "Switch on/off this layer",
 
                                 "no_search_results": {
                                         "title": "No data",
                                         "message": "No results for this search"
                                 },
-                                "are_you_sure": {
-                                        "title": "Confirm removal",
-                                        "message": "Are you sure to remove this search?<br />"
+                                "are_you_sure_to_remove": {
+                                        "this": {
+                                                "title": "Confirm removal",
+                                                "message": "Are you sure to remove this search?<br />"
+                                        },
+                                        "all": {
+                                                "title": "Confirm removal",
+                                                "message": "Are you sure to remove all searches?<br />"
+                                        }
                                 },
                                 "fulltext": {
+                                        "fulltext_search": "Full-text search",
+                                        "goto_search": "Go to search",
                                         "add_another_group": "Add another group field"
+                                }
+                        },
+                        "grouping": {
+                                "are_you_sure_to_remove": "Are you sure to remove all defined group filters?",
+                                "zero_results_remove_filter": "Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?",
+                                "reset_filters": {
+                                        "title": "Reset all group filters",
+                                        "mewssage": "Do you really want to cancel and remove all defined group filters?"
+                                },
+                                "no_combination_results": {
+                                        "title": "Nothing to display",
+                                        "message": "No results for this combination"
                                 }
                         },
                         "forms": {
@@ -44,24 +73,31 @@ var i18n = {
                         },
                         "static_forms": {
                                 "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
-                        }
+                        },
+                        "waiting": "Waiting..."
                 },
                 "interface": {
                         "btns": {
+                                "activate": "Activate",
                                 "add": "Add",
-                                "edit": "Edit",
-                                "remove": "Remove",
-                                "remove_all": "Remove all",
-                                "group": "Group",
-                                "search": "Search",
                                 "advanced_search": "Advanced search",
-                                "search_tips": "Search tips",
+                                "change_group_filters": "Change grouping filters",
+                                "choose": "Choose",
+                                "close": "Close",
+                                "edit": "Edit",
+                                "filter": "Filter",
                                 "group_by": "Group by...",
+                                "group": "Group",
+                                "move_bottom": "Move to bottom",
+                                "move_down": "Move down",
                                 "move_top": "Move to top",
                                 "move_up": "Move up",
-                                "move_down": "Move down",
-                                "move_bottom": "Move to bottom",
-                                "close": "Close",
+                                "remove_all": "Remove all",
+                                "remove": "Remove",
+                                "reset_all": "Reset all",
+                                "search_tips": "Search tips",
+                                "search": "Search",
+                                "undo": "Undo",
                                 "view_data": "View data",
                                 "view_map": "View map"
                         },

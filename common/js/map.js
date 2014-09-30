@@ -1496,6 +1496,7 @@ $(document).ready(function() {
                 }
                 $("#pgrdg_map, .panel_content").fadeIn(600);
                 $("#map_toolbox").delay(600).animate({"right": "0"}, 300);
+                $("#breadcrumb").animate({"right": "50px"}, 300);
 
                 $("#breadcrumb .breadcrumb li.pull-right").hide();
 
