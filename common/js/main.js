@@ -1327,6 +1327,7 @@ $(document).ready(function() {
 			$.manage_url(document.location.hash.replace("#", ""));
 		};
 		$.manage_url();
+		$.left_panel("open");
 
 		$("#search_tips").click(function(){
 			apprise(i18n[lang].interface.search_tips, {

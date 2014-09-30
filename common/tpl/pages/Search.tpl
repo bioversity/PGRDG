@@ -19,6 +19,7 @@ if(!isset($_GET["q"]) || trim($_GET["q"]) == "") {
                         <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                         <br />
                         <br />
+                        <span class="help-block">The figures below will be changing, since we are currently loading data.</p>
                         <small id="statistics_loader"></small>
                 </div>
         </div>
