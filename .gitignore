@@ -3,4 +3,5 @@ rsa*
 pgrdiversity.bioversityinternational.org
 blog
 backup*
+*.bkp
 PGRDG
