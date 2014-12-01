@@ -1,0 +1,128 @@
+[
+        {
+                "articles": [
+                        [227, 95.0]
+                ],
+                "total": 254.5,
+                "name": "Pennisetum glaucum"
+        },
+        {
+                "articles": [
+                        [182, 76.2]
+                ],
+                "total": 348.3,
+                "name": "Cyamopsis tetragonoloba"
+        },
+        {
+                "articles": [
+                        [138, 57.7]
+                ],
+                "total": 65.8,
+                "name": "Vigna aconitifolia"
+        },
+        {
+                "articles": [
+                        [120, 50.2]
+                ],
+                "total": 46.3,
+                "name": "Vigna radiata"
+        },
+        {
+                "articles": [
+                        [88, 36.8]
+                ],
+                "total": 142.1,
+                "name": "Triticum aestivum"
+        },
+        {
+                "articles": [
+                        [78, 36.6]
+                ],
+                "total": 174.9,
+                "name": "Cicer ariatinum"
+        },
+        {
+                "articles": [
+                        [50, 20.9]
+                ],
+                "total": 20.2,
+                "name": "Cucumis sativus"
+        },
+        {
+                "articles": [
+                        [50, 20.5]
+                ],
+                "total": 20.2,
+                "name": "Citrullus lanatus"
+        },
+        {
+                "articles": [
+                        [27, 11.3]
+                ],
+                "total": 37.9,
+                "name": "Brassica spp"
+        },
+        {
+                "articles": [
+                        [24, 10.0]
+                ],
+                "total": 8.4,
+                "name": "Sesamum indicum"
+        },
+        {
+                "articles": [
+                        [21, 8.8]
+                ],
+                "total": 27.3,
+                "name": "Ricinus communis"
+        },
+        {
+                "articles": [
+                        [11, 4.6]
+                ],
+                "total": 31.6,
+                "name": "Cuminum cyminum"
+        },
+        {
+                "articles": [
+                        [9, 3.8]
+                ],
+                "total": 6.4,
+                "name": "Gossypium hirsutum"
+        },
+        {
+                "articles": [
+                        [8, 3.3]
+                ],
+                "total": 10.1,
+                "name": "Sorghum vulgare"
+        },
+        {
+                "articles": [
+                        [2, 0.8]
+                ],
+                "total": 5.8,
+                "name": "Allium cepa"
+        },
+        {
+                "articles": [
+                        [1, 4.0]
+                ],
+                "total": 4.0,
+                "name": "Allium cepa"
+        },
+        {
+                "articles": [
+                        [1, 0.4]
+                ],
+                "total": 1.0,
+                "name": "Plantago ovata"
+        },
+        {
+                "articles": [
+                        [1, 3.3]
+                ],
+                "total": 10.1,
+                "name": "Praecitrullus"
+        }
+]

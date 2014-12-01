@@ -1,0 +1,26 @@
+
+body {
+	width: 100%;
+	margin: 0;
+	float: none;
+}
+
+#header,
+#nav,
+.noprint,
+#breadcrumb li.pull-right,
+#left_panel,
+#loader_bg,
+h1 > .btn,
+h1 > .btn-group,
+.panel_content-head > div.btn-group.pull-right {
+	display: none !important;
+}
+
+#breadcrumb {
+	top: 100px;
+}
+.panel_content-head > h1,
+.panel_content > div {
+	padding: 10px!important;
+}

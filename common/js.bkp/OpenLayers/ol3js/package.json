@@ -1,0 +1,33 @@
+{
+  "name": "openlayers",
+  "version": "3.0.0-beta",
+  "description": "Mapping library",
+  "scripts": {
+    "postinstall": "node tasks/parse-examples.js",
+    "start": "node tasks/serve.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/openlayers/ol3.git"
+  },
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/openlayers/ol3/issues"
+  },
+  "dependencies": {
+    "async": "~0.2.10",
+    "htmlparser2": "~3.7.1"
+  },
+  "devDependencies": {
+    "closure-util": "~0.14.0",
+    "jshint": "~2.5.1",
+    "jsdoc": "~3.3.0-alpha7",
+    "taffydb": "~2.7.0",
+    "underscore": "~1.6.0",
+    "walk": "~2.3.3",
+    "fs-extra": "~0.8.1",
+    "nomnom": "~1.6.2",
+    "temp": "~0.7.0",
+    "phantomjs": "~1.9.7-5"
+  }
+}

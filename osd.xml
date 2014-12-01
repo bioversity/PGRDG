@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+	<ShortName>PGRDG (Mauricio)</ShortName>
+	<LongName>Plant Genetic Resource Diversity Gateway</LongName>
+	<Description>Promote and facilitate the use of crop wild relatives and landraces in breeding and crop improvement, by providing traits and QTL information of potential value to breeders and other users of germplasm</Description>
+	<Tags></Tags>
+	<Developer>Bioversity International</Developer>
+
+	<Contact>s.dias@cgiar.org</Contact>
+	<Url type="text/html" method="GET" template="http://mauricio.grinfo.net/Search?q={searchTerms}"/>
+	<Url type="application/opensearchdescription+xml" rel="self" template="osd.xml"/>
+
+	<Image height="16" width="16" type="image/x-icon">http://mauricio.grinfo.net/common/media/img/favicon.ico</Image>
+	<Attribution>Bioversity International</Attribution>
+	<SyndicationRight>open</SyndicationRight>
+	<AdultContent>false</AdultContent>
+	<Language>en</Language>
+	<OutputEncoding>UTF-8</OutputEncoding>
+	<InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>

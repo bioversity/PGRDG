@@ -1,0 +1,40 @@
+{
+	"map": {
+		"default": {
+			"coordinates": {
+				"lon": 12,
+				"lat": 55,
+				"bounding_box": [-31, 30, 65, 72]
+			},
+			"zoom": {
+				"default_zoom": 4,
+				"min_zoom": 3
+			}
+		},
+		"layers": {
+			"defaultLayer": "Esri.WorldImagery",
+			"baseLayers": {
+				"unlabelled": [
+					"MapQuestOpen.Aerial",
+					"Esri.WorldImagery",
+					"Esri.WorldPhysical",
+					"Esri.WorldTerrain",
+					"Acetate"
+				],
+				"labelled": [
+					"OpenStreetMap.BlackAndWhite"
+				]
+			},
+			"overlayLayers": {
+				"labels": ["ok", "ok2"],
+				"overlays": [
+					"OpenWeatherMap.Clouds",
+					"OpenWeatherMap.Precipitation",
+					"OpenWeatherMap.PressureContour",
+					"OpenWeatherMap.Wind",
+					"OpenWeatherMap.Temperature"
+				]
+			}
+		}
+	}
+}

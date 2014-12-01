@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet raster boundary plugin example (using drawing plugin)</title>
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" /><![endif]-->
+	<link rel="stylesheet" href="leaflet.draw/leaflet.draw.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="leaflet.draw/leaflet.draw.ie.css" /><![endif]-->
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+	<script src="leaflet.draw/leaflet.draw.js"></script>
+
+	<script src="../src/BoundaryCanvas.js"></script>
+</head>
+
+<body>
+	<div style="font-weight:bold;">Draw polygons or rectangles to see parts of the map</div>
+	<div id="map" style="width: 800px; height: 500px; border: 1px solid #ccc;"></div>
+
+	<script type="text/javascript">
+
+	var map = L.map('map').setView([55.7, 37.4], 9),
+	    osmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+	    osmAttribution = 'Map data &copy; 2012 OpenStreetMap contributors';
+
+	var drawControl = new L.Control.Draw({
+		position: 'topright',
+		marker: null,
+		polyline: null,
+		circle: null,
+		polygon: {
+			title: 'Draw layer boundary',
+			allowIntersection: false,
+			drawError: {
+				color: '#b00b00',
+				timeout: 1000
+			},
+			shapeOptions: {
+				color: '#bada55'
+			}
+		}
+	});
+	map.addControl(drawControl);
+	map.on('draw:poly-created', function (e) {
+		L.TileLayer.boundaryCanvas(osmUrl, {
+			boundary: e.poly.getLatLngs(), 
+			attribution: osmAttribution
+		}).addTo(map);
+	});
+
+	map.on('draw:rectangle-created', function (e) {
+		L.TileLayer.boundaryCanvas(osmUrl, {
+			boundary: e.rect.getLatLngs(), 
+			attribution: osmAttribution
+		}).addTo(map);
+	});
+
+	</script>
+</body>
+</html>

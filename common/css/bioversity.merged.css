@@ -1,0 +1,5 @@
+@charset "UTF-8";body{margin:0;padding:0;line-height:1.4em;word-spacing:1px;letter-spacing:0.2px;font:13px Arial, Helvetica,"Lucida Grande",serif;color:#000}H1,H2,H3,H4{color:#000}a:link,a:visited{background:transparent;color:#333;text-decoration:none}a:link[href^="http://"]:after,a[href^="http://"]:visited:after{content:" (" attr(href) ") ";font-size:11px}a[href^="http://"]{color:#000}.record
+H2{display:block;page-break-before:always}a:link,a:visited{background:transparent;color:#333;text-decoration:none}a:link[href^="http://"]:after,a[href^="http://"]:visited:after{content:" (" attr(href) ") ";font-size:11px}a[href^="http://"]{color:#000}img, img a, .more-link
+a{border:none}HEADER,FOOTER,#sidebar{display:none;width:0;height:0}#normal
+*{color:#000}.highlight{background:none}.highlight
+*{color:#000}

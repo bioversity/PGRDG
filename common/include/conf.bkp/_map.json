@@ -1,0 +1,136 @@
+{
+	"map": {
+		"default": {
+			"coordinates": {
+				"lon": 12,
+				"lat": 55,
+				"bounding_box": [-31, 30, 65, 72]
+			},
+			"zoom": {
+				"default_zoom": 4,
+				"min_zoom": 3,
+				"max_zoom": 15
+			}
+		},
+		"layers": {
+			"defaultLayer": {
+				"name": "Satellite",
+				"layer": "Esri.WorldImagery",
+				"min_zoom": 3,
+				"max_zoom": 18
+			},
+			"baseLayers": {
+				"unlabelled": [
+					{
+						"name": "Satellite",
+						"layer": "Esri.WorldImagery",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+
+					},
+					{
+						"name": "Terrain",
+						"layer": "Esri.WorldTerrain",
+						"min_zoom": 3,
+						"max_zoom": 8,
+						"zindex": 1
+					},
+					{
+						"name": "Physical",
+						"layer": "Esri.WorldPhysical",
+						"min_zoom": 3,
+						"max_zoom": 8,
+						"zindex": 1
+					}
+				],
+				"labelled": [
+					{
+						"name": "Cycle",
+						"layer": "Thunderforest.OpenCycleMap",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Outdoors",
+						"layer": "Thunderforest.Outdoors",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Streets",
+						"layer": "OpenStreetMap.HOT",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Streets (black & white)",
+						"layer": "OpenStreetMap.BlackAndWhite",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					}
+				]
+			},
+			"overlayLayers": {
+				"labels": [
+					{
+						"name": "Boundaries",
+						"layer": "OpenMapSurfer.AdminBounds",
+						"zindex": 110
+					},
+					{
+						"name": "Roads",
+						"layer": "Acetate.roads",
+						"zindex": 120
+					},
+					{
+						"name": "Labels",
+						"layer": "Acetate.labels",
+						"zindex": 130
+					}
+				],
+				"overlays": [
+					{
+						"name": "Clouds",
+						"layer": "OpenWeatherMap.CloudsClassic",
+						"zindex": 360
+					},
+					{
+						"name": "Precipitation",
+						"layer": "OpenWeatherMap.PrecipitationClassic",
+						"zindex": 370
+					},
+					{
+						"name": "Pressure",
+						"layer": "OpenWeatherMap.Pressure",
+						"zindex": 340
+					},
+					{
+						"name": "Pressure (contour)",
+						"layer": "OpenWeatherMap.PressureContour",
+						"zindex": 390
+					},
+					{
+						"name": "Wind",
+						"layer": "OpenWeatherMap.Wind",
+						"zindex": 350
+					},
+					{
+						"name": "Temperature",
+						"layer": "OpenWeatherMap.Temperature",
+						"zindex": 360
+					},
+					{
+						"name": "Snow",
+						"layer": "OpenWeatherMap.Snow",
+						"zindex": 400
+					}
+				]
+			}
+		}
+	}
+}
