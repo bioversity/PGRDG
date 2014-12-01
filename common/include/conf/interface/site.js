@@ -5,7 +5,7 @@ var config = {
                 "definitions_dir": "PATH TO ONTOLOGYWRAPPER DIR"
         },
         "site": {
-                "version": 1.4,
+                "version": 1.5,
                 "developer_mode": true,
                 "default_language": "en",
                 "allow_signin": false
