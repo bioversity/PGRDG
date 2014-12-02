@@ -6,12 +6,15 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 	options: {
 		shapeOptions: {
 			stroke: true,
-			color: '#f06eaa',
-			weight: 4,
+			color: '#fff',
+			weight: 2,
+			dashArray: [5, 10],
 			opacity: 0.5,
 			fill: true,
-			fillColor: null, //same as color by default
-			fillOpacity: 0.2,
+			fillColor: "#000", //same as color by default
+			fillOpacity: 0.3,
+			lineCap: "square",
+			lineJoin: "miter",
 			clickable: true
 		},
 		metric: true // Whether to use the metric meaurement system or imperial

@@ -6,12 +6,15 @@ L.Draw.Circle = L.Draw.SimpleShape.extend({
 	options: {
 		shapeOptions: {
 			stroke: true,
-			color: '#f06eaa',
-			weight: 4,
+			color: '#fff',
+			weight: 2,
+			dashArray: [5, 10],
 			opacity: 0.5,
 			fill: true,
-			fillColor: null, //same as color by default
-			fillOpacity: 0.2,
+			fillColor: "#560015", //same as color by default
+			fillOpacity: 0.3,
+			lineCap: "square",
+			lineJoin: "miter",
 			clickable: true
 		},
 		showRadius: true,

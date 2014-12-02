@@ -167,24 +167,28 @@
                                         polyline: false,
                                         polygon: {
                                                 allowIntersection: false,
-                                                showArea: true,
+                                                showArea: false,
                                                 drawError: {
                                                         color: '#b00b00',
                                                         timeout: 1000
                                                 },
                                                 shapeOptions: {
-                                                        color: "purple"
+                                                        color: "#ff0043",
+                                                        weight: 2
                                                 },
+                                                lineJoin: "miter",
         					metric: true
                                         },
                                         rect: {
                                                 shapeOptions: {
-                                                        color: "orange"
+                                                        color: "#ff0043",
+                                                        weight: 2
                                                 },
                                         },
                                         circle: {
                                                 shapeOptions: {
-                                                        color: "#bada55"
+                                                        color: "#ff0043",
+                                                        weight: 2
                                                 }
                                         },
                                         marker: false
@@ -216,16 +220,18 @@
                                         $.sub_toolbox("tools");
                                         $("#tools li.selected").removeClass("selected");
                                         apprise(i18n[lang].messages.map.selected_area
-                                                        .replace("{X}", evt.layerType)
-                                                        .replace("{Y}", $.highlight(area.toFixed(3)))
-                                                        .replace("{Z}", meters), {
-                                                showHeader: false,
-                                                perhaps: true,
-                                                okBtnClass: "btn-default-grey",
-                                                PerhapsBtnClass: "btn-default-grey",
-                                                textCancel: '<span class="fa fa-trash"></span>',
-                                                textPerhaps: '<span class="fa fa-edit"></span>',
-                                                textOk: '<span class="fa fa-crop"></span> ' + i18n[lang].interface.btns.search_in_shape
+                                                .replace("{X}", evt.layerType)
+                                                .replace("{Y}", $.highlight(area.toFixed(3)))
+                                                .replace("{Z}", meters), {
+                                                        title: i18n[lang].interface.map_selection,
+                                                        icon: "icon-vector-selection",
+                                                        titleClass: "text-info",
+                                                        showHeader: true,
+                                                        double: true,
+                                                        cancelBtnClass: "btn-default-grey",
+                                                        okBtnClass: "btn-default",
+                                                        textCancel: '<span class="fa fa-trash"></span> ' + i18n[lang].interface.btns.remove_selection,
+                                                        textOk: i18n[lang].interface.btns.search_in_shape + ' <span class="fa fa-crop"></span>'
                                         }, function(r) {
                                                 var criteria = {};
                                                 if(r === true) {
@@ -355,6 +361,8 @@
                                         layer.on("mouseout", function() { $("#pgrdg_map").css("cursor", "grab"); });
                                         layer.on("click", function() {
                                                 layer.editing.enable();
+                                        });
+                                        layer.on("dblclick", function() {
                                                 $.execute(evt);
                                         });
                                         $(document).bind("keydown", "del", function(e) {

@@ -11,7 +11,9 @@ function apprise(string, args, callback) {
 	}
 	var default_args = {
 		"allowExit": true,
+		"cancelBtnClass": "btn-default",
 		"confirm": false, 			// Ok and Cancel buttons
+		"double": false,
 		"input": false,
 		"inputIP": false,
 		"invertedBtns": false,
@@ -158,13 +160,16 @@ function apprise(string, args, callback) {
 		}
 	}
 	if (args) {
-		var btn_group = $('<div class="btn-group">');
-		if (args.confirm || args.input || args.message) {
+		var btn_group = $('<div class="">');
+		if(!args.double) {
+			btn_group.addClass("btn-group");
+		}
+		if (args.confirm || args.input || args.message || args.double) {
 			if(args.confirm) {
 				args.textOk = "Yes";
 				args.textCancel = "No";
 			}
-			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args.textCancel + '</button>');
+			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args.cancelBtnClass + ((args.double) ? ' pull-left' : '') + '">' + args.textCancel + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args.okBtnClass + ' right">' + args.textOk + '</button>');
 			btn_group.appendTo(footer);
 		} else if (args.invertedBtns) {

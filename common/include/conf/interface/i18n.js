@@ -129,6 +129,7 @@ var i18n = {
                                 "print_results": "Print results",
                                 "remove_all": "Remove all",
                                 "remove": "Remove",
+                                "remove_selection": "Remove selection",
                                 "reset_all": "Reset all",
                                 "search_in_shape": "Search in shape...",
                                 "search_tips": "Search tips",
@@ -143,6 +144,7 @@ var i18n = {
                                 "view_map": "View map",
                                 "view_statistics": "View statistics"
                         },
+                        "map_selection": "Map selection",
                         "zoom_in": "Zoom in",
                         "zoom_out": "Zoom out",
                         "world": "World",
