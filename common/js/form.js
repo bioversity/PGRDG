@@ -2469,7 +2469,7 @@
 		* Show statistics list menu
 		* @param  {string} Domain
 		*/
-		$.load_statistics_menu = function(storage_id, domain) {
+		$.load_statistics_menu = function(storage_id, domain, grouped_data) {
 			var $modal_container = $('<div>').addClass("modal fade"),
 			$modal_dialog = $('<div>').addClass("modal-dialog"),
 			$modal_content = $('<div>').addClass("modal-content"),
@@ -2495,7 +2495,7 @@
 					$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
 						var $a = $('<a>').attr({
 								"href": "javascript:void(0);",
-								"onclick": "$.show_statistics(\'" + v[kAPI_PARAM_STAT] + "\', \'" + storage_id + "\', \'" + domain + "\')"
+								"onclick": "$.show_statistics(\'" + v[kAPI_PARAM_STAT] + "\', \'" + storage_id + "\', \'" + domain + "\', \'" + grouped_data + "\')"
 							})
 							.html(v[kAPI_PARAM_RESPONSE_FRMT_NAME])
 							.popover({
@@ -2525,9 +2525,31 @@
 		 * @param {string} Statistics id
 		 */
 
-		$.show_statistics = function(statistic_id, storage_id, domain) {
+		$.show_statistics = function(statistic_id, storage_id, domain, grouped_data) {
 			var summaries_data = storage.get("pgrdg_cache.summary." + storage_id),
+			grouped = {},
+			uobj_id = "",
 			objp = {};
+			if(grouped_data === undefined || grouped_data === null || grouped_data === "") {
+				uobj_id = $.md5(domain);
+				grouped_data = {};
+			} else {
+				$.each($.parseJSON($.rawurldecode(grouped_data)), function(k, v) {
+					uobj_id = $.md5(v[kAPI_PARAM_RESPONSE_FRMT_NAME] + domain);
+					name = v[kAPI_PARAM_RESPONSE_FRMT_NAME];
+					if(v.is_patch !== undefined && v.is_patch === true) {
+						grouped = {};
+					} else {
+						grouped[k] = {};
+						$.each(v, function(kk, vv) {
+							if(kk !== kAPI_PARAM_RESPONSE_FRMT_NAME && kk !== kAPI_PARAM_RESPONSE_FRMT_INFO) {
+								grouped[k][kk] = vv;
+							}
+						});
+					}
+				});
+			}
+
 			objp.storage_group = "summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			objp.parameters = {};
@@ -2540,8 +2562,8 @@
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DOMAIN] = domain;
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_STAT] = statistic_id;
 			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_DATA] = kAPI_RESULT_ENUM_DATA_STAT;
-			// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped;
-			//
+			objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SUMMARY] = grouped;
+
 			$.ask_to_service(objp, function(res) {
 				var results = res[kAPI_RESPONSE_RESULTS];
 				if($.obj_len(results) > 0 || results.length > 0) {
@@ -2551,8 +2573,6 @@
 						domain: domain,
 						res: res
 					}, function() {
-					console.warn(results);
-						// Remember to show the loader...
 						var $table = $('<table>').addClass("table table-striped table-hover table-responsive"),
 						$thead = $('<thead>'),
 						$thead_tr = $('<tr>'),
@@ -2561,12 +2581,14 @@
 						$tfooter_tr = $('<tr>');
 
 						$.each(results[kAPI_PARAM_RESPONSE_FRMT_HEAD], function(k, v) {
-							var $thead_th = $('<th>'),
+							var $thead_th = $('<th>').attr({
+								"data-sort": $.detect_type(results[kAPI_PARAM_RESPONSE_FRMT_DOCU][0][k]),
+								"title": i18n[lang].interface.btns.sort_asc
+							}),
 							$sort_btn = $('<a>')
-								.addClass("btn btn-text text-muted pull-right disabled")
+								.addClass("btn btn-text text-muted pull-right descending")
 								.attr({
 									"href": "javascript: void(0);",
-									"title": i18n[lang].interface.btns.sort_by
 								});
 							if(v[kAPI_PARAM_DATA_TYPE] == kTYPE_FLOAT || v[kAPI_PARAM_DATA_TYPE] == kTYPE_INT) {
 								$thead_th.addClass("text-right");
@@ -2574,7 +2596,6 @@
 							$sort_btn.html('<span class="fa fa-fw fa-sort"></span>');
 
 							$thead_th.html('<span class="pull-left">' + v[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</span>');
-							$thead_th.append($sort_btn);
 							$thead_tr.append($thead_th);
 						});
 						$.each(results[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
@@ -2599,6 +2620,22 @@
 
 						$("#stats #stats-head .content-title").text(results[kAPI_PARAM_RESPONSE_FRMT_NAME]);
 						$("#stats #stats-body .content-body").html($table);
+						$table.stupidtable({
+							"date":function(a, b){
+								// Get these into date objects for comparison.
+								aDate = date_from_string(a);
+								bDate = date_from_string(b);
+
+								return aDate - bDate;
+							}
+						}).on("aftertablesort", function (event, data) {
+							var th = $(this).find("th");
+							th.find(".arrow").remove();
+							var dir = $.fn.stupidtable.dir;
+
+							var arrow = data.direction === dir.ASC ? '<span class="fa fa-fw fa-sort-asc"></span>' : '<span class="fa fa-fw fa-sort-desc"></span>';
+							th.eq(data.column).append('<span class="arrow pull-right">' + arrow +'</span>');
+						});
 					});
 				}
 			});
@@ -2737,7 +2774,7 @@
 
 				result_description_span_muted.html('<span class="help-block"></span>').appendTo(result_content_container);
 				if(values[kAPI_PARAM_RESPONSE_FRMT_STATS] > 0) {
-					result_description_span_right.append('<a class="btn text-warning transparent" href="javascript:void(0);" onclick="$.load_statistics_menu(\'' + storage_id + '\', \'' + domain + '\');"><span class="fa fa-line-chart"></span>' + i18n[lang].interface.btns.view_statistics + '</a>');
+					result_description_span_right.append('<a class="btn text-warning transparent" href="javascript:void(0);" onclick="$.load_statistics_menu(\'' + storage_id + '\', \'' + domain + '\', \'' + $.rawurlencode(h) + '\');"><span class="fa fa-line-chart"></span>' + i18n[lang].interface.btns.view_statistics + '</a>');
 					result_description_span_right.append(' <span class="hidden-xs hidden-sm text-muted">|</span>');
 				}
 				result_description_span_right.append('<a class="btn text-info transparent" href="javascript: void(0);" onclick="$.show_raw_data(\'' + storage_id + '\', \'' + domain + '\', \'' + $.rawurlencode(JSON.stringify(shape)) + '\', \'0\', \'50\', \'' + $.rawurlencode(h) + '\')"><span class="fa fa-list-alt"></span>' + i18n[lang].interface.btns.view_data + '</a>');

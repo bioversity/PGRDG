@@ -1,8 +1,8 @@
 var config = {
         "service": {
-                "url": "YOUR SITE URL",
+                "url": "http://mauricio.grinfo.private/",
                 "proxy": "API/?type=service&proxy=",
-                "definitions_dir": "PATH TO ONTOLOGYWRAPPER DIR"
+                "definitions_dir": "Service/Library/definitions"
         },
         "site": {
                 "version": 1.5,

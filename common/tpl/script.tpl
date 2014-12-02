@@ -32,6 +32,8 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/typeahead/typeahead.bundle.js"></script>
 <!-- jQuery-Knob -->
 <!--script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jQuery-Knob/js/jquery.knob.js"></script-->
+<!-- Stupid-Table-Plugin -->
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/Stupid-Table-Plugin/stupidtable.js"></script>
 <!-- ToucSwipe -->
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/TouchSwipe/jquery.touchSwipe.min.js"></script>
 

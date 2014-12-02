@@ -182,6 +182,24 @@ $.linkify = function(inputText) {
 };
 
 /**
+ * Detect the type of value for table sorting purposes
+ */
+$.detect_type = function(value) {
+        if($.isNumeric(value)) {
+                if(value % 1 === 0){
+                        return "int";
+                } else{
+                        return "float";
+                }
+        } else if(Date.parse(value)) {
+                return "date";
+        } else {
+                return "string-ins";
+        }
+};
+
+
+/**
  * Parse query string paramaters into an object.
  * taken from https://gist.github.com/kares/956897
  *
