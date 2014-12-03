@@ -1823,7 +1823,7 @@ $(document).ready(function() {
         // });
         if(current_path == "Map") {
                 $("header.main, section.container, #left_panel").addClass("map");
-                $("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
+                $("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
                 if($("#breadcrumb").css("top") == "110px") {
                         $("#breadcrumb").css("top", "75px");
                 }

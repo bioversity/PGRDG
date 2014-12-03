@@ -1,9 +1,9 @@
-<header class="main map">
+<header class="main<?php print (strtolower($page) == "map") ? ' map' : ""; ?>">
 	<div class="container">
 		<div class="top">
 			<div id="logo"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>
 				<a href="/">
-					<img alt="Bioversity logo" src="<?php print $domain; ?>/common/media/svg/bioversity-logo_small.svg" />
+					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page) == "map") ? "_white" : ""); ?>.svg" />
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>
@@ -19,7 +19,9 @@
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<?php
-					print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+					if (strtolower($page) !== "map") {
+						print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+					}
 					?>
 				</div>
 			</div>

@@ -1,4 +1,5 @@
 <?php
+// header("Content-type: text/plain");
 
 // Parse the menu defined by json object in "common/include/conf/menu.json"
 class parse_json_config {
@@ -6,6 +7,7 @@ class parse_json_config {
 		if(trim($config) == "") {
 			// Uncomment if you want to remote json menu
 			//$config = "common/include/conf/menu.json";
+			// include("../conf/menu.php");
 			include("common/include/conf/menu.php");
 			$config = $menu;
 		}
@@ -28,18 +30,18 @@ class parse_json_config {
 		}
 		return false;
 	}
-	private function build_menu($menu, $menu_position) {
-	$menu_list = '';
-		foreach($this->walk($menu, $menu_position) as $obj => $map_toolbox) {
-			if($obj !== "_comment") {
-				if(!isset($map_toolbox["show_on_page"]) || $map_toolbox["show_on_page"] == $_GET["p"]) {
-					$menu_list .= '	<li' . (isset($map_toolbox["childs"]) ? ' class="btn-group"' : '') . '><a ';
-					$menu_list .= implode(" ", $this->extract_attributes($map_toolbox)) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . (isset($map_toolbox["childs"]) ? ' <span class="caret"></span>' : '') . '</a>';
-					if(isset($map_toolbox["childs"])) {
-						$menu_list .= '<ul class="dropdown-menu" role="menu">' . $this->build_menu($map_toolbox, "childs") . '</ul>';
+	private function build_menu($menu, $menu_position, $array = 0) {
+		$menu_list = '';
+		foreach($this->walk($menu, $menu_position)[$array] as $k => $v) {
+			if($k !== "_comment") {
+				if(!isset($v["show_on_page"]) || $v["show_on_page"] == $_GET["p"]) {
+					$menu_list .= '	<li' . (isset($v["childs"]) ? ' class="btn-group"' : '') . '><a ';
+					$menu_list .= implode(" ", $this->extract_attributes($v)) . '><span class="' . $v["content"]["icon"] . '"></span>&nbsp;' . $v["content"]["text"] . (isset($v["childs"]) ? ' <span class="caret"></span>' : '') . '</a>';
+					if(isset($v["childs"])) {
+						$menu_list .= '<ul class="dropdown-menu" role="menu">' . $this->build_menu($v, "childs") . '</ul>';
 					}
 					$menu_list .= '</li>' . "\n";
-					if(isset($map_toolbox["divider"])) {
+					if(isset($v["divider"])) {
 						$menu_list .= '	<li class="divider"></li>' . "\n";
 					}
 				}
@@ -64,16 +66,25 @@ class parse_json_config {
 		return $attributes;
 	}
 	public function menu($menu_position, $ul_class = array()) {
-		$menu_list = '<ul';
-		if(!is_array($ul_class)) {
-			$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
-		} else {
-			foreach($ul_class as $k => $v) {
-				$menu_list .= " " . $k . '="' . $v . '"';
+		// print_r($this->build_menu($this->json_conf, $menu_position, 0));
+		foreach($this->walk($this->json_conf, $menu_position) as $i => $j) {
+			if(!is_numeric($i)) {
+				$num = 0;
+			} else {
+				$num = $i;
 			}
+			$menu_list .= '<ul';
+			if(!is_array($ul_class)) {
+				$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
+			} else {
+				foreach($ul_class as $k => $v) {
+					$menu_list .= " " . $k . '="' . $v . '"';
+				}
+			}
+			$menu_list .=  ">\n";
+			$menu_list .= $this->build_menu($this->json_conf, $menu_position, $num);
+			$menu_list .= "</ul>\n";
 		}
-		$menu_list .=  ">\n";
-		$menu_list .= $this->build_menu($this->json_conf, $menu_position);
 		/*
 		foreach($this->walk($this->json_conf, $menu_position) as $obj => $map_toolbox) {
 			if($obj !== "_comment") {
@@ -85,9 +96,9 @@ class parse_json_config {
 			}
 		}
 		*/
-		$menu_list .= "</ul>";
 		return $menu_list;
 	}
+
 
 	public function contextmenu($menu_position, $ul_class = array()) {
 		$menu_list = '<ul';
@@ -129,3 +140,8 @@ class parse_json_config {
 		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
 	}
 }
+//
+// $site_config = new parse_json_config();
+// print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+// exit();
+?>

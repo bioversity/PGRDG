@@ -1,5 +1,5 @@
 <?php
-$menu["menu"]["top"] = array(
+$menu["menu"]["top"][] = array(
 	/*"Left panel" => array(
 		"show_on_page" => "Search",
 		// Here you are defining the <a> tag
@@ -189,6 +189,35 @@ $menu["menu"]["top"] = array(
 	*/
 );
 $menu["menu"]["map_toolbox"] = array(
+	"Show_hide_menu" => array(
+		"content" => array(
+			"icon" => "ion-navicon",
+			"text" => ""
+		),
+		"attributes" => array(
+			"onclick" => "$.sh_menu()",
+			"href" => "javascript:void(0);",
+			"class" => "btn",
+			"id" => "show_hide_menu_btn",
+			"title" => "Show or hide main menu (ALT+M)"
+		),
+		"divider" => "divider"
+	),
+	"Show_hide_breadcrumb" => array(
+		"content" => array(
+			"icon" => "fa fa-history",
+			"text" => ""
+		),
+		"attributes" => array(
+			"onclick" => "$.sh_breadcrumb()",
+			"href" => "javascript:void(0);",
+			"class" => "btn",
+			"id" => "show_hide_breadcrumb_btn",
+			"title" => "Show or hide breadcrumb (ALT+B)"
+		)
+	)
+);
+$menu["menu"]["map_toolbox"][] = array(
 	"Find_location" => array(
 		"content" => array(
 			"icon" => "ion-search",
@@ -200,8 +229,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"class" => "btn",
 			"id" => "find_location_btn",
 			"title" => "Find a location (ALT+F)"
-		),
-		"divider" => "divider"
+		)
 	),
 	"Change_map" => array(
 		"content" => array(
@@ -256,7 +284,9 @@ $menu["menu"]["map_toolbox"] = array(
 			"id" => "lock_view_btn",
 			"title" => "Lock/unlock this view (ALT+L)"
 		)
-	),
+	)
+);
+$menu["menu"]["map_toolbox"][] = array(
 	"Help" => array(
 		"content" => array(
 			"icon" => "ion-help",
@@ -271,7 +301,7 @@ $menu["menu"]["map_toolbox"] = array(
 		)
 	)
 );
-$menu["menu"]["tools"] = array(
+$menu["menu"]["tools"][] = array(
 	// "Add_marker" => array(
 	// 	"content" => array(
 	// 		"icon" => "ion-location",
@@ -350,7 +380,7 @@ $menu["menu"]["tools"] = array(
 		)
 	)
 );
-$menu["menu"]["map_contextmenu"] = array(
+$menu["menu"]["map_contextmenu"][] = array(
 	"Get_point" => array(
 		"content" => array(
 			"icon" => "fa fa-crosshairs",
@@ -365,7 +395,7 @@ $menu["menu"]["map_contextmenu"] = array(
 		"divider" => "divider"
 	)
 );
-$menu["menu"]["map_knob_contextmenu"] = array(
+$menu["menu"]["map_knob_contextmenu"][] = array(
 	"Point_info" => array(
 		"content" => array(
 			"icon" => "fa fa-info-circle",

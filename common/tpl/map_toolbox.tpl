@@ -17,17 +17,28 @@
 	<div id="gyy"></div>
 </div>
 <div id="map_sub_toolbox">
+	<?php
+	if (strtolower($page) == "map") {
+		?>
+		<div id="menu" class="level0">
+			<?php
+			print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+			?>
+		</div>
+		<?php
+	}
+	?>
 	<div id="previous_selected_layer"></div>
-	<div id="find_location" class="level0">
+	<div id="find_location" class="level2">
 		<input type="search" class="form-control input-sm" size="30" placeholder="Enter the location name here" />
 	</div>
-	<div id="change_map" class="level1">
+	<div id="change_map" class="level3">
 		<span id="selected_map" style="display: none;"><?php print $map_config->json_conf["map"]["default_map_layer"]; ?></span>
 	</div>
-	<div id="user_layers" class="level2">
+	<div id="user_layers" class="level4">
 		<ul id="selected_layer" class="list-unstyled"></ul>
 	</div>
-	<div id="tools" class="level2">
+	<div id="tools" class="level5">
 		<?php
 		print $site_config->menu("tools", "list-unstyled text-center");
 		?>
