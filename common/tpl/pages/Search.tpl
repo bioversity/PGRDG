@@ -1,7 +1,7 @@
 <?php
 if($page == "Map" || ($page == "Search" && isset($_GET["q"]) && trim($_GET["q"]) !== "")) {
         ?>
-        <div id="breadcrumb" style="left: 0;">
+        <div id="breadcrumb">
                 <ol class="breadcrumb">
                         <li id="goto_summary_btn"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
                         <li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>

@@ -986,7 +986,7 @@
                                                                 break;
                                                         case "tools":
                                                                 if(!$("#user_level_btn").is(":visible")) {
-                                                                        $(this).switchClass("level3", "level2", 100);
+                                                                        $(this).switchClass("level3", "level4", 100);
                                                                 } else {
                                                                         $(this).switchClass("level2", "level3", 100);
                                                                 }
@@ -1041,7 +1041,7 @@
                                 $("#lock_view_btn").addClass("pulse");
                                 $.reset_map_toolbox();
                                 $.disable_map_toolbox();
-                                $("#selected_zone").text("Map locked").stop().show();
+                                $("#selected_zone").html('<span style="position: fixed; top: 50%; right: 50%; margin-top: -80px; opacity: 0.5; text-shadow: 0px 0px 100px rgb(0, 0, 0);" class="fa fa-lock fa-2x"></span>' + i18n[lang].interface.map_locked).stop().show();
                                 $("#goto_map_btn").append('<sup class="lock"> <span class="fa fa-lock text-danger"></span></sup>');
 
                                 map.dragging.disable();
@@ -1106,6 +1106,34 @@
                         $("#guides").hide();
                 };
 
+                /**
+                 * Show/hide the main menu
+                 */
+                $.sh_menu = function() {
+                        if($("#nav").is(":visible")) {
+                                $("#nav").hide("slide", { direction: "right" }, 100);
+                                $("#show_hide_menu_btn").closest("li").removeClass("selected");
+                        } else {
+                                $("#nav").show("slide", { direction: "right" }, 100);
+                                $("#show_hide_menu_btn").closest("li").addClass("selected");
+                        }
+                };
+
+                /**
+                 * Show/hide the breadcrumb
+                 */
+                $.sh_breadcrumb = function() {
+                        if($("#breadcrumb").is(":visible")) {
+                                $("#breadcrumb").hide("slide", { direction: "right" }, 100);
+                                $("#show_hide_breadcrumb_btn").closest("li").removeClass("selected");
+                        } else {
+                                $("#show_hide_breadcrumb_btn span.fa").addClass("fa-1rspin");
+                                $("#breadcrumb").show("slide", { direction: "right" }, 100, function() {
+                                        $("#show_hide_breadcrumb_btn span.fa").removeClass("fa-1rspin");
+                                });
+                                $("#show_hide_breadcrumb_btn").closest("li").addClass("selected");
+                        }
+                };
 
                 /**
                 * Show contextMenu on map
@@ -1824,12 +1852,12 @@ $(document).ready(function() {
         if(current_path == "Map") {
                 $("header.main, section.container, #left_panel").addClass("map");
                 $("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
-                if($("#breadcrumb").css("top") == "110px") {
-                        $("#breadcrumb").css("top", "75px");
-                }
+                // if($("#breadcrumb").css("top") == "110px") {
+                //         $("#breadcrumb").css("top", "75px");
+                // }
                 $("#pgrdg_map, .panel_content").fadeIn(600);
                 $("#map_toolbox").delay(600).animate({"right": "0"}, 300);
-                $("#breadcrumb").animate({"right": "50px"}, 300);
+                // $("#breadcrumb").animate({"right": "50px"}, 300);
 
                 $("#breadcrumb .breadcrumb li.pull-right").hide();
 

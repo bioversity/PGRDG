@@ -28,7 +28,7 @@ $.shortcuts = function() {
         /**
          * ALT + 0
          */
-        $("body, #find_location input").bind("keydown", "alt+0", function(e) {
+        $("body, #find_location input").bind("keydown", "ctrl+0", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("World");
@@ -38,7 +38,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 1
 	 */
-        }).bind("keydown", "alt+1", function(e) {
+        }).bind("keydown", "ctrl+1", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("Africa");
@@ -48,7 +48,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 2
 	 */
-        }).bind("keydown", "alt+2", function(e) {
+        }).bind("keydown", "ctrl+2", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("Antarctica");
@@ -58,7 +58,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 3
 	 */
-        }).bind("keydown", "alt+3", function(e) {
+        }).bind("keydown", "ctrl+3", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("Asia");
@@ -68,7 +68,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 4
 	 */
-        }).bind("keydown", "alt+4", function(e) {
+        }).bind("keydown", "ctrl+4", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("Europe");
@@ -78,7 +78,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 5
 	 */
-        }).bind("keydown", "alt+5", function(e) {
+        }).bind("keydown", "ctrl+5", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("North America");
@@ -88,7 +88,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 6
 	 */
-        }).bind("keydown", "alt+6", function(e) {
+        }).bind("keydown", "ctrl+6", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("South America");
@@ -98,7 +98,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 7
 	 */
-        }).bind("keydown", "alt+7", function(e) {
+        }).bind("keydown", "ctrl+7", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         $.center_map_on("Oceania");
@@ -108,7 +108,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 8
 	 */
-        }).bind("keydown", "alt+8", function(e) {
+        }).bind("keydown", "ctrl+8", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         // Unset
@@ -117,11 +117,11 @@ $.shortcuts = function() {
 	/**
 	 * ALT + 9
 	 */
-        }).bind("keydown", "alt+9", function(e) {
+        }).bind("keydown", "ctrl+9", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                 	/**
-                	 * Fix for ALT+I and F1 confusion
+                	 * Fix for ctrl+I and F1 confusion
                 	 */
                         if(e.keyCode == 105){
                                 return false;
@@ -131,24 +131,33 @@ $.shortcuts = function() {
                 }
                 return false;
 	/**
-	 * ALT + i and ALT + F1
+	 * ALT + I and ALT + F1
 	 */
-        }).bind("keydown", "alt+i F1", function(e) {
+ }).bind("keydown", "ctrl+i F1", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                         if(e.keyCode != 105){
                                 $.show_help();
                         }
                 }
                 return false;
 	/**
+	 * ALT + B
+	 */
+        }).bind("keydown", "ctrl+b", function(e) {
+                e.preventDefault();
+                if(current_path == "Map") {
+                        $.sh_breadcrumb();
+                }
+                return false;
+	/**
 	 * ALT + F
 	 */
-        }).bind("keydown", "alt+f", function(e) {
+        }).bind("keydown", "ctrl+f", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                 	/**
-                	 * Fix for ALT+6 confusion
+                	 * Fix for ctrl+6 confusion
                 	 */
                         if(e.keyCode == 70){
                                 if(!$("#pgrdg_map").hasClass("locked")) {
@@ -163,18 +172,27 @@ $.shortcuts = function() {
 	/**
 	 * ALT + L
 	 */
-        }).bind("keydown", "alt+l", function(e) {
+        }).bind("keydown", "ctrl+l", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                         $.toggle_lock_view();
+                }
+                return false;
+	/**
+	 * ALT + M
+	 */
+        }).bind("keydown", "ctrl+m", function(e) {
+                e.preventDefault();
+                if(current_path == "Map") {
+                        $.sh_menu();
                 }
                 return false;
 	/**
 	 * ALT + T
 	 */
-        }).bind("keydown", "alt+t", function(e) {
+        }).bind("keydown", "ctrl+t", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $.sub_toolbox("change_map");
                         }
@@ -183,9 +201,9 @@ $.shortcuts = function() {
 	/**
 	 * ALT + "+" (plus key)
 	 */
-        }).bind("keydown", "alt++", function(e) {
+        }).bind("keydown", "ctrl++", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $("#selected_zone").text(i18n[lang].interface.zoom_in).fadeIn(300);
                                 $.increase_zoom();
@@ -195,27 +213,29 @@ $.shortcuts = function() {
 	/**
 	 * ALT + "-" (minus key)
 	 */
-        }).bind("keydown", "alt+-", function(e) {
+        }).bind("keydown", "ctrl+-", function(e) {
+                e.preventDefault();
                 if(current_path == "Map") {
-                        e.preventDefault();
                         if(!$("#pgrdg_map").hasClass("locked")) {
                                 $("#selected_zone").text(i18n[lang].interface.zoom_out).fadeIn(300);
                                 $.decrease_zoom();
                         }
                 }
                 return false;
-	/**
-	 * ALT + (left arrow key)
-	 */
-        }).bind("keydown", "alt+left", function(e) {
-                $.left_panel("close");
-                return false;
-	/**
-	 * ALT + (right arrow key)
-	 */
-        }).bind("keydown", "alt+right", function(e) {
-                $.left_panel("open");
-                return false;
+	// /**
+	//  * ALT + (left arrow key)
+	//  */
+        // }).bind("keydown", "ctrl+left", function(e) {
+        //         e.preventDefault();
+        //         $.left_panel("close");
+        //         return false;
+	// /**
+	//  * ALT + (right arrow key)
+	//  */
+        // }).bind("keydown", "ctrl+right", function(e) {
+        //         e.preventDefault();
+        //         $.left_panel("open");
+        //         return false;
 	/**
 	 * ESC
 	 */
@@ -231,7 +251,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT [keydown]
 	 */
-        }).bind("keydown", "alt", function(e) {
+        }).bind("keydown", "ctrl", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         /*
@@ -242,7 +262,7 @@ $.shortcuts = function() {
 	/**
 	 * ALT [keyup]
 	 */
-        }).bind("keyup", "alt", function(e) {
+        }).bind("keyup", "ctrl", function(e) {
                 if(current_path == "Map") {
                         e.preventDefault();
                         /*

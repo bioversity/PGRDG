@@ -19,9 +19,9 @@
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<?php
-					if (strtolower($page) !== "map") {
+					// if (strtolower($page) !== "map") {
 						print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
-					}
+					// }
 					?>
 				</div>
 			</div>

@@ -359,10 +359,10 @@
 	font-size: 11px;
 	}
 .leaflet-left .leaflet-control-scale {
-	margin-left: 5px;
+	/*margin-left: 5px;*/
 	}
 .leaflet-bottom .leaflet-control-scale {
-	margin-bottom: 5px;
+	/*margin-bottom: 5px;*/
 	}
 .leaflet-control-scale-line {
 	border: 2px solid #777;

@@ -188,7 +188,7 @@ $menu["menu"]["top"][] = array(
 	)
 	*/
 );
-$menu["menu"]["map_toolbox"] = array(
+$menu["menu"]["map_toolbox"][] = array(
 	"Show_hide_menu" => array(
 		"content" => array(
 			"icon" => "ion-navicon",
@@ -201,7 +201,7 @@ $menu["menu"]["map_toolbox"] = array(
 			"id" => "show_hide_menu_btn",
 			"title" => "Show or hide main menu (ALT+M)"
 		),
-		"divider" => "divider"
+		"divider" => "divider nav_divider"
 	),
 	"Show_hide_breadcrumb" => array(
 		"content" => array(
@@ -409,7 +409,8 @@ $menu["menu"]["map_knob_contextmenu"][] = array(
 		)
 	)
 );
-
+// print_r($menu["menu"]);
+// exit();
 if(isset($_GET["debug"]) == "true") {
 	header("Content-type: text/plain;");
 

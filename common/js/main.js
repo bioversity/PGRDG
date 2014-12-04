@@ -463,21 +463,35 @@
 			switch(hash) {
 				case "Forms":
 					//$.remove_storage("pgrdg_cache.interface.left_panel");
+					$("header.main, section.container, #left_panel").removeClass("map");
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Summary":
+					$("header.main, section.container, #left_panel").removeClass("map");
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Stats":
+					$("header.main, section.container, #left_panel").removeClass("map");
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Results":
+					$("header.main, section.container, #left_panel").removeClass("map");
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("close");
 					break;
 				case "Map":
+					if(!$("header").hasClass("map")) {
+						$("header.main, section.container, #left_panel").addClass("map");
+					}
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
 					$.left_panel("close");
 					break;
 				default:
+					$("header.main, section.container, #left_panel").removeClass("map");
+					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					// if(//$.left_panel("is_closed")) {
 					// 	//$.left_panel("check");
 					// }
@@ -565,7 +579,7 @@
 			$.left_panel_behaviour(hash);
 			if(hash == "Map") {
 				$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
-				$("#breadcrumb").animate({"right": "50px"}, 300);
+				// $("#breadcrumb").animate({"right": "50px"}, 300);
 				$("#contents .panel_content:not(#loader_bg)").hide();
 				$("#map, #pgrdg_map").fadeIn(300);
 			} else {
@@ -1283,13 +1297,13 @@
 		objp.storage_group = "ask";
 		objp.loaderType = $("#statistics_loader");
 		objp.loaderText = "Acquiring data...";
-		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_LIST_DOMAINS;
 		objp.parameters = {};
 		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
-		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
+		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
+		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
+		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
 		objp.colour = true;
 
 		$.ask_to_service(objp, function(response) {
@@ -1329,7 +1343,7 @@ $(document).ready(function() {
 
 			if($.obj_len(query) > 0) {
 				if($("#breadcrumb").css("display") == "none") {
-					$("#breadcrumb").fadeIn(200);
+					// $("#breadcrumb").fadeIn(200);
 				}
 
 				$.search_fulltext(query.q);
@@ -1340,9 +1354,14 @@ $(document).ready(function() {
 			}
 		}
 		if(current_path == "Map") {
-			if($("#breadcrumb").css("display") == "none") {
-				$("#breadcrumb").fadeIn(200);
+			if(!$("header").hasClass("map")) {
+				$("header").addClass("map");
 			}
+			if($("#breadcrumb").css("display") == "none") {
+				// $("#breadcrumb").fadeIn(200);
+			}
+		} else {
+			$("header").removeClass("map");
 		}
 		if(current_path == "Search" || current_path == "Advanced_search" || current_path == "Map") {
 			document.location.hash = "";

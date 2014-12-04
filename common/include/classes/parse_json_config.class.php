@@ -1,12 +1,10 @@
 <?php
-// header("Content-type: text/plain");
-
 // Parse the menu defined by json object in "common/include/conf/menu.json"
 class parse_json_config {
 	function __construct($config = "") {
 		if(trim($config) == "") {
 			// Uncomment if you want to remote json menu
-			//$config = "common/include/conf/menu.json";
+			// $config = "common/include/conf/menu.json";
 			// include("../conf/menu.php");
 			include("common/include/conf/menu.php");
 			$config = $menu;
@@ -30,9 +28,14 @@ class parse_json_config {
 		}
 		return false;
 	}
-	private function build_menu($menu, $menu_position, $array = 0) {
+	private function build_menu($menu, $menu_position, $num = null) {
+		if($num === null) {
+			$the_array = $menu[$menu_position];
+		} else {
+			$the_array = $menu[$menu_position][$num];
+		}
 		$menu_list = '';
-		foreach($this->walk($menu, $menu_position)[$array] as $k => $v) {
+		foreach($the_array as $k => $v) {
 			if($k !== "_comment") {
 				if(!isset($v["show_on_page"]) || $v["show_on_page"] == $_GET["p"]) {
 					$menu_list .= '	<li' . (isset($v["childs"]) ? ' class="btn-group"' : '') . '><a ';
@@ -42,7 +45,7 @@ class parse_json_config {
 					}
 					$menu_list .= '</li>' . "\n";
 					if(isset($v["divider"])) {
-						$menu_list .= '	<li class="divider"></li>' . "\n";
+						$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
 					}
 				}
 			}
@@ -66,8 +69,7 @@ class parse_json_config {
 		return $attributes;
 	}
 	public function menu($menu_position, $ul_class = array()) {
-		// print_r($this->build_menu($this->json_conf, $menu_position, 0));
-		foreach($this->walk($this->json_conf, $menu_position) as $i => $j) {
+		foreach($this->json_conf["menu"][$menu_position] as $i => $j) {
 			if(!is_numeric($i)) {
 				$num = 0;
 			} else {
@@ -82,7 +84,7 @@ class parse_json_config {
 				}
 			}
 			$menu_list .=  ">\n";
-			$menu_list .= $this->build_menu($this->json_conf, $menu_position, $num);
+			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $num);
 			$menu_list .= "</ul>\n";
 		}
 		/*
@@ -140,8 +142,8 @@ class parse_json_config {
 		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
 	}
 }
-//
+// header("Content-type: text/plain");
 // $site_config = new parse_json_config();
-// print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+// print $site_config->menu("top", "list-unstyled text-center");
 // exit();
 ?>

@@ -1,4 +1,5 @@
-*[unselectable="on"] {
+*[unselectable="on"],
+*[unselectable="true"] {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -379,7 +380,7 @@ header.map #logo,
 #logo.map {
 	padding-left: 10px;
 	height: 65px;
-	max-width: 275px;
+	max-width: 360px;
 }
 section > article {
 	border-top: #e0e0e0 1px solid;
@@ -536,13 +537,17 @@ header.main #nav {
 	border-left: 0px none;
 }
 header.map #nav {
-	height: 33px;
-	min-height: 33px;
+	display: none;
+	height: 39px;
+	min-height: 39px;
 	border-top: 0px none;
 	border-right: 0px none;
 	border-left: 0px none;
 	width: auto;
 	float: right;
+	position: fixed;
+	top: 0;
+	right: 49px;
 }
 #nav .fa,
 #nav .ionicons {
@@ -557,6 +562,7 @@ header.map #nav {
 }
 .map #nav li > a {
 	color: #ddd;
+	line-height: 26px;
 }
 #nav li > a:hover {
 	color: #000;
@@ -574,7 +580,7 @@ header.map #nav {
 	height: 75px;
 }
 .map #nav .container-fluid {
-	height: 33px;
+	height: 39px;
 }
 #nav .navbar-toggle {
 	margin: 35px 15px 0 0;
@@ -615,12 +621,13 @@ header.map #nav {
 @media (min-width: 868px) {
 	#nav .navbar-collapse.collapse {
 		float: right;
-		margin-top: -68px;
+		margin-top: -33px;
 	}
 	.map #nav .navbar-collapse.collapse {
-		height: 33px;
+		height: 39px;
 		margin: 0;
-		max-height: 33px;
+		max-height: 39px;
+		/*border-right: #2d2d2d 1px solid;*/
 	}
 }
 @media only screen and (max-width:868px) {
@@ -639,6 +646,12 @@ header.map #nav {
 	width: 1px;
 	margin: 0 !important;
 }
+.map .navbar .divider-vertical,
+.map .navbar .vertical-divider {
+	height: 38px;
+	background-color: #2d2d2d;
+	width: 1px;
+}
 @media (max-width: 868px) {
 	.navbar .divider-vertical,
 	.navbar .vertical-divider {
@@ -654,22 +667,25 @@ header.map #nav {
 #logo {
 	padding-bottom: 10px;
 }
+
 #logo img,
 #logo object {
 	border-right: 2px solid #E6E6E6;
 	float: left;
 	margin-top: 15px;
 	padding-right: 15px;
+	padding-left: 15px;
 }
 .map #logo img,
 .map #logo object {
 	border-right: rgba(255, 255, 255, 0.5) 1px solid;
+	padding-left: 0;
 }
 p.tagline {
 	color: #5f604b;
- 	display: table-cell;
+	display: table-cell;
 	font-size: 0.8em;
-	height: 100px;
+	height: 65px;
 	padding: 0 0 0 15px;
 	vertical-align: bottom;
 }
@@ -717,10 +733,13 @@ section.map {
 	z-index: 2;
 }
 .map #breadcrumb {
-	margin-left: 57.5%;
-	width: 642px;
-	top: 33px;
-	display: none !important;
+	border-top: 1px solid #c1d82f;
+	left: initial !important;
+	position: fixed;
+	right: 50px !important;
+	top: 38px;
+	width: auto;
+	display: none;
 }
 
 #breadcrumb .breadcrumb {
@@ -736,9 +755,13 @@ section.map {
 	padding-bottom: 10px;
 }
 .map #breadcrumb .breadcrumb {
-	background-color: transparent;
+	background-color: rgba(0, 0, 0, 0.9);
 	background-image: none;
 	padding-left: 9px;
+}
+.map .no-divider.pull-right {
+	margin: 0 0 0 150px;
+	padding: 0;
 }
 .map #breadcrumb .breadcrumb li {
 	color: #fff;
@@ -1919,6 +1942,9 @@ ul.list-group.transparent ul {
 	background-color: #2d2d2d;
 	height: 1px;
 }
+#map_toolbox li.nav_divider {
+	background-color: #c1d82f;
+}
 #map_toolbox a {
 	text-align: center;
 	border-radius: 0;
@@ -2236,12 +2262,25 @@ ul.list-group.transparent ul {
 	padding: 0  2px 2px;
 	float: right;
 }
-.ol-scale-line,
-.leaflet-control-scale.leaflet-control {
-	background-color: rgba(0, 0, 0, 0.7) !important;
-	margin-left: 10px;
+.leaflet-control-scale .leaflet-control {
+	bottom: 10px;
+	left: 10px;
+	margin: 0 !important;
 	position: fixed;
 }
+.leaflet-control-scale-line {
+	background-color: transparent !important;
+	border-color: #fff !important;
+	border-width: 1px !important;
+	color: #ccc !important;
+	text-shadow: 1px 1px 0 #333;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.5) inset;
+	padding: 0 5px;
+}
+.leaflet-control-scale-line:not(:first-child) {
+	margin-top: -1px !important;
+}
+
 .leaflet-control-attribution {
 	padding: 0 2px !important;
 }

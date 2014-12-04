@@ -78,7 +78,19 @@
 }
 .fa-spin {
   -webkit-animation: fa-spin 2s infinite linear;
-  animation: fa-spin 2s infinite linear;
+  animation: fa-spin 0.2s infinite linear;
+}
+.fa-1spin {
+  -webkit-animation: fa-spin 2s 1 linear;
+  animation: fa-spin 0.2s 1 linear;
+}
+.fa-rspin {
+  -webkit-animation: fa-spin 2s infinite linear reverse;
+  animation: fa-spin 2s infinite linear reverse;
+}
+.fa-1rspin {
+  -webkit-animation: fa-spin 0.2s 1 linear reverse;
+  animation: fa-spin 0.2s 1 linear reverse;
 }
 @-webkit-keyframes fa-spin {
   0% {
