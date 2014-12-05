@@ -80,46 +80,46 @@
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map3.js"></script-->
 
 		<!-- Leaflet -->
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/dist/leaflet.js"></script>
-		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/dist/leaflet.css" />
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/leaflet.js"></script>
+		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/leaflet.css" />
 			<!-- Providers -->
-			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/leaflet-providers/leaflet-providers.js"></script>
+			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/leaflet-providers/leaflet-providers.js"></script>
 			<!-- Marker cluster-->
-			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.markercluster/dist/MarkerCluster.css" />
-			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
-			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.markercluster/dist/MarkerCluster.css" />
+			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
 			<!-- Heatmap -->
-			<!-- <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/leaflet-heat.js"></script> -->
-			<!-- Draw -->
-			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/dist/leaflet.draw.css" />
-			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/Leaflet.draw.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
+			<!-- <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/leaflet-heat.js"></script> -->
+			<!-- Leaflet Draw -->
+			<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/dist/leaflet.draw.css" />
+			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/Leaflet.draw.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/Edit.Poly.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/Edit.SimpleShape.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/Edit.Circle.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/Edit.Rectangle.js"></script>
 
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Feature.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Polyline.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Polygon.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.SimpleShape.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Rectangle.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Circle.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/handler/Draw.Marker.js"></script>
 
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/ext/LatLngUtil.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/ext/GeometryUtil.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/ext/LatLngUtil.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/ext/GeometryUtil.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/ext/LineUtil.Intersect.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/ext/Polyline.Intersect.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/ext/Polygon.Intersect.js"></script>
 
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/Control.Draw.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/Tooltip.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/Toolbar.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/Control.Draw.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/Tooltip.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/Toolbar.js"></script>
 
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/draw/DrawToolbar.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/EditToolbar.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
-				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugin/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/draw/DrawToolbar.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/EditToolbar.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
+				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
 
 			<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 			<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>

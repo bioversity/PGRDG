@@ -167,7 +167,6 @@
                                         polyline: false,
                                         polygon: {
                                                 allowIntersection: false,
-                                                showArea: false,
                                                 drawError: {
                                                         color: '#b00b00',
                                                         timeout: 1000
@@ -177,6 +176,7 @@
                                                         weight: 2
                                                 },
                                                 lineJoin: "miter",
+                                                showArea: true,
         					metric: true
                                         },
                                         rect: {
@@ -208,17 +208,42 @@
                                 $.show_guides();
                         });
                         map.on("draw:created", function(e) {
+                                $.get_drawned_bounds = function(evt) {
+                                        var formatted = {},
+                                        latslngs_container = [],
+                                        latslngs = [];
+
+                                        if(evt.layerType !== "circle") {
+                                                $.each(evt.layer._latlngs, function(k, v) {
+                                                        latslngs[k] = [v.lng, v.lat];
+                                                });
+                                                latslngs.push([evt.layer._latlngs[0].lng, evt.layer._latlngs[0].lat]);
+                                                latslngs_container.push(latslngs);
+
+                                                formatted.type = "Polygon";
+                                                formatted.coordinates = latslngs_container;
+                                        } else {
+                                                latslngs_container = [evt.layer._latlng.lng, evt.layer._latlng.lat];
+
+                                                formatted.type = "Circle";
+                                                formatted.coordinates = latslngs_container;
+                                                formatted.radius = Math.ceil(evt.layer._mRadius);
+                                        }
+
+                                        return L.GeometryUtil.geodesicArea(evt.layer._latlngs);
+                                };
                                 $.execute = function(evt) {
                                         var meters = "", area = "";
                                         if(evt.layerType == "circle") {
-                                                meters = "km";
+                                                meters = "km<sup>2</sup>";
                                                 area = (layer._mRadius / 1000);
                                         } else {
-                                                meters = "ha",
-                                                area = L.GeometryUtil.geodesicArea(layer.getLatLngs());
+                                                meters = "km<sup>2</sup>";
+                                                area = L.GeometryUtil.geodesicArea(evt.layer.getLatLngs());
                                         }
                                         $.sub_toolbox("tools");
                                         $("#tools li.selected").removeClass("selected");
+                                        console.warn($.get_drawned_bounds(evt));
                                         apprise(i18n[lang].messages.map.selected_area
                                                 .replace("{X}", evt.layerType)
                                                 .replace("{Y}", $.highlight(area.toFixed(3)))
@@ -235,9 +260,7 @@
                                         }, function(r) {
                                                 var criteria = {};
                                                 if(r === true) {
-                                                        var latslngs_container = [],
-                                                        latslngs = [],
-                                                        formatted = {},
+                                                        var formatted = {},
                                                         kAPI = {};
 
                                                         if($.storage_exists("search.criteria")) {
@@ -246,22 +269,8 @@
                                                         // if($.storage_exists("search.criteria.select_map_area")) {
                                                         //         formatted = storage.get("pgrdg_cache.search.criteria.select_map_area");
                                                         // } else {
-                                                                if(evt.layerType !== "circle") {
-                                                                        $.each(evt.layer._latlngs, function(k, v) {
-                                                                                latslngs[k] = [v.lng, v.lat];
-                                                                        });
-                                                                        latslngs.push([evt.layer._latlngs[0].lng, evt.layer._latlngs[0].lat]);
-                                                                        latslngs_container.push(latslngs);
+                                                                formatted = $.get_drawned_bounds(evt.layer);
 
-                                                                        formatted.type = "Polygon";
-                                                                        formatted.coordinates = latslngs_container;
-                                                                } else {
-                                                                        latslngs_container = [evt.layer._latlng.lng, evt.layer._latlng.lat];
-
-                                                                        formatted.type = "Circle";
-                                                                        formatted.coordinates = latslngs_container;
-                                                                        formatted.radius = Math.ceil(evt.layer._mRadius);
-                                                                }
                                                                 storage.set("pgrdg_cache.search.criteria.select_map_area", formatted);
 
                                                                 var bounds = e.layer.getBounds(),
@@ -395,7 +404,7 @@
 
                         /*control = L.control.layers.provided(baseLayers, overlayLayers, {collapsed: true});//.addTo(map);*/
                         map.invalidateSize();
-                        map.setMaxBounds([[85, -190], [-190, 190]]);
+                        map.setMaxBounds([[-85.0, -200.0], [85.0, 200.0]]);
 
                         $(".leaflet-control-attribution.leaflet-control").html('<div class="attribution">' + $(".leaflet-control-attribution.leaflet-control").html() + '</div><a class="info" href="javascript: void(0);" onclick="$(\'.leaflet-control-attribution.leaflet-control div.attribution\').toggle_layer_description();"><span class="fa fa-info-circle"></span></a>');
 
