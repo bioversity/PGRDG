@@ -38,7 +38,7 @@
 	<div id="user_layers" class="level4">
 		<ul id="selected_layer" class="list-unstyled"></ul>
 	</div>
-	<div id="tools" class="level5">
+	<div id="tools" class="level4">
 		<?php
 		print $site_config->menu("tools", "list-unstyled text-center");
 		?>

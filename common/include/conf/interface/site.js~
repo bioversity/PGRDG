@@ -1,0 +1,14 @@
+var config = {
+        "service": {
+                "url": "http://192.168.20.253/services/Bioversity/",
+                "proxy": "API/?type=service&proxy=",
+                "definitions_dir": "/Service/Library2/definitions"
+        },
+        "site": {
+                "version": 1.5,
+                "timestamp": 1414137020,
+                "developer_mode": true,
+                "default_language": "en",
+                "allow_signin": true
+        }
+};

@@ -35,6 +35,7 @@ if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 	$page = "";
 }
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
+$logged = true;
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>
@@ -46,10 +47,20 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 			<div></div>
 			<div></div>
 		</div>
-		<?php include("common/tpl/body_header.tpl"); ?>
+		<?php
+		if($logged && $page == "Admin") {
+			?>
+			<?php include("common/tpl/admin/index.tpl"); ?>
+			<?php
+		} else {
+			?>
+			<?php include("common/tpl/body_header.tpl"); ?>
 
-		<?php include("common/include/get_contents.php"); ?>
+			<?php include("common/include/get_contents.php"); ?>
 
-		<?php include("common/tpl/script.tpl"); ?>
+			<?php include("common/tpl/script.tpl"); ?>
+			<?php
+		}
+		?>
 	</body>
 </html>

@@ -152,7 +152,7 @@ $menu["menu"]["top"][] = array(
 			"class" => "btn btn-link"
 		),
 		"divider" => "vertical-divider"
-	)
+	),
 	/*
 	"Data" => array(
 		"content" => array(
@@ -173,6 +173,7 @@ $menu["menu"]["top"][] = array(
 		),
 		"divider" => "vertical-divider"
 	),
+	*/
 	"Sign in" => array(
 		"content" => array(
 			"icon" => "fa fa-refresh fa-spin",
@@ -186,7 +187,6 @@ $menu["menu"]["top"][] = array(
 			"class" => "btn btn-link disabled"
 		)
 	)
-	*/
 );
 $menu["menu"]["map_toolbox"][] = array(
 	"Show_hide_menu" => array(

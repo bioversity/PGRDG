@@ -994,11 +994,11 @@
                                                         case "user_level":
                                                                 break;
                                                         case "tools":
-                                                                if(!$("#user_level_btn").is(":visible")) {
-                                                                        $(this).switchClass("level3", "level4", 100);
-                                                                } else {
-                                                                        $(this).switchClass("level2", "level3", 100);
-                                                                }
+                                                                // if(!$("#user_level_btn").is(":visible")) {
+                                                                //         $(this).switchClass("level3", "level4", 100);
+                                                                // } else {
+                                                                //         $(this).switchClass("level2", "level3", 100);
+                                                                // }
                                                                 break;
                                                 }
                                         });
