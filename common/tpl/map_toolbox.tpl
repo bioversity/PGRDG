@@ -18,7 +18,7 @@
 </div>
 <div id="map_sub_toolbox">
 	<?php
-	if (strtolower($page) == "map") {
+	if (strtolower($page->current) == "map") {
 		?>
 		<div id="menu" class="level0">
 			<?php

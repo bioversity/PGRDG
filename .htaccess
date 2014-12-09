@@ -40,7 +40,7 @@ RewriteBase /
 	RewriteCond %{REQUEST_URI} !^/(share_data|share_data/.*?)($|/)
 	RewriteRule (.*)\ (.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	RewriteRule (.*)\+(.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
-	# Replace double quotes «"» with single quotes «'»
+	# Replace double quotes ï¿½"ï¿½ with single quotes ï¿½'ï¿½
 	RewriteRule (.*)\"(.*) http://%{SERVER_NAME}/$1'$2 [R=303,L]
 	# Replace all double-slashes "//" with single slash "/"
 	RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
@@ -91,9 +91,9 @@ RewriteBase /
 # ----------- PHP -----------
 #
 	# PHP error handling for development servers
-	
+
 	php_flag display_startup_errors off
-	php_flag display_errors off
+	php_flag display_errors on
 	php_flag html_errors off
 	php_flag log_errors on
 	php_flag ignore_repeated_errors off

@@ -64,7 +64,7 @@
 	</script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/main.js"></script>
 	<?php
-	if(strtolower($page) == "map" || strtolower($page) == "search" || strtolower($page) == "advanced_search") {
+	if(strtolower($page->current) == "map" || strtolower($page->current) == "search" || strtolower($page->current) == "advanced_search") {
 		?>
 		<!-- OpenLayers2 -->
 			<!--
@@ -134,4 +134,4 @@
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types"></script>
-	<?php include("common/include/conf/google_analytics.php"); ?>
+	<?php //include("common/include/conf/google_analytics.php"); ?>

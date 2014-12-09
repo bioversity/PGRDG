@@ -1,15 +1,15 @@
-<header class="main<?php print (strtolower($page) == "map") ? ' map' : ""; ?>">
+<header class="main<?php print (strtolower($page->current) == "map") ? ' map' : ""; ?>">
 	<div class="container">
 		<div class="top">
-			<div id="logo"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>
+			<div id="logo"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 				<a href="/">
-					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page) == "map") ? "_white" : ""); ?>.svg" />
+					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page->current) == "map") ? "_white" : ""); ?>.svg" />
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>
 		</div>
 
-		<nav role="navigation" id="nav" class="navbar right<?php print (strtolower($page) == "map") ? " map" : ""; ?>">
+		<nav role="navigation" id="nav" class="navbar right<?php print (strtolower($page->current) == "map") ? " map" : ""; ?>">
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -19,7 +19,7 @@
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<?php
-					// if (strtolower($page) !== "map") {
+					// if (strtolower($page->current) !== "map") {
 						print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
 					// }
 					?>

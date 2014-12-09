@@ -1,0 +1,123 @@
+{
+        "pages": {
+                "Home": {
+                        "title": "Main page",
+                        "title_class": "",
+                        "address": "",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": true,
+                        "subpages": ""
+                },
+                "About_us": {
+                        "title": "About us",
+                        "title_class": "",
+                        "address": "About_us",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": {
+                                "Feedback": {
+                                        "title": "Feedback",
+                                        "title_class": "",
+                                        "address": "Feedback",
+                                        "template": "common/tpl/pages/Feedback.tpl",
+                                        "need_login": false,
+                                        "is_main_page": false,
+                                        "subpages": ""
+                                },
+                                "How_the_system_works": {
+                                        "title": "How the system works",
+                                        "title_class": "",
+                                        "address": "How_the_system_works",
+                                        "template": "",
+                                        "need_login": false,
+                                        "is_main_page": false,
+                                        "subpages": ""
+                                }
+                        }
+                },
+                "National_Inventories": {
+                        "title": "National Inventories",
+                        "title_class": "",
+                        "address": "National_Inventories",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": {
+                                "Conservation_Strategies": {
+                                        "title": "Conservation Strategies",
+                                        "title_class": "",
+                                        "address": "Conservation_Strategies",
+                                        "template": "",
+                                        "need_login": false,
+                                        "is_main_page": false,
+                                        "subpages": ""
+                                },
+                                "Links": {
+                                        "title": "Links to other information systems",
+                                        "title_class": "",
+                                        "address": "Links",
+                                        "template": "",
+                                        "need_login": false,
+                                        "is_main_page": false,
+                                        "subpages": ""
+                                }
+                        }
+                },
+                "Search": {
+                        "title": "Search",
+                        "title_class": "",
+                        "address": "Search",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": ""
+                },
+                "Graph": {
+                        "title": "Graph",
+                        "title_class": "",
+                        "address": "Graph",
+                        "template": "common/tpl/pages/Graph.tpl",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": ""
+                },
+                "Map": {
+                        "title": "Map",
+                        "title_class": "",
+                        "address": "Map",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": ""
+                },
+                "Blog": {
+                        "title": "Blog",
+                        "title_class": "",
+                        "address": "Blog",
+                        "template": "common/tpl/pages/Blog.tpl",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": ""
+                },
+                "Profile": {
+                        "title": "Profile",
+                        "title_class": "",
+                        "address": "Profile",
+                        "template": "common/tpl/admin/Profile.tpl",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "subpages": ""
+                },
+                "Dashboard": {
+                        "title": "Dashboard",
+                        "title_class": "",
+                        "address": "Dashboard",
+                        "template": "",
+                        "need_login": true,
+                        "is_main_page": false,
+                        "subpages": ""
+                }
+        }
+}

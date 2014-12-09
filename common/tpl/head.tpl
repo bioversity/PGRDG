@@ -2,10 +2,10 @@
 <base href="./">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-<title>PGRDG ~ Researching agricultural and forest biodiversity | <?php print $page_title; ?></title>
+<title>PGRDG ~ Researching agricultural and forest biodiversity | <?php print $page->title; ?></title>
 
 <?php
-if($logged && $page == "Admin") {
+if($logged && strtolower($page->current) == "dashboard") {
         ?>
         <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/font-awesome.min.css">

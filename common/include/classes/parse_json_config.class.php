@@ -13,6 +13,9 @@ class parse_json_config {
 		//$this->json_conf = json_decode(file_get_contents($config), true);
 		$this->json_conf = $config;
 	}
+/* -------------------------------------------------------------------------- */
+/* PRIVATE FUNCTIONS
+/* -------------------------------------------------------------------------- */
 	private function walk($array, $key) {
 		if(!is_array($array)) {
 			return false;
@@ -68,7 +71,31 @@ class parse_json_config {
 		}
 		return $attributes;
 	}
+	/**
+	* Search recursive a value in an array and returns its parent key
+	* @param  array  $array        The target array
+	* @param  string $key          Which key must have the searched value
+	* @param  string $value        The value to search
+	* @return object               An object with the entire part of array
+	*/
+	private function search($array, $key, $value) {
+		$results = array();
+		if (is_array($array)){
+			if (isset($array[$key]) && $array[$key] == $value)
+			$results[] = $array;
+
+			foreach ($array as $subarray)
+			$results = array_merge($results, $this->search($subarray, $key, $value));
+		}
+		return $results;
+	}
+
+/* -------------------------------------------------------------------------- */
+/* PUBLIC FUNCTIONS
+/* -------------------------------------------------------------------------- */
+
 	public function menu($menu_position, $ul_class = array()) {
+		$menu_list = "";
 		foreach($this->json_conf["menu"][$menu_position] as $i => $j) {
 			if(!is_numeric($i)) {
 				$num = 0;
@@ -141,6 +168,38 @@ class parse_json_config {
 	public function parse_js_config($variable) {
 		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
 	}
+
+	/**
+	* Parse
+	* @param  [type] $pp [description]
+	* @return [type]     [description]
+	*/
+	public function parse_page_config($variable) {
+		$pp = json_decode(trim(file_get_contents($this->json_conf)), 1);
+		// print_r($pp);
+		$page = new stdClass();
+		$fp = new stdClass();
+		$found = false;
+		if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
+			$page->current = $_GET["p"];
+			if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {
+				$page->sub_page = $_GET["s"];
+				if (isset($_GET["ss"]) && trim($_GET["ss"]) !== "") {
+					$page->sub_subpage = $_GET["ss"];
+				}
+			}
+		} else {
+			$page->current = "";
+		}
+		if(is_array($pp)) {
+			foreach($this->search($pp, "address", $page->current)[0] as $i => $v) {
+				$page->$i = $v;
+			};
+		}
+		return $page;
+		// print_r($page);
+	}
+
 }
 // header("Content-type: text/plain");
 // $site_config = new parse_json_config();

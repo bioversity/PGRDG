@@ -1,5 +1,5 @@
 <?php
-if($page == "Map" || ($page == "Search" && isset($_GET["q"]) && trim($_GET["q"]) !== "")) {
+if(strtolower($page->current) == "map" || (strtolower($page->current) == "search" && isset($_GET["q"]) && trim($_GET["q"]) !== "")) {
         ?>
         <div id="breadcrumb">
                 <ol class="breadcrumb">
@@ -13,7 +13,7 @@ if($page == "Map" || ($page == "Search" && isset($_GET["q"]) && trim($_GET["q"])
                 <div id="se_results">
                         <form method="get" action="" onsubmit="if($('#search_form').val().length < 3) { return false; }">
                                 <div class="input-group">
-                                        <input type="text" name="q" class="form-control" id="search_form" placeholder="<?php print $i18n[$lang]["interface"]["btns"]["search"]; ?>..." value="<?php print htmlentities(urldecode($_GET["q"])); ?>" />
+                                        <input type="text" name="q" class="form-control" id="search_form" placeholder="<?php print $i18n[$lang]["interface"]["btns"]["search"]; ?>..." value="<?php print (isset($_GET["q"]) ? htmlentities(urldecode($_GET["q"])) : ""); ?>" />
                                         <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-default-white"><span class="fa fa-search"></span></button>
                                                 <a data-toggle="collapse" id="group_by_btn" onclick="$.manage_url('Summary');" data-parent="#group_by_accordion" href="#collapsed_group_form" class="btn btn-default-grey disabled">

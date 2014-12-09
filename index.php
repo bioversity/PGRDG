@@ -1,5 +1,6 @@
 <?php
-//header("Content-type: text/plain");
+// header("Content-type: text/plain");
+
 require_once("common/include/funcs/nl2.php");
 require_once("common/include/funcs/readmore.php");
 require_once("common/include/lib/php-markdown-extra-extended/markdown.php");
@@ -8,37 +9,27 @@ require_once("common/include/classes/parse_json_config.class.php");
 
 $site_config = new parse_json_config();
 $map_config = new parse_json_config("common/include/conf/map.json");
+$pages_config = new parse_json_config("common/include/conf/interface/pages.json");
 $i18n_config = new parse_json_config("common/include/conf/interface/i18n.js");
 $interface_config = new parse_json_config("common/include/conf/interface/site.js");
 $i18n = $i18n_config->parse_js_config("i18n");
 $interface = $interface_config->parse_js_config("config");
+$page = $pages_config->parse_page_config("pages");
+
 if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $_COOKIE["lang"];
 } else {
 	$lang = $interface["site"]["default_language"];
 }
 
-function is_home() {
-	return( (! isset( $_GET[ 'p' ] ))
-		 || (trim( $_GET[ 'p' ] ) == '')
-		 || (strtolower( $_GET[ 'p' ] ) == 'home') );								// ==>
-}
-if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
-	$page = $_GET["p"];
-	if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {
-		$sub_page = $_GET["s"];
-		if (isset($_GET["ss"]) && trim($_GET["ss"]) !== "") {
-			$sub_subpage = $_GET["ss"];
-		}
-	}
-} else {
-	$page = "";
-}
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
 $logged = true;
+
+// print_r($page);
+// exit();
 ?>
 <!DOCTYPE html>
-<html lang="en"<?php print (strtolower($page) == "map") ? ' class="map"' : ""; ?>>
+<html lang="en"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
@@ -48,7 +39,7 @@ $logged = true;
 			<div></div>
 		</div>
 		<?php
-		if($logged && $page == "Admin") {
+		if($logged && strtolower($page->current) == "dashboard") {
 			?>
 			<?php include("common/tpl/admin/index.tpl"); ?>
 			<?php
