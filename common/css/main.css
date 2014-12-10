@@ -48,13 +48,55 @@ body {
 	width: 100%;
 	height: 100%;
 }
-h1, h2,
+body.e404 {
+	background: #000 url("../media/img/1302078_37216853.jpg") top center no-repeat !important;
+	background-size: 100%;
+}
+
+h1,
+h2,
 h3 {
 	font-family: "HelveticaNeueW01-45Ligh";
 }
 h1.text-muted {
 	margin-bottom: 2em;
 	border-bottom: #eee 1px solid;
+}
+div.e404 {
+	position: absolute;
+	bottom: 20%;
+	right: 20%;
+	width: 260px;
+	color: #fff;
+	text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+div.e404 .help-block {
+	background-color: rgba(255, 255, 255, 0.5);
+	box-shadow: 0 0 3px #fff;
+	color: #333;
+	padding: 5px;
+}
+div.e404 p { color: #ddd; text-shadow: 0 0 10px #000; }
+
+@media only screen and (max-width:420px) {
+	div.e404 {
+		position: absolute;
+		top: 20%;
+		left: 50%;
+		margin-left: -130px;
+		width: 260px;
+	}
+	div.e404 h1 {
+		text-align: center;
+	}
+	div.e404 p {
+		font-size: 13px;
+		text-align: justify;
+	}
+}
+div.e404 h1 > span {
+	font-size: 4em !important;
+	font-weight: bold;
 }
 h2 {
 	border-bottom: #eee 1px solid;

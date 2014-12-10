@@ -33,24 +33,32 @@ $logged = true;
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
-	<body>
-		<div id="loader" class="system">
-			<div></div>
-			<div></div>
-		</div>
+	<body <?php print (($page->exists) ? "" : 'class="e404"'); ?>>
 		<?php
-		if($logged && strtolower($page->current) == "dashboard") {
+		if($page->exists) {
 			?>
-			<?php include("common/tpl/admin/index.tpl"); ?>
+			<div id="loader" class="system">
+				<div></div>
+				<div></div>
+			</div>
+			<?php
+			if($logged && strtolower($page->current) == "dashboard") {
+				?>
+				<?php include("common/tpl/admin/index.tpl"); ?>
+				<?php
+			} else {
+				?>
+				<?php include("common/tpl/body_header.tpl"); ?>
+
+				<?php include("common/include/get_contents.php"); ?>
+
+				<?php include("common/tpl/script.tpl"); ?>
+				<?php
+			}
+			?>
 			<?php
 		} else {
-			?>
-			<?php include("common/tpl/body_header.tpl"); ?>
-
-			<?php include("common/include/get_contents.php"); ?>
-
-			<?php include("common/tpl/script.tpl"); ?>
-			<?php
+			include("common/tpl/pages/404.tpl");
 		}
 		?>
 	</body>

@@ -192,9 +192,25 @@ class parse_json_config {
 			$page->current = "";
 		}
 		if(is_array($pp)) {
-			foreach($this->search($pp, "address", $page->current)[0] as $i => $v) {
-				$page->$i = $v;
-			};
+		// print_r($variable);
+		// print_r($pp[$variable]);
+		// print_r($this->search($pp, "address", $page->current));
+		// exit();
+			if(strlen($page->current) == 0 || array_key_exists($page->current, $pp[$variable])) {
+				$page->exists = true;
+				foreach($this->search($pp, "address", $page->current)[0] as $i => $v) {
+					$page->$i = $v;
+				};
+			} else {
+				$page->title = str_replace("_", " ", $page->current);
+				$page->exists = false;
+				$page->title_class = "";
+				$page->address = $page->current;
+				$page->template = "";
+				$page->need_login = false;
+				$page->is_main_page = false;
+				$page->subpages = "";
+			}
 		}
 		return $page;
 		// print_r($page);
