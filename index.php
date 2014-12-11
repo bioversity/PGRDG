@@ -23,7 +23,7 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 }
 
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
-$logged = true;
+$logged = false;
 
 // print_r($page);
 // exit();
@@ -33,32 +33,35 @@ $logged = true;
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
-	<body <?php print (($page->exists) ? "" : 'class="e404"'); ?>>
+	<body <?php print (($page->exists) ? (($page->need_login && !$logged) ? 'class="e405"' : "") : 'class="e404"'); ?>>
 		<?php
-		if($page->exists) {
-			?>
-			<div id="loader" class="system">
-				<div></div>
-				<div></div>
-			</div>
-			<?php
-			if($logged && strtolower($page->current) == "dashboard") {
-				?>
-				<?php include("common/tpl/admin/index.tpl"); ?>
-				<?php
+		if(!$page->exists) {
+			include("common/tpl/pages/404.tpl");
+		} else {
+			if($page->need_login && !$logged) {
+				include("common/tpl/pages/405.tpl");
+				include("common/tpl/script.tpl");
 			} else {
 				?>
-				<?php include("common/tpl/body_header.tpl"); ?>
-
-				<?php include("common/include/get_contents.php"); ?>
-
-				<?php include("common/tpl/script.tpl"); ?>
+				<div id="loader" class="system">
+					<div></div>
+					<div></div>
+				</div>
 				<?php
+				if($logged && strtolower($page->current) == "dashboard") {
+					?>
+					<?php include("common/tpl/admin/index.tpl"); ?>
+					<?php
+				} else {
+					?>
+					<?php include("common/tpl/body_header.tpl"); ?>
+
+					<?php include("common/include/get_contents.php"); ?>
+
+					<?php include("common/tpl/script.tpl"); ?>
+					<?php
+				}
 			}
-			?>
-			<?php
-		} else {
-			include("common/tpl/pages/404.tpl");
 		}
 		?>
 	</body>

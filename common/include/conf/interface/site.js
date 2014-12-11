@@ -9,6 +9,6 @@ var config = {
                 "timestamp": 1414137020,
                 "developer_mode": true,
                 "default_language": "en",
-                "allow_signin": false
+                "allow_signup": false
         }
 };

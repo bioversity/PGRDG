@@ -486,7 +486,6 @@
 					if(!$("header").hasClass("map")) {
 						$("header.main, section.container, #left_panel").addClass("map");
 					}
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
 					$.left_panel("close");
 					break;
 				default:
@@ -1361,7 +1360,10 @@ $(document).ready(function() {
 				// $("#breadcrumb").fadeIn(200);
 			}
 		} else {
-			$("header").removeClass("map");
+			// $("header").removeClass("map");
+		}
+		if($("header").hasClass("map")) {
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
 		}
 		if(current_path == "Search" || current_path == "Advanced_search" || current_path == "Map") {
 			document.location.hash = "";

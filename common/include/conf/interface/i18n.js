@@ -18,10 +18,17 @@ var i18n = {
                         "login": {
                                 "remember_me": "Remember me",
                                 "dont_have_account": "Don't have an account?",
-                                "sign_here": "Sign up here",
+                                "signup_here": "Sign up here",
                                 "sign_in": "Sign in",
                                 "sign_in_btn": "Sign in"
                         },
+                        "errors": {
+                                "404": "Page not found",
+                                "405": "Not allowed",
+                                "page_do_not_exists": "We're sorry but the page you are looking for do not exists in this Server",
+                                "page_requires_login": "This page requires that you're logged in"
+                        },
+                        "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
                         "map_limit_display": {
                                 "title": "Displayed {N} of {TOT} markers",
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."

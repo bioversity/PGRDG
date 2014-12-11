@@ -27,10 +27,10 @@
 					<div class="row">
 						<div class="col-sm-6">
 							<?php
-							if($interface["site"]["allow_signin"]) {
+							if($interface["site"]["allow_signup"]) {
 								?>
 								<div class="input-group">
-									<?php print $i18n[$lang]["messages"]["login"]["dont_have_account"]; ?> <a href="javascript:void(0);"><?php print $i18n[$lang]["messages"]["login"]["sign_here"]; ?></a>
+									<?php print $i18n[$lang]["messages"]["login"]["dont_have_account"]; ?> <a href="javascript:void(0);"><?php print $i18n[$lang]["messages"]["login"]["signup_here"]; ?></a>
 								</div>
 								<?php
 							}
