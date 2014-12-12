@@ -464,22 +464,18 @@
 				case "Forms":
 					//$.remove_storage("pgrdg_cache.interface.left_panel");
 					$("header.main, section.container, #left_panel").removeClass("map");
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Summary":
 					$("header.main, section.container, #left_panel").removeClass("map");
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Stats":
 					$("header.main, section.container, #left_panel").removeClass("map");
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("open");
 					break;
 				case "Results":
 					$("header.main, section.container, #left_panel").removeClass("map");
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					$.left_panel("close");
 					break;
 				case "Map":
@@ -490,7 +486,6 @@
 					break;
 				default:
 					$("header.main, section.container, #left_panel").removeClass("map");
-					$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
 					// if(//$.left_panel("is_closed")) {
 					// 	//$.left_panel("check");
 					// }
@@ -1361,9 +1356,6 @@ $(document).ready(function() {
 			}
 		} else {
 			// $("header").removeClass("map");
-		}
-		if($("header").hasClass("map")) {
-			$("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
 		}
 		if(current_path == "Search" || current_path == "Advanced_search" || current_path == "Map") {
 			document.location.hash = "";

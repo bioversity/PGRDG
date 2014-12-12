@@ -343,7 +343,8 @@ auth = false, // Default status for jcryption authentication, do not edit
 url = $.url().attr(),
 url_paths = url.path.split("/"),
 query = $.parse_params(url.query),
-current_path = url_paths[url_paths.length - 1];
+current_path = url_paths[url_paths.length - 1],
+is_error_page = $("body").attr("data-error");
 
 $.site_conf(function() {
         if(!load) {

@@ -33,7 +33,7 @@ $logged = false;
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
-	<body <?php print (($page->exists) ? (($page->need_login && !$logged) ? 'class="e405"' : "") : 'class="e404"'); ?>>
+	<body <?php print ((count($page->class) > 0) ? 'class="' . implode($page->class, " ") . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		if(!$page->exists) {
 			include("common/tpl/pages/404.tpl");

@@ -180,6 +180,8 @@ class parse_json_config {
 		$page = new stdClass();
 		$fp = new stdClass();
 		$found = false;
+		$logged = isset($_COOKIE["l"]);
+
 		if (isset($_GET["p"]) && trim($_GET["p"]) !== "") {
 			$page->current = $_GET["p"];
 			if (isset($_GET["s"]) && trim($_GET["s"]) !== "") {
@@ -210,6 +212,17 @@ class parse_json_config {
 				$page->need_login = false;
 				$page->is_main_page = false;
 				$page->subpages = "";
+			}
+			$page->has_error = false;
+
+			if($page->exists) {
+				if($page->need_login && !$logged) {
+					$page->class[] = "e405";
+					$page->has_error = true;
+				}
+			} else {
+				$page->class[] = "e404";
+				$page->has_error = true;
 			}
 		}
 		return $page;
