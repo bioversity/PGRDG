@@ -19,7 +19,6 @@ define("I", "info");
 define("D", "debug");
 define("T", "trace");
 
-
 class Cypher {
         function __construct($user_data, $mode) {
                 // The working path based on the script path
