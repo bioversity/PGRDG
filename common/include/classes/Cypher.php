@@ -478,6 +478,7 @@ class Cypher {
                         } else {
                                 // Set the array to export
                                 $this->fingerprint = $this->export_fingerprint(false);
+                                return "ok";
                                 // Rename temp user dir with its fingerprint
                                 $this->rename_user_path();
                                 $this->public_key = $this->export_key(true);
@@ -488,7 +489,7 @@ class Cypher {
                                 @unlink($this->user_path . DIRECTORY_SEPARATOR . "pubring.gpg~");
                                 chmod($this->user_path, 0600);
 
-                                print_r($this->repo);
+                                return json_encode($this->repo);
                         }
                 }
         }
@@ -580,7 +581,8 @@ $user_data = array(
         "passphrase" => ""
 );
 $cypher = new Cypher($user_data, "PGP");
-$cypher->generate_key();
+$key_data = $cypher->generate_key();
+var_dump($key_data);
 // $cypher->remove_key();
 // $cypher->sign_message("This is a test");
 ?>
