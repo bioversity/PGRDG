@@ -241,7 +241,7 @@ $.is_touch_device = function() { return "ontouchstart" in window || "onmsgesture
 * @param {object} options Request params
 */
 $.cryptAjax = function(url, options) {
-        if(!auth) {
+        if(!config.site.developer_mode) {
                 $.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
                         auth = true;
                         $.ajax(url, options);

@@ -1,7 +1,6 @@
 <?php
 require_once("../common/include/classes/frontend_api.class.php");
 require_once("../common/include/classes/parse_json_config.class.php");
-$api = new frontend_api();
 
 $interface_config = new parse_json_config("../common/include/conf/interface/site.js");
 $interface = $interface_config->parse_js_config("config");

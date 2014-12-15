@@ -28,9 +28,11 @@ class frontend_api {
 		if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
 			// You need openssl to generate these keys...
 			shell_exec('openssl genrsa -out ../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048');
+			chmod("../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048", 0777);
 			if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_pub.pem")) {
-				shell_exec('openssl rsa -pubout -in ../common/include/conf/.rsa_keys/rsa_2048_priv.pem -out common/include/conf/.rsa_keys/rsa_2048_pub.pem');
+				shell_exec('openssl rsa -pubout -in ../common/include/conf/.rsa_keys/rsa_2048_priv.pem -out ../common/include/conf/.rsa_keys/rsa_2048_pub.pem');
 			}
+			chmod("../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048", 0644);
 		}
 	}
 	public function browse($url) {
@@ -57,6 +59,7 @@ class frontend_api {
 
 		return $result;
 	}
+
 	private function compose_url($params_array, $urlencode_value = "", $urlencode = true) {
 		$url_composed = "";
 		foreach($params_array as $key => $value) {

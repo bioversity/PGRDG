@@ -40,6 +40,10 @@
 	<!-- Core scripts -->
 	<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/i18n.js"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/site.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?local=conf%2Frole_definitions.json"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/params.js"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/shortcuts.js"></script>
 	<script type="text/javascript">
@@ -130,8 +134,4 @@
 		<?php
 	}
 	?>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?local=conf%2Frole_definitions.json"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types"></script>
 	<?php //include("common/include/conf/google_analytics.php"); ?>

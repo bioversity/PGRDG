@@ -1295,11 +1295,10 @@
 		objp.parameters = {};
 		objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
 		objp.parameters[kAPI_REQUEST_PARAMETERS] = {};
-		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
+		objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
 		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = [];
 		// objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = kTAG_DOMAIN;
 		objp.colour = true;
-
 		$.ask_to_service(objp, function(response) {
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				var res = response[kAPI_RESPONSE_RESULTS],

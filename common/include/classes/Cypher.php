@@ -78,6 +78,7 @@ class Cypher {
         private function mail_path($email) {
                 return preg_replace("[@]", "_", $email);
         }
+
         /**
          * Collect data
          * @param void          $key            The key of array. If is array will be parsed instead of $value
@@ -433,7 +434,7 @@ class Cypher {
          */
         public function generate_key() {
                 switch($this->mode) {
-                        case "GPG":     $this->generate_pgp_key($this->user_data);      break;
+                        case "GPG":     return $this->generate_pgp_key($this->user_data);      break;
                         case "RSA":                                                     break;
                         default:        print "no mode";                                break;
                 }
@@ -450,6 +451,7 @@ class Cypher {
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
                         $this->log(self::I, "The user '" . $this->user_data["email"] . "' has no comment for its key");
                 }
+
                 if($this->check_user_path(true)) {
                         if(!isset($this->user_data["passphrase"]) || empty($this->user_data["passphrase"])){
                                 $this->user_data["passphrase"] = $this->generate_default_passphrase();
@@ -469,7 +471,6 @@ class Cypher {
                                 $command .= " 2> /dev/null < /dev/null &";
                         }
                         exec($command, $output, $error_code);
-
                         if($error_code){
                                 $this->log(self::E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
                                 // Remove created dir
@@ -478,7 +479,6 @@ class Cypher {
                         } else {
                                 // Set the array to export
                                 $this->fingerprint = $this->export_fingerprint(false);
-                                return "ok";
                                 // Rename temp user dir with its fingerprint
                                 $this->rename_user_path();
                                 $this->public_key = $this->export_key(true);
@@ -489,7 +489,8 @@ class Cypher {
                                 @unlink($this->user_path . DIRECTORY_SEPARATOR . "pubring.gpg~");
                                 chmod($this->user_path, 0600);
 
-                                return json_encode($this->repo);
+                                // Send everything to the Service
+                                return $this->send_to_service($this->repo);
                         }
                 }
         }
@@ -532,11 +533,14 @@ class Cypher {
         }
 
         /**
+         * ---------------------------------------------------------------------
+         * WARNING: MUST BE TESTED!
+         * ---------------------------------------------------------------------
          * Sign a given message with PGP
          * @param  string       $message                The message to sign
          * @return string                               The signed message
          */
-        public function sign_message($message) {
+        public function encrypt_message($message) {
                 $token = md5(uniqid(rand()));
 
                 chmod($this->user_path, 0777);
@@ -567,7 +571,42 @@ class Cypher {
                         print_r($command);
                         print_r($output);
                 }
-                // chmod($this->user_path, 0600);
+                chmod($this->user_path, 0600);
+        }
+
+
+        /**
+         * Send a GET request to the Service
+         * @param array         $params                 The params to append to the url
+         */
+        public function send_to_service($params) {
+                require_once("../common/include/classes/parse_json_config.class.php");
+                $interface_config = new parse_json_config("../common/include/conf/interface/site.js");
+                $interface = $interface_config->parse_js_config("config");
+                $querystring = array(
+                        "op" => "Test",
+                        "ln" => $interface["site"]["default_language"],
+                        "params" => json_encode($params)
+                );
+
+                $url = $interface["service"]["url"] . "Service.php?" . http_build_query($querystring);
+                print $url;
+                exit();
+
+                // cURL
+                $agent = "PGRD Request";
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_VERBOSE, true);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_USERAGENT, "PGRD Request");
+
+                $result = curl_exec($ch);
+                curl_close($ch);
+
+                return $result;
         }
 }
 
@@ -581,8 +620,9 @@ $user_data = array(
         "passphrase" => ""
 );
 $cypher = new Cypher($user_data, "PGP");
-$key_data = $cypher->generate_key();
-var_dump($key_data);
-// $cypher->remove_key();
+// print_r($cypher->generate_key());
+// var_dump($key_data);
+$url_params = array("name" => "Antonio Rossi");
+$cypher->send_to_service($url_params);
 // $cypher->sign_message("This is a test");
 ?>
