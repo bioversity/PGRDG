@@ -10,27 +10,37 @@ define("GPG_PASS_LENGTH", 8);
 // Generate or not logs in the HTTP log
 define("GEN_HTTP_LOG", false);
 
-define("GPG", "GPG");
-define("RSA", "RSA");
-// Defining log levels
-define("E", "error");
-define("W", "warn");
-define("I", "info");
-define("D", "debug");
-define("T", "trace");
+// define("GPG", "GPG");
+// define("RSA", "RSA");
+// // Defining log levels
+// define("E", "error");
+// define("W", "warn");
+// define("I", "info");
+// define("D", "debug");
+// define("T", "trace");
 
 class Cypher {
+        const GPG = "GPG";
+        const RSA = "RSA";
+        // Defining log levels
+        const E = "error";
+        const W = "warn";
+        const I = "info";
+        const D = "debug";
+        const T = "trace";
+
         function __construct($user_data, $mode) {
                 // The working path based on the script path
                 chdir("../../");
                 $this->gpg_path = getcwd() . DIRECTORY_SEPARATOR . ".gnupg";
                 $this->user_data = $user_data;
+                $this->repo = array();
                 $this->check_user_data();
                 $this->user_path();
 
                 switch($mode) {
-                        case "PGP":     $this->mode = GPG;      break;
-                        case "RSA":     $this->mode = RSA;      break;
+                        case "PGP":     $this->mode = self::GPG;      break;
+                        case "RSA":     $this->mode = self::RSA;      break;
                 }
         }
 
@@ -50,12 +60,12 @@ class Cypher {
                                 return true;
                         } else {
                                 if($display_message) {
-                                        $this->log(E, "The " . $item . " is empty", false);
+                                        $this->log(self::E, "The " . $item . " is empty", false);
                                 }
                                 return false;
                         }
                 } else {
-                        $this->log(E, "No user data passed in the class", false);
+                        $this->log(self::E, "No user data passed in the class", false);
                         return false;
                 }
         }
@@ -131,7 +141,7 @@ class Cypher {
                         @fclose($fd);
                         chmod($log_file, 0777);
                 }
-                if($type == E) {
+                if($type == self::E) {
                         // Integrate with your exception system
                         throw new Exception("\n\n" . $log_message . "\n");
                 }
@@ -145,7 +155,7 @@ class Cypher {
                 // Create GnuPG working dir if not exists
                 if(!is_dir($this->gpg_path)) {
                         if(!mkdir($this->gpg_path)){
-                                $this->log(E, "Cannot create the working gpg path: " . $this->gpg_path);
+                                $this->log(self::E, "Cannot create the working gpg path: " . $this->gpg_path);
                                 return false;
                         } else {
                                 chmod($this->gpg_path, 0777);
@@ -156,17 +166,27 @@ class Cypher {
                 if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]))) {
                         $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]);
                 } else {
+                        $fingerprint = "";
                         if(!$this->check_user_data("fingerprint", false)) {
                                 $identify = $this->identify();
-                                $fingerprint = $identify["fingerprint"];
+                                if(count($identify) == 0) {
+                                        $fingerprint = "";
+                                } else {
+                                        $fingerprint = $identify["fingerprint"];
+                                }
                         } else {
                                 $fingerprint = $this->$user_data["fingerprint"];
                         }
-                        $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $fingerprint;
+                        if(empty($fingerprint)) {
+                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]);
+                        } else {
+                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $fingerprint;
+                        }
+
                 }
                 // Store
-                // $this->store("user_path", $this->user_path);
-                // $this->store("user_conf", $this->user_conf);
+                $this->store("user_path", $this->user_path);
+                $this->store("user_conf", $this->user_conf);
         }
 
         /**
@@ -182,14 +202,14 @@ class Cypher {
                         if(!is_dir($this->user_path)) {
                                 if(!file_exists($this->user_path) && !file_exists($this->user_conf)){
                                         if(!mkdir($this->user_path)){
-                                                $this->log(E, "Cannot create a new user dir " . $this->user_path);
+                                                $this->log(self::E, "Cannot create a new user dir " . $this->user_path);
                                                 return false;
                                         } else {
                                                 chmod($this->user_path, 0777);
                                                 return true;
                                         }
                                 } else {
-                                        $this->log(E, "This user already exist, please try another e-mail address");
+                                        $this->log(self::E, "This user already exist, please try another e-mail address");
                                         return false;
                                 }
                         } else {
@@ -204,13 +224,13 @@ class Cypher {
          */
         private function rename_user_path() {
                 if(!isset($this->user_data["fingerprint"]) || empty($this->user_data["fingerprint"][0])) {
-                        $this->log(E, "Fingerprint is not defined");
+                        $this->log(self::E, "Fingerprint is not defined");
                         return false;
                 }
 
                 $this->finger_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->user_data["fingerprint"][0];
                 if(!rename($this->user_path, $this->finger_path)) {
-                        $this->log(E, "Cannot rename the user path: " . $this->user_path . " to " . $this->finger_path);
+                        $this->log(self::E, "Cannot rename the user path: " . $this->user_path . " to " . $this->finger_path);
                         return false;
                 } else {
                         $this->store("user_path", $this->finger_path);
@@ -259,7 +279,7 @@ class Cypher {
                 // Open file and dump the plaintext contents into it
                 $fd = @fopen($config_file, "w+");
                 if(!$fd){
-                        $this->log(E, "Cannot create the temporary config file");
+                        $this->log(self::E, "Cannot create the temporary config file");
                         return false;
                 }
                 @fputs($fd, $tmp_config);
@@ -294,7 +314,7 @@ class Cypher {
                 // Open file and dump the plaintext contents into it
                 $fd = @fopen($config_file, "w+");
                 if(!$fd){
-                        $this->log(E, "Cannot create the user conf file");
+                        $this->log(self::E, "Cannot create the user conf file");
                         return false;
                 }
                 @fputs($fd, "[User]\n" . $tmp_config);
@@ -328,7 +348,7 @@ class Cypher {
                 }
                 exec($command, $output, $error_code);
                 if($error_code){
-                        $this->log(E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
+                        $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
                         return(false);
                 }
                 $sfingerprint = str_replace("Key fingerprint = ", "", trim($output[3]));
@@ -378,14 +398,14 @@ class Cypher {
                         }
                         exec($command, $result, $error_code);
                         if($error_code){
-                                $this->log(E, "Cannot export the public key with command: " . $command . " error_code: " . $error_code);
+                                $this->log(self::E, "Cannot export the public key with command: " . $command . " error_code: " . $error_code);
                                 return(false);
                         }
                         $this->public_key = implode("\n", $result);
                         if($save_file) {
                                 $fd = @fopen($pubring_file, "w+");
                                 if(!$fd){
-                                        $this->log(E, "Cannot create the pubring file");
+                                        $this->log(self::E, "Cannot create the pubring file");
                                         return false;
                                 }
                                 @fputs($fd, $this->public_key);
@@ -404,7 +424,8 @@ class Cypher {
         * @param  string         $key_server              Target Key Server
         */
         public function export_key_to_server($key_server = "pgp.mit.edu") {
-
+                print "This function must be developed!";
+                exit();
         }
 
         /**
@@ -427,14 +448,14 @@ class Cypher {
                 $this->check_user_data("name");
                 $this->check_user_data("email");
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
-                        $this->log(I, "The user '" . $this->user_data["email"] . "' has no comment for its key");
+                        $this->log(self::I, "The user '" . $this->user_data["email"] . "' has no comment for its key");
                 }
                 if($this->check_user_path(true)) {
                         if(!isset($this->user_data["passphrase"]) || empty($this->user_data["passphrase"])){
                                 $this->user_data["passphrase"] = $this->generate_default_passphrase();
                         }
                         if(strlen(trim($this->user_data["passphrase"])) < GPG_PASS_LENGTH){
-                                $this->log(E, "The passphrase is too short");
+                                $this->log(self::E, "The passphrase is too short");
                                 return false;
                         }
                         $this->store_user_data();
@@ -450,7 +471,7 @@ class Cypher {
                         exec($command, $output, $error_code);
 
                         if($error_code){
-                                $this->log(E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
+                                $this->log(self::E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
                                 // Remove created dir
                                 $this->remove_key();
                                 return false;
@@ -495,13 +516,13 @@ class Cypher {
                 if($must_identify) {
                         $identify = $this->identify($this->user_data["email"]);
                         if(!@chmod($this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"], 0600)) {
-                                $this->log(E, "Cannot change permission to dir '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
+                                $this->log(self::E, "Cannot change permission to dir '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
                         if(!@exec("rm -rf " . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"])) {
-                                $this->log(E, "Cannot remove directory '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
+                                $this->log(self::E, "Cannot remove directory '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
                         if(!@exec("rm " . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($identify["email"]) . ".conf")) {
-                                $this->log(E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($identify["email"]) . "'. seems do not exists");
+                                $this->log(self::E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($identify["email"]) . "'. seems do not exists");
                         }
 
                         return true;
@@ -521,7 +542,7 @@ class Cypher {
                 $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message.txt";
                 $fd = @fopen($temp_file, "w+");
                 if(!$fd){
-                        $this->log(E, "Cannot create temp file");
+                        $this->log(self::E, "Cannot create temp file");
                         return false;
                 }
                 @fputs($fd, $message);
@@ -537,7 +558,7 @@ class Cypher {
                 exec($command, $output, $error_code);
 
                 if($error_code){
-                        $this->log(E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
+                        $this->log(self::E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
                         // Remove created dir
                         $this->remove_key();
                         return false;
@@ -559,7 +580,7 @@ $user_data = array(
         "passphrase" => ""
 );
 $cypher = new Cypher($user_data, "PGP");
-// $cypher->generate_key();
+$cypher->generate_key();
 // $cypher->remove_key();
-$cypher->sign_message("This is a test");
+// $cypher->sign_message("This is a test");
 ?>
