@@ -11,7 +11,7 @@
 class frontend_api {
 	function __construct($input = array()) {
 		require_once("../common/include/classes/parse_json_config.class.php");
-		$this->interface_config = new parse_json_config("../common/include/conf/interface/site.js");
+		$this->interface_config = new parse_json_config($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/interface/site.js");
 		$this->input = $input;
 		$this->debug = false;
 		$this->external_definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions";
@@ -23,23 +23,55 @@ class frontend_api {
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 	private function check_rsa() {
-		// Generates RSA keys if don't exits
-		// See my gist for further documentation: https://gist.github.com/gubi/7532110
-		if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
-			// You need openssl to generate these keys...
-			shell_exec('openssl genrsa -out ../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048');
-			chmod("../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048", 0777);
-			if(!file_exists("../common/include/conf/.rsa_keys/rsa_2048_pub.pem")) {
-				shell_exec('openssl rsa -pubout -in ../common/include/conf/.rsa_keys/rsa_2048_priv.pem -out ../common/include/conf/.rsa_keys/rsa_2048_pub.pem');
-			}
-			chmod("../common/include/conf/.rsa_keys/rsa_2048_priv.pem 2048", 0644);
+		// Generate RSA keys if don't exits
+		if(!file_exists($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
+			$this->gen_key();
 		}
 	}
+
+	/**
+	 * Generate RSA keys if don't exits
+	 */
+	private function gen_key() {
+		$priv_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem";
+		$pub_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_pub.pem";
+
+		header("Content-type: text/plain");
+		$config = array(
+			"private_key_bits" => 2048,
+			"private_key_type" => OPENSSL_KEYTYPE_RSA,
+		);
+		$res = openssl_pkey_new($config);
+
+		// Extract the private key from $res to $privKey
+		openssl_pkey_export($res, $privKey);
+
+		// Extract the public key from $res to $pubKey
+		$pubKey = openssl_pkey_get_details($res);
+		$pubKey = $pubKey["key"];
+
+		$fd = @fopen($priv_pem, "w+");
+		if(!$fd){
+			return false;
+		}
+		@fputs($fd, $privKey);
+		@fclose($fd);
+		// print_r($privKey);
+
+		$fd = @fopen($pub_pem, "w+");
+		if(!$fd){
+			return false;
+		}
+		@fputs($fd, $pubKey);
+		@fclose($fd);
+		// print_r($pubKey);
+	}
+
 	public function browse($url) {
 		// Set the user agent as "PGRD Request" if not exists
-		$this->input["agent"] = ($this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
+		$this->input["agent"] = (!isset($this->input["agent"]) || $this->input["agent"] == "" || $this->input["agent"] == null) ? "PGRD Request" : $this->input["agent"];
 		// Set the request type as "GET" if not exists
-		$this->input["type"] = ($this->input["type"] == "" || $this->input["type"] == null) ? "GET" : $this->input["type"];
+		$this->input["type"] = (!isset($this->input["type"]) || $this->input["type"] == "" || $this->input["type"] == null) ? "GET" : $this->input["type"];
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -103,9 +135,11 @@ class frontend_api {
 		$url_exploded = parse_url($url);
 		$url_first_part = str_replace($url_exploded["query"], "", $url);
 		parse_str($url_exploded["query"], $parsed_query);
-		$definitions = $this->get_definitions("api", true, "obj");
+		$this->get_definitions("api", false, "obj");
+		// print_r($definitions);
+		// exit();
 
-		$url_query = $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], true);
+		$url_query = $this->compose_url($parsed_query, kAPI_REQUEST_PARAMETERS, true);
 		/**
 		* Screen output
 		*/
@@ -115,8 +149,8 @@ class frontend_api {
 			print "URL EXPLODED QUERY:\n";
 			print_r($url_exploded);
 			print "\n\n";
-			print "BUILDED QUERY (UNENCODED):	" . $url_first_part . $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], false) . "\n";
-			print "BUILDED QUERY (ENCODED):	" . $url_first_part . $this->compose_url($parsed_query, $definitions["kAPI_REQUEST_PARAMETERS"], true) . "\n";
+			print "BUILDED QUERY (UNENCODED):	" . $url_first_part . $this->compose_url($parsed_query, kAPI_REQUEST_PARAMETERS, false) . "\n";
+			print "BUILDED QUERY (ENCODED):	" . $url_first_part . $this->compose_url($parsed_query, kAPI_REQUEST_PARAMETERS, true) . "\n";
 			print "\n\n";
 		}
 		return $url_first_part . $url_query;
@@ -182,7 +216,8 @@ class frontend_api {
 			$interface = $this->interface_config->parse_js_config("config");
 			$definitions_dir = $interface["service"]["definitions_dir"];
 
-			include($definitions_dir . DIRECTORY_SEPARATOR . $def_file);
+			include_once($definitions_dir . DIRECTORY_SEPARATOR . $def_file);
+
 			$after_include_constants = $this->getUserDefinedConstants();
 
 			$script_constants = array_diff_assoc($after_include_constants, $global_constants);
@@ -244,6 +279,7 @@ class frontend_api {
 	public function ask_service($address) {
 		$this->set_content_type("json");
 		$url = $this->build_url_for_service($address);
+
 		if($this->debug) {
 			/**
 			* Screen output

@@ -16,6 +16,8 @@ var i18n = {
                         "offsets": "{X} offsets",
                         "text_has_produced_zero_results": "Entered text has produced 0 results",
                         "login": {
+                                "username": "Username or email",
+                                "password": "Password",
                                 "remember_me": "Remember me",
                                 "dont_have_account": "Don't have an account?",
                                 "signup_here": "Sign up here",

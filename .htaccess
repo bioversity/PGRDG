@@ -67,6 +67,11 @@ RewriteBase /
 
 # ----------- SECURITY -----------
 #
+	# ENABLE CORS
+	# ONLY FOR DEVELOPING PURPOSES
+	# See here for more information: http://enable-cors.org/server_apache.html
+	# Header set Access-Control-Allow-Origin "*"
+
 	# proc/self/environ? no!
 	RewriteCond %{QUERY_STRING} proc/self/environ [OR]
 
@@ -93,7 +98,7 @@ RewriteBase /
 	# PHP error handling for development servers
 
 	php_flag display_startup_errors off
-	php_flag display_errors off
+	php_flag display_errors on
 	php_flag html_errors off
 	php_flag log_errors on
 	php_flag ignore_repeated_errors off

@@ -111,14 +111,15 @@
 					console.log("(", param_nob64, ")");
 				}
 				$.cryptAjax({
-					url: "API/",
+					url: (!config.site.developer_mode) ? "API/" : param_nob64,
 					dataType: "json",
 					// dataFilter: function(data, type) {
 					// 	if(type !== "json") {
 					// 		return JSON.parse(data);
 					// 	}
 					// },
-					type: "POST",
+					crossDomain: true,
+					type: (!config.site.developer_mode) ? "POST" : "GET",
 					timeout: 30000,
 					data: {
 						jCryption: $.jCryption.encrypt(param, password),
@@ -1326,10 +1327,6 @@ $(document).ready(function() {
 			e.preventDefault();
 			$("#login_btn").removeClass("disabled").attr("disabled", false);
 			$("#login-username").focus();
-
-			$("#login_btn").on("click", function() {
-				$.login();
-			});
 		});
 		if(current_path == "Search") {
 			$.get_statistics();

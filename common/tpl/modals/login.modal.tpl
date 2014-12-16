@@ -9,11 +9,11 @@
 				<div class="modal-body">
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						<input id="login-username" type="text" class="form-control" name="username" autofocus value="alessandro" placeholder="username or email" />
+						<input id="login-username" type="text" class="form-control" name="username" autofocus value="gatewayadmin" placeholder="<?php print $i18n[$lang]["messages"]["login"]["username"]; ?>" />
 					</div>
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="quellochetepare" />
+						<input id="login-password" type="password" class="form-control" name="password" value="<?php print sha1("gatewayadmin"); ?>" placeholder="<?php print $i18n[$lang]["messages"]["login"]["password"]; ?>" />
 					</div>
 					<div class="input-group">
 						<div class="checkbox">
@@ -37,7 +37,7 @@
 							?>
 						</div>
 						<div class="col-sm-6 text-right">
-							<a href="javascript: void(0);" id="login_btn" class="btn btn-primary"><?php print $i18n[$lang]["messages"]["login"]["sign_in_btn"]; ?></a>
+							<a href="javascript: void(0);" id="login_btn" onclick="$.login()" class="btn btn-primary"><?php print $i18n[$lang]["messages"]["login"]["sign_in_btn"]; ?></a>
 						</div>
 					</div>
 				</div>

@@ -13,7 +13,7 @@ $op = base64_decode($output[kAPI_REQUEST_OPERATION]);
 // exit();
 // print $service_url . $op;
 // exit();
-if($output["debug"] == "true") {
+if(isset($output["debug"]) && $output["debug"] == "true") {
 	print_r($api->ask_service($service_url . $op));
 } else {
 	print $api->ask_service($service_url . $op);

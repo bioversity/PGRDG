@@ -245,6 +245,8 @@ $.cryptAjax = function(url, options) {
                 $.jCryption.authenticate(password, "common/include/funcs/_ajax/_decrypt.php?getPublicKey=true", "common/include/funcs/_ajax/_decrypt.php?handshake=true", function(AESKey) {
                         auth = true;
                         $.ajax(url, options);
+                }, function(fail) {
+                        console.warn("error");
                 });
         } else {
                 $.ajax(url, options);
