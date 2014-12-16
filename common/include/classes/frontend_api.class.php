@@ -10,7 +10,7 @@
 
 class frontend_api {
 	function __construct($input = array()) {
-		require_once("../common/include/classes/parse_json_config.class.php");
+		require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/classes/parse_json_config.class.php");
 		$this->interface_config = new parse_json_config($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/interface/site.js");
 		$this->input = $input;
 		$this->debug = false;
@@ -92,7 +92,7 @@ class frontend_api {
 		return $result;
 	}
 
-	private function compose_url($params_array, $urlencode_value = "", $urlencode = true) {
+	public function compose_url($params_array, $urlencode_value = "", $urlencode = true) {
 		$url_composed = "";
 		foreach($params_array as $key => $value) {
 			if($key == $urlencode_value) {

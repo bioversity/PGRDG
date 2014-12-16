@@ -1,8 +1,8 @@
 <?php
 // header("Content-type: text/plain");
-header("Access-Control-Allow-Origin: *");
-header("Allow-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET,POST");
+// header("Access-Control-Allow-Origin: *");
+// header("Allow-Control-Allow-Credentials: true");
+// header("Access-Control-Allow-Methods: GET,POST");
 
 require_once("common/include/funcs/nl2.php");
 require_once("common/include/funcs/readmore.php");

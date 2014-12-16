@@ -1,6 +1,9 @@
 <?php
+
 // The GnuPG Binary file
 define("GPG_BIN", "/usr/bin/gpg");
+// The System root dir
+define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
 // The default parameters to use the GnuPG
 define("GPG_PARAMS", " --no-tty --no-secmem-warning --home ");
 // Where the users dir will be created
@@ -10,14 +13,8 @@ define("GPG_PASS_LENGTH", 8);
 // Generate or not logs in the HTTP log
 define("GEN_HTTP_LOG", false);
 
-// define("GPG", "GPG");
-// define("RSA", "RSA");
-// // Defining log levels
-// define("E", "error");
-// define("W", "warn");
-// define("I", "info");
-// define("D", "debug");
-// define("T", "trace");
+require_once(SYSTEM_ROOT . "common/include/classes/parse_json_config.class.php");
+require_once(SYSTEM_ROOT . "common/include/classes/frontend_api.class.php");
 
 class Cypher {
         const GPG = "GPG";
@@ -30,8 +27,8 @@ class Cypher {
         const T = "trace";
 
         function __construct($user_data, $mode) {
-                // The working path based on the script path
-                chdir("../../");
+                // The absolute working path
+                chdir(SYSTEM_ROOT . "common/");
                 $this->gpg_path = getcwd() . DIRECTORY_SEPARATOR . ".gnupg";
                 $this->user_data = $user_data;
                 $this->repo = array();
@@ -579,39 +576,37 @@ class Cypher {
          * Send a GET request to the Service
          * @param array         $params                 The params to append to the url
          */
-        public function send_to_service($params) {
-                require_once("../common/include/classes/parse_json_config.class.php");
-                $interface_config = new parse_json_config("../common/include/conf/interface/site.js");
+        public function send_to_service($inviter, $params) {
+                require_once(SYSTEM_ROOT . "common/include/classes/Encoder.php");
+                $sys_pub_key = file_get_contents(SYSTEM_ROOT . "KEY");
+
+                $interface_config = new parse_json_config(SYSTEM_ROOT . "common/include/conf/interface/site.js");
+                $frontend = new frontend_api();
+                $encoder = new OntologyWrapper\Encoder();
+
                 $interface = $interface_config->parse_js_config("config");
+
                 $querystring = array(
-                        "op" => "Test",
-                        "ln" => $interface["site"]["default_language"],
-                        "params" => json_encode($params)
+                        kAPI_REQUEST_OPERATION => kAPI_OP_INVITE_USER,
+                        kAPI_REQUEST_LANGUAGE => $interface["site"]["default_language"],
+                        kAPI_REQUEST_USER => $inviter,
+                        kAPI_PARAM_OBJECT => $encoder->publicEncode(json_encode($params), $sys_pub_key)
                 );
-
                 $url = $interface["service"]["url"] . "Service.php?" . http_build_query($querystring);
-                print $url;
-                exit();
 
-                // cURL
-                $agent = "PGRD Request";
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_VERBOSE, true);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_USERAGENT, "PGRD Request");
-
-                $result = curl_exec($ch);
-                curl_close($ch);
-
-                return $result;
+                return $frontend->browse($url);
         }
 }
 
 // USAGE
 header("Content-type: text/plain;");
+
+$interface_config = new parse_json_config(SYSTEM_ROOT . "common/include/conf/interface/site.js");
+$frontend = new frontend_api();
+
+$interface = $interface_config->parse_js_config("config");
+$frontend->get_definitions("api", false, "obj");
+$frontend->get_definitions("tags", false, "obj");
 
 $user_data = array(
         "name" => "Antonio Rossi",
@@ -622,7 +617,33 @@ $user_data = array(
 $cypher = new Cypher($user_data, "PGP");
 // print_r($cypher->generate_key());
 // var_dump($key_data);
-$url_params = array("name" => "Antonio Rossi");
-$cypher->send_to_service($url_params);
-// $cypher->sign_message("This is a test");
+$inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
+$user_params = array(
+        kTAG_NAME => "Antonio Rossi",
+        kTAG_ENTITY_EMAIL => "antonio.rossi@example.net",
+        kTAG_ROLES => array(":roles:user-invite"),
+        kTAG_ENTITY_PGP_KEY => "185BE161D78A812C78C737003200EBDCF15E1B60",
+        kTAG_ENTITY_PGP_FINGERPRINT => "-----BEGIN PGP PUBLIC KEY BLOCK-----
+        Version: GnuPG v1
+
+        mQENBFSO7/MBCADH/aq4QXycGhhQcoC9hJ1hkPyttjIPul8f+5ocgNjy1w/zzXsR
+        F7F08bVA5ygz1a6cpmnzn+/E5tufJPy+p/OlxETaI1ZCOlH+MTw6Mb0xAWDXT4xh
+        UuRjloXdQC9XdXKDxg8L4WOLjBs02YAQNPYwwxmGQz8W3ckgh+jwiDGj+eEyWVkj
+        k98xNs3090Ne7qk0DIs6Njo0SoJkd/ELAHVTmpDdseNu4V5ar+eN31LH04BZaqaH
+        MpPeowILUut5fe9Ln1Y8yuTdL6jrdyyjyFhzqFXd7Ki4HctA/J0Biir5OtKXRYoN
+        7DtOEHejdGe/WxErRs0+/mROPO9SenflGK8TABEBAAG0KUFudG9uaW8gUm9zc2kg
+        PGFudG9uaW8ucm9zc2lAZXhhbXBsZS5uZXQ+iQE4BBMBAgAiBQJUju/zAhsvBgsJ
+        CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAyAOvc8V4bYJinB/9RnBxzjcu2toxl
+        kzyqxsqLqFEQ0cWfB6u44w7aYjNF1ZSfeP8kQ00E9JTRlQPBXG0UDLSnRhKaAhSC
+        uL+EnjfVNb1BVlz+wj7qdsee+Rn54ebIJpyPT6I5iTn8qyS972i4R2NP8tf+WrUX
+        aK8v59YmY+Ks3ZQWADhp/eu6h1yS7xlxA2uGnjwsQ7TPFvQg+mrSh36v1Gr0eWGZ
+        roxfqojgMbnf1/UnN/qzIzDpU5Kp//0uEEIwGu7P8+d9GB0H7yRiKfuVA+I1EU5W
+        UHUOa0bE+/VT04OxpQGLXRidwmbd1BStsbi/1JPchPvlzDRSm3CeSF/6NQipFwXL
+        gp2II9bG
+        =KgWD
+        -----END PGP PUBLIC KEY BLOCK-----"
+);
+print_r($user_params);
+
+print $cypher->send_to_service($inviter, $user_params);
 ?>
