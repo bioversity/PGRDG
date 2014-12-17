@@ -71,6 +71,7 @@ class parse_json_config {
 		}
 		return $attributes;
 	}
+
 	/**
 	* Search recursive a value in an array and returns its parent key
 	* @param  array  $array        The target array

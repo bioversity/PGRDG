@@ -4,6 +4,13 @@
 define("GPG_BIN", "/usr/bin/gpg");
 // The System root dir
 define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+// The include dir
+define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
+// The classes dir
+define("CLASSES_DIR", INCLUDE_DIR . "classes/");
+// The conf dir
+define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
+
 // The default parameters to use the GnuPG
 define("GPG_PARAMS", " --no-tty --no-secmem-warning --home ");
 // Where the users dir will be created
@@ -13,13 +20,11 @@ define("GPG_PASS_LENGTH", 8);
 // Generate or not logs in the HTTP log
 define("GEN_HTTP_LOG", false);
 
-require_once(SYSTEM_ROOT . "common/include/classes/parse_json_config.class.php");
-require_once(SYSTEM_ROOT . "common/include/classes/frontend_api.class.php");
+require_once(CLASSES_DIR . "frontend_api.class.php");
 
 class Cypher {
         const GPG = "GPG";
-        const RSA = "RSA";
-        // Defining log levels
+        // Log levels
         const E = "error";
         const W = "warn";
         const I = "info";
@@ -34,18 +39,40 @@ class Cypher {
                 $this->repo = array();
                 $this->check_user_data();
                 $this->user_path();
+                $this->site_config = $this->get_site_config();
 
-                switch($mode) {
-                        case "PGP":     $this->mode = self::GPG;      break;
-                        case "RSA":     $this->mode = self::RSA;      break;
+                // Initialisate the gpg class
+                $this->gpg = new gnupg();
+                if(strlen($this->gpg->geterror()) > 0) {
+                        $this->log(self::E, $this->gpg->geterror(), false);
                 }
+
+                switch ($mode) {
+                        case "PHP":
+                                $CLI = false;
+                                break;
+                        case "BASH":
+                        default:
+                                $CLI = true;
+                }
+        }
+
+        /**
+         * Include the parse_js_config.class.php and return the array of site.js
+         * @return array                                The site configs
+         */
+        public function get_site_config() {
+                require_once(CLASSES_DIR . "parse_json_config.class.php");
+
+                $parse_json_config = new parse_json_config(CONF_DIR . "site.js");
+                return $parse_json_config->parse_js_config("config");
         }
 
         /**
          * Check if required data was passed to the class
          * If $item will not be passed will check only for email address
-         * @param  string       $item                      The item to check
-         * @param  bool         $display_message           Display the error message?
+         * @param  string       $item                   The item to check
+         * @param  bool         $display_message        Display the error message?
          * @return bool
          */
         private function check_user_data($item = "", $display_message = true) {
@@ -69,17 +96,17 @@ class Cypher {
 
         /**
          * Transform a mail address to path friendly
-         * @param  string       $email          The email address
-         * @return string                       Transformed email address
+         * @param  string       $email                  The email address
+         * @return string                               Transformed email address
          */
-        private function mail_path($email) {
+        private function mail_to_path($email) {
                 return preg_replace("[@]", "_", $email);
         }
 
         /**
          * Collect data
-         * @param void          $key            The key of array. If is array will be parsed instead of $value
-         * @param string        $value          The value of array. If $key is an array $value will be ignored
+         * @param  void         $key                    The key of array. If is array will be parsed instead of $value
+         * @param  string       $value                  The value of array. If $key is an array $value will be ignored
          */
         private function store($key, $value = "") {
                 if(is_array($key)) {
@@ -94,7 +121,7 @@ class Cypher {
 
         /**
          * Store selected user data
-         * @param  array         $data           The array with data to filter
+         * @param  array        $data                   The array with data to filter
          */
         private function store_user_data($data = array()) {
                 if(count($data) == 0) {
@@ -111,9 +138,9 @@ class Cypher {
 
         /**
         * Log error messages in user dir
-        * @param  string       $type           The log level
-        * @param  string       $message        The message to log
-        * @param  bool         $log            Save in log file?
+        * @param   string       $type                   The log level
+        * @param   string       $message                The message to log
+        * @param   bool         $log                    Save in log file?
         */
         private function log($type = E, $message, $log = true) {
                 $log_path = $this->gpg_path . DIRECTORY_SEPARATOR . "log";
@@ -125,7 +152,7 @@ class Cypher {
                                 chmod($log_path, 0777);
                         }
                 }
-                $log_file = $log_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]) . ".log";
+                $log_file = $log_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]) . ".log";
                 $log_message = "[" . date("Y-m-d H:i:s.u") . "] [" . strtoupper($type) . "] " . $message . "\n";
 
                 if($log) {
@@ -147,7 +174,7 @@ class Cypher {
 
         /**
          * Transform a given email address to the full directory user path
-         * @return string        The full directory user path
+         * @return string                               The full directory user path
          */
         private function user_path() {
                 // Create GnuPG working dir if not exists
@@ -160,9 +187,9 @@ class Cypher {
                         }
                 }
 
-                $this->user_conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($this->user_data["email"]) . ".conf";
-                if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]))) {
-                        $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]);
+                $this->user_conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
+                if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]))) {
+                        $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]);
                 } else {
                         $fingerprint = "";
                         if(!$this->check_user_data("fingerprint", false)) {
@@ -176,7 +203,7 @@ class Cypher {
                                 $fingerprint = $this->$user_data["fingerprint"];
                         }
                         if(empty($fingerprint)) {
-                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_path($this->user_data["email"]);
+                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]);
                         } else {
                                 $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $fingerprint;
                         }
@@ -190,8 +217,8 @@ class Cypher {
         /**
          * Check if the user dir exists.
          * If $create is set to true will try to create the dir if not exists
-         * @param  bool         $create         Create the dir if not exists
-         * @return bool                         True = The user dir exists | False = The user dir do not exists
+         * @param  bool         $create                 Create the dir if not exists
+         * @return bool                                 True = The user dir exists | False = The user dir do not exists
          */
         private function check_user_path($create = false){
                 if(!$create) {
@@ -250,7 +277,7 @@ class Cypher {
 
         /**
         * Save config file for generate the user PGP key
-        * @return string                               The full path of the config file
+        * @return  string                               The full path of the config file
         */
         private function save_conf() {
                 $tmp_conf["Key-Type"] = "RSA";
@@ -291,7 +318,6 @@ class Cypher {
 
         /**
         * Save user data for login
-        * @return [type] [description]
         */
         private function save_user_data() {
                 $data["name"] = $this->user_data["name"];
@@ -308,7 +334,7 @@ class Cypher {
                 // This file must to be encrypted!
                 // Use the JCryption RSA public key and decrypt it when you need
                 // -------------------------------------------------------------
-                $config_file = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($this->user_data["email"]) . ".conf";
+                $config_file = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
                 // Open file and dump the plaintext contents into it
                 $fd = @fopen($config_file, "w+");
                 if(!$fd){
@@ -325,7 +351,7 @@ class Cypher {
          * @return array                                An array with user data
          */
         public function identify() {
-                $conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($this->user_data["email"]) . ".conf";
+                $conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
                 if(file_exists($conf)) {
                         $p_conf = parse_ini_file($conf);
                         $this->store_user_data($p_conf);
@@ -335,19 +361,22 @@ class Cypher {
 
         /**
          * Display the fingerprint of a given email address
-         * @param  string       $email          The email address of stored user
-         * @param  bool         $with_spaces    Show with spaces or not
-         * @return string                       The fingerprint of user
+         * @param  bool         $with_spaces            Show with spaces or not
+         * @return string                               The fingerprint of user
          */
         public function export_fingerprint($with_spaces = true) {
-                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --fingerprint";
-                if(GEN_HTTP_LOG){
-                        $command .= " 2>/dev/null &";
-                }
-                exec($command, $output, $error_code);
-                if($error_code){
-                        $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
-                        return(false);
+                if($CLI) {
+                        $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --fingerprint";
+                        if(GEN_HTTP_LOG){
+                                $command .= " 2>/dev/null &";
+                        }
+                        exec($command, $output, $error_code);
+                        if($error_code){
+                                $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
+                                return(false);
+                        }
+                } else {
+
                 }
                 $sfingerprint = str_replace("Key fingerprint = ", "", trim($output[3]));
                 $fingerprint = preg_replace("[ ]", "", str_replace("Key fingerprint = ", "", trim($output[3])));
@@ -419,7 +448,7 @@ class Cypher {
 
         /**
         * Export the public key to a given server
-        * @param  string         $key_server              Target Key Server
+        * @param   string       $key_server             Target Key Server
         */
         public function export_key_to_server($key_server = "pgp.mit.edu") {
                 print "This function must be developed!";
@@ -427,22 +456,10 @@ class Cypher {
         }
 
         /**
-         * Generate an asimmetric key-pair depending on the given mode
-         */
-        public function generate_key() {
-                switch($this->mode) {
-                        case "GPG":     return $this->generate_pgp_key($this->user_data);      break;
-                        case "RSA":                                                     break;
-                        default:        print "no mode";                                break;
-                }
-        }
-
-        /**
         * Generate GPG key-pair
-        * @param  array        $user_data      The user data: [name, email, (comment), (passphrase)]
-        * @return array                        An array with the fingerprint and the public key
+        * @return  array                                An array with the fingerprint and the public key
         */
-        public function generate_pgp_key() {
+        public function generate_key() {
                 $this->check_user_data("name");
                 $this->check_user_data("email");
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
@@ -520,8 +537,8 @@ class Cypher {
                         if(!@exec("rm -rf " . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"])) {
                                 $this->log(self::E, "Cannot remove directory '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
-                        if(!@exec("rm " . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($identify["email"]) . ".conf")) {
-                                $this->log(self::E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_path($identify["email"]) . "'. seems do not exists");
+                        if(!@exec("rm " . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify["email"]) . ".conf")) {
+                                $this->log(self::E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify["email"]) . "'. seems do not exists");
                         }
 
                         return true;
@@ -574,17 +591,18 @@ class Cypher {
 
         /**
          * Send a GET request to the Service
-         * @param array         $params                 The params to append to the url
+         * @param  array        $params                 The params to append to the url
          */
         public function send_to_service($inviter, $params) {
-                require_once(SYSTEM_ROOT . "common/include/classes/Encoder.php");
-                $sys_pub_key = file_get_contents(SYSTEM_ROOT . "KEY");
+                require_once(CLASSES_DIR . "Encoder.php");
+                print_r($this->site_config);
+                exit();
+                $system_rsa_path = SYSTEM_ROOT . $interface["service"]["path"]["rsa"];
+                print $system_rsa_path;
+                $sys_pub_key = file_get_contents($system_rsa_path . "service_pub.pem");
 
-                $interface_config = new parse_json_config(SYSTEM_ROOT . "common/include/conf/interface/site.js");
                 $frontend = new frontend_api();
                 $encoder = new OntologyWrapper\Encoder();
-
-                $interface = $interface_config->parse_js_config("config");
 
                 $querystring = array(
                         kAPI_REQUEST_OPERATION => kAPI_OP_INVITE_USER,
@@ -592,7 +610,7 @@ class Cypher {
                         kAPI_REQUEST_USER => $inviter,
                         kAPI_PARAM_OBJECT => $encoder->publicEncode(json_encode($params), $sys_pub_key)
                 );
-                $url = $interface["service"]["url"] . "Service.php?" . http_build_query($querystring);
+                $url = $interface["service"]["url"] . $interface["service"]["script"] . "?" . http_build_query($querystring);
 
                 return $frontend->browse($url);
         }
@@ -601,10 +619,10 @@ class Cypher {
 // USAGE
 header("Content-type: text/plain;");
 
-$interface_config = new parse_json_config(SYSTEM_ROOT . "common/include/conf/interface/site.js");
-$frontend = new frontend_api();
+// $interface_config = new parse_json_config(CONF_DIR . "site.js");
 
-$interface = $interface_config->parse_js_config("config");
+// $interface = $interface_config->parse_js_config("config");
+$frontend = new frontend_api();
 $frontend->get_definitions("api", false, "obj");
 $frontend->get_definitions("tags", false, "obj");
 
@@ -614,7 +632,8 @@ $user_data = array(
         "comment" => "",
         "passphrase" => ""
 );
-$cypher = new Cypher($user_data, "PGP");
+$cypher = new Cypher($user_data, "PHP");
+// print_r($cypher->get_site_config());
 // print_r($cypher->generate_key());
 // var_dump($key_data);
 $inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
@@ -623,27 +642,17 @@ $user_params = array(
         kTAG_ENTITY_EMAIL => "antonio.rossi@example.net",
         kTAG_ROLES => array(":roles:user-invite"),
         kTAG_ENTITY_PGP_KEY => "185BE161D78A812C78C737003200EBDCF15E1B60",
-        kTAG_ENTITY_PGP_FINGERPRINT => "-----BEGIN PGP PUBLIC KEY BLOCK-----
-        Version: GnuPG v1
-
-        mQENBFSO7/MBCADH/aq4QXycGhhQcoC9hJ1hkPyttjIPul8f+5ocgNjy1w/zzXsR
-        F7F08bVA5ygz1a6cpmnzn+/E5tufJPy+p/OlxETaI1ZCOlH+MTw6Mb0xAWDXT4xh
-        UuRjloXdQC9XdXKDxg8L4WOLjBs02YAQNPYwwxmGQz8W3ckgh+jwiDGj+eEyWVkj
-        k98xNs3090Ne7qk0DIs6Njo0SoJkd/ELAHVTmpDdseNu4V5ar+eN31LH04BZaqaH
-        MpPeowILUut5fe9Ln1Y8yuTdL6jrdyyjyFhzqFXd7Ki4HctA/J0Biir5OtKXRYoN
-        7DtOEHejdGe/WxErRs0+/mROPO9SenflGK8TABEBAAG0KUFudG9uaW8gUm9zc2kg
-        PGFudG9uaW8ucm9zc2lAZXhhbXBsZS5uZXQ+iQE4BBMBAgAiBQJUju/zAhsvBgsJ
-        CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAyAOvc8V4bYJinB/9RnBxzjcu2toxl
-        kzyqxsqLqFEQ0cWfB6u44w7aYjNF1ZSfeP8kQ00E9JTRlQPBXG0UDLSnRhKaAhSC
-        uL+EnjfVNb1BVlz+wj7qdsee+Rn54ebIJpyPT6I5iTn8qyS972i4R2NP8tf+WrUX
-        aK8v59YmY+Ks3ZQWADhp/eu6h1yS7xlxA2uGnjwsQ7TPFvQg+mrSh36v1Gr0eWGZ
-        roxfqojgMbnf1/UnN/qzIzDpU5Kp//0uEEIwGu7P8+d9GB0H7yRiKfuVA+I1EU5W
-        UHUOa0bE+/VT04OxpQGLXRidwmbd1BStsbi/1JPchPvlzDRSm3CeSF/6NQipFwXL
-        gp2II9bG
-        =KgWD
-        -----END PGP PUBLIC KEY BLOCK-----"
+        kTAG_ENTITY_PGP_FINGERPRINT => "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1\n\nmQENBFSO7/MBCADH/aq4QXycGhhQcoC9hJ1hkPyttjIPul8f+5ocgNjy1w/zzXsR\nF7F08bVA5ygz1a6cpmnzn+/E5tufJPy+p/OlxETaI1ZCOlH+MTw6Mb0xAWDXT4xh\nUuRjloXdQC9XdXKDxg8L4WOLjBs02YAQNPYwwxmGQz8W3ckgh+jwiDGj+eEyWVkj\nk98xNs3090Ne7qk0DIs6Njo0SoJkd/ELAHVTmpDdseNu4V5ar+eN31LH04BZaqaH\nMpPeowILUut5fe9Ln1Y8yuTdL6jrdyyjyFhzqFXd7Ki4HctA/J0Biir5OtKXRYoN\n7DtOEHejdGe/WxErRs0+/mROPO9SenflGK8TABEBAAG0KUFudG9uaW8gUm9zc2kg\nPGFudG9uaW8ucm9zc2lAZXhhbXBsZS5uZXQ+iQE4BBMBAgAiBQJUju/zAhsvBgsJ\nCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAyAOvc8V4bYJinB/9RnBxzjcu2toxl\nkzyqxsqLqFEQ0cWfB6u44w7aYjNF1ZSfeP8kQ00E9JTRlQPBXG0UDLSnRhKaAhSC\nuL+EnjfVNb1BVlz+wj7qdsee+Rn54ebIJpyPT6I5iTn8qyS972i4R2NP8tf+WrUX\naK8v59YmY+Ks3ZQWADhp/eu6h1yS7xlxA2uGnjwsQ7TPFvQg+mrSh36v1Gr0eWGZ\nroxfqojgMbnf1/UnN/qzIzDpU5Kp//0uEEIwGu7P8+d9GB0H7yRiKfuVA+I1EU5W\nUHUOa0bE+/VT04OxpQGLXRidwmbd1BStsbi/1JPchPvlzDRSm3CeSF/6NQipFwXL\ngp2II9bG\n=KgWD\n-----END PGP PUBLIC KEY BLOCK-----"
 );
-print_r($user_params);
-
-print $cypher->send_to_service($inviter, $user_params);
+// chdir(SYSTEM_ROOT . "common/.gnupg/EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
+$gpg = new gnupg();
+putenv("GNUPGHOME=" . SYSTEM_ROOT . "common/.gnupg/EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
+$gpg->addencryptkey("EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
+$enc = $gpg->encrypt("just a test");
+$dec = $gpg->decrypt($enc);
+echo $gpg->geterror();
+echo $dec;
+// print_r($user_params);
+//
+// print $cypher->send_to_service($inviter, $user_params);
 ?>
