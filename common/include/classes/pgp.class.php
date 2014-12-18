@@ -140,13 +140,7 @@ class PGP {
 
                 if($log) {
                         // Open file and dump the plaintext contents into it
-                        $fd = @fopen($log_file, "a");
-                        if(!$fd){
-                                // Integrate with your exception system
-                                throw new Exception("Error: Canot create the log file");
-                        }
-                        @fputs($fd, $log_message);
-                        @fclose($fd);
+                        $this->save_to_file($log_file, $log_message, "a");
                         chmod($log_file, 0777);
                 }
                 if($type == self::E) {
@@ -257,6 +251,23 @@ class PGP {
                 return bin2hex($bytes);
         }
 
+        /**
+         * Create a temporary file with given content
+         * @param  string       $file                   The file name (including full path)
+         * @param  string       $content                The content to put inside the file
+         * @param  string       $mode                   The access mode, default is "w+"
+         */
+        private function save_to_file($file, $content, $mode = "w+") {
+                chmod($this->user_path, 0777);
+
+                $fd = @fopen($file, "w+");
+                if(!$fd){
+                        $this->log(self::E, "Cannot create temp file");
+                        return false;
+                }
+                @fputs($fd, $content);
+                @fclose($fd);
+        }
 
         /**
         * Save config file for generate the user PGP key
@@ -285,13 +296,7 @@ class PGP {
                 // Create vars to hold paths and filenames
                 $config_file = $this->user_path . DIRECTORY_SEPARATOR . ".key.conf";
                 // Open file and dump the plaintext contents into it
-                $fd = @fopen($config_file, "w+");
-                if(!$fd){
-                        $this->log(self::E, "Cannot create the temporary config file");
-                        return false;
-                }
-                @fputs($fd, $tmp_config);
-                @fclose($fd);
+                $this->save_to_file($config_file, $tmp_config);
                 // $this->store("key", array("data" => $tmp_conf, "generated file" => $tmp_config));
 
                 unset($tmp_config);
@@ -313,20 +318,10 @@ class PGP {
                         return $k . " = " . '"' . $v . '"';
                 }, $data, array_keys($data)));
 
-                // WARNING:
-                // This file must to be encrypted!
-                // Use the JCryption RSA public key and decrypt it when you need
-                // -------------------------------------------------------------
                 $config_file = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
                 // Open file and dump the plaintext contents into it
-                $fd = @fopen($config_file, "w+");
-                if(!$fd){
-                        $this->log(self::E, "Cannot create the user conf file");
-                        return false;
-                }
-                @fputs($fd, "[User]\n" . $tmp_config);
-                @fclose($fd);
-                // -------------------------------------------------------------
+                $this->save_to_file($config_file, $tmp_config);
+                chmod($config_file, 0600);
         }
 
         /**
@@ -390,13 +385,7 @@ class PGP {
                         }
                         $this->public_key = implode("\n", $result);
                         if($save_file) {
-                                $fd = @fopen($pubring_file, "w+");
-                                if(!$fd){
-                                        $this->log(self::E, "Cannot create the pubring file");
-                                        return false;
-                                }
-                                @fputs($fd, $this->public_key);
-                                @fclose($fd);
+                                $this->save_to_file($pubring_file, $this->public_key);
                         }
                 } else {
                         $this->public_key = file_get_contents($pubring_file);
@@ -514,15 +503,8 @@ class PGP {
         public function encrypt_message($message) {
                 $token = md5(uniqid(rand()));
 
-                chmod($this->user_path, 0777);
                 $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message";
-                $fd = @fopen($temp_file, "w+");
-                if(!$fd){
-                        $this->log(self::E, "Cannot create temp file");
-                        return false;
-                }
-                @fputs($fd, $message);
-                @fclose($fd);
+                $this->save_to_file($temp_file, $message);
 
                 $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --encrypt --armor -r " . escapeshellarg($this->user_data["email"]) . " " . $temp_file;
 
@@ -542,6 +524,7 @@ class PGP {
                         // Clean
                         unlink($temp_file);
                         unlink($temp_file . ".asc");
+
                         return $encrypted;
                 }
                 chmod($this->user_path, 0600);
@@ -555,15 +538,8 @@ class PGP {
         public function decrypt_message($message) {
                 $token = md5(uniqid(rand()));
 
-                chmod($this->user_path, 0777);
                 $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message";
-                $fd = @fopen($temp_file, "w+");
-                if(!$fd){
-                        $this->log(self::E, "Cannot create temp file");
-                        return false;
-                }
-                @fputs($fd, $message);
-                @fclose($fd);
+                $this->save_to_file($temp_file, $message);
 
                 $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --passphrase '" . $this->get_conf(true)->passphrase . "' -d " . $temp_file;
 
@@ -578,11 +554,12 @@ class PGP {
                         $this->log(self::E,  "Cannot decrypt the message", false);
                         return false;
                 } else {
+                        // Clean
                         unlink($temp_file);
                         return $output[0];
                 }
+                chmod($this->user_path, 0600);
         }
-
 
         /**
          * Send a GET request to the Service
