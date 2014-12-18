@@ -22,7 +22,7 @@ define("GEN_HTTP_LOG", false);
 
 require_once(CLASSES_DIR . "frontend_api.class.php");
 
-class Cypher {
+class PGP {
         const GPG = "GPG";
         // Log levels
         const E = "error";
@@ -31,7 +31,7 @@ class Cypher {
         const D = "debug";
         const T = "trace";
 
-        function __construct($user_data, $mode) {
+        function __construct($user_data) {
                 // The absolute working path
                 chdir(SYSTEM_ROOT . "common/");
                 $this->gpg_path = getcwd() . DIRECTORY_SEPARATOR . ".gnupg";
@@ -40,21 +40,6 @@ class Cypher {
                 $this->check_user_data();
                 $this->user_path();
                 $this->site_config = $this->get_site_config();
-
-                // Initialisate the gpg class
-                $this->gpg = new gnupg();
-                if(strlen($this->gpg->geterror()) > 0) {
-                        $this->log(self::E, $this->gpg->geterror(), false);
-                }
-
-                switch ($mode) {
-                        case "PHP":
-                                $CLI = false;
-                                break;
-                        case "BASH":
-                        default:
-                                $CLI = true;
-                }
         }
 
         /**
@@ -99,9 +84,7 @@ class Cypher {
          * @param  string       $email                  The email address
          * @return string                               Transformed email address
          */
-        private function mail_to_path($email) {
-                return preg_replace("[@]", "_", $email);
-        }
+        private function mail_to_path($email) { return preg_replace("[@]", "_", $email); }
 
         /**
          * Collect data
@@ -347,15 +330,26 @@ class Cypher {
         }
 
         /**
+        * Return data about generate key
+        * @param  bool          $object                Return as object?
+        * @return array                                An array of key data
+        */
+        private function get_conf($object = false) {
+                if($object) {
+                        return json_decode(json_encode(parse_ini_file($this->user_conf)));
+                } else {
+                        return parse_ini_file($this->user_conf);
+                }
+        }
+
+        /**
          * Identify an user by email address
          * @return array                                An array with user data
          */
         public function identify() {
-                $conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
-                if(file_exists($conf)) {
-                        $p_conf = parse_ini_file($conf);
-                        $this->store_user_data($p_conf);
-                }
+                $p_conf = $this->get_conf();
+                $this->store_user_data($p_conf);
+
                 return $this->repo;
         }
 
@@ -365,19 +359,6 @@ class Cypher {
          * @return string                               The fingerprint of user
          */
         public function export_fingerprint($with_spaces = true) {
-                if($CLI) {
-                        $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --fingerprint";
-                        if(GEN_HTTP_LOG){
-                                $command .= " 2>/dev/null &";
-                        }
-                        exec($command, $output, $error_code);
-                        if($error_code){
-                                $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
-                                return(false);
-                        }
-                } else {
-
-                }
                 $sfingerprint = str_replace("Key fingerprint = ", "", trim($output[3]));
                 $fingerprint = preg_replace("[ ]", "", str_replace("Key fingerprint = ", "", trim($output[3])));
                 $this->user_data["fingerprint"] = array($fingerprint, $sfingerprint);
@@ -389,27 +370,6 @@ class Cypher {
                         return $fingerprint;
                 }
         }
-
-        // /**
-        //  * Return data about generate key
-        //  * @param  string       $fingerprint           The key fingerprint
-        //  * @return array                                An array of key data
-        //  */
-        // private function get_conf($fingerprint) {
-        //         $finger_path = $this->finger_path($fingerprint);
-        //         $conf = file($finger_path . DIRECTORY_SEPARATOR . ".key.conf");
-        //
-        //         foreach($conf as $k => $v) {
-        //                 if(strstr($v, ": ")) {
-        //                         $conf2 = explode(": ", $v);
-        //
-        //                         foreach($conf2 as $kk => $vv) {
-        //                                 $config[strtolower(trim($conf2[0]))] = trim($conf2[1]);
-        //                         }
-        //                 }
-        //         }
-        //         return $config;
-        // }
 
         /**
          * Export the public key in ascii armored format
@@ -547,18 +507,15 @@ class Cypher {
         }
 
         /**
-         * ---------------------------------------------------------------------
-         * WARNING: MUST BE TESTED!
-         * ---------------------------------------------------------------------
-         * Sign a given message with PGP
-         * @param  string       $message                The message to sign
-         * @return string                               The signed message
+         * Encrypt a given message
+         * @param  string       $message                The message to encrypt
+         * @return string                               The encrypted message
          */
         public function encrypt_message($message) {
                 $token = md5(uniqid(rand()));
 
                 chmod($this->user_path, 0777);
-                $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message.txt";
+                $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message";
                 $fd = @fopen($temp_file, "w+");
                 if(!$fd){
                         $this->log(self::E, "Cannot create temp file");
@@ -567,7 +524,7 @@ class Cypher {
                 @fputs($fd, $message);
                 @fclose($fd);
 
-                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --encrypt --sign --armor -r " . escapeshellarg($this->user_data["email"]) . " " . $temp_file;
+                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --encrypt --armor -r " . escapeshellarg($this->user_data["email"]) . " " . $temp_file;
 
                 if(GEN_HTTP_LOG){
                         $command .= " 2> " . escapeshellarg($this->user_path) . DIRECTORY_SEPARATOR . "log.txt < /dev/null &";
@@ -577,15 +534,53 @@ class Cypher {
                 exec($command, $output, $error_code);
 
                 if($error_code){
-                        $this->log(self::E,  "Cannot generate the key with command: " . $command . " error_code: " . $error_code);
-                        // Remove created dir
-                        $this->remove_key();
+                        $this->log(self::E,  "Cannot encrypt the message", false);
                         return false;
                 } else {
-                        print_r($command);
-                        print_r($output);
+                        chmod($temp_file . ".asc", 0777);
+                        $encrypted = file_get_contents($temp_file . ".asc");
+                        // Clean
+                        unlink($temp_file);
+                        unlink($temp_file . ".asc");
+                        return $encrypted;
                 }
                 chmod($this->user_path, 0600);
+        }
+
+        /**
+        * Decrypt a given crypted message
+        * @param  string       $message                The crypted message to decrypt
+        * @return string                               The decrypted message
+        */
+        public function decrypt_message($message) {
+                $token = md5(uniqid(rand()));
+
+                chmod($this->user_path, 0777);
+                $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message";
+                $fd = @fopen($temp_file, "w+");
+                if(!$fd){
+                        $this->log(self::E, "Cannot create temp file");
+                        return false;
+                }
+                @fputs($fd, $message);
+                @fclose($fd);
+
+                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --passphrase '" . $this->get_conf(true)->passphrase . "' -d " . $temp_file;
+
+                if(GEN_HTTP_LOG){
+                        $command .= " 2> " . escapeshellarg($this->user_path) . DIRECTORY_SEPARATOR . "log.txt < /dev/null &";
+                } else {
+                        $command .= " 2> /dev/null < /dev/null &";
+                }
+                exec($command, $output, $error_code);
+
+                if($error_code){
+                        $this->log(self::E,  "Cannot decrypt the message", false);
+                        return false;
+                } else {
+                        unlink($temp_file);
+                        return $output[0];
+                }
         }
 
 
@@ -616,43 +611,4 @@ class Cypher {
         }
 }
 
-// USAGE
-header("Content-type: text/plain;");
-
-// $interface_config = new parse_json_config(CONF_DIR . "site.js");
-
-// $interface = $interface_config->parse_js_config("config");
-$frontend = new frontend_api();
-$frontend->get_definitions("api", false, "obj");
-$frontend->get_definitions("tags", false, "obj");
-
-$user_data = array(
-        "name" => "Antonio Rossi",
-        "email" => "antonio.rossi@example.net",
-        "comment" => "",
-        "passphrase" => ""
-);
-$cypher = new Cypher($user_data, "PHP");
-// print_r($cypher->get_site_config());
-// print_r($cypher->generate_key());
-// var_dump($key_data);
-$inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
-$user_params = array(
-        kTAG_NAME => "Antonio Rossi",
-        kTAG_ENTITY_EMAIL => "antonio.rossi@example.net",
-        kTAG_ROLES => array(":roles:user-invite"),
-        kTAG_ENTITY_PGP_KEY => "185BE161D78A812C78C737003200EBDCF15E1B60",
-        kTAG_ENTITY_PGP_FINGERPRINT => "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1\n\nmQENBFSO7/MBCADH/aq4QXycGhhQcoC9hJ1hkPyttjIPul8f+5ocgNjy1w/zzXsR\nF7F08bVA5ygz1a6cpmnzn+/E5tufJPy+p/OlxETaI1ZCOlH+MTw6Mb0xAWDXT4xh\nUuRjloXdQC9XdXKDxg8L4WOLjBs02YAQNPYwwxmGQz8W3ckgh+jwiDGj+eEyWVkj\nk98xNs3090Ne7qk0DIs6Njo0SoJkd/ELAHVTmpDdseNu4V5ar+eN31LH04BZaqaH\nMpPeowILUut5fe9Ln1Y8yuTdL6jrdyyjyFhzqFXd7Ki4HctA/J0Biir5OtKXRYoN\n7DtOEHejdGe/WxErRs0+/mROPO9SenflGK8TABEBAAG0KUFudG9uaW8gUm9zc2kg\nPGFudG9uaW8ucm9zc2lAZXhhbXBsZS5uZXQ+iQE4BBMBAgAiBQJUju/zAhsvBgsJ\nCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAyAOvc8V4bYJinB/9RnBxzjcu2toxl\nkzyqxsqLqFEQ0cWfB6u44w7aYjNF1ZSfeP8kQ00E9JTRlQPBXG0UDLSnRhKaAhSC\nuL+EnjfVNb1BVlz+wj7qdsee+Rn54ebIJpyPT6I5iTn8qyS972i4R2NP8tf+WrUX\naK8v59YmY+Ks3ZQWADhp/eu6h1yS7xlxA2uGnjwsQ7TPFvQg+mrSh36v1Gr0eWGZ\nroxfqojgMbnf1/UnN/qzIzDpU5Kp//0uEEIwGu7P8+d9GB0H7yRiKfuVA+I1EU5W\nUHUOa0bE+/VT04OxpQGLXRidwmbd1BStsbi/1JPchPvlzDRSm3CeSF/6NQipFwXL\ngp2II9bG\n=KgWD\n-----END PGP PUBLIC KEY BLOCK-----"
-);
-// chdir(SYSTEM_ROOT . "common/.gnupg/EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
-$gpg = new gnupg();
-putenv("GNUPGHOME=" . SYSTEM_ROOT . "common/.gnupg/EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
-$gpg->addencryptkey("EF35AADD793ABFC152AF03AC04052A6B41F64CCA");
-$enc = $gpg->encrypt("just a test");
-$dec = $gpg->decrypt($enc);
-echo $gpg->geterror();
-echo $dec;
-// print_r($user_params);
-//
-// print $cypher->send_to_service($inviter, $user_params);
 ?>
