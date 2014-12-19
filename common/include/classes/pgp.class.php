@@ -1,5 +1,11 @@
 <?php
 
+/**
+* pgp.class.php
+*
+* This file contains the {@link PGP} class.
+*/
+
 // The GnuPG Binary file
 define("GPG_BIN", "/usr/bin/gpg");
 // The System root dir
@@ -22,15 +28,95 @@ define("GEN_HTTP_LOG", false);
 
 require_once(CLASSES_DIR . "frontend_api.class.php");
 
+/*=======================================================================================
+*																						*
+*										pgp.class.php										*
+*																						*
+*======================================================================================*/
+
+/**
+* PGP object
+*
+* This class can be used to ecncrypt and decrypt data, as well as to create user PGP keys and
+* manage the relative data.
+*
+* Example:
+* ```php
+* $user_data = array(
+* 	"name" => "John Doe",
+*  	"email" => "john@example.net",
+*   	"comment" => "",
+*    	"passphrase" => ""
+* );
+* $pgp = new PGP($user_data);
+* $pgp->generate_key();
+*
+* $txt = "Lorem ipsum dolor sit amet, nam ut omittam eleifend, eu facer labore oporteat his. Facete vituperata per ei. Pri causae vulputate pertinacia ea, alia facete dignissim ad sed. Eam ad mazim exerci pericula, pro ex malorum postulant. Ex unum nominavi nam, lorem propriae et sea. No vel denique dissentiunt definitionem, vis ne praesent postulant.";
+*
+* print "Encrypting...\n" . str_repeat("~", 70) . "\n";
+* $enc = $pgp->encrypt_message($txt);
+* print $enc . "\n\n";
+* print "Decrypting encrypted text...\n" . str_repeat("~", 70) . "\n";
+* $dec = $pgp->decrypt_message($enc);
+* print $dec;
+* ```
+*
+* The class features the following methods:
+* * {@link PGP::get_site_config()}              Get the site config
+* * {@link PGP::check_user_data()}              Check if required data was passed to the class
+* * {@link PGP::mail_to_path()}                 Transform a mail address to path friendly
+* * {@link PGP::store()}                        Collect given data
+* * {@link PGP::store_user_data()}              Store selected user data
+* * {@link PGP::save_to_file()}                 Create a temporary file with given content
+* * {@link PGP::log()}                          Log error messages in user dir
+* * {@link PGP::user_path()}                    Calculate the full directory user path
+* * {@link PGP::check_user_path()}              Check if the user dir exists
+* * {@link PGP::rename_user_path()}             Rename the user temp folder with its fingerprint
+* * {@link PGP::generate_default_passphrase()}  Generate a random passphrase
+* * {@link PGP::save_conf()}                    Save config file for generate the user PGP key
+* * {@link PGP::save_user_data()}               Save some user data in a .conf file
+* * {@link PGP::get_conf()}                     Return data about generate key
+* * {@link PGP::identify()}                     Identify an user by email address
+* * {@link PGP::export_fingerprint()}           Return the fingerprint of a given email address
+* * {@link PGP::export_key()}                   Export the public key in ascii armored format
+* * {@link PGP::export_key_to_server()}         Export the public key to a given server
+* * {@link PGP::generate_key()}                 Generate GPG key-pair
+* * {@link PGP::remove_key()}                   Remove a stored PGP key
+* * {@link PGP::encrypt_message()}              Encrypt a given message
+* * {@link PGP::decrypt_message()}              Decrypt a given crypted message
+* * {@link PGP::send_to_service()}              Send a GET request to the Service
+*
+*
+*	@package	PGRDG
+*	@author		Alessandro Gubitosi <gubi.ale@iod.io>
+*	@version	1.00 12/2014
+*	@access         public
+*	@see            https://github.com/bioversity/PGRDG Project Main Page
+*	@todo           PGP::export_key_to_server()
+*/
 class PGP {
-        const GPG = "GPG";
-        // Log levels
+        /**
+         * Log levels
+         * @const E     Level Error
+         * @const W     Level Warning
+         * @const I     Level Info
+         * @const D     Level Debug
+         * @const T     Level Trace
+         */
         const E = "error";
         const W = "warn";
         const I = "info";
         const D = "debug";
         const T = "trace";
 
+        /**
+         * Constructor
+         *
+         * @param  array        $user_data              An array with basic user data
+         * @uses   PGP::check_user_data()
+         * @uses   PGP::user_path()
+         * @uses   PGP::get_site_config()
+         */
         function __construct($user_data) {
                 // The absolute working path
                 chdir(SYSTEM_ROOT . "common/");
@@ -44,6 +130,8 @@ class PGP {
 
         /**
          * Include the parse_js_config.class.php and return the array of site.js
+         *
+         * @uses   parse_json_config::parse_json_config()
          * @return array                                The site configs
          */
         public function get_site_config() {
@@ -56,6 +144,8 @@ class PGP {
         /**
          * Check if required data was passed to the class
          * If $item will not be passed will check only for email address
+         *
+         * @uses   PGP::log()
          * @param  string       $item                   The item to check
          * @param  bool         $display_message        Display the error message?
          * @return bool
@@ -81,13 +171,15 @@ class PGP {
 
         /**
          * Transform a mail address to path friendly
+         *
          * @param  string       $email                  The email address
          * @return string                               Transformed email address
          */
         private function mail_to_path($email) { return preg_replace("[@]", "_", $email); }
 
         /**
-         * Collect data
+         * Collect given data
+         *
          * @param  void         $key                    The key of array. If is array will be parsed instead of $value
          * @param  string       $value                  The value of array. If $key is an array $value will be ignored
          */
@@ -101,9 +193,10 @@ class PGP {
                 }
         }
 
-
         /**
          * Store selected user data
+         *
+         * @uses   PGP::store()
          * @param  array        $data                   The array with data to filter
          */
         private function store_user_data($data = array()) {
@@ -120,7 +213,29 @@ class PGP {
         }
 
         /**
+        * Create a temporary file with given content
+        *
+        * @uses   PGP::log()
+        * @param  string       $file                   The file name (including full path)
+        * @param  string       $content                The content to put inside the file
+        * @param  string       $mode                   The access mode, default is "w+"
+        */
+        private function save_to_file($file, $content, $mode = "w+") {
+                chmod($this->user_path, 0777);
+
+                $fd = @fopen($file, "w+");
+                if(!$fd){
+                        $this->log(self::E, "Cannot create temp file");
+                        return false;
+                }
+                @fputs($fd, $content);
+                @fclose($fd);
+        }
+
+        /**
         * Log error messages in user dir
+        *
+        * @uses   PGP::save_to_file()
         * @param   string       $type                   The log level
         * @param   string       $message                The message to log
         * @param   bool         $log                    Save in log file?
@@ -150,7 +265,11 @@ class PGP {
         }
 
         /**
-         * Transform a given email address to the full directory user path
+         * Calculate the full directory user path
+         *
+         * @uses   PGP::log()
+         * @uses   PGP::mail_to_path()
+         * @uses   PGP::check_user_data()
          * @return string                               The full directory user path
          */
         private function user_path() {
@@ -192,8 +311,10 @@ class PGP {
         }
 
         /**
-         * Check if the user dir exists.
+         * Check if the user dir exists
          * If $create is set to true will try to create the dir if not exists
+         *
+         * @uses   PGP::log()
          * @param  bool         $create                 Create the dir if not exists
          * @return bool                                 True = The user dir exists | False = The user dir do not exists
          */
@@ -222,6 +343,9 @@ class PGP {
 
         /**
          * Rename the user temp folder with its fingerprint
+         *
+         * @uses   PGP::log()
+         * @uses   PGP::store()
          * @return bool
          */
         private function rename_user_path() {
@@ -244,33 +368,15 @@ class PGP {
 
         /**
          * Generate a random passphrase
+         *
          * @return string The passphrase
          */
-        private function generate_default_passphrase() {
-                $bytes = openssl_random_pseudo_bytes(rand(100, 300));
-                return bin2hex($bytes);
-        }
-
-        /**
-         * Create a temporary file with given content
-         * @param  string       $file                   The file name (including full path)
-         * @param  string       $content                The content to put inside the file
-         * @param  string       $mode                   The access mode, default is "w+"
-         */
-        private function save_to_file($file, $content, $mode = "w+") {
-                chmod($this->user_path, 0777);
-
-                $fd = @fopen($file, "w+");
-                if(!$fd){
-                        $this->log(self::E, "Cannot create temp file");
-                        return false;
-                }
-                @fputs($fd, $content);
-                @fclose($fd);
-        }
+        private function generate_default_passphrase() { $bytes = bin2hex(openssl_random_pseudo_bytes(rand(100, 300))); }
 
         /**
         * Save config file for generate the user PGP key
+        *
+        * @uses   PGP::save_to_file()
         * @return  string                               The full path of the config file
         */
         private function save_conf() {
@@ -305,7 +411,10 @@ class PGP {
         }
 
         /**
-        * Save user data for login
+        * Save some user data in a .conf file
+        *
+        * @uses   PGP::mail_to_path()
+        * @uses   PGP::save_to_file()
         */
         private function save_user_data() {
                 $data["name"] = $this->user_data["name"];
@@ -326,6 +435,7 @@ class PGP {
 
         /**
         * Return data about generate key
+        *
         * @param  bool          $object                Return as object?
         * @return array                                An array of key data
         */
@@ -339,6 +449,9 @@ class PGP {
 
         /**
          * Identify an user by email address
+         *
+         * @uses   PGP::get_conf()
+         * @uses   PGP::store_user_data()
          * @return array                                An array with user data
          */
         public function identify() {
@@ -349,7 +462,9 @@ class PGP {
         }
 
         /**
-         * Display the fingerprint of a given email address
+         * Return the fingerprint of a given email address
+         *
+         * @uses   PGP::store()
          * @param  bool         $with_spaces            Show with spaces or not
          * @return string                               The fingerprint of user
          */
@@ -368,6 +483,9 @@ class PGP {
 
         /**
          * Export the public key in ascii armored format
+         *
+         * @uses   PGP::log()
+         * @uses   PGP::save_to_file()
          * @param  bool         $save_file              If true save the key in a file
          * @return bool         False if failed
          */
@@ -397,7 +515,9 @@ class PGP {
 
         /**
         * Export the public key to a given server
-        * @param   string       $key_server             Target Key Server
+        *
+        * @todo    Develope the function
+        * @param   string       $key_server             Target Key Server, default is {@link http://pgp.mit.edu}
         */
         public function export_key_to_server($key_server = "pgp.mit.edu") {
                 print "This function must be developed!";
@@ -405,7 +525,16 @@ class PGP {
         }
 
         /**
-        * Generate GPG key-pair
+        * Generate a new GPG key-pair
+        *
+        * @uses    PGP::log()
+        * @uses    PGP::generate_default_passphrase()
+        * @uses    PGP::remove_key()
+        * @uses    PGP::export_fingerprint()
+        * @uses    PGP::rename_user_path()
+        * @uses    PGP::export_key()
+        * @uses    PGP::save_user_data()
+        * @uses    PGP::send_to_service()
         * @return  array                                An array with the fingerprint and the public key
         */
         public function generate_key() {
@@ -459,9 +588,11 @@ class PGP {
         }
 
         /**
-         * Remove a stored Key.
+         * Remove a stored PGP key
          * Search for a config file of a given email address and remove its key.
-         * If no email will be passed directly will acquire from the class params
+         * If no email will be passed directly will acquire from the class params.
+         *
+         * @uses   PGP::mail_to_path()
          * @param  string       $email                  An email address
          * @return bool                                 If passed
          */
@@ -497,6 +628,9 @@ class PGP {
 
         /**
          * Encrypt a given message
+         *
+         * @uses   PGP::save_to_file()
+         * @uses   PGP::log()
          * @param  string       $message                The message to encrypt
          * @return string                               The encrypted message
          */
@@ -532,6 +666,9 @@ class PGP {
 
         /**
         * Decrypt a given crypted message
+        *
+        * @uses   PGP::save_to_file()
+        * @uses   PGP::log()
         * @param  string       $message                The crypted message to decrypt
         * @return string                               The decrypted message
         */
@@ -563,6 +700,10 @@ class PGP {
 
         /**
          * Send a GET request to the Service
+         *
+         * @uses   PGP::log()
+         * @uses   frontend_api::publicEncode()
+         * @uses   Encoder::publicEncode()
          * @param  array        $params                 The params to append to the url
          */
         public function send_to_service($inviter, $params) {

@@ -216,14 +216,18 @@ class parse_json_config {
 			}
 			$page->has_error = false;
 
-			if($page->exists) {
-				if($page->need_login && !$logged) {
-					$page->class[] = "e405";
+			if(isset($page->is_system_page) && $page->is_system_page) {
+				$page->has_error = false;
+			} else {
+				if($page->exists) {
+					if($page->need_login && !$logged) {
+						$page->class[] = "e405";
+						$page->has_error = true;
+					}
+				} else {
+					$page->class[] = "e404";
 					$page->has_error = true;
 				}
-			} else {
-				$page->class[] = "e404";
-				$page->has_error = true;
 			}
 		}
 		return $page;

@@ -8,6 +8,7 @@
                         "template": "",
                         "need_login": false,
                         "is_main_page": true,
+                        "is_system_page": false,
                         "subpages": ""
                 },
                 "About_us": {
@@ -18,6 +19,7 @@
                         "template": "",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": {
                                 "Feedback": {
                                         "title": "Feedback",
@@ -27,6 +29,7 @@
                                         "template": "common/tpl/pages/Feedback.tpl",
                                         "need_login": false,
                                         "is_main_page": false,
+                                        "is_system_page": false,
                                         "subpages": ""
                                 },
                                 "How_the_system_works": {
@@ -37,6 +40,7 @@
                                         "template": "",
                                         "need_login": false,
                                         "is_main_page": false,
+                                        "is_system_page": false,
                                         "subpages": ""
                                 }
                         }
@@ -49,6 +53,7 @@
                         "template": "",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": {
                                 "Conservation_Strategies": {
                                         "title": "Conservation Strategies",
@@ -58,6 +63,7 @@
                                         "template": "",
                                         "need_login": false,
                                         "is_main_page": false,
+                                        "is_system_page": false,
                                         "subpages": ""
                                 },
                                 "Links": {
@@ -68,6 +74,7 @@
                                         "template": "",
                                         "need_login": false,
                                         "is_main_page": false,
+                                        "is_system_page": false,
                                         "subpages": ""
                                 }
                         }
@@ -80,6 +87,7 @@
                         "template": "",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": ""
                 },
                 "Graph": {
@@ -90,6 +98,7 @@
                         "template": "common/tpl/pages/Graph.tpl",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": ""
                 },
                 "Map": {
@@ -100,6 +109,7 @@
                         "template": "",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": ""
                 },
                 "Blog": {
@@ -110,6 +120,7 @@
                         "template": "common/tpl/pages/Blog.tpl",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": ""
                 },
                 "Profile": {
@@ -120,6 +131,18 @@
                         "template": "common/tpl/admin/Profile.tpl",
                         "need_login": false,
                         "is_main_page": false,
+                        "is_system_page": false,
+                        "subpages": ""
+                },
+                "Signin": {
+                        "title": "Signin",
+                        "title_class": "",
+                        "class": ["signin"],
+                        "address": "Signin",
+                        "template": "",
+                        "need_login": true,
+                        "is_main_page": false,
+                        "is_system_page": true,
                         "subpages": ""
                 },
                 "Dashboard": {
@@ -130,6 +153,7 @@
                         "template": "",
                         "need_login": true,
                         "is_main_page": false,
+                        "is_system_page": false,
                         "subpages": ""
                 }
         }

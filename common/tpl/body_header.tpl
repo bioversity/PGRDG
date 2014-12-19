@@ -1,4 +1,4 @@
-<header class="main<?php print (strtolower($page->current) == "map" || !$page->exists || $page->need_login && !$logged) ? ' map' : ""; ?>">
+<header class="main <?php print (strtolower($page->current) == "signin" ? "signin" : ((strtolower($page->current) == "map" || !$page->exists || $page->need_login && !$logged) ? 'map' : "")); ?>">
 	<div class="container">
 		<div class="top">
 			<div id="logo"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>

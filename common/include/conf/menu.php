@@ -176,15 +176,15 @@ $menu["menu"]["top"][] = array(
 	*/
 	"Sign in" => array(
 		"content" => array(
-			"icon" => "fa fa-refresh fa-spin",
+			"icon" => "fa fa-sign-in",
 			"text" => "Sign in"
 		),
 		"attributes" => array(
-			"href" => "javascript:void(0);",
-			"data-toggle" => "modal",
-			"data-target" => "#login",
-			"id" => "login_menu_btn",
-			"class" => "btn btn-link disabled"
+			"href" => "/Signin",
+			// "data-toggle" => "modal",
+			// "data-target" => "#login",
+			// "id" => "login_menu_btn",
+			"class" => "btn btn-link"
 		)
 	)
 );

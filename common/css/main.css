@@ -56,6 +56,10 @@ body.e405 {
 	background: #000 url("../media/img/lava_explosion.jpg") top center no-repeat !important;
 	background-size: 100%;
 }
+body.signin {
+	/*background: #fff url("../media/img/_.jpg") top center no-repeat !important;*/
+	background-size: 100%;
+}
 
 h1,
 h2,
@@ -67,7 +71,8 @@ h1.text-muted {
 	border-bottom: #eee 1px solid;
 }
 div.e404,
-div.e405 {
+div.e405,
+div.signin {
 	position: absolute;
 	bottom: 20%;
 	right: 20%;
@@ -76,18 +81,22 @@ div.e405 {
 }
 div.e404,
 div.e404 h1 > span,
-div.e405 h1 > span {
+div.e405 h1 > span,
+div.signin h1 > span {
 	color: #fff;
 }
-div.e405 h2 {
+div.e405 h2,
+div.signin h2 {
 	border-bottom: 0px none;
 }
-div.e405 > div.panel {
+div.e405 > div.panel,
+div.signin > div.panel {
 	background-color: rgba(255,255,255,0.5);
 	border-radius: 0px;
 }
 div.e404 + div.signature,
-div.e405 + div.signature {
+div.e405 + div.signature,
+div.signin + div.signature {
 	position: absolute;
 	bottom: 10px;
 	left: 10px;
@@ -97,26 +106,30 @@ div.e405 + div.signature {
 	font-size: 0.7em;
 }
 div.e404 + div.signature a,
-div.e405 + div.signature a {
+div.e405 + div.signature a,
+div.signin + div.signature a {
 	color: #fff;
 	text-decoration: underline;
 }
 div.e404 + div.signature a + sup,
-div.e405 + div.signature a + sup {
+div.e405 + div.signature a + sup,
+div.signin + div.signature a + sup {
 	color: #999;
 }
 
 div.e404 .help-block,
-div.e405 .help-block {
+div.e405 .help-block,
+div.signin .help-block {
 	background-color: rgba(255, 255, 255, 0.5);
 	box-shadow: 0 0 3px #fff;
 	color: #333;
 	padding: 10px;
 }
-div.e405 .help-block {
+div.e405 .help-block,
+div.signin .help-block {
 	box-shadow: 0 0 0 transparent;
 }
-div.e404 p, div.e405 p { color: #ddd; text-shadow: 0 0 10px #000; }
+div.e404 p, div.e405 p, div.signin p { color: #ddd; text-shadow: 0 0 10px #000; }
 
 @media only screen and (max-height:420px) {
 	body.e404,
@@ -126,28 +139,33 @@ div.e404 p, div.e405 p { color: #ddd; text-shadow: 0 0 10px #000; }
 }
 @media only screen and (max-width:420px) {
 	div.e404,
-	div.e405 {
+	div.e405,
+	div.signin {
 		position: absolute;
 		top: 20%;
 		left: 50%;
 		margin-left: -130px;
 		width: 260px;
 	}
-	div.e405 {
+	div.e405,
+	div.signin {
 		top: 50px;
 	}
 	div.e404 h1,
-	div.e405 h1 {
+	div.e405 h1,
+	div.signin h1 {
 		text-align: center;
 	}
 	div.e404 p,
-	div.e405 p {
+	div.e405 p,
+	div.signin p {
 		font-size: 13px;
 		text-align: justify;
 	}
 }
 div.e404 h1 > span,
-div.e405 h1 > span {
+div.e405 h1 > span,
+div.signin h1 > span {
 	font-size: 4em !important;
 	font-weight: bold;
 }
@@ -1239,16 +1257,16 @@ div[unselectable] {
 }
 
 section.backgrounded {
-	background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 50% 50% no-repeat;
+	background: transparent url("/common/media/img/iStock_000033155168XXXLarge.jpg") 50% 50% no-repeat;
 }
 @media only screen and (max-width:1024px) {
 	section.backgrounded {
-		background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 70% -30% no-repeat;
+		background: transparent url("/common/media/img/iStock_000033155168XXXLarge.jpg") 70% -30% no-repeat;
 	}
 }
 @media only screen and (max-width:420px) {
 	section.backgrounded {
-		background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 70% -30% no-repeat;
+		background: transparent url("/common/media/img/iStock_000033155168XXXLarge_2.jpg") 70% 30% no-repeat;
 	}
 }
 section.backgrounded #se {

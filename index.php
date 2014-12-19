@@ -38,31 +38,35 @@ $logged = false;
 	</head>
 	<body <?php print ((count($page->class) > 0) ? 'class="' . implode($page->class, " ") . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
-		if(!$page->exists) {
-			include("common/tpl/pages/404.tpl");
+		if(strtolower($page->current) == "signin") {
+			include("common/tpl/pages/Signin.tpl");
 		} else {
-			if($page->need_login && !$logged) {
-				include("common/tpl/pages/405.tpl");
-				include("common/tpl/script.tpl");
+			if(!$page->exists) {
+				include("common/tpl/pages/404.tpl");
 			} else {
-				?>
-				<div id="loader" class="system">
-					<div></div>
-					<div></div>
-				</div>
-				<?php
-				if($logged && strtolower($page->current) == "dashboard") {
-					?>
-					<?php include("common/tpl/admin/index.tpl"); ?>
-					<?php
+				if($page->need_login && !$logged) {
+					include("common/tpl/pages/405.tpl");
+					include("common/tpl/script.tpl");
 				} else {
 					?>
-					<?php include("common/tpl/body_header.tpl"); ?>
-
-					<?php include("common/include/get_contents.php"); ?>
-
-					<?php include("common/tpl/script.tpl"); ?>
+					<div id="loader" class="system">
+						<div></div>
+						<div></div>
+					</div>
 					<?php
+					if($logged && strtolower($page->current) == "dashboard") {
+						?>
+						<?php include("common/tpl/admin/index.tpl"); ?>
+						<?php
+					} else {
+						?>
+						<?php include("common/tpl/body_header.tpl"); ?>
+
+						<?php include("common/include/get_contents.php"); ?>
+
+						<?php include("common/tpl/script.tpl"); ?>
+						<?php
+					}
 				}
 			}
 		}

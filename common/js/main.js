@@ -1389,7 +1389,7 @@ $(document).ready(function() {
 				$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev);
 			}
 		}
-		$.check_logged_user();
+		// $.check_logged_user();
 		if(current_path == "Profile") {
 			if($.cookie("l") !== undefined && $.cookie("l") !== null && $.cookie("l") !== "") {
 				//$.generate_personal_form(storage.get("pgrdg_cache.session." + $.cookie("l") + ".data"));
