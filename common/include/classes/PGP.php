@@ -1,41 +1,50 @@
 <?php
+header("Content-type: text/plain;");
 
 /**
-* pgp.class.php
+* PGP.php
 *
 * This file contains the {@link PGP} class.
+*
+* @const SYSTEM_ROOT           The System root dir
+* @const INCLUDE_DIR           Include dir
+* @const CLASSES_DIR           Classes dir
+* @const CONF_DIR              Conf dir
+*
+* @const GPG_BIN               Absolute local URI of GnuPG package binary file
+* @const GPG_PARAMS            Default parameters in the GnuPG command calls
+* @const GPG_USER_DIR          User dir
+* @const GPG_PASS_LENGTH       Minimum lenght accepted of the passphrase
+* @const GEN_HTTP_LOG          Generate or not logs via HTTP interface
 */
-
-// The GnuPG Binary file
-define("GPG_BIN", "/usr/bin/gpg");
-// The System root dir
 define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-// The include dir
 define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-// The classes dir
 define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-// The conf dir
 define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
 
-// The default parameters to use the GnuPG
+define("GPG_BIN", "/usr/bin/gpg");
 define("GPG_PARAMS", " --no-tty --no-secmem-warning --home ");
-// Where the users dir will be created
 define("GPG_USER_DIR", getcwd() . ".gnupg");
-// The minimum lenght accepted of the passphrase
 define("GPG_PASS_LENGTH", 8);
-// Generate or not logs in the HTTP log
 define("GEN_HTTP_LOG", false);
 
-require_once(CLASSES_DIR . "frontend_api.class.php");
+
+require_once(CLASSES_DIR . "Frontend.php");
 
 /*=======================================================================================
 *																						*
-*										pgp.class.php										*
+*										PGP.php										*
 *																						*
 *======================================================================================*/
 
 /**
 * PGP object
+*
+* PHP Version 5.3
+*
+* @copyright 2013 Bioversity International (http://www.bioversityinternational.org/)
+* @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @link https://github.com/bioversity/PGRD
 *
 * This class can be used to ecncrypt and decrypt data, as well as to create user PGP keys and
 * manage the relative data.
@@ -87,12 +96,13 @@ require_once(CLASSES_DIR . "frontend_api.class.php");
 * * {@link PGP::send_to_service()}              Send a GET request to the Service
 *
 *
-*	@package	PGRDG
-*	@author		Alessandro Gubitosi <gubi.ale@iod.io>
-*	@version	1.00 12/2014
-*	@access         public
-*	@see            https://github.com/bioversity/PGRDG Project Main Page
-*	@todo           PGP::export_key_to_server()
+* @package      PGRDG
+* @author       Alessandro Gubitosi <gubi.ale@iod.io>
+* @version      1.00 12/2014
+* @license      http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3
+* @access       public
+* @see          https://github.com/bioversity/PGRDG Project Main Page
+* @todo         PGP::export_key_to_server()
 */
 class PGP {
         /**
@@ -131,14 +141,14 @@ class PGP {
         /**
          * Include the parse_js_config.class.php and return the array of site.js
          *
-         * @uses   parse_json_config::parse_json_config()
+         * @uses   Parse_json::Parse_json()
          * @return array                                The site configs
          */
         public function get_site_config() {
-                require_once(CLASSES_DIR . "parse_json_config.class.php");
+                require_once(CLASSES_DIR . "Parse_json.php");
 
-                $parse_json_config = new parse_json_config(CONF_DIR . "site.js");
-                return $parse_json_config->parse_js_config("config");
+                $parse_json = new Parse_json(CONF_DIR . "site.js");
+                return $parse_json->parse_js_config("config");
         }
 
         /**

@@ -10,8 +10,8 @@
 
 class frontend_api {
 	function __construct($input = array()) {
-		require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/classes/parse_json_config.class.php");
-		$this->interface_config = new parse_json_config($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/interface/site.js");
+		require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/classes/Parse_json.php");
+		$this->interface_config = new Parse_json($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/interface/site.js");
 		$this->input = $input;
 		$this->debug = false;
 		$this->external_definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions";

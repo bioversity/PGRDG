@@ -1,6 +1,6 @@
 <?php
 // Parse the menu defined by json object in "common/include/conf/menu.json"
-class parse_json_config {
+class Parse_json {
 	function __construct($config = "") {
 		if(trim($config) == "") {
 			// Uncomment if you want to remote json menu
@@ -236,7 +236,7 @@ class parse_json_config {
 
 }
 // header("Content-type: text/plain");
-// $site_config = new parse_json_config();
+// $site_config = new Parse_json();
 // print $site_config->menu("top", "list-unstyled text-center");
 // exit();
 ?>

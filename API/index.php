@@ -1,5 +1,5 @@
 <?php
-require_once("../common/include/classes/frontend_api.class.php");
+require_once("../common/include/classes/Frontend.php");
 $api = new frontend_api();
 
 if(empty($_GET) && empty($_POST)) {

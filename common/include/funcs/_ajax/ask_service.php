@@ -1,8 +1,8 @@
 <?php
-require_once("../common/include/classes/frontend_api.class.php");
-require_once("../common/include/classes/parse_json_config.class.php");
+require_once("../common/include/classes/Frontend.php");
+require_once("../common/include/classes/Parse_json.php");
 
-$interface_config = new parse_json_config("../common/include/conf/interface/site.js");
+$interface_config = new Parse_json("../common/include/conf/interface/site.js");
 $interface = $interface_config->parse_js_config("config");
 require_once($interface["service"]["definitions_dir"] . DIRECTORY_SEPARATOR . "Api.inc.php");
 $service_url = $interface["service"]["url"] . "Service.php?debug=true&" . kAPI_REQUEST_OPERATION . "=";
