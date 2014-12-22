@@ -93,7 +93,6 @@ require_once(CLASSES_DIR . "Frontend.php");
 * * {@link PGP::remove_key()}                   Remove a stored PGP key
 * * {@link PGP::encrypt_message()}              Encrypt a given message
 * * {@link PGP::decrypt_message()}              Decrypt a given crypted message
-* * {@link PGP::send_to_service()}              Send a GET request to the Service
 *
 *
 * @package      PGRDG
@@ -141,7 +140,7 @@ class PGP {
         /**
          * Include the parse_js_config.class.php and return the array of site.js
          *
-         * @uses   Parse_json::Parse_json()
+         * @uses   Parse_json::parse_js_config()
          * @return array                                The site configs
          */
         public function get_site_config() {
@@ -544,7 +543,6 @@ class PGP {
         * @uses    PGP::rename_user_path()
         * @uses    PGP::export_key()
         * @uses    PGP::save_user_data()
-        * @uses    PGP::send_to_service()
         * @return  array                                An array with the fingerprint and the public key
         */
         public function generate_key() {
@@ -591,8 +589,8 @@ class PGP {
                                 @unlink($this->user_path . DIRECTORY_SEPARATOR . "pubring.gpg~");
                                 chmod($this->user_path, 0600);
 
-                                // Send everything to the Service
-                                return $this->send_to_service($this->repo);
+                                // Return all user data
+                                return $this->repo;
                         }
                 }
         }
@@ -707,79 +705,6 @@ class PGP {
                 }
                 chmod($this->user_path, 0600);
         }
-
-        /**
-         * Send a GET request to the Service
-         *
-         * @uses   PGP::log()
-         * @uses   frontend_api::publicEncode()
-         * @uses   Encoder::publicEncode()
-         * @param  array        $params                 The params to append to the url
-         */
-        public function send_to_service($inviter, $params) {
-                require_once(CLASSES_DIR . "Encoder.php");
-                print_r($this->site_config);
-                exit();
-                $system_rsa_path = SYSTEM_ROOT . $interface["service"]["path"]["rsa"];
-                print $system_rsa_path;
-                $sys_pub_key = file_get_contents($system_rsa_path . "service_pub.pem");
-
-                $frontend = new frontend_api();
-                $encoder = new OntologyWrapper\Encoder();
-
-                $querystring = array(
-                        kAPI_REQUEST_OPERATION => kAPI_OP_INVITE_USER,
-                        kAPI_REQUEST_LANGUAGE => $interface["site"]["default_language"],
-                        kAPI_REQUEST_USER => $inviter,
-                        kAPI_PARAM_OBJECT => $encoder->publicEncode(json_encode($params), $sys_pub_key)
-                );
-                $url = $interface["service"]["url"] . $interface["service"]["script"] . "?" . http_build_query($querystring);
-
-                return $frontend->browse($url);
-        }
 }
 
-// USAGE
-
-// $interface_config = new Parse_json(CONF_DIR . "site.js");
-
-// $interface = $interface_config->parse_js_config("config");
-$frontend = new frontend_api();
-$frontend->get_definitions("api", false, "obj");
-$frontend->get_definitions("tags", false, "obj");
-
-$user_data = array(
-        "name" => "Antonio Rossi",
-        "email" => "antonio.rossi@example.net",
-        "comment" => "",
-        "passphrase" => ""
-);
-$pgp = new PGP($user_data);
-// print_r($pgp->get_site_config());
-// print_r($pgp->generate_key());
-// var_dump($key_data);
-// $inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
-// $user_params = array(
-//         kTAG_NAME => "Antonio Rossi",
-//         kTAG_ENTITY_EMAIL => "antonio.rossi@example.net",
-//         kTAG_ROLES => array(":roles:user-invite"),
-//         kTAG_ENTITY_PGP_KEY => "185BE161D78A812C78C737003200EBDCF15E1B60",
-//         kTAG_ENTITY_PGP_FINGERPRINT => "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1\n\nmQENBFSO7/MBCADH/aq4QXycGhhQcoC9hJ1hkPyttjIPul8f+5ocgNjy1w/zzXsR\nF7F08bVA5ygz1a6cpmnzn+/E5tufJPy+p/OlxETaI1ZCOlH+MTw6Mb0xAWDXT4xh\nUuRjloXdQC9XdXKDxg8L4WOLjBs02YAQNPYwwxmGQz8W3ckgh+jwiDGj+eEyWVkj\nk98xNs3090Ne7qk0DIs6Njo0SoJkd/ELAHVTmpDdseNu4V5ar+eN31LH04BZaqaH\nMpPeowILUut5fe9Ln1Y8yuTdL6jrdyyjyFhzqFXd7Ki4HctA/J0Biir5OtKXRYoN\n7DtOEHejdGe/WxErRs0+/mROPO9SenflGK8TABEBAAG0KUFudG9uaW8gUm9zc2kg\nPGFudG9uaW8ucm9zc2lAZXhhbXBsZS5uZXQ+iQE4BBMBAgAiBQJUju/zAhsvBgsJ\nCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAyAOvc8V4bYJinB/9RnBxzjcu2toxl\nkzyqxsqLqFEQ0cWfB6u44w7aYjNF1ZSfeP8kQ00E9JTRlQPBXG0UDLSnRhKaAhSC\nuL+EnjfVNb1BVlz+wj7qdsee+Rn54ebIJpyPT6I5iTn8qyS972i4R2NP8tf+WrUX\naK8v59YmY+Ks3ZQWADhp/eu6h1yS7xlxA2uGnjwsQ7TPFvQg+mrSh36v1Gr0eWGZ\nroxfqojgMbnf1/UnN/qzIzDpU5Kp//0uEEIwGu7P8+d9GB0H7yRiKfuVA+I1EU5W\nUHUOa0bE+/VT04OxpQGLXRidwmbd1BStsbi/1JPchPvlzDRSm3CeSF/6NQipFwXL\ngp2II9bG\n=KgWD\n-----END PGP PUBLIC KEY BLOCK-----"
-// );
-// print_r($pgp->identify());
-
-
-
-/* -------------------------------------------------------------------------- */
-// Test crypt and decrypt
-/* -------------------------------------------------------------------------- */
-$txt = "Lorem ipsum dolor sit amet, nam ut omittam eleifend, eu facer labore oporteat his. Facete vituperata per ei. Pri causae vulputate pertinacia ea, alia facete dignissim ad sed. Eam ad mazim exerci pericula, pro ex malorum postulant. Ex unum nominavi nam, lorem propriae et sea. No vel denique dissentiunt definitionem, vis ne praesent postulant.";
-
-print "Encrypting...\n" . str_repeat("~", 70) . "\n";
-$enc = $pgp->encrypt_message($txt);
-print $enc . "\n\n";
-print "Decrypting encrypted text...\n" . str_repeat("~", 70) . "\n";
-$dec = $pgp->decrypt_message($enc);
-print $dec;
-// print $pgp->send_to_service($inviter, $user_params);
 ?>

@@ -83,6 +83,11 @@ if(isset($_GET["getPublicKey"])) {
 		case "ask_service":
 			require_once("ask_service.php");
 			break;
+		case "login":
+			require_once("../../classes/Service_exchange.php");
+			$se = new Service_exchange();
+			
+			break;
 	}
 }
 ?>

@@ -7,12 +7,23 @@
 */
 
 namespace OntologyWrapper;
+if(!defined("SYSTEM_ROOT")) {
+	define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+}
 
 /*=======================================================================================
 *																						*
 *										Encoder.php										*
 *																						*
 *======================================================================================*/
+
+/**
+* Encryption library.
+*
+* These refer to the encryption library.
+*/
+require_once( SYSTEM_ROOT . "common/include/lib/phpseclib/Crypt/RSA.php" );
+require_once( SYSTEM_ROOT . "common/include/lib/phpseclib/Math/BigInteger.php" );
 
 /**
 * Encoder object
@@ -23,10 +34,8 @@ namespace OntologyWrapper;
 * The class features the following methods:
 *
 * <ul>
-*	<li>tt>cypherMode()</tt>: Set or retrieve cypher mode, the value must be among the
-*		openSSL (http://php.net/manual/en/openssl.ciphers.php) cyphers, defaults to
-*		{@link OPENSSL_CIPHER_AES_256_CBC}.
-*	<li>tt>blockSize()</tt>: Set or retrieve block size, defaults to 2048.
+*	<li>tt>cypherMode()</tt>: Set or retrieve cypher mode.
+*	<li>tt>keySize()</tt>: Set or retrieve key bits size.
 *	<li>tt>generateKeys()</tt>: Generate public and private keys.
 *	<li>tt>generateFingerprint()</tt>: Generate PGP fingerprint.
 *	<li>tt>publicEncode()</tt>: Encode data with public key.
@@ -50,13 +59,13 @@ class Encoder
 	protected $mMode = NULL;
 
 	/**
-	* Block size.
+	* Key size.
 	*
-	* This data member holds the encoding block size.
+	* This data member holds the key size.
 	*
 	* @var int
 	*/
-	protected $mSize = NULL;
+	protected $mKeySize = NULL;
 
 
 
@@ -78,14 +87,14 @@ class Encoder
 	* The constructor requires the encoding mode, the RSA mode is default.
 	*
 	* @param int					$theMode			Cypher mode.
-	* @param int					$theSize			Block size.
+	* @param int					$theSize			Key size.
 	*
 	* @access public
 	*
 	* @uses cypherMode()
-	* @uses blockSize()
+	* @uses keySize()
 	*/
-	public function __construct( $theMode = OPENSSL_CIPHER_AES_256_CBC, $theSize = 240 )
+	public function __construct( $theMode = CRYPT_RSA_ENCRYPTION_PKCS1, $theSize = 2048 )
 	{
 		//
 		// Set mode.
@@ -93,9 +102,9 @@ class Encoder
 		$this->cypherMode( $theMode );
 
 		//
-		// Set size.
+		// Set key size.
 		//
-		$this->blockSize( $theSize );
+		$this->keySize( $theSize );
 
 	} // Constructor.
 
@@ -117,8 +126,7 @@ class Encoder
 	* Manage cypher mode
 	*
 	* This method can be used to manage the cypher mode, the method expects a single
-	* integer parameter that must be among the openSSL predefined constants
-	* (http://php.net/manual/en/openssl.ciphers.php), or <tt>NULL</tt> to retrieve the
+	* integer parameter that must be either the mode, or <tt>NULL</tt> to retrieve the
 	* current value.
 	*
 	* @param mixed					$theValue			Operation or mode.
@@ -140,14 +148,8 @@ class Encoder
 			//
 			switch( $theValue )
 			{
-				case OPENSSL_CIPHER_RC2_40:
-				case OPENSSL_CIPHER_RC2_128:
-				case OPENSSL_CIPHER_RC2_64:
-				case OPENSSL_CIPHER_DES:
-				case OPENSSL_CIPHER_3DES:
-				case OPENSSL_CIPHER_AES_128_CBC:
-				case OPENSSL_CIPHER_AES_192_CBC:
-				case OPENSSL_CIPHER_AES_256_CBC:
+				case CRYPT_RSA_ENCRYPTION_OAEP:
+				case CRYPT_RSA_ENCRYPTION_PKCS1:
 				$this->mMode = (int) $theValue;
 				break;
 
@@ -164,13 +166,13 @@ class Encoder
 
 
 	/*===================================================================================
-	*	blockSize																		*
+	*	keySize																			*
 	*==================================================================================*/
 
 	/**
-	* Manage block size
+	* Manage key size
 	*
-	* This method can be used to manage the block size, the method expects a single
+	* This method can be used to manage the key size, the method expects a single
 	* integer parameter, or <tt>NULL</tt> to retrieve the current value.
 	*
 	* @param mixed					$theValue			Operation or size.
@@ -180,17 +182,155 @@ class Encoder
 	*
 	* @throws Exception
 	*/
-	public function blockSize( $theValue = NULL )
+	public function keySize( $theValue = NULL )
 	{
 		//
 		// Set mode.
 		//
 		if( $theValue !== NULL )
-		$this->mSize = (int) $theValue;
+		$this->mKeySize = (int) $theValue;
 
-		return $this->mSize;														// ==>
+		return $this->mKeySize;														// ==>
 
-	} // blockSize.
+	} // keySize.
+
+
+
+	/*=======================================================================================
+	*																						*
+	*								PUBLIC KEYGEN INTERFACE									*
+	*																						*
+	*======================================================================================*/
+
+
+
+	/*===================================================================================
+	*	generateKeys																	*
+	*==================================================================================*/
+
+	/**
+	* Generate keys
+	*
+	* This method can be used to encode the provided data with the external public key.
+	*
+	* The method will return the data as a base 64 encoded string.
+	*
+	* @param string			   &$thePublic			Receives public key.
+	* @param string			   &$thePrivate			Receives private key.
+	*
+	* @access public
+	*/
+	public function generateKeys( &$thePublic, &$thePrivate )
+	{
+		//
+		// Conficure.
+		//
+		$crypter = new \Crypt_RSA();
+		$crypter->setPrivateKeyFormat( CRYPT_RSA_PRIVATE_FORMAT_PKCS1 );
+		$crypter->setPublicKeyFormat( CRYPT_RSA_PUBLIC_FORMAT_PKCS1 );
+
+		//
+		// Create keys.
+		//
+		$keys = $crypter->createKey( $this->keySize() );
+
+		//
+		// Check keys.
+		//
+		if( $keys[ 'partialkey' ] )
+		throw new \Exception(
+		"Partial keys." );												// !@! ==>
+
+		//
+		// Set keys.
+		//
+		$thePublic = $keys[ 'publickey' ];
+		$thePrivate = $keys[ 'privatekey' ];
+
+	} // generateKeys.
+
+
+
+	/*=======================================================================================
+	*																						*
+	*								PUBLIC CYPHER INTERFACE									*
+	*																						*
+	*======================================================================================*/
+
+
+
+	/*===================================================================================
+	*	encodeData																		*
+	*==================================================================================*/
+
+	/**
+	* Encode data
+	*
+	* This method can be used to encode the provided data with the external public key.
+	*
+	* The method will return the data as a base 64 encoded string.
+	*
+	* @param string				$theData			Data to encode.
+	*
+	* @access public
+	* @return string				Encoded data.
+	*
+	* @uses publicEncode()
+	*/
+	public function encodeData( $theData )
+	{
+		$tmp = explode( '/', kPATH_LIBRARY_ROOT );
+		return $this->publicEncode(
+		$theData,
+		file_get_contents(
+		implode( '/',
+		array_merge(
+		array_splice(
+		$tmp,
+		0,
+		count( $tmp ) - 3 ),
+		array( 'Private',
+		kPORTAL_PREFIX,
+		'ext_pub.pem' ) ) ) ) );				// ==>
+
+	} // encodeData.
+
+
+	/*===================================================================================
+	*	decodeData																		*
+	*==================================================================================*/
+
+	/**
+	* Decode data
+	*
+	* This method can be used to decode the provided data with the local private key.
+	*
+	* The method will return the data as a plain string.
+	*
+	* @param string				$theData			Data to decode.
+	*
+	* @access public
+	* @return string				Decoded data.
+	*
+	* @uses privateDecode()
+	*/
+	public function decodeData( $theData )
+	{
+		$tmp = explode( '/', kPATH_LIBRARY_ROOT );
+		return $this->privateDecode(
+		$theData,
+		file_get_contents(
+		implode( '/',
+		array_merge(
+		array_splice(
+		$tmp,
+		0,
+		count( $tmp ) - 3 ),
+		array( 'Private',
+		kPORTAL_PREFIX,
+		'priv.pem' ) ) ) ) );				// ==>
+
+	} // decodeData.
 
 
 
@@ -210,106 +350,24 @@ class Encoder
 	* Encode data with public key
 	*
 	* This method can be used to encode the provided data with a public key, the method
-	* expects the data to be encoded and the key used to crypt the data; the method will
-	* return a string holding the encoded data.
-	*
-	* The method will return the data as a base 64 encoded string.
+	* expects the data to be encoded and the public key used to crypt the data; the method
+	* will return the crypted data as a base 64 encoded string.
 	*
 	* @param string				$theData			Data to encode.
-	* @param string				$theKey				Encoding public key.
+	* @param string				$theKey				Public key.
 	*
 	* @access public
-	* @return string				Encoded data.
+	* @return string				Encoded data (base 64).
 	*
 	* @uses encode()
 	*/
 	public function publicEncode( $theData, $theKey )
 	{
-		//
-		// Init local storage.
-		//
-		$size = $this->blockSize();
-
-		//
-		// Encode.
-		//
-		$theData = $this->encode( $theData, $theKey, $size, FALSE );
-
-		return base64_encode( $theData );											// ==>
+		return
+		base64_encode(
+		$this->encode( $theData, $theKey ) );								// ==>
 
 	} // publicEncode.
-
-
-	/*===================================================================================
-	*	publicDecode																	*
-	*==================================================================================*/
-
-	/**
-	* Decode data with public key
-	*
-	* This method can be used to decode the provided data with a public key, the method
-	* expects the data to be decoded and the key used to crypt the data; the method will
-	* return a string holding the decoded data.
-	*
-	* The method expects a base 64 encoded string and will return the data as a plain text
-	* string.
-	*
-	* @param string				$theData			Data to dencode.
-	* @param string				$theKey				Encoding public key.
-	*
-	* @access public
-	* @return string				Encoded data.
-	*
-	* @uses decode()
-	*/
-	public function publicDecode( $theData, $theKey )
-	{
-		//
-		// Init local storage.
-		//
-		$size = $this->blockSize();
-
-		return $this->decode( base64_decode( $theData ), $theKey, $size, FALSE );	// ==>
-
-	} // publicDecode.
-
-
-	/*===================================================================================
-	*	privateEncode																	*
-	*==================================================================================*/
-
-	/**
-	* Encode data with private key
-	*
-	* This method can be used to encode the provided data with a private key, the method
-	* expects the data to be encoded and the key used to crypt the data; the method will
-	* return a string holding the encoded data.
-	*
-	* The method will return the data as a base 64 encoded string.
-	*
-	* @param string				$theData			Data to encode.
-	* @param string				$theKey				Encoding private key.
-	*
-	* @access public
-	* @return string				Encoded data.
-	*
-	* @uses encode()
-	*/
-	public function privateEncode( $theData, $theKey )
-	{
-		//
-		// Init local storage.
-		//
-		$size = $this->blockSize();
-
-		//
-		// Encode.
-		//
-		$theData = $this->encode( $theData, $theKey, $size, TRUE );
-
-		return base64_encode( $theData );											// ==>
-
-	} // privateEncode.
 
 
 	/*===================================================================================
@@ -320,28 +378,22 @@ class Encoder
 	* Decode data with private key
 	*
 	* This method can be used to decode the provided data with a private key, the method
-	* expects the data to be decoded and the key used to crypt the data; the method will
-	* return a string holding the decoded data.
+	* expects the data to be decoded as a base 64 encoded string and the private key; the
+	* method will return a string holding the decoded data in plain text.
 	*
-	* The method expects a base 64 encoded string and will return the data as a plain text
-	* string.
-	*
-	* @param string				$theData			Data to dencode.
-	* @param string				$theKey				Encoding provate key.
+	* @param string				$theData			Data to decode (in base 64).
+	* @param string				$theKey				Private key.
 	*
 	* @access public
-	* @return string				Encoded data.
+	* @return string				Decoded data.
 	*
 	* @uses decode()
 	*/
 	public function privateDecode( $theData, $theKey )
 	{
-		//
-		// Init local storage.
-		//
-		$size = $this->blockSize();
-
-		return $this->decode( base64_decode( $theData ), $theKey, $size, TRUE );	// ==>
+		return
+		$this->decode(
+		base64_decode( $theData ), $theKey );								// ==>
 
 	} // privateDecode.
 
@@ -362,58 +414,39 @@ class Encoder
 	/**
 	* Encode data
 	*
-	* This method is used to encode data by the public methods, its main duty is to
-	* differentiate encoding from private and public keys.
+	* This method is used to encode data.
 	*
 	* @param string				$theData			Data to encode.
-	* @param string				$theKey				Encoding key.
-	* @param int					$theSize			Encoding size.
-	* @param boolean				$isPrivate			<tt>TRUE</tt> private key.
+	* @param string				$theKey				Public key.
 	*
 	* @access public
-	* @return string				Encoded data.
+	* @return string				Encoded data (binary).
 	*/
-	protected function encode( $theData, $theKey, $theSize, $isPrivate = FALSE )
+	protected function encode( $theData, $theKey )
 	{
 		//
-		// Init local storage.
+		// Conficure.
 		//
-		$encrypted = '';
+		$crypter = new \Crypt_RSA();
 
 		//
-		// Cycle data.
+		// Load key.
 		//
-		while( $theData )
+		if( $crypter->loadKey( $theKey ) )
 		{
 			//
-			// Slice.
+			// Set mode.
 			//
-			$slice = substr( $theData, 0, $theSize );
-			$theData = substr( $theData, $theSize );
+			$crypter->setEncryptionMode( $this->cypherMode() );
 
-			//
-			// Encrypt.
-			//
-			if( $isPrivate )
-				$ok = openssl_private_encrypt( $slice, $block, $theKey );
-			else
-				$ok = openssl_public_encrypt( $slice, $block, $theKey );
+			return $crypter->encrypt( (string) $theData );							// ==>
 
+		} // Loaded key.
 
-			//
-			// Append.
-			//
-			if( $ok )
-				$encrypted .= $block;
-			else
-				throw new \Exception(
-					"Error encoding value." );									// !@! ==>
+		throw new \Exception(
+		"Unable to load key." );											// !@! ==>
 
-		} // Cycling data.
-
-		return $encrypted;															// ==>
-
-	} // decode.
+	} // encode.
 
 
 	/*===================================================================================
@@ -423,55 +456,37 @@ class Encoder
 	/**
 	* Decode data
 	*
-	* This method is used to decode data by the public methods, its main duty is to
-	* differentiate encoding from private and public keys.
+	* This method is used to decode data.
 	*
 	* @param string				$theData			Data to decode.
-	* @param string				$theKey				Encoding key.
-	* @param int					$theSize			Encoding size.
-	* @param boolean				$isPrivate			<tt>TRUE</tt> private key.
+	* @param string				$theKey				Private key.
 	*
 	* @access public
 	* @return string				Decoded data.
 	*/
-	protected function decode( $theData, $theKey, $theSize, $isPrivate = FALSE )
+	protected function decode( $theData, $theKey )
 	{
 		//
-		// Init local storage.
+		// Conficure.
 		//
-		$decrypted = '';
+		$crypter = new \Crypt_RSA();
 
 		//
-		// Cycle data.
+		// Load key.
 		//
-		while( $theData )
+		if( $crypter->loadKey( $theKey ) )
 		{
 			//
-			// Slice.
+			// Set mode.
 			//
-			$slice = substr( $theData, 0, $theSize );
-			$theData = substr( $theData, $theSize );
+			$crypter->setEncryptionMode( $this->cypherMode() );
 
-			//
-			// Decrypt.
-			//
-			if( $isPrivate )
-			$ok = openssl_private_decrypt( $slice, $block, $theKey );
-			else
-			$ok = openssl_public_decrypt( $slice, $block, $theKey );
+			return $crypter->decrypt( (string) $theData );							// ==>
 
-			//
-			// Append.
-			//
-			if( $ok )
-			$decrypted .= $block;
-			else
-			throw new \Exception(
-			"Error decoding value." );									// !@! ==>
+		} // Loaded key.
 
-		} // Cycling data.
-
-		return $decrypted;															// ==>
+		throw new \Exception(
+		"Unable to load key." );											// !@! ==>
 
 	} // decode.
 
