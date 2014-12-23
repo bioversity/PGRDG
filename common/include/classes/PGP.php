@@ -17,10 +17,18 @@ header("Content-type: text/plain;");
 * @const GPG_PASS_LENGTH       Minimum lenght accepted of the passphrase
 * @const GEN_HTTP_LOG          Generate or not logs via HTTP interface
 */
-define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
+if(!defined("SYSTEM_ROOT")) {
+        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+}
+if(!defined("INCLUDE_DIR")) {
+        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
+}
+if(!defined("CLASSES_DIR")) {
+        define("CLASSES_DIR", INCLUDE_DIR . "classes/");
+}
+if(!defined("CONF_DIR")) {
+        define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
+}
 
 define("GPG_BIN", "/usr/bin/gpg");
 define("GPG_PARAMS", " --no-tty --no-secmem-warning --home ");
@@ -134,7 +142,7 @@ class PGP {
                 $this->repo = array();
                 $this->check_user_data();
                 $this->user_path();
-                $this->site_config = $this->get_site_config();
+                // $this->site_config = $this->get_site_config();
         }
 
         /**
@@ -291,7 +299,6 @@ class PGP {
                                 chmod($this->gpg_path, 0777);
                         }
                 }
-
                 $this->user_conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
                 if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]))) {
                         $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]);
@@ -299,7 +306,7 @@ class PGP {
                         $fingerprint = "";
                         if(!$this->check_user_data("fingerprint", false)) {
                                 $identify = $this->identify();
-                                if(count($identify) == 0) {
+                                if(!is_array($identify) || count($identify) == 0) {
                                         $fingerprint = "";
                                 } else {
                                         $fingerprint = $identify["fingerprint"];
@@ -380,7 +387,7 @@ class PGP {
          *
          * @return string The passphrase
          */
-        private function generate_default_passphrase() { $bytes = bin2hex(openssl_random_pseudo_bytes(rand(100, 300))); }
+        private function generate_default_passphrase() { return bin2hex(openssl_random_pseudo_bytes(rand(100, 300))); }
 
         /**
         * Save config file for generate the user PGP key
@@ -452,7 +459,11 @@ class PGP {
                 if($object) {
                         return json_decode(json_encode(parse_ini_file($this->user_conf)));
                 } else {
-                        return parse_ini_file($this->user_conf);
+                        if(file_exists($this->user_conf)) {
+                                return parse_ini_file($this->user_conf);
+                        } else {
+                                return false;
+                        }
                 }
         }
 
@@ -465,8 +476,9 @@ class PGP {
          */
         public function identify() {
                 $p_conf = $this->get_conf();
-                $this->store_user_data($p_conf);
-
+                if(is_array($p_conf) && count($p_conf) > 0) {
+                        $this->store_user_data($p_conf);
+                }
                 return $this->repo;
         }
 
@@ -474,10 +486,21 @@ class PGP {
          * Return the fingerprint of a given email address
          *
          * @uses   PGP::store()
+         * @param  array        $output                 The array result of exec() command
          * @param  bool         $with_spaces            Show with spaces or not
          * @return string                               The fingerprint of user
          */
-        public function export_fingerprint($with_spaces = true) {
+        public function export_fingerprint($output, $with_spaces = true) {
+                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --fingerprint";
+                if(GEN_HTTP_LOG){
+                        $command .= " 2>/dev/null &";
+                }
+                exec($command, $output, $error_code);
+                if($error_code){
+                        $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
+                        return(false);
+                }
+                
                 $sfingerprint = str_replace("Key fingerprint = ", "", trim($output[3]));
                 $fingerprint = preg_replace("[ ]", "", str_replace("Key fingerprint = ", "", trim($output[3])));
                 $this->user_data["fingerprint"] = array($fingerprint, $sfingerprint);
@@ -549,7 +572,7 @@ class PGP {
                 $this->check_user_data("name");
                 $this->check_user_data("email");
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
-                        $this->log(self::I, "The user '" . $this->user_data["email"] . "' has no comment for its key");
+                        $this->log(self::I, "The user '" . $this->user_data["email"] . "' has no comment for its key", false);
                 }
 
                 if($this->check_user_path(true)) {
@@ -578,7 +601,7 @@ class PGP {
                                 return false;
                         } else {
                                 // Set the array to export
-                                $this->fingerprint = $this->export_fingerprint(false);
+                                $this->fingerprint = $this->export_fingerprint($output, false);
                                 // Rename temp user dir with its fingerprint
                                 $this->rename_user_path();
                                 $this->public_key = $this->export_key(true);

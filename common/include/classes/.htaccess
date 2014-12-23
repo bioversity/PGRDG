@@ -13,5 +13,5 @@
         php_value docref_root 0
         php_value docref_ext 0
 #	php_value error_log /home/path/public_html/domain/PHP_errors.log
-        php_value error_reporting -1
+#       php_value error_reporting -1
         php_value log_errors_max_len 0

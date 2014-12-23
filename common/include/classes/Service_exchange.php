@@ -1,5 +1,5 @@
 <?php
-header("Content-type: text/plain;");
+header("Content-type: text/plain; charset=utf-8;");
 
 /**
 * Service_exchange.php
@@ -11,10 +11,18 @@ header("Content-type: text/plain;");
 * @const CLASSES_DIR           Classes dir
 * @const CONF_DIR              Conf dir
 */
-define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
+if(!defined("SYSTEM_ROOT")) {
+        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+}
+if(!defined("INCLUDE_DIR")) {
+        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
+}
+if(!defined("CLASSES_DIR")) {
+        define("CLASSES_DIR", INCLUDE_DIR . "classes/");
+}
+if(!defined("CONF_DIR")) {
+        define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
+}
 
 /*=======================================================================================
 *																						*
@@ -56,6 +64,7 @@ define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
 * ```
 *
 * The class features the following methods:
+* * {@link Service_exchange::get_define_key()}               Display the define key of a given value
 * * {@link Service_exchange::get_site_config()}              Get the site config
 * * {@link Service_exchange::encrypt_RSA()}                  Encrypt data for service communication
 * * {@link Service_exchange::decrypt_RSA()}                  Decrypt given data from Service
@@ -82,8 +91,26 @@ class Service_exchange {
                 $this->frontend = new frontend_api();
                 $this->frontend->get_definitions("api", false, "obj");
                 $this->frontend->get_definitions("tags", false, "obj");
+                $this->frontend->get_definitions("types", false, "obj");
                 $this->site_config = $this->get_site_config();
         }
+
+        /**
+         * Display the define key of a given value
+         *
+         * @param  string       $value                  The value to search
+         * @return string                               The define key
+         */
+        private function get_define_key($value) {
+                $defines = get_defined_constants(true);
+                foreach($defines["user"] as $k => $v) {
+                        if($value == $v) {
+                                return $k;
+                                break;
+                        }
+                }
+        }
+
 
         /**
          * Include the parse_js_config.class.php and return the array of site.js
@@ -142,17 +169,17 @@ class Service_exchange {
          * Send a GET request to the Service
          *
          * @uses   Frontend::browse()
-         * @param  array        $params                 The params to append to the url
+         * @uses   Service_exchange::encrypt_RSA()
+         * @param  void        $data                    Data which perform request
+         * @param  string      $action                  The action to execute
          * @return string                               The Service response in json format
          */
-        public function send_to_service($inviter, $params, $action) {
+        public function send_to_service($data, $action) {
                 switch($action) {
                         case "login":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_GET_USER,
                                         kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                        // kAPI_PARAM_ID => $inviter,
-                                        // kAPI_PARAM_OBJECT => $encoder->publicEncode(json_encode($params), $sys_pub_key),
                                 );
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
@@ -160,49 +187,112 @@ class Service_exchange {
                                         kAPI_PARAM_ID => $inviter,
                                         kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
                                 );
-                                $encoded = $this->encrypt_RSA($params);
-                                $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
+                                break;
+                        case "invite_user":
+                                if(empty($data["name"])) {
+                                        print "No given name";
+                                        return false;
+                                }
+                                if(empty($data["email"])) {
+                                        print "No given email";
+                                        return false;
+                                }
+                                if(empty($data["fingerprint"])) {
+                                        print "No given fingerprint";
+                                        return false;
+                                }
+                                if(empty($data["public_key"])) {
+                                        print "No given PGP public key";
+                                        return false;
+                                }
+
+                                // Perform request
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_INVITE_USER,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data["inviter"],
+                                        kAPI_PARAM_OBJECT => array(
+                                                kTAG_AUTHORITY => ((isset($data["authority"]) && strlen(trim($data["authority"])) > 0) ? $data["collection"] : "ITA406"),
+                                                kTAG_COLLECTION => ((isset($data["collection"]) && strlen(trim($data["collection"])) > 0) ? $data["collection"] : "pgrdiversity.bioversityinternational.org"),
+                                                kTAG_NAME => $data["name"],
+                                                kTAG_ENTITY_EMAIL => $data["email"],
+                                                kTAG_ROLES => array( kTYPE_ROLE_UPLOAD, kTYPE_ROLE_EDIT ), // ???
+                                                kTAG_ENTITY_PGP_KEY => $data["public_key"],
+                                                kTAG_ENTITY_PGP_FINGERPRINT => $data["fingerprint"],
+                                        )
+                                );
                                 break;
                         default:
                                 print "No action were specified";
                                 return false;
                 }
+                $encoded = $this->encrypt_RSA($params);
+                $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
                 return $this->receive_from_service($this->frontend->browse($url));
         }
 
         /**
          * Parse the Service response and decrypt its results
+         *
          * @param  string       $json                   The json Service response
          * @return array                                Parsed response
          */
         public function receive_from_service($json) {
-                $service_response = json_decode($json);
+                $service_response = json_decode($json, 1);
 
-                if($service_response->status->state == "ok") {
-                        return $this->decrypt_RSA($service_response->results);
+                if($service_response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+                        if(isset($service_response[kAPI_RESPONSE_RESULTS]) && count($service_response[kAPI_RESPONSE_RESULTS]) > 0) {
+                                $results = $this->decrypt_RSA($service_response[kAPI_RESPONSE_RESULTS]);
+
+                                foreach(json_decode(json_encode($results), 1) as $user_id => $v) {
+                                        foreach($v as $k => $vv) {
+                                                if(!is_array($vv)) {
+                                                        $res[$k] = $vv;
+                                                } else {
+                                                        if($k !== kTAG_CONN_PASS) {
+                                                                $res[$k] = $vv;
+                                                        }
+                                                }
+                                        }
+                                        $service_response[kAPI_RESPONSE_RESULTS] = $res;
+                                }
+                                return json_encode($service_response);
+                        } else {
+                                return json_encode($service_response);
+                        }
                 }
 
         }
 }
 
-// USAGE
+/* -------------------------------------------------------------------------- */
+// Test login
+/* -------------------------------------------------------------------------- */
 require_once(CLASSES_DIR . "Frontend.php");
 $frontend = new frontend_api();
 $frontend->get_definitions("api", false, "obj");
 $frontend->get_definitions("tags", false, "obj");
 
-/* -------------------------------------------------------------------------- */
-// Test login
-/* -------------------------------------------------------------------------- */
 $se = new Service_exchange();
-// $inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
-$inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:milko;";
-$params = array(
-        kAPI_PARAM_LOG_REQUEST => true,
-        kAPI_PARAM_LOG_TRACE => true,
-        kAPI_PARAM_ID => $inviter,
-        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
+
+// Test invite user
+require_once("PGP.php");
+$data = array(
+        "inviter" => "INVITER ID",
+        "name" => "John Doe",
+        "email" => "john.doe@example.net",
+        "comment" => "", // Leave empty
+        "passphrase" => "" // Leave empty
 );
-$action = "login";
-print_r($se->send_to_service($inviter, $params, $action));
+$pgp = new PGP($data);
+$key_data = $pgp->generate_key();
+
+$data["fingerprint"] = $key_data["fingerprint"][0];
+$data["public_key"] = $key_data["public_key"];
+$action = "invite_user";
+print $se->send_to_service($data, $action);
 ?>

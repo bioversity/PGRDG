@@ -86,7 +86,27 @@ if(isset($_GET["getPublicKey"])) {
 		case "login":
 			require_once("../../classes/Service_exchange.php");
 			$se = new Service_exchange();
-			
+			print json_encode($se->send_to_service($_POST["inviter"], "login"))
+			break;
+		case "invite_user":
+			require_once("../../classes/Service_exchange.php");
+			require_once("../../classes/PGP.php");
+
+			$se = new Service_exchange();
+			$data = array(
+				"inviter" => $_POST["user_id"],
+				"name" => $_POST["name"],
+				"email" => $_POST["email"],
+				"comment" => "",
+				"passphrase" => ""
+			);
+			$pgp = new PGP($data);
+			$key_data = $pgp->generate_key();
+
+			$data["fingerprint"] = $key_data["fingerprint"][0];
+			$data["public_key"] = $key_data["public_key"];
+			$action = "invite_user";
+			print $se->send_to_service($data, $action);
 			break;
 	}
 }
