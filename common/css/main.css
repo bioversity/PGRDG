@@ -50,15 +50,36 @@ body {
 }
 body.e404 {
 	background: #000 url("../media/img/1302078_37216853.jpg") top center no-repeat !important;
-	background-size: 100%;
+	/*background-size: 100%;*/
 }
 body.e405 {
 	background: #000 url("../media/img/lava_explosion.jpg") top center no-repeat !important;
-	background-size: 100%;
+	/*background-size: 100%;*/
 }
 body.signin {
 	/*background: #fff url("../media/img/_.jpg") top center no-repeat !important;*/
-	background-size: 100%;
+}
+body.activation {
+	background: #000 url("../media/img/1426260_41975453.jpg") top center no-repeat !important;
+	/*background-size: 100% !important;*/
+}
+@media only screen and (min-width:1024px) {
+	body.e404,
+	body.e405,
+	body.signin,
+	body.activation
+	{
+		background-size: 100% !important;
+	}
+}
+@media only screen and (max-width:420px) {
+	body.e404,
+	body.e405,
+	body.signin,
+	body.activation
+	{
+		background-position: center center;
+	}
 }
 
 h1,
@@ -72,7 +93,9 @@ h1.text-muted {
 }
 div.e404,
 div.e405,
-div.signin {
+div.signin,
+div.activation
+{
 	position: absolute;
 	bottom: 20%;
 	right: 20%;
@@ -82,21 +105,29 @@ div.signin {
 div.e404,
 div.e404 h1 > span,
 div.e405 h1 > span,
-div.signin h1 > span {
+div.signin h1 > span,
+div.activation h1 > span
+{
 	color: #fff;
 }
 div.e405 h2,
-div.signin h2 {
+div.signin h2,
+div.activation h2
+{
 	border-bottom: 0px none;
 }
 div.e405 > div.panel,
-div.signin > div.panel {
+div.signin > div.panel,
+div.activation > div.panel
+{
 	background-color: rgba(255,255,255,0.5);
 	border-radius: 0px;
 }
 div.e404 + div.signature,
 div.e405 + div.signature,
-div.signin + div.signature {
+div.signin + div.signature,
+div.activation + div.signature
+{
 	position: absolute;
 	bottom: 10px;
 	left: 10px;
@@ -107,7 +138,9 @@ div.signin + div.signature {
 }
 div.e404 + div.signature a,
 div.e405 + div.signature a,
-div.signin + div.signature a {
+div.signin + div.signature a,
+div.activation + div.signature a
+{
 	color: #fff;
 	text-decoration: underline;
 }
@@ -119,17 +152,28 @@ div.signin + div.signature a + sup {
 
 div.e404 .help-block,
 div.e405 .help-block,
-div.signin .help-block {
+div.signin .help-block,
+div.activation .help-block
+{
 	background-color: rgba(255, 255, 255, 0.5);
 	box-shadow: 0 0 3px #fff;
 	color: #333;
 	padding: 10px;
 }
 div.e405 .help-block,
-div.signin .help-block {
+div.signin .help-block,
+div.activation .help-block
+{
 	box-shadow: 0 0 0 transparent;
 }
-div.e404 p, div.e405 p, div.signin p { color: #ddd; text-shadow: 0 0 10px #000; }
+div.e404 p,
+div.e405 p,
+div.signin p,
+div.activation p
+{
+	color: #ddd;
+	text-shadow: 0 0 10px #000;
+}
 
 @media only screen and (max-height:420px) {
 	body.e404,
@@ -140,7 +184,9 @@ div.e404 p, div.e405 p, div.signin p { color: #ddd; text-shadow: 0 0 10px #000; 
 @media only screen and (max-width:420px) {
 	div.e404,
 	div.e405,
-	div.signin {
+	div.signin,
+	div.activation
+	{
 		position: absolute;
 		top: 20%;
 		left: 50%;
@@ -148,26 +194,36 @@ div.e404 p, div.e405 p, div.signin p { color: #ddd; text-shadow: 0 0 10px #000; 
 		width: 260px;
 	}
 	div.e405,
-	div.signin {
+	div.signin,
+	div.activation
+	{
 		top: 50px;
 	}
 	div.e404 h1,
 	div.e405 h1,
-	div.signin h1 {
+	div.signin h1,
+	div.activation h1
+	{
 		text-align: center;
 	}
 	div.e404 p,
 	div.e405 p,
-	div.signin p {
+	div.signin p,
+	div.activation p
+	{
 		font-size: 13px;
 		text-align: justify;
 	}
 }
 div.e404 h1 > span,
 div.e405 h1 > span,
-div.signin h1 > span {
-	font-size: 4em !important;
-	font-weight: bold;
+div.signin h1 > span,
+div.activation h1 > span
+{
+	font-family: "HelveticaNeueW01-65Medi";
+	font-size: 4em;
+	text-transform: uppercase;
+	/*font-weight: bold;*/
 }
 h2 {
 	border-bottom: #eee 1px solid;
@@ -1647,7 +1703,7 @@ section.container > #contents .carousel-inner {
 	}
 }
 #left_panel div.panel-header h1 {
-	font-family: HelveticaNeueW01-45Ligh;
+	font-family: "HelveticaNeueW01-45Ligh";
 	font-size: 1.6em;
 	margin: 0;
 	color: #666;

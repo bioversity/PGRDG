@@ -30,6 +30,10 @@ var i18n = {
                                 "page_do_not_exists": "We're sorry but the page you are looking for do not exists in this Server",
                                 "page_requires_login": "This page requires that you're logged in"
                         },
+                        "activation": {
+                                "title": "Invite activation",
+                                "message": "We're activating your account and generating the key for enhance your privacy.<br />Please wait for a while"
+                        },
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
                         "map_limit_display": {
                                 "title": "Displayed {N} of {TOT} markers",

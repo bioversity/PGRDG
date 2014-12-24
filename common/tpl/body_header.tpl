@@ -1,9 +1,16 @@
-<header class="main <?php print (strtolower($page->current) == "signin" ? "signin" : ((strtolower($page->current) == "map" || !$page->exists || $page->need_login && !$logged) ? 'map' : "")); ?>">
+<?php
+if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !$logged) {
+	$page_class = "map";
+} else {
+	$page_class = implode(" ", $page->class);
+}
+?>
+<header class="main <?php print $page_class; ?>">
 	<div class="container">
 		<div class="top">
 			<div id="logo"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 				<a href="/">
-					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || $page->has_error) ? "_white" : ""); ?>.svg" />
+					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || strtolower($page->current) == "activation" || $page->has_error) ? "_white" : ""); ?>.svg" />
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>

@@ -1,5 +1,5 @@
 <?php
-header("Content-type: text/plain; charset=utf-8;");
+// header("Content-type: text/plain; charset=utf-8;");
 
 /**
 * Service_exchange.php
@@ -184,7 +184,7 @@ class Service_exchange {
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_PARAM_ID => $inviter,
+                                        kAPI_PARAM_ID => $data,
                                         kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
                                 );
                                 break;
@@ -224,6 +224,18 @@ class Service_exchange {
                                                 kTAG_ENTITY_PGP_KEY => $data["public_key"],
                                                 kTAG_ENTITY_PGP_FINGERPRINT => $data["fingerprint"],
                                         )
+                                );
+                                break;
+                        case "activate_user":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_USER_INVITE,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => TRUE,
+                                        kAPI_PARAM_LOG_TRACE => TRUE,
+                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_RECORD,
+                                        kAPI_PARAM_ID => $data
                                 );
                                 break;
                         default:
@@ -268,31 +280,4 @@ class Service_exchange {
 
         }
 }
-
-/* -------------------------------------------------------------------------- */
-// Test login
-/* -------------------------------------------------------------------------- */
-require_once(CLASSES_DIR . "Frontend.php");
-$frontend = new frontend_api();
-$frontend->get_definitions("api", false, "obj");
-$frontend->get_definitions("tags", false, "obj");
-
-$se = new Service_exchange();
-
-// Test invite user
-require_once("PGP.php");
-$data = array(
-        "inviter" => "INVITER ID",
-        "name" => "John Doe",
-        "email" => "john.doe@example.net",
-        "comment" => "", // Leave empty
-        "passphrase" => "" // Leave empty
-);
-$pgp = new PGP($data);
-$key_data = $pgp->generate_key();
-
-$data["fingerprint"] = $key_data["fingerprint"][0];
-$data["public_key"] = $key_data["public_key"];
-$action = "invite_user";
-print $se->send_to_service($data, $action);
 ?>

@@ -1,6 +1,16 @@
 <?php
 // Note: this script is a comment stripped version.
 // If you want to study, you can find a commented version in `common/js/jCryption/php/jcryption.php`
+
+if(!defined("SYSTEM_ROOT")) {
+	define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+}
+if(!defined("INCLUDE_DIR")) {
+	define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
+}
+if(!defined("CLASSES_DIR")) {
+	define("CLASSES_DIR", INCLUDE_DIR . "classes/");
+}
 //header("Content-type: text/plain");
 session_start();
 
@@ -86,17 +96,17 @@ if(isset($_GET["getPublicKey"])) {
 		case "login":
 			require_once("../../classes/Service_exchange.php");
 			$se = new Service_exchange();
-			print json_encode($se->send_to_service($_POST["inviter"], "login"))
+			print json_encode($se->send_to_service($output["inviter"], "login"));
 			break;
 		case "invite_user":
-			require_once("../../classes/Service_exchange.php");
-			require_once("../../classes/PGP.php");
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			require_once(CLASSES_DIR . "PGP.php");
 
 			$se = new Service_exchange();
 			$data = array(
-				"inviter" => $_POST["user_id"],
-				"name" => $_POST["name"],
-				"email" => $_POST["email"],
+				"inviter" => $output["user_id"],
+				"name" => $output["name"],
+				"email" => $output["email"],
 				"comment" => "",
 				"passphrase" => ""
 			);
@@ -107,6 +117,11 @@ if(isset($_GET["getPublicKey"])) {
 			$data["public_key"] = $key_data["public_key"];
 			$action = "invite_user";
 			print $se->send_to_service($data, $action);
+			break;
+		case "activate_user":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			print $se->send_to_service(trim(base64_decode($output["fingerprint"])), "activate_user");
 			break;
 	}
 }

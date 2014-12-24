@@ -92,4 +92,10 @@ if(isset($_POST["type"]) && trim($_POST["type"]) == "ask_service") {
 	}
 	*/
 }
+if(isset($_POST["type"]) && trim($_POST["type"]) == "activate_user") {
+	header("Content-type: text/plain");
+
+	// $_POST["jCryption"] = $_GET["jCryption"];
+	require_once("../common/include/funcs/_ajax/_decrypt.php");
+}
 ?>

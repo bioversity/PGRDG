@@ -40,6 +40,16 @@ $logged = false;
 		<?php
 		if(strtolower($page->current) == "signin") {
 			include("common/tpl/pages/Signin.tpl");
+
+		} else if(strtolower($page->current) == "activation") {
+			include("common/tpl/script.tpl");
+			include("common/tpl/pages/Activation.tpl");
+			?>
+			<div id="loader">
+				<div></div>
+				<div></div>
+			</div>
+			<?php
 		} else {
 			if(!$page->exists) {
 				include("common/tpl/pages/404.tpl");

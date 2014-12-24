@@ -145,6 +145,17 @@
                         "is_system_page": true,
                         "subpages": ""
                 },
+                "Activation": {
+                        "title": "Invite activation",
+                        "title_class": "",
+                        "class": ["activation", "map"],
+                        "address": "Activation",
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "is_system_page": true,
+                        "subpages": ""
+                },
                 "Dashboard": {
                         "title": "Dashboard",
                         "title_class": "",
