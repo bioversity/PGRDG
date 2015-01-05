@@ -3,7 +3,15 @@
 // header("Access-Control-Allow-Origin: *");
 // header("Allow-Control-Allow-Credentials: true");
 // header("Access-Control-Allow-Methods: GET,POST");
+define("LOGGED", (isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") ? true : false);
 
+
+if(isset($_COOKIE["l"]) && trim($_COOKIE["l"])) {
+	session_start();
+	if(isset($_SESSION["user"])) {
+		$user = json_decode(json_encode($_SESSION["user"]));
+	}
+}
 require_once("common/include/funcs/nl2.php");
 require_once("common/include/funcs/readmore.php");
 require_once("common/include/lib/php-markdown-extra-extended/markdown.php");
@@ -25,8 +33,8 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $interface["site"]["default_language"];
 }
 
+
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
-$logged = false;
 
 // print_r($page);
 // exit();
@@ -40,7 +48,22 @@ $logged = false;
 		<?php
 		if(strtolower($page->current) == "signin") {
 			include("common/tpl/pages/Signin.tpl");
-
+			include("common/tpl/script.tpl");
+			?>
+			<div id="loader">
+				<div></div>
+				<div></div>
+			</div>
+			<?php
+		} else if(strtolower($page->current) == "signout") {
+			include("common/tpl/script.tpl");
+			include("common/tpl/pages/Signout.tpl");
+			?>
+			<div id="loader">
+				<div></div>
+				<div></div>
+			</div>
+			<?php
 		} else if(strtolower($page->current) == "activation") {
 			include("common/tpl/script.tpl");
 			include("common/tpl/pages/Activation.tpl");
@@ -54,7 +77,7 @@ $logged = false;
 			if(!$page->exists) {
 				include("common/tpl/pages/404.tpl");
 			} else {
-				if($page->need_login && !$logged) {
+				if($page->need_login && !LOGGED) {
 					include("common/tpl/pages/405.tpl");
 					include("common/tpl/script.tpl");
 				} else {
@@ -64,7 +87,7 @@ $logged = false;
 						<div></div>
 					</div>
 					<?php
-					if($logged && strtolower($page->current) == "dashboard") {
+					if(LOGGED && $page->current == "") {
 						?>
 						<?php include("common/tpl/admin/index.tpl"); ?>
 						<?php

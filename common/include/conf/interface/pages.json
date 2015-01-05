@@ -140,6 +140,17 @@
                         "class": ["signin"],
                         "address": "Signin",
                         "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "is_system_page": true,
+                        "subpages": ""
+                },
+                "Signout": {
+                        "title": "Signout",
+                        "title_class": "",
+                        "class": "",
+                        "address": "Signout",
+                        "template": "",
                         "need_login": true,
                         "is_main_page": false,
                         "is_system_page": true,
@@ -154,17 +165,6 @@
                         "need_login": false,
                         "is_main_page": false,
                         "is_system_page": true,
-                        "subpages": ""
-                },
-                "Dashboard": {
-                        "title": "Dashboard",
-                        "title_class": "",
-                        "class": [],
-                        "address": "Dashboard",
-                        "template": "",
-                        "need_login": true,
-                        "is_main_page": false,
-                        "is_system_page": false,
                         "subpages": ""
                 }
         }

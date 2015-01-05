@@ -5,10 +5,10 @@
 <title>PGRDG ~ Researching agricultural and forest biodiversity | <?php print $page->title; ?></title>
 
 <?php
-if($logged && strtolower($page->current) == "dashboard") {
+if(LOGGED && $page->current == "") {
         ?>
         <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/font-awesome.min.css">
+        <link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
 
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production.min.css" rel="stylesheet" type="text/css" media="screen" />

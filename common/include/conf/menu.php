@@ -174,20 +174,51 @@ $menu["menu"]["top"][] = array(
 		"divider" => "vertical-divider"
 	),
 	*/
-	"Sign in" => array(
+);
+if(!LOGGED) {
+	$menu["menu"]["top"][0]["Sign in"] = array(
 		"content" => array(
 			"icon" => "fa fa-sign-in",
 			"text" => "Sign in"
 		),
 		"attributes" => array(
 			"href" => "/Signin",
-			// "data-toggle" => "modal",
-			// "data-target" => "#login",
-			// "id" => "login_menu_btn",
 			"class" => "btn btn-link"
 		)
-	)
-);
+	);
+} else {
+	$menu["menu"]["top"][0]["User"] = array(
+		"content" => array(
+			"icon" => "fa fa-cogs",
+			"text" => "{USER_NAME}"
+		),
+		"attributes" => array(
+			"href" => "javascript: void(0);",
+			"class" => "btn btn-link"
+		),
+		"childs" => array(
+			"Personal settings" => array(
+				"content" => array(
+					"icon" => "fa fa-user",
+					"text" => "Personal settings"
+				),
+				"attributes" => array(
+					"href" => "/Personal_settings"
+				),
+				"divider" => "divider"
+			),
+			"Logout" => array(
+				"content" => array(
+					"icon" => "fa fa-sign-out",
+					"text" => "Logout"
+				),
+				"attributes" => array(
+					"href" => "/Logout"
+				)
+			)
+		)
+	);
+}
 $menu["menu"]["map_toolbox"][] = array(
 	"Show_hide_menu" => array(
 		"content" => array(

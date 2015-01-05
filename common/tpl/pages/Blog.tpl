@@ -3,7 +3,6 @@ require_once("common/include/funcs/cut_text_block.php");
 
 $dir = "common/md/blog";
 $ignored = array(".", "..");
-$logged = false;
 
 $blog_config = json_decode(file_get_contents("common/include/conf/blog.json"), 1);
 
@@ -73,7 +72,7 @@ if(!isset($_GET["s"]) || trim($_GET["s"]) === "") {
                                                 <header>
                                                         <?php
                                                         if(substr($title, 0, 1) == ".") {
-                                                                if($logged) {
+                                                                if(LOGGED) {
                                                                         print '<h1><span class="text-muted">' . $post . '</span></h1>';
                                                                 }
                                                         } else {
@@ -88,7 +87,7 @@ if(!isset($_GET["s"]) || trim($_GET["s"]) === "") {
                                                 <p>
                                                         <?php
                                                         if(substr($title, 0, 1) == ".") {
-                                                                if($logged) {
+                                                                if(LOGGED) {
                                                                         print str_replace("<p>", '<p class="text-muted">', Markdown(stripslashes($summary))) . str_replace("<a ", '<a class="text-info" ', readmore($post_id . "/" . $title));
                                                                 }
                                                         } else {

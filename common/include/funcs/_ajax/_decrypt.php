@@ -78,14 +78,13 @@ if(isset($_GET["getPublicKey"])) {
 	$cmd = sprintf("openssl enc -aes-256-cbc -pass pass:" . $key . " -d");
 	$process = proc_open($cmd, $descriptorspec, $pipes);
 	if (is_resource($process)) {
-		 fwrite($pipes[0], base64_decode($_POST["jCryption"]));
-		 fclose($pipes[0]);
+		fwrite($pipes[0], base64_decode($_POST["jCryption"]));
+		fclose($pipes[0]);
 
-		 $data = stream_get_contents($pipes[1]);
-		 fclose($pipes[1]);
-		 proc_close($process);
+		$data = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+		proc_close($process);
 	}
-
 	parse_str($data, $output);
 
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
@@ -94,9 +93,38 @@ if(isset($_GET["getPublicKey"])) {
 			require_once("ask_service.php");
 			break;
 		case "login":
-			require_once("../../classes/Service_exchange.php");
+			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
-			print json_encode($se->send_to_service($output["inviter"], "login"));
+			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
+			$user_data = json_decode($login, 1);
+
+			header("Content-type: text/plain");
+			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+				$fingerprint = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
+
+				$_SESSION["user"]["name"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				$_SESSION["user"]["last_name"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				$_SESSION["user"]["email"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_EMAIL]["val"][0]["text"];
+				$_SESSION["user"]["fingerprint"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				$_SESSION["user"]["roles"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ROLES]["val"];
+
+				if(isset($output["remember"])) {
+					setcookie("l", $fingerprint, time()+10800, "/");
+				} else {
+					setcookie("l", $fingerprint, time()+28800, "/");
+				}
+
+				print $login;
+			} else {
+				print "{}";
+			}
+			break;
+		case "logout":
+			$_SESSION["user"] = array();
+			session_destroy();
+			setcookie("l", "", time()-3600);
+			unset($_COOKIE["l"]);
+			print "ok";
 			break;
 		case "invite_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");

@@ -5,6 +5,8 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/apprise-bootstrap.js"></script>
+<!-- FitText.js -->
+<!--script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script-->
 <!-- jquery.cookie & storage -->
 <script src="<?php print $domain; ?>/common/js/plugins/jquery-cookie/jquery.cookie.js"></script>
 <script src="<?php print $domain; ?>/common/js/plugins/jquery-storage/jquery.storageapi.js"></script>

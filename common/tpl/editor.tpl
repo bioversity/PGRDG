@@ -1,5 +1,5 @@
 <?php
-if($logged) {
+if(LOGGED) {
 	$post = $pdo->query("select * from `iod_posts` where `id` = '" . addslashes($_GET["id"]) . "'");
 	if($post->rowCount()) {
 		while($dato_post = $post->fetch()) {
@@ -25,7 +25,7 @@ if($logged) {
 			$visible_btn_icon = "glyphicon-eye-open";
 			$visible_btn_txt = "Visible";
 			$visible_btn_type = "btn-default";
-		
+
 		$del_btn = "disabled";
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !$logged) {
+if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !LOGGED) {
 	$page_class = "map";
 } else {
 	$page_class = implode(" ", $page->class);
@@ -26,9 +26,11 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<?php
-					// if (strtolower($page->current) !== "map") {
+					if (LOGGED) {
+						print str_replace("{USER_NAME}", $user->name, $site_config->menu("top", "lvl1 nav navbar-nav navbar-right"));
+					} else {
 						print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
-					// }
+					}
 					?>
 				</div>
 			</div>
@@ -36,7 +38,6 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 	</div>
 </header>
 <?php require_once("common/tpl/modals/markers.modal.tpl"); ?>
-<?php require_once("common/tpl/modals/login.modal.tpl"); ?>
 <?php require_once("common/tpl/modals/map_toolbox_help.modal.tpl"); ?>
 <?php require_once("common/tpl/modals/summary_ordering.modal.tpl"); ?>
 <?php require_once("common/tpl/modals/storage_data.modal.tpl"); ?>

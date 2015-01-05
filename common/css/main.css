@@ -105,7 +105,6 @@ div.activation
 div.e404,
 div.e404 h1 > span,
 div.e405 h1 > span,
-div.signin h1 > span,
 div.activation h1 > span
 {
 	color: #fff;
@@ -152,7 +151,6 @@ div.signin + div.signature a + sup {
 
 div.e404 .help-block,
 div.e405 .help-block,
-div.signin .help-block,
 div.activation .help-block
 {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -168,7 +166,6 @@ div.activation .help-block
 }
 div.e404 p,
 div.e405 p,
-div.signin p,
 div.activation p
 {
 	color: #ddd;
@@ -224,6 +221,13 @@ div.activation h1 > span
 	font-size: 4em;
 	text-transform: uppercase;
 	/*font-weight: bold;*/
+}
+div.signin h1 > span {
+	color: #333;
+	font-size: 1.9em;
+}
+div.signin .panel-body {
+	padding: 15px 0;
 }
 h2 {
 	border-bottom: #eee 1px solid;

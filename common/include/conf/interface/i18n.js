@@ -22,7 +22,13 @@ var i18n = {
                                 "dont_have_account": "Don't have an account?",
                                 "signup_here": "Sign up here",
                                 "sign_in": "Sign in",
-                                "sign_in_btn": "Sign in"
+                                "sign_in_btn": "Sign in",
+                                "honeypot_message": "If you see this field please leave it blank",
+                                "wrong_data": "Wrong username or password",
+                                "already_logged": {
+                                        "title": "Already logged",
+                                        "message": "You are already logged in as {USER_NAME}"
+                                }
                         },
                         "errors": {
                                 "404": "Page not found",
