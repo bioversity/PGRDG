@@ -10,6 +10,9 @@
 	cursor: default;
 }
 
+html {
+	height: 100%
+}
 input::-moz-focus-inner, * {
 	outline: 0 !important;
 }
@@ -57,7 +60,8 @@ body.e405 {
 	/*background-size: 100%;*/
 }
 body.signin {
-	background: #fff url("../media/img/dotted_leaf.png") top center no-repeat !important;
+	background: #fff url("../media/img/dotted_leaf.png") bottom left no-repeat !important;
+	/*background-size: 100% !important;*/
 }
 body.activation {
 	background: #000 url("../media/img/1426260_41975453.jpg") top center no-repeat !important;
@@ -79,6 +83,9 @@ body.activation {
 	body.activation
 	{
 		background-position: center center;
+	}
+	body.signin {
+		background-size: 100% !important;
 	}
 }
 
@@ -102,6 +109,12 @@ div.activation
 	width: 260px;
 	text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
+div.signin {
+	background-color: #fff;
+	box-shadow: 0px 10px 10px #999;
+	width: 300px;
+	padding: 15px;
+}
 div.e404,
 div.e404 h1 > span,
 div.e405 h1 > span,
@@ -116,7 +129,7 @@ div.activation h2
 	border-bottom: 0px none;
 }
 div.e405 > div.panel,
-div.signin > div.panel,
+/*div.signin > div.panel,*/
 div.activation > div.panel
 {
 	background-color: rgba(255,255,255,0.5);
@@ -224,7 +237,7 @@ div.activation h1 > span
 }
 div.signin h1 > span {
 	color: #333;
-	font-size: 1.9em;
+	font-size: 1.95em;
 }
 div.signin .panel-body {
 	padding: 15px 0;

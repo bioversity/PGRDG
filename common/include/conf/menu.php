@@ -175,6 +175,167 @@ $menu["menu"]["top"][] = array(
 	),
 	*/
 );
+$menu["menu"]["admin"][] = array(
+	"Home" => array(
+		"content" => array(
+			"icon" => "fa fa-home",
+			"text" => "Home"
+		),
+		"attributes" => array(
+			"href" => "/",
+			"title" => "Go to Main Page",
+			"class" => "btn btn-link"
+		)
+	),
+	/*
+	"Blog" => array(
+		"content" => array(
+			"icon" => "fa fa-comments-o",
+			"text" => "Blog"
+		),
+		"attributes" => array(
+			"href" => "/Blog",
+			"title" => "The PGRDG Blog"
+		)
+	),
+	*/
+	"About us" => array(
+		"content" => array(
+			"icon" => "fa fa-leaf",
+			"text" => "About us"
+		),
+		"attributes" => array(
+			"href" => "javascript: void(0);",
+			"class" => "btn btn-link"
+		),
+		"childs" => array(
+			"About us" => array(
+				"content" => array(
+					"icon" => "fa fa-comment-o",
+					"text" => "About us"
+				),
+				"attributes" => array(
+					"href" => "/About_us"
+				)
+			),
+			"How_the_system_works" => array(
+				"content" => array(
+					"icon" => "fa fa-gears",
+					"text" => "How the system works"
+				),
+				"attributes" => array(
+					"href" => "/How_the_system_works"
+				)
+			),
+			"Feedback" => array(
+				"content" => array(
+					"icon" => "fa fa-comments-o",
+					"text" => "Give us your feedback"
+				),
+				"attributes" => array(
+					"href" => "/Feedback"
+				)
+			),
+		)
+	),
+	"National Inventories" => array(
+		"content" => array(
+			"icon" => "fa fa-sitemap",
+			"text" => "National Inventories"
+		),
+		"attributes" => array(
+			"href" => "javascript: void(0);",
+			"class" => "btn btn-link"
+		),
+		"childs" => array(
+			"National Inventories" => array(
+				"content" => array(
+					"icon" => "fa fa-list",
+					"text" => "National Inventories"
+				),
+				"attributes" => array(
+					"href" => "/National_Inventories"
+				)
+			),
+			"Conservation Strategies" => array(
+				"content" => array(
+					"icon" => "ionicons ion-fork-repo",
+					"text" => "Conservation Strategies"
+				),
+				"attributes" => array(
+					"href" => "/Conservation_Strategies"
+				)
+			),
+			"Links" => array(
+				"content" => array(
+					"icon" => "fa fa-link",
+					"text" => "Links"
+				),
+				"attributes" => array(
+					"href" => "/Links"
+				)
+			)
+		)
+	),
+	"Search" => array(
+		"content" => array(
+			"icon" => "fa fa-search",
+			"text" => "Search"
+		),
+		"attributes" => array(
+			"href" => "/Search",
+			"class" => "btn btn-link"
+		)
+	),
+	"Graphs" => array(
+		"content" => array(
+			"icon" => "fa fa-pie-chart",
+			"text" => "Graphs"
+		),
+		"attributes" => array(
+			//"href" => "/Map"
+			"href" => "Graph",
+			"title" => "",
+			"class" => "btn btn-link"
+		),
+		"divider" => "vertical-divider"
+	),
+	"Map" => array(
+		"content" => array(
+			"icon" => "fa fa-globe",
+			"text" => "Map"
+		),
+		"attributes" => array(
+			//"href" => "/Map"
+			"href" => "Map",
+			"title" => "Go to map view",
+			"class" => "btn btn-link"
+		),
+		"divider" => "vertical-divider"
+	),
+	/*
+	"Data" => array(
+		"content" => array(
+			"icon" => "fa fa-code-fork",
+			"text" => "Data"
+		),
+		"attributes" => array(
+			"href" => "/Data"
+		)
+	),
+	"Charts" => array(
+		"content" => array(
+			"icon" => "fa fa-bar-chart-o",
+			"text" => "Charts"
+		),
+		"attributes" => array(
+			"href" => "/Charts"
+		),
+		"divider" => "vertical-divider"
+	),
+	*/
+);
+
 if(!LOGGED) {
 	$menu["menu"]["top"][0]["Sign in"] = array(
 		"content" => array(
@@ -219,6 +380,7 @@ if(!LOGGED) {
 		)
 	);
 }
+
 $menu["menu"]["map_toolbox"][] = array(
 	"Show_hide_menu" => array(
 		"content" => array(

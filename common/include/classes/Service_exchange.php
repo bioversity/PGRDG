@@ -280,36 +280,4 @@ class Service_exchange {
 
         }
 }
-//
-// // USAGE
-// require_once(CLASSES_DIR . "Frontend.php");
-// $frontend = new frontend_api();
-// $frontend->get_definitions("api", false, "obj");
-// $frontend->get_definitions("tags", false, "obj");
-//
-// /* -------------------------------------------------------------------------- */
-// // Test login
-// /* -------------------------------------------------------------------------- */
-// $se = new Service_exchange();
-// // $inviter = ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;";
-// // $inviter = array("m.skofic@cgiar.org", "5429f725955bdf4da45e0bca0c5eaafeaedb6081");
-//
-// // Test invite user
-// require_once("PGP.php");
-// // $data = array(
-// //         "inviter" => ":domain:individual://ITA406/pgrdiversity.bioversityinternational.org:gubi;",
-// //         "name" => "John Doe",
-// //         "email" => "john.doe@example.net",
-// //         "comment" => "", // Leave empty
-// //         "passphrase" => "" // Leave empty
-// // );
-// // $pgp = new PGP($data);
-// // $key_data = $pgp->generate_key();
-//
-// // $data["fingerprint"] = $key_data["fingerprint"][0];
-// // $data["public_key"] = $key_data["public_key"];
-// $action = "activate_user";
-// $data = "79964F1196C48C97B33FA75E25AFF74C2563D3DA";
-// $service_resp = $se->send_to_service($data, $action);
-// print $service_resp;
 ?>
