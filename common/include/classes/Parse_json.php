@@ -41,17 +41,21 @@ class Parse_json {
 		foreach($the_array as $k => $v) {
 			if($k !== "_comment") {
 				if(!isset($v["show_on_page"]) || $v["show_on_page"] == $_GET["p"]) {
-					$menu_list .= '	<li' . (isset($v["childs"]) ? ($menu_position == "admin" ? '' : ' class="btn-group"') : '') . '><a ';
+					$menu_list .= '	<li' . (isset($v["childs"]) ? ($menu_position == "admin" ? (isset($v["content"]["class"]) ? ' class="' . $v["content"]["class"] . '"' : "") : ' class="btn-group"') : '') . '><a ';
 						$menu_list_icon = '<span class="' . $v["content"]["icon"] . ($menu_position == "admin" ? " fa-lg fa-fw": "") . '"></span>';
 						$menu_list_text = ($menu_position == "admin" ? '<span class="menu-item-parent">' . $v["content"]["text"] . '</span>' : $v["content"]["text"]);
 						$menu_list_text .= (isset($v["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
 					$menu_list .= implode(" ", $this->extract_attributes($v)) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
 					if(isset($v["childs"])) {
-						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" role="menu">' . $this->build_menu($v, "childs") . '</ul>';
+						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs") . '</ul>';
 					}
 					$menu_list .= '</li>' . "\n";
 					if(isset($v["divider"])) {
-						$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
+						if($menu_position == "admin") {
+							$menu_list .= '	<li class="nav-divider"></li>' . "\n";
+						} else {
+							$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
+						}
 					}
 				}
 			}
@@ -113,6 +117,9 @@ class Parse_json {
 				foreach($ul_class as $k => $v) {
 					$menu_list .= " " . $k . '="' . $v . '"';
 				}
+			}
+			if($menu_position == "admin") {
+				$menu_list .= ' class="nav"';
 			}
 			$menu_list .=  ">\n";
 			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $num);

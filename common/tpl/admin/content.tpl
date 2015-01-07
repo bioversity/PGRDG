@@ -29,8 +29,9 @@
         <!-- END RIBBON -->
 
         <!-- #MAIN CONTENT -->
-        <div id="content">
-        </div>
+        <?php
+        require_once("common/tpl/content.tpl")
+        ?>
         <!-- END #MAIN CONTENT -->
 </div>
 <!-- END #MAIN PANEL -->

@@ -1,9 +1,10 @@
 <header id="header">
         <div id="logo-group">
-
-                <!-- PLACE YOUR LOGO HERE -->
-                <span id="logo"> <img src="<?php print $domain; ?>/common/media/svg/bioversity-logo_small_horizontal.svg" alt="SmartAdmin"> </span>
-                <!-- END LOGO PLACEHOLDER -->
+                <span id="logo">
+                        <a href="/">
+                                <img src="<?php print $domain; ?>/common/media/svg/bioversity-logo_small_horizontal.svg" alt="SmartAdmin">
+                        </a>
+                </span>
 
                 <!-- Note: The activity badge color changes when clicked and resets the number to 0
                 Suggestion: You may want to set a flag when this happens to tick off all checked messages / notifications -->

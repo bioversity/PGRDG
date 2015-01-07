@@ -2,6 +2,7 @@
         "pages": {
                 "Home": {
                         "title": "Main page",
+                        "logged_title": "Dashboard",
                         "title_class": "",
                         "address": "",
                         "class": [],
@@ -129,7 +130,7 @@
                         "address": "Profile",
                         "class": [],
                         "template": "common/tpl/admin/Profile.tpl",
-                        "need_login": false,
+                        "need_login": true,
                         "is_main_page": false,
                         "is_system_page": false,
                         "subpages": ""

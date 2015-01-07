@@ -35,7 +35,7 @@
  * GLOBAL: Your left nav in your app will no longer fire ajax calls, set
  * it to false for HTML version
  */
-	$.navAsAjax = true;
+	$.navAsAjax = false;
 /*
  * GLOBAL: Sound Config (define sound path, enable or disable all sounds)
  */

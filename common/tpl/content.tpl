@@ -7,10 +7,14 @@
 		<div id="content" class="panel-content">
 			<?php
 			if($page->is_main_page) {
-				print '<h1>Plant Genetic Resources Diversity Gateway<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small></h1>';
+				if(!LOGGED) {
+					print '<h1>Plant Genetic Resources Diversity Gateway<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small></h1>';
 
-				require_once("common/tpl/pages/home.tpl");
-				print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md")));
+					require_once("common/tpl/pages/home.tpl");
+					print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md")));
+				} else {
+					print "ok";
+				}
 			} else if ($page->current == "Conservation_Strategies") {
 				require_once("common/tpl/pages/Conservation Strategies.tpl");
 			} else {
@@ -32,13 +36,12 @@
 					require_once($page->template);
 				}
 			}
-
 			?>
 		</div>
 		<hr />
 		<?php
 	}
-	if($page->current !== "Feedback") {
+	if(!LOGGED && $page->current !== "Feedback") {
 		include("common/tpl/footer.tpl");
 	}
 	?>

@@ -3709,7 +3709,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: #eee;
+  /*background-color: #eee;*/
 }
 .nav > li.disabled > a {
   color: #999;
@@ -3724,7 +3724,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav .open > a,
 .nav .open > a:hover,
 .nav .open > a:focus {
-  background-color: #eee;
+  /*background-color: #eee;*/
   border-color: #3c9332;
 }
 .nav .nav-divider {
@@ -3732,6 +3732,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
+}
+#left-panel .nav-divider {
+        margin: 5px 0;
+        background-color: #454545;
 }
 .nav > li > a > img {
   max-width: none;

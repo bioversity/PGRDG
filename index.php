@@ -44,7 +44,7 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0) ? 'class="' . implode($page->class, " ") . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer" : implode($page->class, " ")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		if(strtolower($page->current) == "signin") {
 			include("common/tpl/pages/Signin.tpl");
@@ -87,7 +87,7 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 						<div></div>
 					</div>
 					<?php
-					if(LOGGED && $page->current == "") {
+					if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
 						?>
 						<?php include("common/tpl/admin/index.tpl"); ?>
 						<?php

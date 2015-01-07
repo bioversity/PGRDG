@@ -5,12 +5,12 @@
         <!-- User info -->
         <div class="login-info">
                 <span> <!-- User image size is adjusted inside CSS, it should stay as is -->
-                        <a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut" style="width: 100%;">
+                        <a href="/Profile" style="width: 100%;">
                                 <img src="<?php print $domain; ?>/common/media/img/admin/avatars/male.png" alt="me" class="online" />
                                 <span>
                                         <?php print $user->name . " " . $user->last_name; ?>
                                 </span>
-                                <i class="fa fa-angle-down pull-right" style="margin-top: 7.5px;"></i>
+                                <i class="fa fa-angle-right pull-right" style="margin-top: 7.5px;"></i>
                         </a>
                 </span>
         </div>

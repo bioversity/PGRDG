@@ -14,6 +14,7 @@
                                         <li class="text-danger"><b>Linux/Unix</b>: the package <code>pgpgpg</code> is currently available</li>
                                 </ul>
                                 For further instructions please see here: <a class="text-danger" target="_blank" href="http://www.pgpi.org/doc/pgpintro/">http://www.pgpi.org/doc/pgpintro/</a><sup class="fa fa-external-link text-muted"></sup>
+                        </div>
                 </div>
         </div>
         <div id="user_permission"></div>
