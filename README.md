@@ -1,4 +1,4 @@
-## Plant Genetic Resource Diversity Gateway
+![PGRDG - Plant Genetic Resource Diversity Gateway](common/media/img/github wiki/theme.jpg)
 
 This is the System Interface for users that wants to explore PGRDG data.
 
