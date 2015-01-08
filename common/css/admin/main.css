@@ -9574,6 +9574,10 @@ tr.fc-last td {
   font-weight: bold;
   font-size: 11px;
   box-sizing: border-box;
+  text-indent: 0;
+}
+.fc-event-inner {
+        text-indent: 0;
 }
 /* calendar button */
 #calendar-buttons {
@@ -10428,14 +10432,14 @@ html {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: url('../img/mybg.png') #ffffff;
+  background: url("../../media/img/admin/admin_bg.png") #ffffff;
   position: relative;
 }
 body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: url('../img/mybg.png') #ffffff;
+  background: url("../../media/img/admin/admin_bg.png") #ffffff;
   direction: ltr;
 }
 /* when mobile menu is active */
@@ -12490,7 +12494,7 @@ img.away {
   width: 199px;
   z-index: 5;
   /*border: 1px solid #bfbfbf;*/
-  min-height: 180px;
+  /*min-height: 180px;*/
   -webkit-box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -14163,7 +14167,7 @@ img.away {
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   font-weight: bold;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-image: url('../img/pattern/overlay-pattern.png');
+  background-image: url("../../media/img/admin/pattern/overlay-pattern.png");
 }
 .progress-striped .progress-bar {
   background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));

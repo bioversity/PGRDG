@@ -1,30 +1,18 @@
 <?php
-if(!defined("SYSTEM_ROOT")) {
-	define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-}
-if(!defined("INCLUDE_DIR")) {
-	define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
-if(!defined("CLASSES_DIR")) {
-	define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-}
-if(!defined("CONF_DIR")) {
-	define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
-}
-require_once(CLASSES_DIR . "Frontend.php");
-$this->frontend = new frontend_api();
-$this->frontend->get_definitions("api", false, "obj");
-$this->frontend->get_definitions("tags", false, "obj");
-$this->frontend->get_definitions("types", false, "obj");
-if(isset($_COOKIE["l"]) && trim($_COOKIE["l"])) {
-	if (session_status() == PHP_SESSION_NONE) {
-		session_start();
-	}
-	if(isset($_SESSION["user"])) {
-		$user = json_decode(json_encode($_SESSION["user"]));
-	}
-}
+require_once("common/tpl/defines.tpl");
 
+if(session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
+if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
+	if(isset($_SESSION["user"])) {
+		$user = json_decode(json_encode($_SESSION["user"]), 1);
+	}
+	$logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+}
+if(!defined("LOGGED")) {
+	define("LOGGED", $logged);
+}
 $menu["menu"]["top"][] = array(
 	/*"Left panel" => array(
 		"show_on_page" => "Search",
@@ -202,7 +190,6 @@ $menu["menu"]["top"][] = array(
 	*/
 );
 
-
 if(!LOGGED) {
 	$menu["menu"]["top"][0]["Sign in"] = array(
 		"content" => array(
@@ -218,7 +205,7 @@ if(!LOGGED) {
 	$menu["menu"]["top"][0]["User"] = array(
 		"content" => array(
 			"icon" => "fa fa-cogs",
-			"text" => $user->name,
+			"text" => $user[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
 		),
 		"attributes" => array(
 			"href" => "javascript: void(0);",

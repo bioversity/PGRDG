@@ -1,23 +1,29 @@
 <?php
 // header("Content-type: text/plain");
-// header("Access-Control-Allow-Origin: *");
-// header("Allow-Control-Allow-Credentials: true");
-// header("Access-Control-Allow-Methods: GET,POST");
-define("LOGGED", (isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") ? true : false);
 
+/**
+ * Load all definitions
+ */
+require_once("common/tpl/defines.tpl");
 
-if(isset($_COOKIE["l"]) && trim($_COOKIE["l"])) {
-	session_start();
-	if(isset($_SESSION["user"])) {
-		$user = json_decode(json_encode($_SESSION["user"]));
-	}
-}
 require_once("common/include/funcs/nl2.php");
 require_once("common/include/funcs/readmore.php");
 require_once("common/include/lib/php-markdown-extra-extended/markdown.php");
 require_once("common/include/funcs/optimize_markdown.php");
 require_once("common/include/classes/Parse_json.php");
 
+if(session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
+if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
+	if(isset($_SESSION["user"])) {
+		$user = json_decode(json_encode($_SESSION["user"]), 1);
+	}
+	$logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+}
+if(!defined("LOGGED")) {
+	define("LOGGED", $logged);
+}
 $site_config = new Parse_json();
 $map_config = new Parse_json("common/include/conf/map.json");
 $pages_config = new Parse_json("common/include/conf/interface/pages.json");
@@ -44,7 +50,7 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 	<head>
 		<?php include("common/tpl/head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer" : implode($page->class, " ")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . implode($page->class, " ") . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		if(strtolower($page->current) == "signin") {
 			include("common/tpl/pages/Signin.tpl");

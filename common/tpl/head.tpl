@@ -16,11 +16,19 @@
 <?php
 if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
         ?>
+        <!-- Demo purpose only: goes with demo.js, you can delete this css when designing your own WebApp -->
+        <!-- <link rel="stylesheet" type="text/css" media="screen" href="css/demo.min.css"> -->
+
+        <!-- FAVICONS -->
+        <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
+
         <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/main.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
-        <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/bioversity.css">
+        <link href="<?php print $domain; ?>/common/css/admin/smartadmin-rtl.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php //print $domain; ?>/common/css/admin/bioversity.css"> -->
 
         <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/demo.css">
 

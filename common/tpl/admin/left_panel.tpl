@@ -5,10 +5,10 @@
         <!-- User info -->
         <div class="login-info">
                 <span> <!-- User image size is adjusted inside CSS, it should stay as is -->
-                        <a href="/Profile" style="width: 100%;">
+                        <a href="/Profile" title="Manage profile" style="width: 100%;">
                                 <img src="<?php print $domain; ?>/common/media/img/admin/avatars/male.png" alt="me" class="online" />
                                 <span>
-                                        <?php print $user->name . " " . $user->last_name; ?>
+                                        <?php print $user[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; ?>
                                 </span>
                                 <i class="fa fa-angle-right pull-right" style="margin-top: 7.5px;"></i>
                         </a>

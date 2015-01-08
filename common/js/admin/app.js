@@ -420,8 +420,8 @@ var calc_navbar_height = function() {
 					$('nav ul').jarvismenu({
 						accordion : menu_accordion || true,
 						speed : menu_speed || true,
-						closedSign : '<em class="fa fa-plus-square-o"></em>',
-						openedSign : '<em class="fa fa-minus-square-o"></em>'
+						closedSign : '<em class="fa fa-angle-down"></em>',
+						openedSign : '<em class="fa fa-angle-up"></em>'
 					});
 				} else {
 					alert("Error - menu anchor does not exist");

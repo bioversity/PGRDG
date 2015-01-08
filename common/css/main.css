@@ -53,6 +53,12 @@ body {
 	text-align: left;
 	position: absolute;
 	width: 100%;
+}
+body.e404,
+body.e405,
+body.signin,
+body.activation
+{
 	height: 100%;
 }
 body.e404 {
@@ -96,9 +102,19 @@ body.activation {
 h1,
 h2,
 h3 {
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 400;
+}
+#content h1 {
+	margin: 30px 0 20px 0;
+	color: #333;
+	font-size: 2.1em;
+}
+.admin #content h1 {
+	font-weight: 100;
+	margin: 12px 0 28px 0;
+	color: #666 !important;
+	font-size: 24px;
 }
 h1.text-muted {
 	margin-bottom: 2em;
@@ -236,7 +252,6 @@ div.e405 h1 > span,
 div.signin h1 > span,
 div.activation h1 > span
 {
-	/*font-family: "HelveticaNeueW01-65Medi";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 700;
 	font-size: 4em;
@@ -301,10 +316,8 @@ a:focus sup {
 	margin-top: -1em;
 	width: 100%;
 	z-index: 2147483647;
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
-
 	-webkit-animation: pulseFade 1s infinite;
 	-moz-animation: pulseFade 1s infinite;
 	-o-animation: pulseFade 1s infinite;
@@ -535,7 +548,7 @@ header > div.container {
 header.map > div.container {
 	width: auto !important;
 }
-header {
+body > header {
 	position: fixed;
 	width: 100%;
 	z-index: 3;
@@ -1218,7 +1231,6 @@ panel span.info,
 #se h1[unselectable] + h2,
 div[unselectable] {
 	color: #d0d0d0;
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 1.5em;
@@ -1228,6 +1240,9 @@ div[unselectable] {
 }
 div[unselectable] {
 	max-width: 35%;
+}
+div[unselectable].fc-view {
+	max-width: 100%;
 }
 #loader_bg {
 	bottom: 0;
@@ -1251,7 +1266,6 @@ div[unselectable] {
 #loader_bg h1[unselectable] {
 	opacity: 0.2;
 	text-align: center;
-	/*font-family: 'HelveticaNeueW01-45Ligh';*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 3em;
@@ -1570,7 +1584,6 @@ section #se_p .panel_content-body.disabled:before {
 	content: "Press \"Group\" button to show summary...";
 	cursor: default;
 	display: inline-block;
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 2em;
@@ -1587,7 +1600,6 @@ section #se_p .panel_content-body.moved:before {
 	content: "Press \"Group\" button to show summary...";
 	cursor: default;
 	display: inline-block;
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 2em;
@@ -1745,7 +1757,6 @@ section.container > #contents .carousel-inner {
 	}
 }
 #left_panel div.panel-header h1 {
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 1.6em;
@@ -2048,7 +2059,6 @@ ul.list-group.transparent ul {
 
 #selected_zone {
 	color: rgba(255, 255, 255, 0.8);
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	font-size: 3.5em;
@@ -2066,7 +2076,6 @@ ul.list-group.transparent ul {
 }
 #information_zone {
 	color: rgba(255, 255, 255, 0.8);
-	/*font-family: "HelveticaNeueW01-45Ligh";*/
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
 	text-shadow: 0 0 3px #333;

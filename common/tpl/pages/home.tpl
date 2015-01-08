@@ -1,3 +1,7 @@
+<h1>
+	Plant Genetic Resources Diversity Gateway
+	<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small>
+</h1>
 <?php
 $dir = "common/media/img/home";
 $images = array_diff(scandir($dir), array("..", "."));
@@ -28,3 +32,6 @@ $i = -1;
 		?>
 	</div>
 </div>
+<?php
+print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md")));
+?>

@@ -12,7 +12,7 @@ $menu["menu"]["admin"][0] = array(
                 )
         )
 );
-if(in_array(kTYPE_ROLE_INVITE, $user->roles) || in_array(kTYPE_ROLE_USERS, $user->roles)) {
+if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) || in_array(kTYPE_ROLE_USERS, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $menu["menu"]["admin"][1] = array(
                 "Manage_user" => array(
                         "content" => array(
@@ -23,34 +23,35 @@ if(in_array(kTYPE_ROLE_INVITE, $user->roles) || in_array(kTYPE_ROLE_USERS, $user
                                 "href" => "javascript:void(0);",
                                 "title" => "",
                                 "class" => "btn btn-link"
-                        ),
-                        "childs" => array(
-                                "All_users" => array(
-                                        "content" => array(
-                                                "icon" => "fa fa-fw ionicons ion-ios7-people",
-                                                "text" => "All users"
-                                        ),
-                                        "attributes" => array(
-                                                "href" => "/Users",
-                                                "title" => "See all users",
-                                                "class" => "btn btn-link"
-                                        )
-                                ),
-                                "Invite_user" => array(
-                                        "content" => array(
-                                                "icon" => "fa fa-fw ionicons ion-person-add",
-                                                "text" => "Invite new"
-                                        ),
-                                        "attributes" => array(
-                                                "href" => "/Users/Invite",
-                                                "title" => "Invite an user",
-                                                "class" => "btn btn-link btn-default"
-                                        )
-                                )
                         )
                 )
         );
+        if($user[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_VALUE] > 0) {
+                $menu["menu"]["admin"][1]["Manage_user"]["childs"]["All_users"] = array(
+                        "content" => array(
+                                "icon" => "fa fa-fw ionicons ion-ios7-people",
+                                "text" => "All users"
+                        ),
+                        "attributes" => array(
+                                "href" => "/Users",
+                                "title" => "See all users",
+                                "class" => "btn btn-link"
+                        )
+                );
+        }
+        $menu["menu"]["admin"][1]["Manage_user"]["childs"]["Invite_user"] = array(
+                "content" => array(
+                        "icon" => "fa fa-fw ionicons ion-person-add",
+                        "text" => "Invite new"
+                ),
+                "attributes" => array(
+                        "href" => "/Users/Invite",
+                        "title" => "Invite an user",
+                        "class" => "btn btn-link btn-default"
+                )
+        );
 }
+
 $menu["menu"]["admin"][2] = array(
         "Your_data" => array(
                 "content" => array(
@@ -78,7 +79,7 @@ $menu["menu"]["admin"][2] = array(
                 )
         )
 );
-if(in_array(kTYPE_ROLE_UPLOAD, $user->roles)) {
+if(in_array(kTYPE_ROLE_UPLOAD, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $menu["menu"]["admin"][2]["Your_data"]["childs"] = array(
                 "Upload" => array(
                         "content" => array(
@@ -94,7 +95,7 @@ if(in_array(kTYPE_ROLE_UPLOAD, $user->roles)) {
         );
 }
 
-if(in_array(kTYPE_ROLE_EDIT, $user->roles)) {
+if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $menu["menu"]["admin"][3] = array(
                 "Manage_contents" => array(
                         "content" => array(
@@ -148,6 +149,6 @@ $menu["menu"]["admin"][] = array(
         )
 );
 // header("Content-type: text/plain");
-// print_r($menu["menu"]["admin"]);
+// print_r($user);
 // exit();
 ?>

@@ -1,5 +1,5 @@
 <!-- #MAIN PANEL -->
-<div id="main" role="main">
+<div id="main" role="main" class="admin">
         <!-- RIBBON -->
         <div id="ribbon">
                 <span class="ribbon-button-alignment pull-right">

@@ -102,16 +102,12 @@ if(isset($_GET["getPublicKey"])) {
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 				$fingerprint = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
 
-				$_SESSION["user"]["name"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
-				$_SESSION["user"]["last_name"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
-				$_SESSION["user"]["email"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_EMAIL]["val"][0]["text"];
-				$_SESSION["user"]["fingerprint"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
-				$_SESSION["user"]["roles"] = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ROLES]["val"];
+				$_SESSION["user"] = $user_data[kAPI_RESPONSE_RESULTS];
 
 				if(isset($output["remember"])) {
-					setcookie("l", $fingerprint, time()+10800, "/");
+					setcookie("l", md5($fingerprint), time()+10800, "/");
 				} else {
-					setcookie("l", $fingerprint, time()+28800, "/");
+					setcookie("l", md5($fingerprint), time()+28800, "/");
 				}
 
 				print $login;
