@@ -139,6 +139,13 @@ $.fn.serializeObject = function() { var o = {}; var a = this.serializeArray(); $
 $.obj_len = function(obj) { var count = 0, i; for(i in obj) { if (obj.hasOwnProperty(i)) { count++; }} return count; };
 
 /**
+ * Detect if given item is an object
+ * @param  {void}  item    The item to analyze
+ * @return {Boolean}
+ */
+$.is_obj = function(item) { return ($.type(item) == "object" ? true : false); };
+
+/**
  * An utility function to find all URLs - FTP, HTTP(S) and Email - in a text string
  * and return them in an html link.
  * Taken from http://stackoverflow.com/a/3890175
@@ -198,6 +205,35 @@ $.detect_type = function(value) {
         }
 };
 
+
+/**
+ * Detect the date type and returns in readable format
+ * @param  {string} date The string to parse
+ * @return {string}      The date in readable format
+ */
+$.right_date = function(date) {
+        $.addZero = function(i) {
+                if (i < 10) {
+                        i = "0" + i;
+                }
+                return i;
+        }
+        $.datepicker.regional[lang]
+
+        // Is year
+        if(date.length == 4) {
+                return date;
+        } else if(date.length == 6) {
+                return $.datepicker.formatDate("MM, yy", date);
+        } else if(date.length == 8) {
+                var d = date.split("");
+                return $.datepicker.formatDate("MM dd, yy", new Date(d[0]+d[1]+d[2]+d[3]+ "/" + d[4]+d[5] + "/" + d[6]+d[7]));
+        } else {
+                var dd = new Date(date),
+                time = $.addZero(dd.getHours()) + ":" + $.addZero(dd.getMinutes()) + ":" + $.addZero(dd.getSeconds());
+                return $.datepicker.formatDate("MM dd, yy", new Date(date)) + " " +  time;
+        }
+}
 
 /**
  * Parse query string paramaters into an object.

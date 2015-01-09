@@ -27,7 +27,7 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<?php
 					if (LOGGED) {
-						print str_replace("{USER_NAME}", $user->name, $site_config->menu("top", "lvl1 nav navbar-nav navbar-right"));
+						print str_replace("{USER_NAME}", $user[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP], $site_config->menu("top", "lvl1 nav navbar-nav navbar-right"));
 					} else {
 						print $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
 					}

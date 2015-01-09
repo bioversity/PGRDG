@@ -1,15 +1,8 @@
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script>
-if (!window.jQuery) {
-        document.write('<script src="<?php print $domain; ?>/common/js/admin/libs/jquery-2.1.1.min.js"><\/script>');
-}
-</script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script>
-if (!window.jQuery.ui) {
-        document.write('<script src="<?php print $domain; ?>/common/js/admin/libs/jquery-ui-1.10.3.min.js"><\/script>');
-}
-</script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.min.js"></script>
+<!-- Jquery UI -->
+<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/jquery-ui-1.11.2.custom/jquery-ui.min.css" type="text/css" />
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.easing.1.3.js"></script>
 
 <!-- IMPORTANT: APP CONFIG -->
 <script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
@@ -42,7 +35,7 @@ if (!window.jQuery.ui) {
 <![endif]-->
 
 <!-- Demo purpose only -->
-<script src="<?php print $domain; ?>/common/js/admin/demo.js"></script>
+<!-- // <script src="<?php print $domain; ?>/common/js/admin/demo.js"></script> -->
 
 <!-- MAIN APP JS FILE -->
 <script src="<?php print $domain; ?>/common/js/admin/app.js"></script>
@@ -70,7 +63,7 @@ if (!window.jQuery.ui) {
 <script src="<?php print $domain; ?>/common/js/admin/plugin/moment/moment.min.js"></script>
 <script src="<?php print $domain; ?>/common/js/admin/plugin/fullcalendar/jquery.fullcalendar.min.js"></script>
 
-<script>
+<script type="text/javascript">
 $(document).ready(function() {
         // DO NOT REMOVE : GLOBAL FUNCTIONS!
         pageSetUp();

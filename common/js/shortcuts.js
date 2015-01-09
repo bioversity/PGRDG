@@ -274,10 +274,15 @@ $.shortcuts = function() {
                 }
         });
 	/**
-	 * ENTER (when find_location input is focused)
+	 * ENTER [keydown]
 	 */
+	// When find_location input is focused
         $("#find_location input").bind("keydown", "return", function() {
                 //$.sub_toolbox("find_location");
                 $(this).search_location($(this).val());
+        });
+        // When login form is focused
+        $("#login_form input").bind("keydown", "return", function() {
+                $.login();
         });
 };

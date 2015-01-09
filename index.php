@@ -55,48 +55,27 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 		if(strtolower($page->current) == "signin") {
 			include("common/tpl/pages/Signin.tpl");
 			include("common/tpl/script.tpl");
-			?>
-			<div id="loader">
-				<div></div>
-				<div></div>
-			</div>
-			<?php
+			include("common/tpl/loader.tpl");
 		} else if(strtolower($page->current) == "signout") {
 			include("common/tpl/script.tpl");
 			include("common/tpl/pages/Signout.tpl");
-			?>
-			<div id="loader">
-				<div></div>
-				<div></div>
-			</div>
-			<?php
+			include("common/tpl/loader.tpl");
 		} else if(strtolower($page->current) == "activation") {
 			include("common/tpl/script.tpl");
 			include("common/tpl/pages/Activation.tpl");
-			?>
-			<div id="loader">
-				<div></div>
-				<div></div>
-			</div>
-			<?php
+			include("common/tpl/loader.tpl");
 		} else {
 			if(!$page->exists) {
 				include("common/tpl/pages/404.tpl");
 			} else {
 				if($page->need_login && !LOGGED) {
 					include("common/tpl/pages/405.tpl");
+					include("common/tpl/loader.tpl");
 					include("common/tpl/script.tpl");
 				} else {
-					?>
-					<div id="loader" class="system">
-						<div></div>
-						<div></div>
-					</div>
-					<?php
+					include("common/tpl/loader.tpl");
 					if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
-						?>
-						<?php include("common/tpl/admin/index.tpl"); ?>
-						<?php
+						include("common/tpl/admin/index.tpl");
 					} else {
 						?>
 						<?php include("common/tpl/body_header.tpl"); ?>

@@ -70,6 +70,11 @@
 	</script>
 	<script type="text/javascript" src="<?php print $domain; ?>/common/js/main.js"></script>
 	<?php
+	if(LOGGED) {
+		?>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main.js"></script>
+		<?php
+	}
 	if(strtolower($page->current) == "map" || strtolower($page->current) == "search" || strtolower($page->current) == "advanced_search") {
 		?>
 		<!-- OpenLayers2 -->
