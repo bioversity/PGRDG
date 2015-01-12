@@ -6,7 +6,14 @@
         <div class="login-info">
                 <span> <!-- User image size is adjusted inside CSS, it should stay as is -->
                         <a href="/Profile" title="Manage profile" style="width: 100%;">
-                                <img src="<?php print $domain; ?>/common/media/img/admin/avatars/male.png" alt="me" class="online" />
+                                <?php
+                                if(!isset($user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME])) {
+                                        $path = "/common/media/img/admin/user_rand_images/";
+                                } else {
+                                        $path = "/common/media/img/admin/user_images/";
+                                }
+                                        print '<img src="' . $domain . $path . $user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] . '" alt="me" class="online" />';
+                                ?>
                                 <span>
                                         <?php print $user[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; ?>
                                 </span>

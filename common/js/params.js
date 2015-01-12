@@ -146,42 +146,75 @@ $.obj_len = function(obj) { var count = 0, i; for(i in obj) { if (obj.hasOwnProp
 $.is_obj = function(item) { return ($.type(item) == "object" ? true : false); };
 
 /**
+* Detect if given item is an array
+* @param  {void}  item    The item to analyze
+* @return {Boolean}
+*/
+$.is_array = function(item) { return $.isArray(item); };
+
+/**
  * An utility function to find all URLs - FTP, HTTP(S) and Email - in a text string
  * and return them in an html link.
  * Taken from http://stackoverflow.com/a/3890175
  *
- * @param text the text to be searched.
+ * @param       {string}        text            The text to be searched.
+ * @param       {string}        ref             If text is passed will ask the service for the right name
  * @return an array of URLs.
  */
-$.linkify = function(inputText) {
+$.linkify = function(inputText, ref) {
         if(inputText !== undefined) {
-                if($.type(inputText) == "array") {
-                        inputText = inputText.join(", ");
-                }
-                var replacedText, replacePattern1, replacePattern2, replacePattern3;
+                if(ref == undefined) {
+                        if($.type(inputText) == "array") {
+                                inputText = inputText.join(", ");
+                        }
+                        var replacedText, replacePattern1, replacePattern2, replacePattern3;
 
-                //URLs starting with http://, https://, or ftp://
-                replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-                if(replacePattern1 !== undefined) {
-                        replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
-                } else {
-                        replacedText = inputText;
-                }
+                        //URLs starting with http://, https://, or ftp://
+                        replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+                        if(replacePattern1 !== undefined) {
+                                replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
+                        } else {
+                                replacedText = inputText;
+                        }
 
-                //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-                replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-                if(replacePattern2 !== undefined) {
-                        replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
-                } else {
-                        replacedText = inputText;
-                }
+                        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+                        replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+                        if(replacePattern2 !== undefined) {
+                                replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
+                        } else {
+                                replacedText = inputText;
+                        }
 
-                //Change email addresses to mailto:: links.
-                replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-                if(replacePattern3 !== undefined) {
-                        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+                        //Change email addresses to mailto:: links.
+                        replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+                        if(replacePattern3 !== undefined) {
+                                replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+                        } else {
+                                replacedText = inputText;
+                        }
                 } else {
-                        replacedText = inputText;
+                        var t = "";
+                        switch(ref) {
+                                case kAPI_PARAM_RESPONSE_FRMT_TAG:
+                                        t = "getTag";
+                                        break;
+                                case kAPI_PARAM_RESPONSE_FRMT_TERM:
+                                        t = "getTerm";
+                                        break;
+                                case kAPI_PARAM_RESPONSE_FRMT_NODE:
+                                        t = "getNode";
+                                        break;
+                                case kAPI_PARAM_RESPONSE_FRMT_EDGE:
+                                        t = "getEdge";
+                                        break;
+                                case kAPI_PARAM_RESPONSE_FRMT_USER:
+                                        t = "getUser";
+                                        break;
+                                case kAPI_PARAM_RESPONSE_FRMT_UNIT:
+                                        t = "getUnit";
+                                        break;
+                        }
+                        replacedText = ref + " (ask Service: " + t + ")";
                 }
 
                 return replacedText;

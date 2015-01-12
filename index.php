@@ -16,8 +16,24 @@ if(session_status() == PHP_SESSION_NONE) {
 	session_start();
 }
 if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
+	/**
+	 * Load session data
+	 */
 	if(isset($_SESSION["user"])) {
 		$user = json_decode(json_encode($_SESSION["user"]), 1);
+	}
+	/**
+	 * Assign a random image if there's no assigned
+	 */
+	if(!isset($user[kTAG_ENTITY_ICON])) {
+		$user_images = array_diff(scandir(IMAGES_DIR . "admin/user_rand_images"), array("..", "."));
+		$img_c = 0;
+		foreach($user_images as $img_file) {
+			$img_c++;
+		}
+		$rand_img = rand(0, ($img_c - 1)) . ".jpg";
+		$_SESSION["user"][kTAG_ENTITY_ICON] = array(kAPI_PARAM_RESPONSE_FRMT_DISP => $rand_img);
+		$user[kTAG_ENTITY_ICON] = array(kAPI_PARAM_RESPONSE_FRMT_DISP => $rand_img);
 	}
 	$logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
 }
