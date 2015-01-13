@@ -1,26 +1,3 @@
-/*
-LEGEND:
-service {
-        url = The URL of the Service
-        script = The name of the script of Ontology Wrapper API
-        proxy = Local proxy URI
-        definitions_dir = The local path of cloned Service's definitions. See the wiki for more info.
-        path {
-                rsa = The local path where all RSA keys will be stored
-                gpg = The local path where all PGP keys will be stored
-        }
-        site {
-                version = The version of the software (do not change)
-                timestamp = The timestamp of last version publication date
-                developer_mode = The site is in developer mode?
-                default_language = The default language
-                allow_signup = Allow or not user auto signup. If false, new users must be invited
-                title = The first part of pages title
-                html_title = The first part of pages title in html mode (for place in page contents)
-                project_name = The Project name
-        }
-}
-*/
 var config = {
         "service": {
                 "url": "http://THE_ONTOLOGY_WRAPPER_API_URL/",
