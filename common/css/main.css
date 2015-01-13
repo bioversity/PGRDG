@@ -309,17 +309,18 @@ a:focus sup {
 #loader:before {
 	color: rgba(255, 255, 255, 0);
 	content: "Processing data...";
+	font-family: "Roboto", sans-serif;
 	font-size: 2em;
+	font-weight: 300;
 	height: 100%;
 	left: 0;
+	margin-top: 2em;
 	position: fixed;
 	text-align: center;
 	top: 50%;
-	margin-top: -1em;
 	width: 100%;
 	z-index: 2147483647;
-	font-family: "Roboto", sans-serif;
-	font-weight: 300;
+
 	-webkit-animation: pulseFade 1s infinite;
 	-moz-animation: pulseFade 1s infinite;
 	-o-animation: pulseFade 1s infinite;
@@ -328,26 +329,6 @@ a:focus sup {
 #loader.system:before {
 	content: "Loading interface";
 }
-	@-webkit-keyframes pulseFade {
-		0%   { color: rgba(255, 255, 255, 0.6); }
-		50%   { color: rgba(255, 255, 255, 0.75); }
-		100%   { color: rgba(255, 255, 255, 0.6); }
-	}
-	@-moz-keyframes pulseFade {
-		0%   { color: rgba(255, 255, 255, 0.6); }
-		50%   { color: rgba(255, 255, 255, 0.75); }
-		100%   { color: rgba(255, 255, 255, 0.6); }
-	}
-	@-o-keyframes pulseFade {
-		0%   { color: rgba(255, 255, 255, 0.6); }
-		50%   { color: rgba(255, 255, 255, 0.75); }
-		100%   { color: rgba(255, 255, 255, 0.6); }
-	}
-	@keyframes pulseFade {
-		0%   { color: rgba(255, 255, 255, 0.6); }
-		50%   { color: rgba(255, 255, 255, 0.75); }
-		100%   { color: rgba(255, 255, 255, 0.6); }
-	}
 #loader {
 	width: 100%;
 	height: 100%;
@@ -358,6 +339,9 @@ a:focus sup {
 	background-color: rgba(0, 0, 0, 0.65);
 	cursor: wait;
 	display: none;
+}
+#loader.visible {
+	display: block;
 }
 #loader div {
 	background-color: rgba(0, 255, 120, 0.5);
@@ -406,135 +390,46 @@ a:focus sup {
 	-o-animation: moveAround2 3s infinite;
 	animation: moveAround2 3s infinite;
 }
+#loader > div + div + div {
+	background-color: transparent;
+	border-color: rgba(255, 255, 255, 0.6) transparent transparent;
+	border-radius: 50%;
+	border-style: solid;
+	border-width: 3px;
+	box-shadow: 0 0 0 transparent;
+	height: 50px;
+	left: 50%;
+	margin-left: -25px;
+	margin-top: -50px;
+	position: fixed;
+	top: 50%;
+	width: 50px;
 
-	@-moz-keyframes moveAround {
-		0%   { left: 0%; }
-		25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		25.5%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		50%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		50.5%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		75%   { height: 2px; width: 10%; left: -9.9%; top: 99.9%; }
-		75.5%   { height: 10%; width: 2px; left: 0%; top: 99.9%; }
-		99.5%   { height: 10%; width: 2px; left: 0%; top: -9.9%; }
-		100%   { height: 2px; width: 10%; left: 0%; top: 0%; }
-	}
-	@-moz-keyframes moveAround2 {
-		0%   { height: 5px; width: 10%; left: 99.9%; top: 99.9%; }
-		25%   { height: 5px; width: 10%; left: -9.9%; top: 99.9%; }
-		25.5%   { height: 10%; width: 5px; left: 0%; top: 99.9%; }
-		50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
-		50.5%   { height: 5px; width: 10%; left: 0%; top: 0%; }
-		75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
-		75.5%   { height: 10%; width: 5px; left: 99.9%; top: 0%; }
-		99.5%   { height: 10%; width: 5px; left: 99.9%; top: 99.9%; }
-		100%   { height: 10%; width: 5px; left: 99.9%; top: 99.9%; }
-	}
+	-webkit-animation: 1.8s linear 0s normal none infinite running spin;
+	-moz-animation: 1.8s linear 0s normal none infinite running spin;
+	-o-animation: 1.8s linear 0s normal none infinite running spin;
+	animation: 1.8s linear 0s normal none infinite running spin;
+}
+#loader > div + div + div + div {
+	background-color: transparent;
+	border-color: transparent transparent rgba(255, 255, 255, 0.6);
+	border-radius: 50%;
+	border-style: solid;
+	border-width: 3px;
+	box-shadow: 0 0 0 transparent;
+	height: 44px;
+	left: 50%;
+	margin-left: -22px;
+	margin-top: -47px;
+	position: fixed;
+	top: 50%;
+	width: 44px;
 
-	@-webkit-keyframes moveRight {
-		0%   { left: 50%; }
-		15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 50%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		100%   { left: 50%; }
-	}
-	@-moz-keyframes moveRight {
-		0%   { left: 50%; }
-		15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 50%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		100%   { left: 50%; }
-	}
-	@-0-keyframes moveRight {
-		0%   { left: 50%; }
-		15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 50%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		100%   { left: 50%; }
-	}
-	@keyframes moveRight {
-		0%   { left: 50%; }
-		15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 50%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 99.9%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 99.9%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
-		100%   { left: 50%; }
-	}
-
-	@-webkit-keyframes moveLeft {
-		0%   { left: 40%; }
-		15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 40%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		100%   { left: 40%; }
-	}
-	@-moz-keyframes moveLeft {
-		0%   { left: 40%; }
-		15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 40%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		100%   { left: 40%; }
-	}
-	@-o-keyframes moveLeft {
-		0%   { left: 40%; }
-		15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 40%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		100%   { left: 40%; }
-	}
-	@keyframes moveLeft {
-		0%   { left: 40%; }
-		15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		39%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		40%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		50%   { height: 2px; width: 10%; left: 40%; top: 99.9%; }
-		60%   { height: 2px; width: 10%; left: 0.1%; top: 99.9%; }
-		61%   { height: 10%; width: 2px; left: 0.1%; top: 99.9%; }
-		84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
-		85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
-		100%   { left: 40%; }
-	}
+	-webkit-animation: 1.2s linear 0s normal none infinite running spin;
+	-moz-animation: 1.2s linear 0s normal none infinite running spin;
+	-o-animation: 1.2s linear 0s normal none infinite running spin;
+	animation: 1.2s linear 0s normal none infinite running spin;
+}
 
 
 /* -----------------------------------------------------------------------------
@@ -1348,18 +1243,7 @@ div[unselectable].fc-view {
 #start h1:hover > span {
 	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
-@keyframes blinker {
-	from {
-		margin-left: 2.5px;
-		margin-right: -2.5px;
-		color: #d0d0d0;
-	}
-	to {
-		margin-left: -5px;
-		margin-right: 5px;
-		color: #da680b;
-	}
-}
+
 @media only screen and (max-width:420px) {
 	#start {
 		padding: 0 10px;
@@ -2216,26 +2100,7 @@ ul.list-group.transparent ul {
 	animation: pulse 2s infinite;
 	color: #fff;
 }
-	@-webkit-keyframes pulse {
-		0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-		50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
-		100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-	}
-	@-moz-keyframes pulse {
-		0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-		50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
-		100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-	}
-	@-o-keyframes pulse {
-		0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-		50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
-		100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-	}
-	@keyframes pulse {
-		0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-		50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
-		100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
-	}
+
 #map_sub_toolbox {
 }
 #map_sub_toolbox > div {
@@ -2999,10 +2864,45 @@ a.list-group-item.related {
 }
 #personal_data #picture {
 	background-color: #333;
-	height: 188px;
+	height: 190px;
 	padding: 3px;
-	width: 188px;
+	width: 190px;
 }
-#picture > img {
-	border: 1px solid #999;
+#picture > a {
+	border: transparent 1px solid;
+	display: block;
+	height: 184px;
+	position: relative;
+	width: 184px;
+}
+#picture > a:hover {
+	text-decoration: none;
+}
+#upload_btn > div {
+	background-color: rgba(0, 0, 0, 0.5);
+	position: relative;
+	display: table;
+	width: 100%;
+	height: 100%;
+	color: rgba(255, 255, 255, 0.5);
+	visibility: hidden;
+}
+#upload_btn > div > span {
+	display: table-cell;
+	vertical-align: middle;
+	/*font-family: "Roboto", sans-serif;
+	font-weight: 100;*/
+	text-align: center;
+	font-size: 10em;
+}
+#picture > #upload_btn:hover {
+	border: #ccc 1px solid;
+	display: block;
+	width: 184px;
+	height: 184px;
+}
+#upload_btn > img {
+	margin-top: -205px;
+	width: 100%;
+	height: 100%;
 }

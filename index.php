@@ -48,7 +48,8 @@ $interface_config = new Parse_json("common/include/conf/interface/site.js");
 $i18n = $i18n_config->parse_js_config("i18n");
 $interface = $interface_config->parse_js_config("config");
 $page = $pages_config->parse_page_config("pages");
-
+// print_r($page);
+// exit();
 if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $_COOKIE["lang"];
 } else {

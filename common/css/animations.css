@@ -1,0 +1,268 @@
+/**
+ * Move a border of div around the half right side of the screen
+ */
+@-webkit-keyframes moveAround {
+        0%    { left: 0%; }
+        25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        25.5% { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        50%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        50.5% { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        75%   { height: 2px; width: 10%; left: -9.9%; top: 99.5%; }
+        75.5% { height: 10%; width: 2px; left: 0%; top: 99.5%; }
+        99.5% { height: 10%; width: 2px; left: 0%; top: -9.9%; }
+        100%  { height: 2px; width: 10%; left: 0%; top: 0%; }
+}
+@-moz-keyframes moveAround {
+        0%    { left: 0%; }
+        25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        25.5% { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        50%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        50.5% { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        75%   { height: 2px; width: 10%; left: -9.9%; top: 99.5%; }
+        75.5% { height: 10%; width: 2px; left: 0%; top: 99.5%; }
+        99.5% { height: 10%; width: 2px; left: 0%; top: -9.9%; }
+        100%  { height: 2px; width: 10%; left: 0%; top: 0%; }
+}
+@-o-keyframes moveAround {
+        0%    { left: 0%; }
+        25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        25.5% { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        50%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        50.5% { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        75%   { height: 2px; width: 10%; left: -9.9%; top: 99.5%; }
+        75.5% { height: 10%; width: 2px; left: 0%; top: 99.5%; }
+        99.5% { height: 10%; width: 2px; left: 0%; top: -9.9%; }
+        100%  { height: 2px; width: 10%; left: 0%; top: 0%; }
+}
+@keyframes moveAround {
+        0%    { left: 0%; }
+        25%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        25.5% { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        50%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        50.5% { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        75%   { height: 2px; width: 10%; left: -9.9%; top: 99.5%; }
+        75.5% { height: 10%; width: 2px; left: 0%; top: 99.5%; }
+        99.5% { height: 10%; width: 2px; left: 0%; top: -9.9%; }
+        100%  { height: 2px; width: 10%; left: 0%; top: 0%; }
+}
+
+/**
+* Move a border of div around the half left side of the screen, in contrary sense
+*/
+@-webkit-keyframes moveAround2 {
+        0%    { height: 5px; width: 10%; left: 99.9%; top: 99.5%; }
+        25%   { height: 5px; width: 10%; left: -9.9%; top: 99.5%; }
+        25.5% { height: 10%; width: 5px; left: 0%; top: 99.5%; }
+        50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
+        50.5% { height: 5px; width: 10%; left: 0%; top: 0%; }
+        75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
+        75.5% { height: 10%; width: 5px; left: 99.9%; top: 0%; }
+        99.5% { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+        100%  { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+}
+@-moz-keyframes moveAround2 {
+        0%    { height: 5px; width: 10%; left: 99.9%; top: 99.5%; }
+        25%   { height: 5px; width: 10%; left: -9.9%; top: 99.5%; }
+        25.5% { height: 10%; width: 5px; left: 0%; top: 99.5%; }
+        50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
+        50.5% { height: 5px; width: 10%; left: 0%; top: 0%; }
+        75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
+        75.5% { height: 10%; width: 5px; left: 99.9%; top: 0%; }
+        99.5% { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+        100%  { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+}
+@-o-keyframes moveAround2 {
+        0%    { height: 5px; width: 10%; left: 99.9%; top: 99.5%; }
+        25%   { height: 5px; width: 10%; left: -9.9%; top: 99.5%; }
+        25.5% { height: 10%; width: 5px; left: 0%; top: 99.5%; }
+        50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
+        50.5% { height: 5px; width: 10%; left: 0%; top: 0%; }
+        75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
+        75.5% { height: 10%; width: 5px; left: 99.9%; top: 0%; }
+        99.5% { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+        100%  { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+}
+@keyframes moveAround2 {
+        0%    { height: 5px; width: 10%; left: 99.9%; top: 99.5%; }
+        25%   { height: 5px; width: 10%; left: -9.9%; top: 99.5%; }
+        25.5% { height: 10%; width: 5px; left: 0%; top: 99.5%; }
+        50%   { height: 10%; width: 5px; left: 0%; top: -9.9%; }
+        50.5% { height: 5px; width: 10%; left: 0%; top: 0%; }
+        75%   { height: 5px; width: 10%; left: 99.9%; top: 0%; }
+        75.5% { height: 10%; width: 5px; left: 99.9%; top: 0%; }
+        99.5% { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+        100%  { height: 10%; width: 5px; left: 99.9%; top: 99.5%; }
+}
+
+/**
+* Move a border of div from the center to the right side of the screen
+*/
+@-webkit-keyframes moveRight {
+        0%    { left: 50%; }
+        15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 50%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        100%   { left: 50%; }
+}
+@-moz-keyframes moveRight {
+        0%    { left: 50%; }
+        15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 50%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        100%  { left: 50%; }
+}
+@-o-keyframes moveRight {
+        0%    { left: 50%; }
+        15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 50%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        100%  { left: 50%; }
+}
+@keyframes moveRight {
+        0%    { left: 50%; }
+        15%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 50%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 99.9%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 99.9%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 99.9%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: 99.9%; top: 0%; }
+        100%  { left: 50%; }
+}
+
+/**
+* Move a border of div from the center to the left side of the screen
+*/
+@-webkit-keyframes moveLeft {
+        0%    { left: 40%; }
+        15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 40%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        100%  { left: 40%; }
+}
+@-moz-keyframes moveLeft {
+        0%    { left: 40%; }
+        15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 40%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        100%  { left: 40%; }
+}
+@-o-keyframes moveLeft {
+        0%    { left: 40%; }
+        15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 40%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        100%  { left: 40%; }
+}
+@keyframes moveLeft {
+        0%    { left: 40%; }
+        15%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        16%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        39%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        40%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        50%   { height: 2px; width: 10%; left: 40%; top: 99.5%; }
+        60%   { height: 2px; width: 10%; left: 0.1%; top: 99.5%; }
+        61%   { height: 10%; width: 2px; left: 0.1%; top: 99.5%; }
+        84%   { height: 10%; width: 2px; left: 0.1%; top: 0%; }
+        85%   { height: 2px; width: 10%; left: -9.9%; top: 0%; }
+        100%  { left: 40%; }
+}
+
+
+@keyframes blinker {
+        from {
+                margin-left: 2.5px;
+                margin-right: -2.5px;
+                color: #d0d0d0;
+        }
+        to {
+                margin-left: -5px;
+                margin-right: 5px;
+                color: #da680b;
+        }
+}
+/**
+ * Pulse an item background
+ */
+@-webkit-keyframes pulse {
+        0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+        50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
+        100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+}
+@-moz-keyframes pulse {
+        0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+        50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
+        100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+}
+@-o-keyframes pulse {
+        0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+        50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
+        100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+}
+@keyframes pulse {
+        0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+        50% { background-color: #220000; box-shadow: 0 0 12px 3px #660000 inset; }
+        100%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }
+}
+
+/**
+* Pulse the white alpha channel of an item color
+*/
+@-webkit-keyframes pulseFade {
+        0%   { color: rgba(255, 255, 255, 0.6); }
+        50%   { color: rgba(255, 255, 255, 0.75); }
+        100%   { color: rgba(255, 255, 255, 0.6); }
+}
+@-moz-keyframes pulseFade {
+        0%   { color: rgba(255, 255, 255, 0.6); }
+        50%   { color: rgba(255, 255, 255, 0.75); }
+        100%   { color: rgba(255, 255, 255, 0.6); }
+}
+@-o-keyframes pulseFade {
+        0%   { color: rgba(255, 255, 255, 0.6); }
+        50%   { color: rgba(255, 255, 255, 0.75); }
+        100%   { color: rgba(255, 255, 255, 0.6); }
+}
+@keyframes pulseFade {
+        0%   { color: rgba(255, 255, 255, 0.6); }
+        50%   { color: rgba(255, 255, 255, 0.75); }
+        100%   { color: rgba(255, 255, 255, 0.6); }
+}

@@ -5,6 +5,20 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.easing.1.3.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/bootstrap/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/apprise-bootstrap.js"></script>
+
+<?php
+if(strtolower($page->current) == "profile") {
+	?>
+	<!-- jQuery-File-Upload -->
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload.js"></script>
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-process.js"></script>
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-image.js"></script>
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-validate.js"></script>
+	<?php
+}
+?>
+
 <!-- FitText.js -->
 <!--script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script-->
 <!-- jquery.cookie & storage -->

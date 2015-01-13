@@ -2,7 +2,16 @@
 <base href="./">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-<title>PGRDG ~ Researching agricultural and forest biodiversity | <?php print (LOGGED && isset($page->logged_title)) ? $page->logged_title : $page->title; ?></title>
+<title>
+        <?php
+        print $interface["site"]["title"] . " | ";
+        if(LOGGED && isset($page->logged_title)) {
+                print $page->logged_title;
+        } else {
+                print $page->title;
+        }
+        ?>
+</title>
 
 <link rel="shortcut icon" href="<?php print $domain; ?>/common/media/img/favicon.ico" type="image/x-icon; charset=binary">
 
@@ -23,6 +32,7 @@ if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
         <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
         <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
 
+        <link href="<?php print $domain; ?>/common/css/animations.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/main.css" rel="stylesheet" type="text/css" media="screen" />
@@ -40,6 +50,7 @@ if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
         <link rel="stylesheet" type="text/css" media="all"  href="<?php print $domain; ?>/common/css/bioversity.css" />
         <link rel="stylesheet" type="text/css" media="print"  href="<?php print $domain; ?>/common/css/bioversity.merged.css" />
 
+        <link href="<?php print $domain; ?>/common/css/animations.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/pgrdg-map-tools/pgrdg-map-tools.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
 

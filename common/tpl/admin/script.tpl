@@ -30,6 +30,7 @@
 <script src="<?php print $domain; ?>/common/js/admin/plugin/msie-fix/jquery.mb.browser.min.js"></script>
 <!-- FastClick: For mobile devices: you can disable this in app.js -->
 <script src="<?php print $domain; ?>/common/js/admin/plugin/fastclick/fastclick.min.js"></script>
+
 <!--[if IE 8]>
 <h1>Your browser is out of date, please update your browser by going to www.microsoft.com/download</h1>
 <![endif]-->
