@@ -1,12 +1,12 @@
 var config = {
         "service": {
-                "url": "http://mauricio.grinfo.private/",
+                "url": "http://THE_ONTOLOGY_WRAPPER_API_URL/",
                 "script": "Service.php",
                 "proxy": "API/?type=service&proxy=",
                 "definitions_dir": "/Service/Library/definitions",
                 "path": {
-                        "rsa": "common/include/conf/.rsa_keys/",
-                        "gpg": "common/.gnupg/"
+                        "rsa": "/.rsa_keys/",
+                        "gpg": "/.gnupg/"
                 }
         },
         "site": {
