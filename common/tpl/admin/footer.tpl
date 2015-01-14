@@ -7,7 +7,9 @@
 
                 <div class="col-xs-6 col-sm-6 text-right hidden-xs">
                         <div class="txt-color-white inline-block">
-                                <i class="txt-color-blueLight hidden-mobile">Last account activity <i class="fa fa-clock-o"></i> <strong>52 mins ago &nbsp;</strong> </i>
+                                <span class="txt-color-blueLight hidden-mobile">
+                                        <span class="fa fa-clock-o"></span> Last activity:&nbsp;<i><span class="timeago" title=""></span></i>
+                                </span>&nbsp;
                                 <div class="btn-group dropup">
                                         <button class="btn btn-xs dropdown-toggle bg-color-blue txt-color-white" data-toggle="dropdown">
                                                 <i class="fa fa-link"></i> <span class="caret"></span>

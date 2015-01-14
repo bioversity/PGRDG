@@ -18,7 +18,8 @@ if(strtolower($page->current) == "profile") {
 	<?php
 }
 ?>
-
+<!-- jQuery timeago -->
+<script src="<?php print $domain; ?>/common/js/plugins/jquery-timeago/jquery.timeago.js" type="text/javascript"></script>
 <!-- FitText.js -->
 <!--script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script-->
 <!-- jquery.cookie & storage -->

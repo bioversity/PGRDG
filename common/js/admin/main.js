@@ -283,7 +283,7 @@ $.load_user_data_in_form = function() {
 					$input_col.attr("class", "col-sm-3 col-xs-12").append($input);
 					$row.append($input_col);
 				}
-				
+
 				$row.addClass($.md5(span_label));
 				$form_group.addClass(v[kAPI_PARAM_RESPONSE_FRMT_TYPE] + "_item");
 				$form_group.append($row);
@@ -292,7 +292,7 @@ $.load_user_data_in_form = function() {
 
 				break;
 		}
-		console.log(k, v);
+		// console.log(k, v);
 	});
 	// $super_row.append($form_col);
 	$("#personal_data").append($super_row);
@@ -328,33 +328,55 @@ $.load_user_data_in_form = function() {
 			}
 		});
 		if(cont == 0) {
-			// if(form_group_type == "edit_item") {
-				$input.attr({
-					"type": "text",
-					"class": "form-control",
-					"id": "user_name",
-					"name": "user_name",
-					"placeholder": "Description text",
-					"value": ""
-				});
-				$input2.attr({
-					"type": "text",
-					"class": "form-control",
-					"id": "user_name",
-					"name": "user_name",
-					"placeholder": "Value",
-					"value": ""
-				});
-				$span_col.append($input);
-				$span_col2.append($input2);
-				$row.append($label_empty).append($span_col).append($span_col2);
-				$item.append('<br />').append($row);
-				$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
-				// $item.find(".col-sm-2 col-xs-5 input").focus();
-				return false;
-			// }
+			$input.attr({
+				"type": "text",
+				"class": "form-control",
+				"id": "user_name",
+				"name": "user_name",
+				"placeholder": "Description text",
+				"value": ""
+			});
+			$input2.attr({
+				"type": "text",
+				"class": "form-control",
+				"id": "user_name",
+				"name": "user_name",
+				"placeholder": "Value",
+				"value": ""
+			});
+			$span_col.append($input);
+			$span_col2.append($input2);
+			$row.append($label_empty).append($span_col).append($span_col2);
+			$item.append('<br />').append($row);
+			$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
+			return false;
 		}
 	});
+};
+
+$.last_activity = function(full) {
+	console.log($.now());
+	full = (full === undefined) ? false : full,
+	last_activity = "";
+
+	if($.storage_exists("pgrdg_user_cache.user_activity")) {
+		var last_activity = storage.get("pgrdg_user_cache.user_activity"),
+		l = last_activity[last_activity.length-1];
+		$.each(l, function(label, time) {
+			if(full) {
+				last_activity = label + ": " + time;
+			} else {
+				last_activity = time;
+			}
+		});
+	} else {
+		if(full) {
+			last_activity = "Loaded page (no registered previous data): " + $.now();
+		} else {
+			last_activity = $.now();
+		}
+	}
+	return last_activity;
 };
 
 /*======================================================================================*/
@@ -384,41 +406,42 @@ $(document).ready(function() {
 
 		$("#loader").show();
 		$.load_user_data_in_form();
+		$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
 
-		$("#upload_btn").hover(function() {
-			// console.log("hover");
-			$("#upload_btn div").css("visibility", "visible");
-		}, function() {
-			// console.log("unhover");
-			$("#upload_btn div").css("visibility", "hidden");
-		}).on("click", function() {
-			$("#upload_btn_input").trigger("click");
-			console.log("triggered");
-		}).fileupload({
-			url: url,
-			dataType: "json",
-			autoUpload: true,
-			acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-			maxFileSize: 3000000, // 3 MB
-			// Enable image resizing, except for Android and Opera,
-			// which actually support image resizing, but fail to
-			// send Blob objects via XHR requests:
-			disableImageResize: /Android(?!.*Chrome)|Opera/
-			.test(window.navigator.userAgent),
-			previewMaxWidth: 180,
-			previewMaxHeight: 180,
-			previewCrop: true,
-			add: function (e, data) {
-				data.context = $('<button/>').text('Upload')
-				.appendTo(document.body)
-				.click(function () {
-					data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-					data.submit();
-				});
-			},
-			done: function (e, data) {
-				data.context.text('Upload finished.');
-			}
-		});
+		// $("#upload_btn").hover(function() {
+		// 	// console.log("hover");
+		// 	$("#upload_btn div").css("visibility", "visible");
+		// }, function() {
+		// 	// console.log("unhover");
+		// 	$("#upload_btn div").css("visibility", "hidden");
+		// }).on("click", function() {
+		// 	$("#upload_btn_input").trigger("click");
+		// 	console.log("triggered");
+		// }).fileupload({
+		// 	url: url,
+		// 	dataType: "json",
+		// 	autoUpload: true,
+		// 	acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+		// 	maxFileSize: 3000000, // 3 MB
+		// 	// Enable image resizing, except for Android and Opera,
+		// 	// which actually support image resizing, but fail to
+		// 	// send Blob objects via XHR requests:
+		// 	disableImageResize: /Android(?!.*Chrome)|Opera/
+		// 	.test(window.navigator.userAgent),
+		// 	previewMaxWidth: 180,
+		// 	previewMaxHeight: 180,
+		// 	previewCrop: true,
+		// 	add: function (e, data) {
+		// 		data.context = $('<button/>').text('Upload')
+		// 		.appendTo(document.body)
+		// 		.click(function () {
+		// 			data.context = $('<p/>').text('Uploading...').replaceAll($(this));
+		// 			data.submit();
+		// 		});
+		// 	},
+		// 	done: function (e, data) {
+		// 		data.context.text('Upload finished.');
+		// 	}
+		// });
 	}
 });

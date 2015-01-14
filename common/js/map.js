@@ -38,7 +38,7 @@
         $.get_map_config = function(callback) {
                 var layer_index = {};
 
-                if($.storage_exists("map_data.config")) {
+                if($.storage_exists("pgrdg_cache.map_data.config")) {
                         if(typeof(callback) == "function") {
                                 callback.call(this, storage.get("pgrdg_cache.map_data.config"));
                         }
@@ -49,7 +49,7 @@
                                 success: function(map_data) {
                                         if(typeof(callback) == "function") {
                                                 storage.set("pgrdg_cache.map_data.config", map_data);
-                                                if(!$.storage_exists("map_data.index")) {
+                                                if(!$.storage_exists("pgrdg_cache.map_data.index")) {
                                                         $.each(map_data.map.layers, function(ltype, ldata) {
                                                                 if(ltype !== "defaultLayer") {
                                                                         $.each(ldata, function(tag, data) {
@@ -78,8 +78,8 @@
          */
         $.init_map = function(callback) {
                 var zindex = 0,
-                storage_layer = ($.storage_exists("map_data.layers.current.layer")) ? storage.get("pgrdg_cache.map_data.layers.current.layer") : {},
-                storage_overlays = ($.storage_exists("map_data.layers.current.layer.overlay")) ? storage.get("pgrdg_cache.map_data.layers.current.layer.overlay") : {};
+                storage_layer = ($.storage_exists("pgrdg_cache.map_data.layers.current.layer")) ? storage.get("pgrdg_cache.map_data.layers.current.layer") : {},
+                storage_overlays = ($.storage_exists("pgrdg_cache.map_data.layers.current.layer.overlay")) ? storage.get("pgrdg_cache.map_data.layers.current.layer.overlay") : {};
 
                 $.get_map_config(function(map_data) {
                         lon = map_data.map.default.coordinates.lon;
@@ -144,7 +144,7 @@
                                 i++;
                                 $.each(layers_list, function(k, v) {
                                         if(v.layer !== undefined && v.layer !== null && v.layer !== "") {
-                                                if($.storage_exists("map_data.layers.current.overlay." + v.layer.replace(/\./g, "~"))) {
+                                                if($.storage_exists("pgrdg_cache.map_data.layers.current.overlay." + v.layer.replace(/\./g, "~"))) {
                                                         $("#change_map ul").append('<li class="keep_open selected" onclick="$.change_map_layer(\'' + $.utf8_to_b64(JSON.stringify(v)) + '\')"><a title="Add/remove overlay" href="javascript: void(0);" class="btn change_map_btn ' + v.layer.replace(".", "_") + '"><span class="fa fa-check-square"></span>&nbsp;&nbsp;' + v.name + '</a>');
                                                         $.show_layer($.utf8_to_b64(JSON.stringify(v)));
                                                 } else {
@@ -263,10 +263,10 @@
                                                         var formatted = {},
                                                         kAPI = {};
 
-                                                        if($.storage_exists("search.criteria")) {
+                                                        if($.storage_exists("pgrdg_cache.search.criteria")) {
                                                                 criteria = $.get_storage_selected_forms();
                                                         }
-                                                        // if($.storage_exists("search.criteria.select_map_area")) {
+                                                        // if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
                                                         //         formatted = storage.get("pgrdg_cache.search.criteria.select_map_area");
                                                         // } else {
                                                                 formatted = $.get_drawned_bounds(evt.layer);
@@ -299,7 +299,7 @@
                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG] = {};
                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_SHAPE;
                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_SHAPE] = formatted;
-                                                                if($.storage_exists("search.criteria.fulltext")) {
+                                                                if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
                                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET] = {};
                                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_TEXT;
                                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_PARAM_FULL_TEXT_OFFSET][kAPI_PARAM_PATTERN] = storage.get("pgrdg_cache.search.criteria.fulltext");
@@ -657,8 +657,8 @@
         $.get_generated_layers = function(selected) {
                 //console.dir(user_layers.getLayers());
                 var icon = "", item_id = "", show = false;
-                if($.storage_exists("map_data.user_layers")) {
-                        if($.storage_exists("map_data.user_layers.results")) {
+                if($.storage_exists("pgrdg_cache.map_data.user_layers")) {
+                        if($.storage_exists("pgrdg_cache.map_data.user_layers.results")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.results"), function(id, search_data) {
                                         var label = i18n[lang].interface.search;
                                         console.log("Not working... you must generate an MD5(CRITERIA + DOMAIN)... See form.js on line 365");
@@ -715,7 +715,7 @@
                                 });
                                 show = true;
                         }
-                        if($.storage_exists("map_data.user_layers.searches")) {
+                        if($.storage_exists("pgrdg_cache.map_data.user_layers.searches")) {
                                 $.each(storage.get("pgrdg_cache.map_data.user_layers.searches"), function(id, search_data) {
                                         var label = i18n[lang].interface.search;
                                         if(search_data.input !== undefined && search_data.input !== "") {
@@ -787,7 +787,7 @@
                 overlay_exists = false;
 
                 if(selected_layer_index.type !== "baseLayers") {
-                        if($.storage_exists("map_data.layers.current.overlay")) {
+                        if($.storage_exists("pgrdg_cache.map_data.layers.current.overlay")) {
                                 overlay = storage.get("pgrdg_cache.map_data.layers.current.overlay");
                         }
                 }
@@ -1308,7 +1308,7 @@
                                         $("#information_zone").html("");
                                         $("#selected_zone").html(i18n[lang].messages.search.map_search_place.replace("{X}", input)).fadeIn(300).delay(5000).fadeOut(600);
 
-                                        if(!$.storage_exists("map_data.user_layers.searches." + $.md5(input))) {
+                                        if(!$.storage_exists("pgrdg_cache.map_data.user_layers.searches." + $.md5(input))) {
                                                 $.ajax({
                                                         url: "API/",
                                                         type: "get",
@@ -1370,7 +1370,7 @@
                                         $.each($("li#" + id).closest("ul").find("li"), function(k, v) {
                                                 if($(this).find("a.pull-left span").hasClass("fa fa-check-square")) {
                                                         if($(this).attr("id") !== id) {
-                                                                if($.storage_exists("map_data.user_layers.results." + $(this).attr("id"))) {
+                                                                if($.storage_exists("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id"))) {
                                                                         $.add_geojson_cluster({
                                                                                 id: $(this).attr("id"),
                                                                                 geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id") + ".results"),
@@ -1458,7 +1458,7 @@
                                 $(this).find("span").removeClass("fa-square-o").addClass("fa-check-square");
                                 $("#loader").removeClass("system").fadeIn(100, function() {
                                         map.addLayer(user_layers);
-                                        if($.storage_exists("map_data.user_layers.results." + selected_layer)) {
+                                        if($.storage_exists("pgrdg_cache.map_data.user_layers.results." + selected_layer)) {
                                                 $.add_geojson_cluster({
                                                         id: selected_layer,
                                                         geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + selected_layer + ".results"),
@@ -1477,7 +1477,7 @@
                                 map.closePopup();
                                 $.each($(this).closest("ul").find("li"), function(k, v) {
                                         if($(this).find("a.pull-left span").hasClass("fa fa-check-square")) {
-                                                if($.storage_exists("map_data.user_layers.results." + $(this).attr("id"))) {
+                                                if($.storage_exists("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id"))) {
                                                         $.add_geojson_cluster({
                                                                 id: selected_layer,
                                                                 geojson: storage.get("pgrdg_cache.map_data.user_layers.results." + $(this).attr("id") + ".results"),

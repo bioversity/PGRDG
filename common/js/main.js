@@ -151,7 +151,7 @@
 										rgba.g = g;
 										rgba.b = b;
 										v.colour = $.set_colour({colour: rgba});
-										if(!$.storage_exists("search")) {
+										if(!$.storage_exists("pgrdg_cache.search")) {
 											storage.set("pgrdg_cache.search", {});
 										}
 										storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
@@ -422,7 +422,7 @@
 	 * Add right buttons on the breadcrumb
 	 */
 	$.breadcrumb_right_buttons = function() {
-		if($.storage_exists("search.criteria")) {
+		if($.storage_exists("pgrdg_cache.search.criteria")) {
 			if($("#breadcrumb").length > 0) {
 				if($("#breadcrumb .breadcrumb li.no-divider.pull-right").length === 0) {
 					var li_no_divider = $('<li class="no-divider pull-right">'),
@@ -632,7 +632,7 @@
 			storage.set("pgrdg_cache.version", last_version);
 		};
 
-		if($.storage_exists("version")) {
+		if($.storage_exists("pgrdg_cache.version")) {
 			if(storage.get("pgrdg_cache.version") !== config.site.timestamp) {
 				$.reset_storage(config.site.timestamp);
 			}
@@ -717,28 +717,32 @@
 	* Split and iterate a given storage address and return false if encounter a non-existing level
 	*/
 	$.storage_exists = function(path) {
-		path = path.replace("pgrdg_cache", "");
+		// path = path.replace("pgrdg_cache", "");
 		var all_path = $.array_clean(path.split(".")),
 		vv = "",
+		p = 0;
 		is_set = true;
 		for(var i = 0; i < all_path.length; i++) {
-			vv += ((i === 0) ? "" : ".") + all_path[i];
-			if(storage.isSet("pgrdg_cache." + vv)) {
-				if($.type(storage.get("pgrdg_cache." + vv)) == "object") {
-					if($.obj_len(storage.get("pgrdg_cache." + vv)) > 0) {
-						is_set = true;
+			p = i+1;
+			vv += ((i === 0) ? "" : ".") + all_path[p];
+			if(all_path[p] !== undefined) {
+				if(all_path[p] !== undefined && storage.isSet(all_path[0] + "." + all_path[p])) {
+					if($.type(storage.get(all_path[0] + "." + vv)) == "object") {
+						if($.obj_len(storage.get(all_path[0] + "." + vv)) > 0) {
+							is_set = true;
+						} else {
+							is_set = false;
+						}
 					} else {
-						is_set = false;
+						if(storage.get(all_path[0] + "." + vv) !== "") {
+							is_set = true;
+						} else {
+							is_set = false;
+						}
 					}
 				} else {
-					if(storage.get("pgrdg_cache." + vv) !== "") {
-						is_set = true;
-					} else {
-						is_set = false;
-					}
+					is_set = false;
 				}
-			} else {
-				is_set = false;
 			}
 		}
 		return is_set;
@@ -860,6 +864,7 @@
 				success: function(response) {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 						storage.set("pgrdg_user_cache.user_data", response[kAPI_RESPONSE_RESULTS]);
+						storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
 						if(current_path == "Signin") {
 							window.location.href = "./";
 						} else {
@@ -916,7 +921,7 @@
 		user_data = "",
 		roles_groups = [];
 		if(username !== undefined && username !== null && username !== "null" && username !== "") {
-			if($.storage_exists("session." + username)) {
+			if($.storage_exists("pgrdg_cache.session." + username)) {
 				user_data = storage.get("pgrdg_cache.session." + username + ".data");
 				$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v){
 					roles_groups.push(k, v.charAt(0));
@@ -1304,7 +1309,7 @@ $(document).ready(function() {
 
 				$.search_fulltext(query.q);
 			} else {
-				if($.storage_exists("search.criteria.fulltext")) {
+				if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
 					$("#search_form").val(storage.get("pgrdg_cache.search.criteria.fulltext"));
 				}
 			}
