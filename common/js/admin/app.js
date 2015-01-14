@@ -74,52 +74,6 @@
  * Calculate nav height
  */
 
-$.add_storage_space_in_panel = function(label, storage) {
-	$.get_localstorage_space = function(key){
-		var allStrings = '';
-		for(var keys in window.localStorage){
-			// console.log(keys);
-			if(window.localStorage.hasOwnProperty(keys)){
-				allStrings += window.localStorage[key];
-			}
-		}
-		return allStrings ? 3 + (Math.round(((allStrings.length*16)/(8*1024)) * 100) / 100) + " Kb" : "0 Kb";
-	};
-
-	var occupied_space_mb = $.get_localstorage_space(storage),
-	occupied_space = parseInt($.get_localstorage_space(storage)),
-	free_space = 1000 - occupied_space,
-	percentage = (occupied_space * 100) / 1000,
-	bar_colour = "progress-bar-success",
-	text_colour = "txt-color-darken";
-
-	if(percentage > 33) {
-		bar_colour = "progress-bar-warning";
-		text_colour = "text-warning";
-	} else if(percentage > 66) {
-		bar_colour = "progress-bar-danger";
-		text_colour = "text-danger";
-	}
-
-	var $li = $('<li>'),
-	$padding5 = $('<div class="padding-5">'),
-	$p = $('<p class="' + text_colour + ' font-sm no-margin">'),
-	$progress = $('<div class="progress progress-micro no-margin">'),
-	$progress_bar = $('<div class="progress-bar ' + bar_colour + '" style="width: ' + percentage + '%">');
-
-
-	$p.html("<b>" + label + ":</b><br /><small>" + occupied_space_mb + "</small>");
-	$progress.append($progress_bar);
-	$padding5.append($p).append($progress);
-	$li.append($padding5);
-	$("#local_storage_space").append($li);
-};
-
-$(document).ready(function() {
-	$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
-	$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
-});
-
 var calc_navbar_height = function() {
 		var height = null;
 

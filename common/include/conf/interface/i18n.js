@@ -14,6 +14,10 @@ var i18n = {
                         "no_entries_found": "No entries found",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
+                        "insert_password": {
+                                "title": "Confirm your identity",
+                                "message": "Please insert your password to validate your edits"
+                        },
                         "text_has_produced_zero_results": "Entered text has produced 0 results",
                         "login": {
                                 "username": "Username or email",
@@ -150,6 +154,7 @@ var i18n = {
                                 "remove": "Remove",
                                 "remove_selection": "Remove selection",
                                 "reset_all": "Reset all",
+                                "save": "Save",
                                 "search_in_shape": "Search in shape...",
                                 "search_tips": "Search tips",
                                 "search": "Search",

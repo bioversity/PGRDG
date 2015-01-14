@@ -10,14 +10,107 @@
 *	MAIN ADMIN FUNCTIONS
 *======================================================================================*/
 
+/**
+ * Display a password requiring dialog before save data
+ * @param  function		callback	 	A function to execute if password is correct
+ */
+$.require_password = function(callback) {
+	var s = storage.get("pgrdg_user_cache.user_data"),
+	username = s[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP];
+	apprise(i18n[lang].messages.insert_password.message, {
+		title: i18n[lang].messages.insert_password.title,
+		icon: "fa-lock",
+		titleClass: "text-warning",
+		input: true,
+		input_type: "password"
+	}, function(r) {
+		if(r) {
+			$("#loader").show();
+			var data = {
+				"username": username,
+				"password": $.sha1(r),
+			};
+			$.cryptAjax({
+				url: "API/",
+				dataType: "json",
+				crossDomain: true,
+				type: "POST",
+				timeout: 30000,
+				data: {
+					jCryption: $.jCryption.encrypt(jQuery.param(data), password),
+					type: "login"
+				},
+				success: function(response) {
+					$.log_activity("confirmed identity");
+					$("#loader").hide();
+					if($.obj_len(response) > 0) {
+						if (typeof callback == "function") {
+							callback.call(true);
+						}
+					} else {
+						return false;
+					}
+				}
+			});
+		} else {
+			return false;
+		}
+	});
+}
+
+
+$.add_storage_space_in_panel = function(label, storage) {
+	$.get_localstorage_space = function(key){
+		var allStrings = '';
+		for(var keys in window.localStorage){
+			// console.log(keys);
+			if(window.localStorage.hasOwnProperty(keys)){
+				allStrings += window.localStorage[key];
+			}
+		}
+		return allStrings ? 3 + (Math.round(((allStrings.length*16)/(8*1024)) * 100) / 100) + " Kb" : "0 Kb";
+	};
+
+	var occupied_space_mb = $.get_localstorage_space(storage),
+	occupied_space = parseInt($.get_localstorage_space(storage)),
+	free_space = 1000 - occupied_space,
+	percentage = (occupied_space * 100) / 1000,
+	bar_colour = "progress-bar-success",
+	text_colour = "txt-color-darken";
+
+	if(percentage > 33) {
+		bar_colour = "progress-bar-warning";
+		text_colour = "text-warning";
+	} else if(percentage > 66) {
+		bar_colour = "progress-bar-danger";
+		text_colour = "text-danger";
+	}
+
+	var $li = $('<li>'),
+	$padding5 = $('<div class="padding-5">'),
+	$p = $('<p class="' + text_colour + ' font-sm no-margin">'),
+	$progress = $('<div class="progress progress-micro no-margin">'),
+	$progress_bar = $('<div class="progress-bar ' + bar_colour + '" style="width: ' + percentage + '%">');
+
+
+	$p.html("<b>" + label + ":</b><br /><small>" + occupied_space_mb + "</small>");
+	$progress.append($progress_bar);
+	$padding5.append($p).append($progress);
+	$li.append($padding5);
+	$("#local_storage_space").append($li);
+};
 
 /*=======================================================================================
 *	EDIT USER
 *======================================================================================*/
 
+/**
+ * Generate form for manage user data
+ */
 $.load_user_data_in_form = function() {
 	var user_data = storage.get("pgrdg_user_cache.user_data");
-	var ud = {};
+	var ud = {},
+	i = 0;
 	ud[kTAG_RECORD_CREATED] = {};
 	ud[kTAG_VERSION] = {};
 	ud[kTAG_ENTITY_AFFILIATION] = {};
@@ -96,6 +189,7 @@ $.load_user_data_in_form = function() {
 	$picture_col.append($picture_div);
 
 	$.each(ud, function(k, v){
+		i++;
 		var $row = $('<div class="row">'),
 		$form_group = $('<div class="form-group">'),
 		$input_col = $('<div class="col-sm-5">'),
@@ -109,7 +203,8 @@ $.load_user_data_in_form = function() {
 		$span = $('<div class="col-sm-3 control-label text-muted">'),
 		$input = $('<input>'),
 		$input2 = $('<input>'),
-		$plus_btn = $('<a href="javascript:void(0);" class="btn btn-default-white">');
+		$plus_btn = $('<a href="javascript:void(0);" class="btn btn-default-white">'),
+		$submit = $('<a href="javascript:void(0);" onclick="$.save_user_data();" class="btn btn-default pull-right">' + i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span></a>');
 
 		$super_row.prepend($picture_col);
 		switch(v[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
@@ -292,6 +387,18 @@ $.load_user_data_in_form = function() {
 
 				break;
 		}
+
+		if(i === $.obj_len(ud)) {
+			$row.append($label_empty);
+			$span_col.attr("class", "col-sm-2 col-xs-5");
+			$span_col2.attr("class", "col-sm-3 col-xs-6 row").append($submit);
+			$row.append($span_col).append($span_col2);
+			$form_group.append($row);
+			$form_col.append('<hr />');
+			$form_col.append('<hr />');
+			$form_col.append($form_group);
+			$super_row.append($form_col);
+		}
 		// console.log(k, v);
 	});
 	// $super_row.append($form_col);
@@ -354,8 +461,32 @@ $.load_user_data_in_form = function() {
 	});
 };
 
+/**
+ * Save the user data
+ */
+$.save_user_data = function() {
+	$.require_password(function() {
+		// $.log_activity("edit personal data");
+		alert("ok");
+	});
+};
+
+$.log_activity = function(action){
+	var st = storage.get("pgrdg_user_cache.user_activity"),
+	log = {};
+	log[action] = $.now();
+	st.push(log);
+
+	storage.set("pgrdg_user_cache.user_activity", st);
+	$("span.timeago").timeago();
+}
+
+/**
+ * Load the last activity saved in log storage
+ * @param  bool 	 	full 			If false or unset display only the date in "Y/m/d H:i:s" format
+ * @return string		        Last logged activity
+ */
 $.last_activity = function(full) {
-	console.log($.now());
 	full = (full === undefined) ? false : full,
 	last_activity = "";
 
@@ -364,7 +495,7 @@ $.last_activity = function(full) {
 		l = last_activity[last_activity.length-1];
 		$.each(l, function(label, time) {
 			if(full) {
-				last_activity = label + ": " + time;
+				last_activity = $.ucfirst(label) + ": " + time;
 			} else {
 				last_activity = time;
 			}
@@ -408,13 +539,16 @@ $(document).ready(function() {
 		$.load_user_data_in_form();
 		$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
 
-		// $("#upload_btn").hover(function() {
-		// 	// console.log("hover");
-		// 	$("#upload_btn div").css("visibility", "visible");
-		// }, function() {
-		// 	// console.log("unhover");
-		// 	$("#upload_btn div").css("visibility", "hidden");
-		// }).on("click", function() {
+		$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
+		$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
+
+		$("#upload_btn").hover(function() {
+			// console.log("hover");
+			$("#upload_btn div").css("visibility", "visible");
+		}, function() {
+			// console.log("unhover");
+			$("#upload_btn div").css("visibility", "hidden");
+		});//.on("click", function() {
 		// 	$("#upload_btn_input").trigger("click");
 		// 	console.log("triggered");
 		// }).fileupload({

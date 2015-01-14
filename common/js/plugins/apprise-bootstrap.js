@@ -15,6 +15,7 @@ function apprise(string, args, callback) {
 		"confirm": false, 			// Ok and Cancel buttons
 		"double": false,
 		"input": false,
+		"input_type": "text",
 		"inputIP": false,
 		"invertedBtns": false,
 		"message": false, 			// Textarea (can be true or string for default text)
@@ -122,12 +123,12 @@ function apprise(string, args, callback) {
 	if (args) {
 		if (args.input) {
 			if (typeof(args.input) == 'string') {
-				row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args.input + '" /></div>');
+				row.find("div.col-sm-12").append('<input type="' + args.input_type + '" class="form-control" value="' + args.input + '" /></div>');
 			} else {
 				if(args.fa_icon) {
-					row.find("div.col-sm-10").append('<input type="text" class="form-control" /></div>');
+					row.find("div.col-sm-10").append('<input type="' + args.input_type + '" class="form-control" /></div>');
 				} else {
-					row.find("div.col-sm-12").append('<input type="text" class="form-control" /></div>');
+					row.find("div.col-sm-12").append('<input type="' + args.input_type + '" class="form-control" /></div>');
 				}
 			}
 		}

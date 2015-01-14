@@ -9,14 +9,7 @@
                         <div class="txt-color-white inline-block">
                                 <span class="txt-color-blueLight hidden-mobile">
                                         <span class="fa fa-clock-o"></span> Last activity:&nbsp;<i><span class="timeago" title=""></span></i>
-                                </span>&nbsp;
-                                <div class="btn-group dropup">
-                                        <button class="btn btn-xs dropdown-toggle bg-color-blue txt-color-white" data-toggle="dropdown">
-                                                <i class="fa fa-link"></i> <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu pull-right text-left" id="local_storage_space"></ul>
-                                </div>
-                                <!-- end btn-group-->
+                                </span>
                         </div>
                         <!-- end div-->
                 </div>
