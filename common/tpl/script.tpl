@@ -7,7 +7,7 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/apprise-bootstrap.js"></script>
 
 <?php
-if(strtolower($page->current) == "profile") {
+if($page->current == "Profile") {
 	?>
 	<!-- jQuery-File-Upload -->
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.iframe-transport.js"></script>
