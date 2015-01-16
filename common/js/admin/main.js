@@ -58,8 +58,17 @@ $.require_password = function(callback) {
 	});
 }
 
-
+/**
+ * Calculate the storage occupied space and fill a panel with percentege
+ * @param string 	label  		The label for percentage row
+ * @param string 	storage		The storage to evaluate
+ */
 $.add_storage_space_in_panel = function(label, storage) {
+	/**
+	 * Calculate the occupied space of given storage
+	 * @param  string key The local storage to evaluate
+	 * @return string     The occupied space in verbose mode
+	 */
 	$.get_localstorage_space = function(key){
 		var allStrings = '';
 		for(var keys in window.localStorage){
@@ -100,6 +109,91 @@ $.add_storage_space_in_panel = function(label, storage) {
 	$("#local_storage_space").append($li);
 };
 
+$.fn.load_user_data = function(user_id) {
+	if($.storage_exists("pgrdg_user_cache.user_data")) {
+		var user_data = storage.get("pgrdg_user_cache.user_data");
+
+		if(user_id === undefined) {
+			user_id = user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		}
+	} else {}
+console.warn(user_data);
+	var $super_row = $('<div class="row">'),
+	$picture_col = $('<div class="col-lg-2 pull-left">'),
+	$form_col = $('<div class="col-lg-10 pull-right">'),
+	$user_data_row = $('<div class="row">'),
+	$user_data = $('<div class="col-lg-8">'),
+	$user_data_right_btns = $('<div class="col-lg-4">'),
+	$title = $('<h1>'),
+	$edit_profile_btn = $('<a>').attr({
+		"class": "btn btn-default-white pull-right",
+		"href": "./Profile#Edit"
+	}).html(i18n[lang].interface.btns.edit_profile + ' <span class="fa fa-edit"></span>'),
+	$picture_ex_upload_btn = $('<span>'),
+	$picture_img = $('<img>').attr({
+		"src": "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
+		"alt": "me"
+	}),
+	$picture_div = $('<div id="picture">'),
+	$static_data = $('<small class="help-block">');
+	$picture_col.append($picture_div);
+	var data_labels = [
+		{"label": "invited on","value": $.right_date(user_data[kTAG_VERSION][kAPI_PARAM_RESPONSE_FRMT_DISP])},
+		{"label": "Subscribed on","value": $.right_date(user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP])},
+	];
+	for (i = 0; i < 2; i++) {
+		var $dl = $('<dl>'),
+		$dt = $('<dt>'),
+		$dd = $('<dd>');
+		$dt.text(data_labels[i].label);
+		$dd.text(data_labels[i].value);
+		$dl.append($dt);
+		$dl.append($dd);
+		$static_data.append($dl);
+	}
+
+	$picture_col.append($static_data);
+	$picture_ex_upload_btn.append($picture_img);
+	$picture_div.append($picture_ex_upload_btn);
+	$super_row.append($picture_col);
+	$title.text(user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP])
+	$user_data.append($title);
+	$user_data_row.append($user_data);
+	$user_data_right_btns.append($edit_profile_btn);
+	$user_data_row.append($user_data_right_btns);
+	$form_col.append($user_data_row);
+	$super_row.append($form_col),
+	$managed_scroller = $('<div id="managed_scroller">'),
+	$invite_user_btn = $('<a>').attr({
+		"href": "javascript:void(0);"
+	}).text(i18n[lang].interface.btns.invite_an_user);
+
+	// Place all in the section
+	$(this).html($super_row);
+
+	/**
+	 * Managed users display
+	 */
+	user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP] = 5;
+	console.log(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+	if(parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == 0) {
+		$managed_scroller.html('<p>' + i18n[lang].messages.no_active_users_yet + '</p>');
+		/**
+		 * Invite users button
+		 */
+		if($.inArray(kTYPE_ROLE_INVITE, user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) {
+			$managed_scroller.append('<br />')
+			$managed_scroller.append($invite_user_btn);
+		}
+	} else {
+		for()
+		// Load users pictures
+	}
+	$managed_scroller.insertAfter($(this));
+
+	$("#loader").hide();
+}
+
 /*=======================================================================================
 *	EDIT USER
 *======================================================================================*/
@@ -107,7 +201,7 @@ $.add_storage_space_in_panel = function(label, storage) {
 /**
  * Generate form for manage user data
  */
-$.load_user_data_in_form = function() {
+$.fn.load_user_data_in_form = function() {
 	var user_data = storage.get("pgrdg_user_cache.user_data");
 	var ud = {},
 	i = 0;
@@ -139,14 +233,11 @@ $.load_user_data_in_form = function() {
 		ud[kTAG_ENTITY_FNAME][kAPI_PARAM_INPUT_TYPE] = "text";
 		ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_FNAME];
 
-		ud[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_TYPE] = "edit";
-		ud[kTAG_ENTITY_FNAME][kAPI_PARAM_INPUT_TYPE] = "text";
-		ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_FNAME];
-
 		ud[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_TYPE] = "edit";
 		ud[kTAG_ENTITY_LNAME][kAPI_PARAM_INPUT_TYPE] = "text";
 		ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_LNAME];
 
+		ud[kTAG_NAME][kAPI_RESULT_ENUM_LABEL] = "Full name";
 		ud[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_TYPE] = "edit";
 		ud[kTAG_NAME][kAPI_PARAM_INPUT_TYPE] = "text";
 		ud[kTAG_NAME][kAPI_PARAM_DATA] = user_data[kTAG_NAME];
@@ -187,6 +278,7 @@ $.load_user_data_in_form = function() {
 	$picture_div.append($picture_upload_btn);
 	$picture_div.append($picture_upload_btn_input);
 	$picture_col.append($picture_div);
+	$(this).html("");
 
 	$.each(ud, function(k, v){
 		i++;
@@ -297,11 +389,11 @@ $.load_user_data_in_form = function() {
 						"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 						"value": ""
 					});
-
+					console.log(v[kAPI_PARAM_DATA]);
 					$row.addClass($.md5(span_label));
 					$span_col.attr("class", "col-sm-2 col-xs-5").append($input);
 					$span_col2.attr("class", "col-sm-3 col-xs-6 row");
-					$plus_btn.addClass("add_" + v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_TYPE]).html('<span class="fa fa-plus text-center">');
+					$plus_btn.addClass("add_typed").html('<span class="fa fa-plus text-center">');
 					$input_group_btn.append($plus_btn);
 					$input_group.append($input2);
 					$input_group.append($input_group_btn);
@@ -310,7 +402,7 @@ $.load_user_data_in_form = function() {
 					$span_col2.append($input_group);
 					$row.append($span_col0).append($label_empty).append($span_col).append($span_col2);
 					$form_group.append($row);
-					$form_col.append('<hr />');
+					// $form_col.append('<hr />');
 				} else {
 					var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 					$span.text(span_label);
@@ -355,7 +447,7 @@ $.load_user_data_in_form = function() {
 					});
 					$span_col.attr("class", "col-sm-2 col-xs-5").append($input);
 					$span_col2.attr("class", "col-sm-3 col-xs-6 row");
-					$plus_btn.addClass("add_" + v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_TYPE]).html('<span class="fa fa-plus text-center">');
+					$plus_btn.addClass("add_typed").html('<span class="fa fa-plus text-center">');
 					$input_group_btn.append($plus_btn);
 					$input_group.append($input2);
 					$input_group.append($input_group_btn);
@@ -364,7 +456,7 @@ $.load_user_data_in_form = function() {
 					$span_col2.append($input_group);
 					$row.append($span_col).append($span_col2);
 					$form_group.append($row);
-					$form_col.append('<hr />');
+					// $form_col.append('<hr />');
 				} else {
 					$row.append($label);
 					$input.attr({
@@ -394,15 +486,13 @@ $.load_user_data_in_form = function() {
 			$span_col2.attr("class", "col-sm-3 col-xs-6 row").append($submit);
 			$row.append($span_col).append($span_col2);
 			$form_group.append($row);
-			$form_col.append('<hr />');
-			$form_col.append('<hr />');
 			$form_col.append($form_group);
 			$super_row.append($form_col);
 		}
 		// console.log(k, v);
 	});
 	// $super_row.append($form_col);
-	$("#personal_data").append($super_row);
+	$(this).html($super_row);
 
 	$("#loader").hide();
 	$("a.add_typed").on("click", function() {
@@ -510,6 +600,16 @@ $.last_activity = function(full) {
 	return last_activity;
 };
 
+/**
+ * Load profile form or interface depending on the hash
+ */
+$.load_profile = function() {
+	if(document.location.hash !== undefined && document.location.hash == "#Edit") {
+		$("#personal_data").load_user_data_in_form();
+	} else {
+		$("#personal_data").load_user_data();
+	}
+}
 /*======================================================================================*/
 
 $(document).ready(function() {
@@ -536,7 +636,11 @@ $(document).ready(function() {
 
 
 		$("#loader").show();
-		$.load_user_data_in_form();
+		$.load_profile();
+		window.onhashchange = function() {
+			$.load_profile();
+		}
+
 		$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
 
 		$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");

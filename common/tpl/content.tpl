@@ -22,7 +22,9 @@
 						$page->current_title = str_replace("_", " ", (($page->current == "") ? "home" : $page->current));
 					}
 				}
-				print "<h1 class=\"" . $page->title_class . "\">" . $page->title . "</h1>";
+				if($page->current !== "Profile") {
+					print "<h1 class=\"" . $page->title_class . "\">" . $page->title . "</h1>";
+				}
 
 				$md_page = str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md";
 				if(file_exists("common/md/" . $md_page)) {

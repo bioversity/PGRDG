@@ -2860,7 +2860,7 @@ a.list-group-item.related {
 
 
 #personal_data {
-	margin-top: 4em;
+	margin-top: 5px;
 }
 #personal_data #picture {
 	background-color: #333;
@@ -2868,7 +2868,7 @@ a.list-group-item.related {
 	padding: 3px;
 	width: 190px;
 }
-#picture > a {
+#picture > a, #picture > span {
 	border: transparent 1px solid;
 	display: block;
 	height: 184px;
@@ -2886,6 +2886,7 @@ a.list-group-item.related {
 	height: 100%;
 	color: rgba(255, 255, 255, 0.5);
 	visibility: hidden;
+	z-index: 1;
 }
 #upload_btn > div > span {
 	display: table-cell;
@@ -2902,7 +2903,26 @@ a.list-group-item.related {
 	height: 184px;
 }
 #upload_btn > img {
-	margin-top: -205px;
+	position: absolute;
+	top: 0;
 	width: 100%;
 	height: 100%;
+	z-index: 0;
+}
+#managed_scroller {
+	background: none repeat scroll 0 0 #2d2d2d;
+	box-shadow: 0 0 50px #000 inset;
+	color: rgba(255,255,255,0.3);
+	height: 120px;
+	margin: 5% -15px;
+	padding: 10px 0;
+	text-align: center;
+}
+#managed_scroller > p {
+	position: relative;
+	top: 30px;
+	width: 100%;
+}
+#managed_scroller > a {
+	color: rgba(255,255,255,0.6);
 }

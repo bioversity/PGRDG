@@ -1,6 +1,8 @@
 <?php
 // header("Content-type: text/plain");
-
+// session_start();
+// print_r($_SESSION["user"]);
+// exit();
 /**
  * Load all definitions
  */

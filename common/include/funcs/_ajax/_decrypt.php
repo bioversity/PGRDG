@@ -99,6 +99,8 @@ if(isset($_GET["getPublicKey"])) {
 			$user_data = json_decode($login, 1);
 
 			header("Content-type: text/plain");
+			print_r($login);
+			exit();
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 				$fingerprint = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
 

@@ -863,6 +863,7 @@
 				},
 				success: function(response) {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+						console.warn(response);
 						storage.set("pgrdg_user_cache.user_data", response[kAPI_RESPONSE_RESULTS]);
 						storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
 						if(current_path == "Signin") {

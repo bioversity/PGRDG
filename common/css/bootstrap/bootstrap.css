@@ -93,9 +93,15 @@ figure {
   margin: 1em 40px;
 }
 hr {
-  height: 0;
-  -moz-box-sizing: content-box;
-       box-sizing: content-box;
+        -moz-border-bottom-colors: none;
+        -moz-border-image: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        border-color: #EEEEEE -moz-use-text-color #FFFFFF;
+        border-style: solid none;
+        border-width: 1px 0;
+        margin: 18px 0;
 }
 pre {
   overflow: auto;
@@ -334,12 +340,12 @@ img {
 .img-circle {
   border-radius: 50%;
 }
-hr {
+/*hr {
   margin-top: 20px;
   margin-bottom: 20px;
   border: 0;
   border-top: 1px solid #eee;
-}
+}*/
 .sr-only {
   position: absolute;
   width: 1px;
