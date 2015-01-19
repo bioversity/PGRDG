@@ -10702,7 +10702,7 @@ aside {
   position: fixed;
 }
 .fixed-header #main {
-  margin-top: 29px;
+  margin-top: 49px;
 }
 #logo-group > span {
   display: inline-block;
@@ -15542,7 +15542,8 @@ label:hover input[type="checkbox"][disabled].checkbox:checked + span:before {
   height: 52px;
   padding: 15px 15px 0;
   padding-left: 233px;
-  border-top: 1px solid #CECECE;
+  border-top: 1px solid #454545;
+  box-shadow: 0px -1px 3px rgba(0, 0, 0, 0.5);
   background: #2a2725;
   width: 100%;
   position: absolute;

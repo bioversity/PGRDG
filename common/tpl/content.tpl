@@ -37,7 +37,6 @@
 			}
 			?>
 		</div>
-		<hr />
 		<?php
 	}
 	if(!LOGGED && $page->current !== "Feedback") {

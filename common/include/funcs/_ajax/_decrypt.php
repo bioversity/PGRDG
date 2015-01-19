@@ -97,22 +97,21 @@ if(isset($_GET["getPublicKey"])) {
 			$se = new Service_exchange();
 			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
 			$user_data = json_decode($login, 1);
-
-			header("Content-type: text/plain");
-			print_r($login);
-			exit();
+			// header("Content-type: text/plain");
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-				$fingerprint = $user_data[kAPI_RESPONSE_RESULTS][kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				foreach($user_data[kAPI_RESPONSE_RESULTS] as $uid => $ud) {
+					$fingerprint = $ud[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
 
-				$_SESSION["user"] = $user_data[kAPI_RESPONSE_RESULTS];
+					$_SESSION["user"] = $ud;
 
-				if(isset($output["remember"])) {
-					setcookie("l", md5($fingerprint), time()+10800, "/");
-				} else {
-					setcookie("l", md5($fingerprint), time()+28800, "/");
+					if(isset($output["remember"])) {
+						setcookie("l", md5($fingerprint), time()+10800, "/");
+					} else {
+						setcookie("l", md5($fingerprint), time()+28800, "/");
+					}
+
+					print json_encode($user_data);
 				}
-
-				print $login;
 			} else {
 				print "{}";
 			}

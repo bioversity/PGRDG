@@ -270,7 +270,7 @@ class Service_exchange {
                                                         }
                                                 }
                                         }
-                                        $service_response[kAPI_RESPONSE_RESULTS] = $res;
+                                        $service_response[kAPI_RESPONSE_RESULTS] = (object)array($user_id => $res);
                                 }
                                 return json_encode($service_response);
                         } else {
