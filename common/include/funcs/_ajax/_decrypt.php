@@ -88,6 +88,7 @@ if(isset($_GET["getPublicKey"])) {
 	parse_str($data, $output);
 
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
+
 	switch($type) {
 		case "ask_service":
 			require_once("ask_service.php");
@@ -98,6 +99,8 @@ if(isset($_GET["getPublicKey"])) {
 			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
 			$user_data = json_decode($login, 1);
 			// header("Content-type: text/plain");
+			// print_r($login);
+			// exit();
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 				foreach($user_data[kAPI_RESPONSE_RESULTS] as $uid => $ud) {
 					$fingerprint = $ud[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
@@ -112,6 +115,16 @@ if(isset($_GET["getPublicKey"])) {
 
 					print json_encode($user_data);
 				}
+			} else {
+				print "{}";
+			}
+			break;
+		case "get_managed_users":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			$managed_users = $se->send_to_service($output["user_id"], "get_managed_users");
+			if($managed_users[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $managed_users[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+				print $managed_users;
 			} else {
 				print "{}";
 			}

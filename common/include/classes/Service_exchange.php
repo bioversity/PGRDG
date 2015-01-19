@@ -238,6 +238,18 @@ class Service_exchange {
                                         kAPI_PARAM_ID => $data
                                 );
                                 break;
+                        case "get_managed_users":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GET_MANAGED,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_PARAM_ID => $data,
+                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
+                                );
+                                break;
                         default:
                                 print "No action were specified";
                                 return false;
@@ -255,7 +267,6 @@ class Service_exchange {
          */
         public function receive_from_service($json) {
                 $service_response = json_decode($json, 1);
-
                 if($service_response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
                         if(isset($service_response[kAPI_RESPONSE_RESULTS]) && count($service_response[kAPI_RESPONSE_RESULTS]) > 0) {
                                 $results = $this->decrypt_RSA($service_response[kAPI_RESPONSE_RESULTS]);

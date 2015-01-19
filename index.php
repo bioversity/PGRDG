@@ -24,6 +24,7 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 	if(isset($_SESSION["user"])) {
 		$user = json_decode(json_encode($_SESSION["user"]), 1);
 	}
+
 	/**
 	 * Assign a random image if there's no assigned
 	 */

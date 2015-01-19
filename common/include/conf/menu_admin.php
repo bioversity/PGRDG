@@ -1,4 +1,18 @@
 <?php
+require_once("common/tpl/defines.tpl");
+
+if(session_status() == PHP_SESSION_NONE) {
+        session_start();
+}
+if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
+        if(isset($_SESSION["user"])) {
+                $user = json_decode(json_encode($_SESSION["user"]), 1);
+        }
+        $logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+}
+if(!defined("LOGGED")) {
+        define("LOGGED", $logged);
+}
 $menu["menu"]["admin"][0] = array(
         "Home" => array(
                 "content" => array(

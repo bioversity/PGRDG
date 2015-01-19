@@ -103,4 +103,10 @@ if(isset($_POST["type"]) && trim($_POST["type"]) == "activate_user") {
 	// $_POST["jCryption"] = $_GET["jCryption"];
 	require_once("../common/include/funcs/_ajax/_decrypt.php");
 }
+if(isset($_POST["type"]) && trim($_POST["type"]) == "get_managed_users") {
+	header("Content-type: text/plain");
+
+	// $_POST["jCryption"] = $_GET["jCryption"];
+	require_once("../common/include/funcs/_ajax/_decrypt.php");
+}
 ?>
