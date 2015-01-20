@@ -116,18 +116,25 @@ if(isset($_GET["getPublicKey"])) {
 					print json_encode($user_data);
 				}
 			} else {
-				print "{}";
+				print json_encode($user_data);
 			}
+			break;
+		case "get_user":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			$login = $se->send_to_service($output["user_id"], "get_user");
+			$user_data = json_decode($login, 1);
+			// header("Content-type: text/plain");
+			// print_r($login);
+			// exit();
+			print json_encode($user_data);
 			break;
 		case "get_managed_users":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
 			$managed_users = $se->send_to_service($output["user_id"], "get_managed_users");
-			if($managed_users[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $managed_users[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-				print $managed_users;
-			} else {
-				print "{}";
-			}
+			$mu = json_decode($managed_users, 1);
+			print $managed_users;
 			break;
 		case "logout":
 			$_SESSION["user"] = array();

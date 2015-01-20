@@ -115,7 +115,7 @@ h3 {
 .admin #content h1 {
 	font-weight: 100;
 	margin: 12px 0 28px 0;
-	color: #666 !important;
+	color: #666;
 	font-size: 24px;
 }
 h1.text-muted {
@@ -2948,16 +2948,62 @@ a.list-group-item.related {
 	background: none repeat scroll 0 0 #2d2d2d;
 	box-shadow: 0 0 50px #000 inset;
 	color: rgba(255,255,255,0.3);
-	height: 120px;
+	height: 170px;
 	margin: 5% -15px;
 	padding: 10px 0;
 	text-align: center;
 }
-#managed_scroller > p {
-	position: relative;
-	top: 30px;
-	width: 100%;
+#managed_scroller.has_data {
+	background: #2d2d2d url("../media/img/loader_2d2d2d.gif") center center no-repeat;
 }
-#managed_scroller > a {
+#managed_scroller > p {
+	margin: 55px 0;
+}
+#managed_scroller > p > a {
 	color: rgba(255,255,255,0.6);
+}
+
+#managed_scroller ul.managed_picture {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	overflow: hidden;
+}
+#managed_scroller ul.managed_picture li {
+	margin: 0 10px;
+	padding: 0;
+	width: 100px;
+	height: 120px;
+}
+#managed_scroller ul.managed_picture li h1 {
+	color: #fff !important;
+	font-size: 18px !important;
+	margin: 5px 0 !important;
+	text-align: center;
+	width: 100px;
+}
+#managed_scroller ul.managed_picture li a {
+	color: #fff;
+}
+#managed_scroller ul.managed_picture li a:hover {
+	text-decoration: none;
+}
+#managed_scroller ul.managed_picture li a:hover img {
+	border: #666 1px dotted;
+	box-shadow: 0 0 9px #000;
+}
+#managed_scroller ul.managed_picture li a:hover span {
+	background-color: #000;
+	box-shadow: 0 0 9px #000;
+	display: block;
+	height: 40px;
+}
+#managed_scroller ul.managed_picture li img {
+	box-shadow: 0 0 33px rgba(0, 0, 0, 0.3);
+	border: #454545 1px dotted;
+	background-color: #333;
+	height: 100px;
+	padding: 2px;
+	width: 100px;
 }

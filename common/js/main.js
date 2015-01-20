@@ -840,15 +840,15 @@
 	 * Log users
 	 */
 	$.login = function() {
-		$("#loader").show();
-		$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", true);
+		$("#loginform .input-group").removeClass("has-error");
 
 		if($("#login-username").val().length >= 4 && $("#login-password").val().length >= 6) {
-			$("#loginform .input-group").removeClass("has-error");
+			$("#loader").show();
+			$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", true);
 			var data = {
 				"username": $("#login-username").val(),
 				"password": $.sha1($("#login-password").val()),
-				"remember": $("#login-remember").val()
+				"remember": ($("#login-remember").is(":checked") ? 1 : 0)
 			};
 			authority = "";
 			$.cryptAjax({
@@ -863,7 +863,7 @@
 				},
 				success: function(response) {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
-						console.warn(response);
+						// console.warn(response);
 						storage.set("pgrdg_user_cache.user_data", response[kAPI_RESPONSE_RESULTS]);
 						storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
 						if(current_path == "Signin") {
@@ -872,6 +872,7 @@
 							location.reload();
 						}
 					} else {
+						// console.log(data);
 						// console.log(response);
 						$("#loader").hide();
 						$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", false);
@@ -883,6 +884,7 @@
 				}
 			});
 		} else {
+			$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", false);
 			$("#loginform .input-group").addClass("has-error");
 			$("#login-username").focus();
 		}

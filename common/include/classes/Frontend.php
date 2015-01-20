@@ -227,6 +227,7 @@ class frontend_api {
 			$d[] = $define . (($condensed) ? '="' : ' = "') . $value . '"';
 		}
 		$js = "";
+		$jsj = "";
 		if($response_type == "string" || $response_type == "all") {
 			if($condensed) {
 				$js .= "var " . implode(",", $d) . ";";
@@ -245,6 +246,7 @@ class frontend_api {
 			$js .= $jsa;
 		}
 
+		// If included by PHP script do not print but return only the object
 		if($response_type == "obj" || $response_type == "object") {
 			return $script_constants;
 		} else {

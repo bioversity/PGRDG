@@ -15,53 +15,31 @@
  * @param  function		callback	 	A function to execute if password is correct
  */
 $.require_password = function(callback) {
-	var s = storage.get("pgrdg_user_cache.user_data"),
-	username = s[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP];
-	apprise(i18n[lang].messages.insert_password.message, {
-		title: i18n[lang].messages.insert_password.title,
-		icon: "fa-lock",
-		titleClass: "text-warning",
-		input: true,
-		input_type: "password"
-	}, function(r) {
-		if(r) {
-			$("#loader").show();
-			var data = {
-				"username": username,
-				"password": $.sha1(r),
-			};
-			$.cryptAjax({
-				url: "API/",
-				dataType: "json",
-				crossDomain: true,
-				type: "POST",
-				timeout: 30000,
-				data: {
-					jCryption: $.jCryption.encrypt(jQuery.param(data), password),
-					type: "login"
-				},
-				success: function(response) {
-					$.log_activity("confirmed identity");
-					$("#loader").hide();
-					if($.obj_len(response) > 0) {
-						if (typeof callback == "function") {
-							callback.call(true);
-						}
-					} else {
-						return false;
-					}
+	var s = storage.get("pgrdg_user_cache.user_data");
+	$.each(s, function(id, ud) {
+		var username = ud[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		apprise(i18n[lang].messages.insert_password.message, {
+			title: i18n[lang].messages.insert_password.title,
+			icon: "fa-lock",
+			titleClass: "text-warning",
+			input: true,
+			input_type: "password"
+		}, function(r) {
+			if(r) {
+				if (typeof callback == "function") {
+					callback.call($.sha1(r));
 				}
-			});
-		} else {
-			return false;
-		}
+			} else {
+				return false;
+			}
+		});
 	});
-}
+};
 
 /**
  * Calculate the storage occupied space and fill a panel with percentege
- * @param string 	label  		The label for percentage row
- * @param string 	storage		The storage to evaluate
+ * @param string 		label  			The label for percentage row
+ * @param string 		storage			The storage to evaluate
  */
 $.add_storage_space_in_panel = function(label, storage) {
 	/**
@@ -109,99 +87,144 @@ $.add_storage_space_in_panel = function(label, storage) {
 	$("#local_storage_space").append($li);
 };
 
-$.fn.load_user_data = function(user_id) {
-	var $item = $(this);
 
-	if(user_id === undefined) {
-		if($.storage_exists("pgrdg_user_cache.user_data")) {
-			var ud = storage.get("pgrdg_user_cache.user_data");
-
-			$.each(ud, function(user_id, user_data) {
-				var $super_row = $('<div class="row">'),
-				$picture_col = $('<div class="col-xs-12 col-sm-3 col-md-4 col-lg-2 pull-left">'),
-				$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-10 pull-right">'),
-				$user_data_row = $('<h1 class="row">'),
-				$user_data = $('<div class="col-xs-10 col-sm-7 col-sm-8 col-lg-8 pull-left">'),
-				$user_data_right_btns = $('<div class="col-xs-2 col-sm-5 col-lg-4 pull-right">'),
-				$title = $('<span class="text-left">'),
-				$edit_profile_btn = $('<a>').attr({
-					"class": "btn btn-default-white pull-right",
-					"href": "./Profile#Edit",
-					"title": i18n[lang].interface.btns.edit_profile,
-					"data-toggle": "tooltip",
-					"data-placement": "right"
-				}).html('<span class="hidden-xs">' + i18n[lang].interface.btns.edit_profile + '&nbsp;</span><span class="fa fa-edit"></span>'),
-				$picture_ex_upload_btn = $('<span>'),
-				$picture_img = $('<img>').attr({
-					"src": "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
-					"alt": "me"
-				}),
-				$picture_div = $('<div id="picture">'),
-				$static_data = $('<small class="help-block hidden-xs hidden-sm hidden-md">');
-				$picture_col.append($picture_div);
-				var data_labels = [
-					{"label": "invited on","value": $.right_date(user_data[kTAG_VERSION][kAPI_PARAM_RESPONSE_FRMT_DISP])},
-					{"label": "Subscribed on","value": $.right_date(user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP])},
-				];
-				for (i = 0; i < 2; i++) {
-					var $dl = $('<dl>'),
-					$dt = $('<dt>'),
-					$dd = $('<dd>');
-					$dt.text(data_labels[i].label);
-					$dd.text(data_labels[i].value);
-					$dl.append($dt);
-					$dl.append($dd);
-					$static_data.append($dl);
+$.get_user = function(user_id, callback) {
+	var data = {
+		"user_id": user_id,
+	};
+	$.cryptAjax({
+		url: "API/",
+		dataType: "json",
+		crossDomain: true,
+		type: "POST",
+		timeout: 30000,
+		data: {
+			jCryption: $.jCryption.encrypt(jQuery.param(data), password),
+			type: "get_user"
+		},
+		success: function(response) {
+			if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0 && response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+				if (typeof callback == "function") {
+					$.each(response[kAPI_RESPONSE_RESULTS], function(id, ud) {
+						callback.call(ud);
+					});
 				}
-
-				$picture_col.append($static_data);
-				$picture_ex_upload_btn.append($picture_img);
-				$picture_div.append($picture_ex_upload_btn);
-				$super_row.append($picture_col);
-				$title.text(user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP])
-				// $user_data.append($title);
-				$user_data_row.append($title);
-				$user_data_row.append($edit_profile_btn);
-				// $user_data_row.append($user_data_right_btns);
-				$form_col.append($user_data_row);
-				$super_row.append($form_col);
-
-				// Place all in the section
-				$item.addClass("container-fluid").html($super_row);
-
-				/**
-				 * Managed users display
-				 */
-				$item.load_active_users(user_data);
-
-				$("#loader").hide();
-			});
+			}
 		}
-	}
+	});
+};
+
+/**
+ * Generate the profile content of a given (or the current) user
+ * @param  void 		ud	 		The user ID to display, if no set will bring the current logged user
+ */
+$.fn.generate_profile = function(ud) {
+	var $item = $(this);
+	$.each(ud, function(user_id, user_data) {
+		var $super_row = $('<div class="row">'),
+		$picture_col = $('<div class="col-xs-12 col-sm-3 col-md-4 col-lg-2 pull-left">'),
+		$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-10 pull-right">'),
+		$user_data_row = $('<h1 class="row">'),
+		$user_data = $('<div class="col-xs-10 col-sm-7 col-sm-8 col-lg-8 pull-left">'),
+		$user_data_right_btns = $('<div class="col-xs-2 col-sm-5 col-lg-4 pull-right">'),
+		$title = $('<span class="text-left">'),
+		$edit_profile_btn = $('<a>').attr({
+			"class": "btn btn-default-white pull-right",
+			"href": "./Profile#Edit",
+			"title": i18n[lang].interface.btns.edit_profile,
+			"data-toggle": "tooltip",
+			"data-placement": "right"
+		}).html('<span class="hidden-xs">' + i18n[lang].interface.btns.edit_profile + '&nbsp;</span><span class="fa fa-edit"></span>'),
+		$picture_ex_upload_btn = $('<span>'),
+		$picture_img = $('<img>').attr({
+			"src": "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
+			"alt": "me"
+		}),
+		$picture_div = $('<div id="picture">'),
+		$static_data = $('<small class="help-block hidden-xs hidden-sm hidden-md">');
+		$picture_col.append($picture_div);
+		var data_labels = [
+			{"label": "invited on","value": $.right_date(user_data[kTAG_VERSION][kAPI_PARAM_RESPONSE_FRMT_DISP])},
+			{"label": "Subscribed on","value": $.right_date(user_data[kTAG_RECORD_CREATED][kAPI_PARAM_RESPONSE_FRMT_DISP])},
+		];
+		for (i = 0; i < 2; i++) {
+			var $dl = $('<dl>'),
+			$dt = $('<dt>'),
+			$dd = $('<dd>');
+			$dt.text(data_labels[i].label);
+			$dd.text(data_labels[i].value);
+			$dl.append($dt);
+			$dl.append($dd);
+			$static_data.append($dl);
+		}
+
+		$picture_col.append($static_data);
+		$picture_ex_upload_btn.append($picture_img);
+		$picture_div.append($picture_ex_upload_btn);
+		$super_row.append($picture_col);
+		$title.text(user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+		// $user_data.append($title);
+		$user_data_row.append($title);
+		$user_data_row.append($edit_profile_btn);
+		// $user_data_row.append($user_data_right_btns);
+		$form_col.append($user_data_row);
+		$super_row.append($form_col);
+
+		// Place all in the section
+		$item.addClass("container-fluid").html($super_row);
+
+		/**
+		* Managed users display
+		*/
+		$item.load_active_users(user_data);
+
+		$("#loader").hide();
+	});
 }
 
+$.fn.load_user_data = function(user_id) {
+	var $item = $(this);
+	if(user_id === undefined) {
+		if($.storage_exists("pgrdg_user_cache.user_data")) {
+			$item.generate_profile(storage.get("pgrdg_user_cache.user_data"));
+		}
+	} else {
+		$.get_user(user_id, function(){
+			$item.generate_profile($(this));
+		});
+	}
+};
 
+/**
+* Load all managed users and gnerate a btns scroll of a given user data manager
+* @param  void 			user_data 		The object of user data.
+*/
 $.fn.load_active_users = function(user_data){
+	$.fn.enpty_scroller = function() {
+		var $p = $('<p>');
+		$p.text(i18n[lang].messages.no_active_users_yet);
+		/**
+		* Invite users button
+		*/
+		if($.inArray(kTYPE_ROLE_INVITE, user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) {
+			$p.append('<br />');
+			$p.append($invite_user_btn);
+		}
+		return $p;
+	};
+
 	$item = $(this);
 	var $managed_scroller = $('<div id="managed_scroller">'),
 	$invite_user_btn = $('<a>').attr({
 		"href": "javascript:void(0);"
 	}).text(i18n[lang].interface.btns.invite_an_user);
 
-	// user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP] = 5;
-	// console.log(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]);
-	if(parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == 0) {
-		$managed_scroller.html('<p>' + i18n[lang].messages.no_active_users_yet + '</p>');
-
-		/**
-		* Invite users button
-		*/
-		if($.inArray(kTYPE_ROLE_INVITE, user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) {
-			$managed_scroller.append('<br />')
-			$managed_scroller.append($invite_user_btn);
-		}
+	// user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP] = 0;
+	console.warn(user_data);
+	if(parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]) === 0) {
+		$managed_scroller.append($.empty_scroller());
 	} else {
-		// console.log(user_data, user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+		$managed_scroller.addClass("has_data");
 		var data = {
 			"user_id": user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP],
 		};
@@ -216,8 +239,28 @@ $.fn.load_active_users = function(user_data){
 				type: "get_managed_users"
 			},
 			success: function(response) {
-				console.log(response);
-				// if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
+				if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0 && response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+					var $managed_picture = $('<ul class="managed_picture list-inline">'),
+					$li = $('<li>');
+
+					$.each(response[kAPI_RESPONSE_RESULTS], function(uid, ud) {
+					console.log(ud);
+						var $h1 = $('<h1>'),
+						$a = $('<a>').attr({
+							"href": "./Profile#" + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP],
+						}),
+						$span = $('<span>'),
+						$user_img = $('<img>').attr({
+							"src": "./common/media/img/admin/user_images/" + ud[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
+							"alt": ud[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]
+						});
+						$span.text(ud[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+						$a.append($user_img).append($span);
+						$h1.append($a);
+						$li.attr("maged-user-id", uid).append($h1);
+						$managed_picture.append($li);
+					});
+					$managed_scroller.append($managed_picture);
 				// 	console.warn(response);
 				// 	storage.set("pgrdg_user_cache.user_data", response[kAPI_RESPONSE_RESULTS]);
 				// 	storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
@@ -226,7 +269,8 @@ $.fn.load_active_users = function(user_data){
 				// 	} else {
 				// 		location.reload();
 				// 	}
-				// } else {
+				} else {
+					$managed_scroller.append($.empty_scroller());
 				// 	// console.log(response);
 				// 	$("#loader").hide();
 				// 	$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", false);
@@ -234,14 +278,13 @@ $.fn.load_active_users = function(user_data){
 				// 	$("#login-username").closest("div.input-group").addClass("has-error");
 				// 	$("#login-password").closest("div.input-group").addClass("has-error");
 				// 	$('<h4 class="text-danger"><span class="fa fa-exclamation"></span> ' + i18n[lang].messages.login.wrong_data + '</h4>').insertAfter("div.signin > h1");
-				// }
+				}
 			}
 		});
 	}
-	if($("#managed_scroller").length === 0) {
-		$managed_scroller.insertAfter($item);
-	}
-}
+	$managed_scroller.insertAfter($item);
+};
+
 
 /*=======================================================================================
 *	EDIT USER
@@ -317,7 +360,7 @@ $.fn.load_user_data_in_form = function() {
 		$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
 		$picture_upload_btn_input = $('<input style="display: none;" type="file" multiple="" class="upload_btn_input" href="javascript:void(0);">'),
 		$picture_img = $('<img>').attr({
-			"src": "./common/media/img/admin/" + ((ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP],
+			"src": "./common/media/img/admin/" + ((ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP],
 			"alt": "me"
 		}),
 		$picture_div = $('<div id="picture">'),
@@ -349,6 +392,7 @@ $.fn.load_user_data_in_form = function() {
 			$submit = $('<a href="javascript:void(0);" onclick="$.save_user_data();" class="btn btn-default pull-right">' + i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span></a>');
 
 			$super_row.prepend($picture_col);
+			var d = "";
 			switch(v[kAPI_PARAM_DATA_TYPE]) {
 				case "static":
 					var $dl = $('<dl class="visible-sm visible-md visible-lg">'),
@@ -367,7 +411,6 @@ $.fn.load_user_data_in_form = function() {
 					$picture_col.append($static_data);
 					break;
 				case "read":
-					var d = "";
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 						$span.text(span_label);
@@ -378,7 +421,7 @@ $.fn.load_user_data_in_form = function() {
 								$.each(vv, function(kkk, vvv) {
 									$.each(vv, function(kkk, vvv) {
 										d = $.linkify(vv[kkk]);
-									})
+									});
 								});
 								$ul.append('<li>' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + ": " + d + '</li>');
 							} else {
@@ -405,7 +448,6 @@ $.fn.load_user_data_in_form = function() {
 					$super_row.append($form_col);
 					break;
 				case "read_edit":
-					var d = "";
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME]);
 						$label.attr("for", "user_name");
@@ -415,9 +457,9 @@ $.fn.load_user_data_in_form = function() {
 						$.each(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP], function(kk, vv) {
 							$.each(vv, function(kkk, vvv) {
 								$.each(vv, function(kkk, vvv) {
-									d = vv[kAPI_PARAM_RESPONSE_FRMT_DISP]
+									d = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
 								});
-							})
+							});
 							$span_col0.attr("class", "col-sm-9 col-xs-12").append('<span class="help-block">' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + ": " + $.linkify(d) + '</span>');
 						});
 						// MUST BE A CYCLE
@@ -430,7 +472,7 @@ $.fn.load_user_data_in_form = function() {
 							"value": ""
 						});
 						$input2.attr({
-							"type": (v[kAPI_PARAM_INPUT_TYPE] != undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
+							"type": (v[kAPI_PARAM_INPUT_TYPE] !== undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
 							"class": "form-control",
 							"id": "user_name",
 							"name": "user_name",
@@ -535,9 +577,7 @@ $.fn.load_user_data_in_form = function() {
 				$form_col.append($form_group);
 				$super_row.append($form_col);
 			}
-			// console.log(k, v);
 		});
-		// $super_row.append($form_col);
 		$item.html($super_row);
 
 		$("#loader").hide();
@@ -616,20 +656,20 @@ $.log_activity = function(action){
 
 	storage.set("pgrdg_user_cache.user_activity", st);
 	$("span.timeago").timeago();
-}
+};
 
 /**
  * Load the last activity saved in log storage
  * @param  bool 	 	full 			If false or unset display only the date in "Y/m/d H:i:s" format
- * @return string		        Last logged activity
+ * @return string		        		Last logged activity
  */
 $.last_activity = function(full) {
-	full = (full === undefined) ? false : full,
-	last_activity = "";
+	full = (full === undefined) ? false : full;
+	var last_activity = "";
 
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
-		var last_activity = storage.get("pgrdg_user_cache.user_activity"),
-		l = last_activity[last_activity.length-1];
+		last_activity = storage.get("pgrdg_user_cache.user_activity");
+		var l = last_activity[last_activity.length-1];
 		$.each(l, function(label, time) {
 			if(full) {
 				last_activity = $.ucfirst(label) + ": " + time;
@@ -651,11 +691,19 @@ $.last_activity = function(full) {
  * Load profile form or interface depending on the hash
  */
 $.load_profile = function() {
-	if(document.location.hash !== undefined && document.location.hash == "#Edit") {
-		// alert("ok")
-		$("#personal_data").load_user_data_in_form();
-		if($("#managed_scroller").length > 0) {
-			$("#managed_scroller").hide();
+	if(document.location.hash !== undefined && document.location.hash.length > 0) {
+		if(document.location.hash === "#Edit") {
+			$("#personal_data").load_user_data_in_form();
+			if($("#managed_scroller").length > 0) {
+				$("#managed_scroller").hide();
+			}
+		} else {
+			var user_id = document.location.hash.replace("#", "");
+			$("#personal_data").load_user_data(user_id);
+			if($("#managed_scroller").length > 0) {
+				$("#managed_scroller").hide();
+			}
+			console.log(document.location.hash);
 		}
 	} else {
 		$("#personal_data").load_user_data();
@@ -663,7 +711,9 @@ $.load_profile = function() {
 			$("#managed_scroller").show();
 		}
 	}
-}
+};
+
+
 /*======================================================================================*/
 
 $(document).ready(function() {
