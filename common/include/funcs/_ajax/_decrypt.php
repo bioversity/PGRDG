@@ -122,7 +122,7 @@ if(isset($_GET["getPublicKey"])) {
 		case "get_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
-			$login = $se->send_to_service($output["user_id"], "get_user");
+			$login = $se->send_to_service($output, "get_user");
 			$user_data = json_decode($login, 1);
 			// header("Content-type: text/plain");
 			// print_r($login);
@@ -132,7 +132,7 @@ if(isset($_GET["getPublicKey"])) {
 		case "get_managed_users":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
-			$managed_users = $se->send_to_service($output["user_id"], "get_managed_users");
+			$managed_users = $se->send_to_service($output, "get_managed_users");
 			$mu = json_decode($managed_users, 1);
 			print $managed_users;
 			break;

@@ -390,6 +390,7 @@ password = $.makeid(),
 load = false, // Default status for continue to load javascript, do not edit
 auth = false, // Default status for jcryption authentication, do not edit
 url = $.url().attr(),
+$hash = $.url().fsegment(),
 url_paths = url.path.split("/"),
 query = $.parse_params(url.query),
 current_path = url_paths[url_paths.length - 1],

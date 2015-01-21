@@ -5,6 +5,7 @@ var i18n = {
                         "message": "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over."
                 },
                 "messages": {
+                        "created_users": "Created users",
                         "add_another_group_field": "Add another group field",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
@@ -13,6 +14,7 @@ var i18n = {
                         "disable_item": "Disable this item",
                         "no_entries_found": "No entries found",
                         "no_active_users_yet": "There's no active users, yet",
+                        "no_created_users": "No users created",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
                         "insert_password": {

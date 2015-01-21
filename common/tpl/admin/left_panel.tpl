@@ -5,7 +5,7 @@
         <!-- User info -->
         <div class="login-info">
                 <span> <!-- User image size is adjusted inside CSS, it should stay as is -->
-                        <a href="/Profile" title="Manage profile" style="width: 100%;">
+                        <a href="/Profile#<?php print $user[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; ?>" title="Manage profile" style="width: 100%;">
                                 <?php
                                 if(!isset($user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME])) {
                                         $path = "/common/media/img/admin/user_rand_images/";

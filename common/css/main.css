@@ -327,7 +327,10 @@ a:focus sup {
 	animation: pulseFade 1s infinite;
 }
 #loader.system:before {
-	content: "Loading interface";
+	content: "Loading interface...";
+}
+#loader.decrypt:before {
+	content: "Decrypting data...";
 }
 #loader {
 	width: 100%;
@@ -2944,6 +2947,13 @@ a.list-group-item.related {
 	height: 100%;
 	z-index: 0;
 }
+
+#personal_data + h2 {
+	color: #999;
+	margin-bottom: 0;
+	margin-top: 5%;
+	padding-left: 15px;
+}
 #managed_scroller {
 	background: none repeat scroll 0 0 #2d2d2d;
 	box-shadow: 0 0 50px #000 inset;
@@ -2952,6 +2962,9 @@ a.list-group-item.related {
 	margin: 5% -15px;
 	padding: 10px 0;
 	text-align: center;
+}
+#personal_data + h2 + #managed_scroller {
+	margin-top: 10px;
 }
 #managed_scroller.has_data {
 	background: #2d2d2d url("../media/img/loader_2d2d2d.gif") center center no-repeat;

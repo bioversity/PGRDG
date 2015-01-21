@@ -246,7 +246,8 @@ class Service_exchange {
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_PARAM_ID => $data,
+                                        kAPI_REQUEST_USER => $data["manager_id"],
+                                        kAPI_PARAM_ID => $data["user_id"],
                                         kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
                                 );
                                 break;
@@ -258,7 +259,8 @@ class Service_exchange {
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_PARAM_ID => $data,
+                                        kAPI_REQUEST_USER => $data["manager_id"],
+                                        kAPI_PARAM_ID => $data["user_id"],
                                         kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
                                 );
                                 break;

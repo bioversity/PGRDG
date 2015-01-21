@@ -17,7 +17,7 @@
 	*/
 	$.ask_to_service = function(options, callback) {
 		var opt = $.extend({
-			storage_group: "local",
+			storage_group: "pgrdg_cache.local",
 			loaderType: "external",
 			loaderText: "",
 			kAPI_REQUEST_OPERATION: "",
@@ -237,6 +237,39 @@
 						}
 					}
 				});
+			});
+		}
+	};
+
+	$.ask_cyphered_to_service = function(options, callback) {
+		var opt = $.extend({
+			storage_group: "pgrdg_user_cache.user_data",
+			data: {},
+			type: "",
+		}, options);
+		console.warn(opt.data);
+		var st = opt.storage_group + "." + opt.data.user_id;
+		if($.storage_exists(st) && st !== "") {
+			var resp_obj = {};
+			resp_obj[opt.data.user_id] = storage.get(st);
+			
+			callback(resp_obj);
+		} else {
+			$.cryptAjax({
+				url: "API/",
+				dataType: "json",
+				crossDomain: true,
+				type: "POST",
+				timeout: 30000,
+				data: {
+					jCryption: $.jCryption.encrypt(jQuery.param(opt.data), password),
+					type: opt.type
+				},
+				success: function(response) {
+					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0 && response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+						callback(response[kAPI_RESPONSE_RESULTS]);
+					}
+				}
 			});
 		}
 	};
@@ -717,34 +750,18 @@
 	* Split and iterate a given storage address and return false if encounter a non-existing level
 	*/
 	$.storage_exists = function(path) {
-		// path = path.replace("pgrdg_cache", "");
 		var all_path = $.array_clean(path.split(".")),
-		vv = "",
-		p = 0;
 		is_set = true;
-		for(var i = 0; i < all_path.length; i++) {
-			p = i+1;
-			vv += ((i === 0) ? "" : ".") + all_path[p];
-			if(all_path[p] !== undefined) {
-				if(all_path[p] !== undefined && storage.isSet(all_path[0] + "." + all_path[p])) {
-					if($.type(storage.get(all_path[0] + "." + vv)) == "object") {
-						if($.obj_len(storage.get(all_path[0] + "." + vv)) > 0) {
-							is_set = true;
-						} else {
-							is_set = false;
-						}
-					} else {
-						if(storage.get(all_path[0] + "." + vv) !== "") {
-							is_set = true;
-						} else {
-							is_set = false;
-						}
-					}
-				} else {
-					is_set = false;
-				}
+		if(storage.isSet(all_path.join("."))) {
+			if($.is_obj(storage.get(all_path.join("."))) && $.obj_len(storage.get(all_path.join("."))) > 0) {
+				is_set = true;
+			} else {
+				is_set = false;
 			}
+		} else {
+			is_set = false;
 		}
+
 		return is_set;
 	};
 
@@ -840,6 +857,7 @@
 	 * Log users
 	 */
 	$.login = function() {
+		$("#loader").addClass("decrypt").show();
 		$("#loginform .input-group").removeClass("has-error");
 
 		if($("#login-username").val().length >= 4 && $("#login-password").val().length >= 6) {
@@ -864,7 +882,10 @@
 				success: function(response) {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 						// console.warn(response);
-						storage.set("pgrdg_user_cache.user_data", response[kAPI_RESPONSE_RESULTS]);
+						$.each(response[kAPI_RESPONSE_RESULTS], function(id, ud) {
+							storage.set("pgrdg_user_cache.user_data.all." + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP], ud);
+							storage.set("pgrdg_user_cache.user_data.current." + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP], ud);
+						});
 						storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
 						if(current_path == "Signin") {
 							window.location.href = "./";
@@ -894,7 +915,7 @@
 	* Log out users
 	*/
 	$.logout = function(){
-		$("#loader").show();
+		$("#loader").addClass("decrypt").show();
 		$.cryptAjax({
 			url: "API/",
 			dataType: "text",
