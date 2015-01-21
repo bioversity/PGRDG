@@ -57,7 +57,8 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 } else {
 	$lang = $interface["site"]["default_language"];
 }
-
+// print_r($interface_config);
+// exit();
 
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
 

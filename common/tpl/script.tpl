@@ -106,8 +106,8 @@ if($page->current == "Profile") {
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map3.js"></script-->
 
 		<!-- Leaflet -->
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/leaflet.js"></script>
-		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-master/leaflet.css" />
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/dist/leaflet.js"></script>
+		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/dist/leaflet.css" />
 			<!-- Providers -->
 			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/leaflet-providers/leaflet-providers.js"></script>
 			<!-- Marker cluster-->
