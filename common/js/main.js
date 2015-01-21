@@ -83,7 +83,7 @@
 			}
 		} else {
 			// Show the loader mask
-			if(opt.storage_group == "local" || opt.storage_group == "ask") {
+			if(opt.storage_group == "pgrdg_cache.local" || opt.storage_group == "pgrdg_cache.ask") {
 				$("#loader").addClass("system");
 			} else {
 				$("#loader").removeClass("system");
@@ -120,7 +120,7 @@
 					// },
 					crossDomain: true,
 					type: (!config.site.developer_mode) ? "POST" : "GET",
-					timeout: 30000,
+					timeout: 60000,
 					data: {
 						jCryption: $.jCryption.encrypt(param, password),
 						type: "ask_service"
@@ -158,7 +158,7 @@
 									});
 								}
 								if(opt.storage_group !== "") {
-									storage.set("pgrdg_cache." + opt.storage_group + "." + $.md5(param), {
+									storage.set(opt.storage_group + "." + $.md5(param), {
 										"date": {"utc": new Date(), "timestamp": $.now()},
 										"query": {
 											"effective": param,
@@ -252,7 +252,7 @@
 		if($.storage_exists(st) && st !== "") {
 			var resp_obj = {};
 			resp_obj[opt.data.user_id] = storage.get(st);
-			
+
 			callback(resp_obj);
 		} else {
 			$.cryptAjax({
@@ -1190,7 +1190,7 @@
 	 */
 	$.get_authority = function(domain){
 		var objpp = {};
-		objpp.storage_group = "session";
+		objpp.storage_group = "pgrdg_cache.session";
 		objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
 		objpp.parameters = {};
 		objpp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -1284,7 +1284,7 @@
 		$("#se input").focus();
 
 		var objp = {};
-		objp.storage_group = "ask";
+		objp.storage_group = "pgrdg_cache.ask";
 		objp.loaderType = $("#statistics_loader");
 		objp.loaderText = "Acquiring data...";
 		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_LIST_DOMAINS;

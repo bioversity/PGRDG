@@ -1,6 +1,6 @@
 <?php
 require_once("common/tpl/defines.tpl");
-
+$allow_signup = false;
 if(session_status() == PHP_SESSION_NONE) {
 	session_start();
 }
@@ -190,51 +190,53 @@ $menu["menu"]["top"][] = array(
 	*/
 );
 
-if(!LOGGED) {
-	$menu["menu"]["top"][0]["Sign in"] = array(
-		"content" => array(
-			"icon" => "fa fa-sign-in",
-			"text" => "Sign in"
-		),
-		"attributes" => array(
-			"href" => "/Signin",
-			"class" => "btn btn-link"
-		)
-	);
-} else {
-	$menu["menu"]["top"][0]["User"] = array(
-		"content" => array(
-			"icon" => "fa fa-cogs",
-			"text" => $user[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
-		),
-		"attributes" => array(
-			"href" => "javascript: void(0);",
-			"class" => "btn btn-link"
-		),
-		"childs" => array(
-			"Personal settings" => array(
-				"content" => array(
-					"icon" => "fa fa-user",
-					"text" => "Personal settings"
-				),
-				"attributes" => array(
-					"href" => "/Personal_settings"
-				),
-				"divider" => "divider"
+if($allow_signup) {
+	if(!LOGGED) {
+		$menu["menu"]["top"][0]["Sign in"] = array(
+			"content" => array(
+				"icon" => "fa fa-sign-in",
+				"text" => "Sign in"
 			),
-			"Signout" => array(
-				"content" => array(
-					"icon" => "fa fa-sign-out",
-					"text" => "Sign out"
+			"attributes" => array(
+				"href" => "/Signin",
+				"class" => "btn btn-link"
+			)
+		);
+	} else {
+		$menu["menu"]["top"][0]["User"] = array(
+			"content" => array(
+				"icon" => "fa fa-cogs",
+				"text" => $user[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP],
+			),
+			"attributes" => array(
+				"href" => "javascript: void(0);",
+				"class" => "btn btn-link"
+			),
+			"childs" => array(
+				"Personal settings" => array(
+					"content" => array(
+						"icon" => "fa fa-user",
+						"text" => "Personal settings"
+					),
+					"attributes" => array(
+						"href" => "/Personal_settings"
+					),
+					"divider" => "divider"
 				),
-				"attributes" => array(
-					"href" => "/Signout"
+				"Signout" => array(
+					"content" => array(
+						"icon" => "fa fa-sign-out",
+						"text" => "Sign out"
+					),
+					"attributes" => array(
+						"href" => "/Signout"
+					)
 				)
 			)
-		)
-	);
+		);
 
-	require_once("common/include/conf/menu_admin.php");
+		require_once("common/include/conf/menu_admin.php");
+	}
 }
 
 $menu["menu"]["map_toolbox"][] = array(

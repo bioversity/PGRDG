@@ -512,7 +512,7 @@
 		$form.find(".dropdown-menu").html(treeselect_title + treeselect_content);
 
 		var kapi_obj = {};
-		kapi_obj.storage_group = "local.forms_data";
+		kapi_obj.storage_group = "pgrdg_cache.local.forms_data";
 		kapi_obj.loaderType = $(this).find("a.pull-left, a.pull-right");
 		kapi_obj[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_TAG_ENUMERATIONS;
 		kapi_obj.parameters = {};
@@ -715,7 +715,7 @@
 		$("#static_forms").html('<div class="list-group"></div>');
 
 		var objp = {};
-		objp.storage_group = "local.forms_data";
+		objp.storage_group = "pgrdg_cache.local.forms_data";
 		// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_NODE_FORM;
 		objp.parameters = {};
@@ -907,7 +907,7 @@
 				$this.closest(".panel-body.contents").next().find("div.title.panel-heading").html($a);
 
 				var objp = {};
-				objp.storage_group = "local.forms_data";
+				objp.storage_group = "pgrdg_cache.local.forms_data";
 				// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_NODE_FORM;
 				objp.parameters = {};
@@ -960,7 +960,7 @@
 	 */
 	$.generate_static_form = function(tag, storage_id) {
 		var kAPI = {};
-		kAPI.storage_group = "search.criteria.forms";
+		kAPI.storage_group = "pgrdg_cache.search.criteria.forms";
 		// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_IDENTIFIER;
 		kAPI.parameters = {};
@@ -1210,7 +1210,7 @@
 				//if($.storage_exists("pgrdg_cache.search.criteria.forms")) {
 
 				var kAPI = {};
-				kAPI.storage_group = "search.criteria.forms";
+				kAPI.storage_group = "pgrdg_cache.search.criteria.forms";
 				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 				kAPI.parameters = {};
 				kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -1296,7 +1296,7 @@
 						storage.set("pgrdg_cache.search.criteria.traitAutocomplete", {text: $("#main_search").val(), type: "input"});
 
 						var kAPI = {};
-						kAPI.storage_group = "search.criteria.forms";
+						kAPI.storage_group = "pgrdg_cache.search.criteria.forms";
 						kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_TAG_BY_LABEL;
 						kAPI.parameters = {};
 						kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -2063,7 +2063,7 @@
 
 				// Autocomplete
 				var kAPI = {};
-				kAPI.storage_group = "search.criteria.grouping.loaded";
+				kAPI.storage_group = "pgrdg_cache.search.criteria.grouping.loaded";
 				kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_SUMMARY_TAG_BY_LABEL;
 				kAPI.parameters = {};
 				kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -2232,7 +2232,7 @@
 	$.search_fulltext = function(text) {
 		if(text.length >= 3) {
 			var objp = {};
-			objp.storage_group = "summary";
+			objp.storage_group = "pgrdg_cache.summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			objp.parameters = {};
 			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -2484,7 +2484,7 @@
 
 
 			objp = {};
-			objp.storage_group = "summary";
+			objp.storage_group = "pgrdg_cache.summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_LIST_STATS;
 			objp.parameters = {};
 			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -2550,7 +2550,7 @@
 				});
 			}
 
-			objp.storage_group = "summary";
+			objp.storage_group = "pgrdg_cache.summary";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			objp.parameters = {};
 			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -2664,7 +2664,7 @@
 					});
 				}
 			}
-			kAPI.storage_group = "summary";
+			kAPI.storage_group = "pgrdg_cache.summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			kAPI.parameters = {};
 			kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -3387,7 +3387,7 @@
 					$("#collapsed_group_form").collapse("hide");
 				}
 
-				objp.storage_group = "summary";
+				objp.storage_group = "pgrdg_cache.summary";
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 				objp.parameters = {};
 				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -3489,7 +3489,7 @@
 
 			var summaries_data = storage.get("pgrdg_cache.summary." + id),
 			objp = {};
-				objp.storage_group = "summary";
+				objp.storage_group = "pgrdg_cache.summary";
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 				objp.parameters = {};
 				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -3682,7 +3682,7 @@
 		*/
 		$.show_raw_row_content = function(id, domain) {
 			objp = {};
-				objp.storage_group = "results";
+				objp.storage_group = "pgrdg_cache.results";
 				objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
 				objp.parameters = {};
 				objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -3742,7 +3742,7 @@
 
 
 			var objp = {};
-			objp.storage_group = "map";
+			objp.storage_group = "pgrdg_cache.map";
 			objp[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
 			objp.parameters = {};
 			objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -4282,7 +4282,7 @@
 					if($("#node_" + node).html() === "") {
 						$("#node_" + node).show().html('<span class="fa fa-refresh fa-spin"></span> Acquiring data...');
 						var objp = {};
-						objp.storage_group = "local.forms_data";
+						objp.storage_group = "pgrdg_cache.local.forms_data";
 						objp.loaderType = $panel.find("a.pull-left, a.pull-right");
 						objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_NODE_ENUMERATIONS;
 						objp.parameters = {};

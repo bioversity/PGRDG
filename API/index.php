@@ -26,16 +26,16 @@ if(empty($_REQUEST) && empty($_POST)) {
 
 		switch (trim($gk)) {
 			case "proxy":
-				if($_REQUEST["debug"] == "true") {
-					$api->debug();
-				}
+				// if($_REQUEST["debug"] == "true") {
+				// 	$api->debug();
+				// }
 				switch($_REQUEST["type"]) {
 					case "service":
-						if($_REQUEST["debug"] == "true") {
-							print_r($api->ask_service($_REQUEST["query"], true));
-						} else {
+						// if($_REQUEST["debug"] == "true") {
+						// 	print_r($api->ask_service($_REQUEST["query"], true));
+						// } else {
 							print $api->ask_service($_REQUEST["query"], true);
-						}
+						// }
 					break;
 					case "github":
 						$api->set_content_type("text");

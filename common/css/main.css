@@ -413,6 +413,10 @@ a:focus sup {
 	-o-animation: 1.8s linear 0s normal none infinite running spin;
 	animation: 1.8s linear 0s normal none infinite running spin;
 }
+#loader.system > div + div + div,
+#loader.system > div + div + div + div {
+	display: none;
+}
 #loader > div + div + div + div {
 	background-color: transparent;
 	border-color: transparent transparent rgba(255, 255, 255, 0.6);

@@ -91,6 +91,17 @@
                         "is_system_page": false,
                         "subpages": ""
                 },
+                "Advanced_search": {
+                        "title": "Advanced search",
+                        "title_class": "",
+                        "address": "Advanced_search",
+                        "class": [],
+                        "template": "",
+                        "need_login": false,
+                        "is_main_page": false,
+                        "is_system_page": false,
+                        "subpages": ""
+                },
                 "Graph": {
                         "title": "Graph",
                         "title_class": "",

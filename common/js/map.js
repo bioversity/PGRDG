@@ -289,7 +289,7 @@
                                                                         }
                                                                 });
                                                         // }
-                                                        kAPI.storage_group = "summary";
+                                                        kAPI.storage_group = "pgrdg_cache.summary";
                                                         kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
                                                         kAPI.parameters = {};
                                                         kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
@@ -945,11 +945,11 @@
                                                                         var li = $("#change_map li");
                                                                         var liSelected;
 
-                                                                        $("body, #pgrdg_map").on("mousedown", function(e) {
-                                                                                if(!$(e.target).closest("li").hasClass("keep_open")) {
-                                                                                        $.sub_toolbox("close");
-                                                                                }
-                                                                        });
+                                                                        // $("body, #pgrdg_map").on("mousedown", function(e) {
+                                                                        //         if(!$(e.target).closest("li").hasClass("keep_open")) {
+                                                                        //                $.sub_toolbox("close");
+                                                                        //         }
+                                                                        // });
                                                                         $(window).bind("keydown", "down", function(e) {
                                                                                 e.preventDefault();
                                                                                 $.each(li, function(item, value) {
@@ -1438,7 +1438,7 @@
                         //});
                         $("#selected_zone").html(options.content).show().stop().delay(5000).hide();
                         map.closePopup();
-                        if(ma.geojson.type == "Point") {
+                        if(map.geojson.type == "Point") {
                                 $.set_center(ma.lon, ma.lat, 10);
                                 map.invalidateSize();
                         } else {
@@ -1723,7 +1723,7 @@
                                         $("#marker_content").modal("show").on("shown.bs.modal", function(){
                                                 if(i === 0) {
                                                         var objp = {};
-                                                        objp.storage_group = "results";
+                                                        objp.storage_group = "pgrdg_cache.results";
                                                         objp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
                                                         objp.parameters = {};
                                                         objp.parameters[kAPI_REQUEST_LANGUAGE] = lang;
