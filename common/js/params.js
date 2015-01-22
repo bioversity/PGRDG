@@ -166,34 +166,38 @@ $.now = function() {
  * @param       {string}        ref             If text is passed will ask the service for the right name
  * @return an array of URLs.
  */
-$.linkify = function(string) {
-        if($.type(string) == "array") {
-                string = string.join(", ");
-        }
+$.linkify = function(string, address) {
         var replacedText, replacePattern1, replacePattern2, replacePattern3;
+        if(address == undefined) {
+                if($.type(string) == "array") {
+                        string = string.join(", ");
+                }
 
-        //URLs starting with http://, https://, or ftp://
-        replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        if(replacePattern1 !== undefined) {
-                replacedText = string.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
-        } else {
-                replacedText = string;
-        }
+                //URLs starting with http://, https://, or ftp://
+                replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+                if(replacePattern1 !== undefined) {
+                        replacedText = string.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
+                } else {
+                        replacedText = string;
+                }
 
-        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-        replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        if(replacePattern2 !== undefined) {
-                replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
-        } else {
-                replacedText = string;
-        }
+                //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+                replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+                if(replacePattern2 !== undefined) {
+                        replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
+                } else {
+                        replacedText = string;
+                }
 
-        //Change email addresses to mailto:: links.
-        replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-        if(replacePattern3 !== undefined) {
-                replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+                //Change email addresses to mailto:: links.
+                replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+                if(replacePattern3 !== undefined) {
+                        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+                } else {
+                        replacedText = string;
+                }
         } else {
-                replacedText = string;
+                replacedText = '<a href="' + address + '" target="_blank">' + string + '</a>';
         }
 
         return replacedText;

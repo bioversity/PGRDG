@@ -6,17 +6,20 @@ var i18n = {
                 },
                 "messages": {
                         "created_users": "Created users",
+                        "contacts": "Contacts",
                         "add_another_group_field": "Add another group field",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
                         "removed_item": "Removed {X}",
                         "enable_item": "Enable this item",
                         "disable_item": "Disable this item",
+                        "managed_by": "User managed by",
                         "no_entries_found": "No entries found",
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
+                        "permissions": "User permissions",
                         "insert_password": {
                                 "title": "Confirm your identity",
                                 "message": "Please insert your password to validate your edits"

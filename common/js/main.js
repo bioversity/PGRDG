@@ -1188,7 +1188,12 @@
 	/**
 	 * Get the authority type from given domain
 	 */
-	$.get_authority = function(domain){
+	/**
+	 * Get the authority type from given domain
+	 * @param  string	   domain   		The domain to analyze
+	 * @param  function        callback 		The function to execute when data are available
+	 */
+	$.get_authority = function(domain, callback){
 		var objpp = {};
 		objpp.storage_group = "pgrdg_cache.session";
 		objpp[kAPI_REQUEST_OPERATION] = kAPI_OP_GET_UNIT;
@@ -1201,8 +1206,11 @@
 		$.ask_to_service(objpp, function(a) {
 			if(a[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(a[kAPI_RESPONSE_RESULTS]) > 0) {
 				$.each(a[kAPI_RESPONSE_RESULTS], function(domain, data) {
-					console.log(data[kTAG_NAME]);
-					return data[kTAG_NAME];
+					if(data[kTAG_ENTITY_LINK] !== undefined) {
+						callback($.linkify(data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP], data[kTAG_ENTITY_LINK][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]));
+					} else {
+						return data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
+					}
 				});
 			}
 		});
