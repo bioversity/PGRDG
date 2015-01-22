@@ -1,6 +1,6 @@
 <?php
 require_once("common/tpl/defines.tpl");
-$allow_signup = false;
+$allow_signup = true;
 if(session_status() == PHP_SESSION_NONE) {
 	session_start();
 }

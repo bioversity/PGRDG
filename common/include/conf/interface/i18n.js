@@ -133,6 +133,10 @@ var i18n = {
                         "static_forms": {
                                 "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
                         },
+                        "undo_user_profile": {
+                                "title": "Are you sure to cancel all editings?",
+                                "message": "By choosing \"Yes\" you may lose your changes, do you want to continue?"
+                        },
                         "waiting": "Waiting..."
                 },
                 "interface": {
@@ -140,6 +144,7 @@ var i18n = {
                                 "activate": "Activate",
                                 "add": "Add",
                                 "advanced_search": "Advanced search",
+                                "cancel": "Cancel",
                                 "change_group_filters": "Change grouping filters",
                                 "choose": "Choose",
                                 "close": "Close",

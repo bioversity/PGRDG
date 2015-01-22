@@ -38,8 +38,8 @@ $.require_password = function(callback) {
 
 /**
  * Calculate the storage occupied space and fill a panel with percentege
- * @param string 		label  			The label for percentage row
- * @param string 		storage			The storage to evaluate
+ * @param  string 		label  			The label for percentage row
+ * @param  string 		storage			The storage to evaluate
  */
 $.add_storage_space_in_panel = function(label, storage) {
 	/**
@@ -88,6 +88,11 @@ $.add_storage_space_in_panel = function(label, storage) {
 };
 
 
+/**
+ * Extract the user's data from given user identifier
+ * @param  string   		user_id  		The user Identifier
+ * @param  function 		callback 		The function to execute when data are available
+ */
 $.get_user = function(user_id, callback) {
 	$("#loader").show();
 	var manager_id = "";
@@ -336,10 +341,97 @@ $.fn.load_active_users = function(user_data){
 *	EDIT USER
 *======================================================================================*/
 
+$.cancel_user_editing = function() {
+	apprise(i18n[lang].messages.undo_user_profile.message, {
+		title: i18n[lang].messages.undo_user_profile.title,
+		icon: "fa-warning",
+		titleClass: "text-warning",
+		confirm: true,
+	}, function(r) {
+		if(r) {
+			var $hash = $.url().fsegment();
+			document.location = "./Profile#" + $hash[1];
+		}
+	});
+}
 /**
  * Generate form for manage user data
  */
 $.fn.load_user_data_in_form = function(usd) {
+	/**
+	 * Add forms for edit typed lists
+	 */
+	$.fn.add_typed = function() {
+		var $item = $(this).closest(".form-group"),
+		form_group_type = $.trim($item.attr("class").replace("form-group", "")),
+		placeholder = "",
+		dataitem = "",
+		mid = "",
+		cont = 0,
+		f = 0;
+
+		$row = $('<div class="row">'),
+		$form_group = $('<div class="form-group">'),
+		$input_col = $('<div class="col-sm-5">'),
+		$input_group = $('<div class="input-group">'),
+		$input_group_btn = $('<div class="input-group-btn">'),
+		$span_col0 = $('<div class="col-sm-5 control-label text-muted text-left">'),
+		$span_col = $('<div class="col-sm-5 control-label text-muted text-left">'),
+		$span_col2 = $('<div class="col-sm-5 control-label text-muted text-left">'),
+		$label = $('<label class="col-sm-3 control-label">'),
+		$label_empty = $('<label class="col-sm-3 control-label">'),
+		$span = $('<div class="col-sm-3 control-label text-muted">'),
+		$input = $('<input>'),
+		$input2 = $('<input>'),
+		$plus_btn = $('<a>').attr({
+			"href": "javascript:void(0);",
+			"onclick": "$(this).add_typed();",
+			"class": "btn btn-default-white"
+		});
+		$span_col.attr("class", "col-sm-2 col-xs-5");
+		$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+
+		$.each($item.find(".row:not(.col-xs-6) input"), function(i) {
+			if($(this).val().length == 0) {
+				cont++;
+				$(this).focus();
+				return false;
+			}
+		});
+		$.each($item.find(".row:not(.col-xs-6.row) input"), function(i) {
+			f++;
+			placeholder = $(this).attr("placeholder");
+			dataitem = $(this).attr("data-item");
+			mid = dataitem + "_" + f;
+		});
+		if(cont == 0) {
+			$input.attr({
+				"type": "text",
+				"class": "form-control",
+				"data-item": dataitem,
+				"id": mid + "k",
+				"name": mid + "k",
+				"placeholder": placeholder,
+				"value": ""
+			});
+			$input2.attr({
+				"type": "text",
+				"class": "form-control",
+				"data-item": dataitem,
+				"id": mid + "v",
+				"name": mid + "v",
+				"placeholder": placeholder,
+				"value": ""
+			});
+			$span_col.append($input);
+			$span_col2.append($input2);
+			$row.append($label_empty).append($span_col).append($span_col2);
+			$item.append('<br />').append($row);
+			$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
+			return false;
+		}
+	}
+
 	if(usd === undefined || usd === null || usd === "") {
 		usd = storage.get("pgrdg_user_cache.user_data.current");
 	}
@@ -372,28 +464,34 @@ $.fn.load_user_data_in_form = function(usd) {
 
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_FNAME];
 
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_LNAME];
 
 			ud[kTAG_NAME][kAPI_RESULT_ENUM_LABEL] = "Full name";
 			ud[kTAG_NAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_NAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_NAME][kAPI_PARAM_ID] = user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_NAME][kAPI_PARAM_DATA] = user_data[kTAG_NAME];
 
 			ud[kTAG_CONN_CODE][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_CONN_CODE][kAPI_PARAM_INPUT_TYPE] = "text";
 			ud[kTAG_CONN_CODE][kAPI_RESULT_ENUM_LABEL] = "Username";
+			ud[kTAG_CONN_CODE][kAPI_PARAM_ID] = user_data[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_CONN_CODE][kAPI_PARAM_DATA] = user_data[kTAG_CONN_CODE];
 
 			ud[kTAG_ENTITY_EMAIL][kAPI_PARAM_DATA_TYPE] = "read_edit";
 			ud[kTAG_ENTITY_EMAIL][kAPI_PARAM_INPUT_TYPE] = "email";
+			ud[kTAG_ENTITY_EMAIL][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_EMAIL][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_EMAIL];
 
 			ud[kTAG_ENTITY_PHONE][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_ENTITY_PHONE][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_ENTITY_PHONE][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_PHONE][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_PHONE][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_PHONE];
 
 			ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA_TYPE] = "hide";
@@ -436,8 +534,21 @@ $.fn.load_user_data_in_form = function(usd) {
 			$span = $('<div class="col-sm-3 control-label text-muted">'),
 			$input = $('<input>'),
 			$input2 = $('<input>'),
-			$plus_btn = $('<a href="javascript:void(0);" class="btn btn-default-white">'),
-			$submit = $('<a href="javascript:void(0);" onclick="$.save_user_data();" class="btn btn-default pull-right">' + i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span></a>');
+			$plus_btn = $('<a>').attr({
+				"href": "javascript:void(0);",
+				"onclick": "$(this).add_typed();",
+				"class": "btn btn-default-white"
+			});
+			$cancel_btn = $('<a>').attr({
+				"href": "javascript:void(0);",
+				"onclick": "$.cancel_user_editing();",
+				"class": "btn btn-default-white pull-left col-sm-offset-1"
+			}).html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
+			$submit = $('<a>').attr({
+				"href": "javascript:void(0);",
+				"onclick": "$.save_user_data();",
+				"class": "btn btn-default pull-right"
+			}).html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
 
 			$super_row.prepend($picture_col);
 			var d = "";
@@ -498,7 +609,7 @@ $.fn.load_user_data_in_form = function(usd) {
 				case "read_edit":
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
 						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME]);
-						$label.attr("for", "user_name");
+						$label.attr("for", v[kAPI_PARAM_ID]);
 						$label.text(span_label);
 						$row.append($label);
 
@@ -509,30 +620,31 @@ $.fn.load_user_data_in_form = function(usd) {
 								});
 							});
 							$span_col0.attr("class", "col-sm-9 col-xs-12").append('<span class="help-block">' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + ": " + $.linkify(d) + '</span>');
+							$input.attr({
+								"type": "text",
+								"class": "form-control",
+								"data-item": v[kAPI_PARAM_ID],
+								"id": v[kAPI_PARAM_ID] + "_k",
+								"name": v[kAPI_PARAM_ID] + "_k",
+								"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
+								"value": ""
+							});
+							$input2.attr({
+								"type": (v[kAPI_PARAM_INPUT_TYPE] !== undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
+								"class": "form-control",
+								"data-item": v[kAPI_PARAM_ID],
+								"id": v[kAPI_PARAM_ID] + "_v",
+								"name": v[kAPI_PARAM_ID] + "_v",
+								"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
+								"value": ""
+							});
+							$row.addClass($.md5(span_label));
+							$span_col.attr("class", "col-sm-2 col-xs-6 col-sm-offset-3").append($input);
+							$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+							$plus_btn.html('<span class="fa fa-plus text-center">');
+							$input_group_btn.append($plus_btn);
+							$input_group.append($input2);
 						});
-						// MUST BE A CYCLE
-						$input.attr({
-							"type": "text",
-							"class": "form-control",
-							"id": "user_name",
-							"name": "user_name",
-							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
-							"value": ""
-						});
-						$input2.attr({
-							"type": (v[kAPI_PARAM_INPUT_TYPE] !== undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
-							"class": "form-control",
-							"id": "user_name",
-							"name": "user_name",
-							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
-							"value": ""
-						});
-						$row.addClass($.md5(span_label));
-						$span_col.attr("class", "col-sm-2 col-xs-6 col-sm-offset-3").append($input);
-						$span_col2.attr("class", "col-sm-3 col-xs-6 row");
-						$plus_btn.addClass("add_typed").html('<span class="fa fa-plus text-center">');
-						$input_group_btn.append($plus_btn);
-						$input_group.append($input2);
 						$input_group.append($input_group_btn);
 						$input_col.append($span_col);
 						$input_col.append($span_col2);
@@ -554,8 +666,9 @@ $.fn.load_user_data_in_form = function(usd) {
 					$super_row.append($form_col);
 					break;
 				case "edit":
+					// Chiedi a Milko di inserire "info" tra i tag
 					var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Entity ", ""));
-					$label.addClass("col-xs-12").attr("for", "user_name");
+					$label.addClass("col-xs-12").attr("for", v[kAPI_PARAM_ID]);
 					$label.text(span_label);
 
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
@@ -566,27 +679,29 @@ $.fn.load_user_data_in_form = function(usd) {
 									$input.attr({
 										"type": "text",
 										"class": "form-control",
-										"id": "user_name",
-										"name": "user_name",
+										"data-item": v[kAPI_PARAM_ID],
+										"id": v[kAPI_PARAM_ID] + "_k",
+										"name": v[kAPI_PARAM_ID] + "_k",
 										"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 										"value": vv[kAPI_PARAM_RESPONSE_FRMT_NAME]
 									});
 									$input2.attr({
 										"type": (v[kAPI_PARAM_INPUT_TYPE] != undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
 										"class": "form-control",
-										"id": "user_name",
-										"name": "user_name",
+										"data-item": v[kAPI_PARAM_ID],
+										"id": v[kAPI_PARAM_ID] + "_v",
+										"name": v[kAPI_PARAM_ID] + "_v",
 										"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 										"value": vv[kkk]
 									});
+									$span_col.attr("class", "col-sm-2 col-xs-6").append($input);
+									$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+									$plus_btn.html('<span class="fa fa-plus text-center">');
+									$input_group_btn.append($plus_btn);
+									$input_group.append($input2);
 								});
 							}
 						});
-						$span_col.attr("class", "col-sm-2 col-xs-6").append($input);
-						$span_col2.attr("class", "col-sm-3 col-xs-6 row");
-						$plus_btn.addClass("add_typed").html('<span class="fa fa-plus text-center">');
-						$input_group_btn.append($plus_btn);
-						$input_group.append($input2);
 						$input_group.append($input_group_btn);
 						$input_col.append($span_col);
 						$input_col.append($span_col2);
@@ -599,8 +714,8 @@ $.fn.load_user_data_in_form = function(usd) {
 						$input.attr({
 							"type": (v[kAPI_PARAM_INPUT_TYPE] != undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
 							"class": "form-control",
-							"id": "user_name",
-							"name": "user_name",
+							"id": v[kAPI_PARAM_ID],
+							"name": v[kAPI_PARAM_ID],
 							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 							"value": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]
 						});
@@ -618,9 +733,9 @@ $.fn.load_user_data_in_form = function(usd) {
 			}
 
 			if(i === $.obj_len(ud)) {
-				$span_col.attr("class", "col-xs-12 col-sm-8 col-md-8 col-lg-8 row").append($submit);
+				$span_col.attr("class", "col-xs-12 col-sm-8 col-md-8 col-lg-8 row").append($cancel_btn).append($submit);
 				$row.append($span_col).append($span_col);
-				$form_group.append($row);
+				$form_group.addClass("btns-group").append($row);
 				$form_col.append($form_group);
 				$super_row.append($form_col);
 			}
@@ -629,58 +744,7 @@ $.fn.load_user_data_in_form = function(usd) {
 
 		$("#loader").hide();
 		$("a.add_typed").on("click", function() {
-			var $item = $(this).closest(".form-group"),
-			form_group_type = $.trim($item.attr("class").replace("form-group", "")),
-			cont = 0,
 
-			$row = $('<div class="row">'),
-			$form_group = $('<div class="form-group">'),
-			$input_col = $('<div class="col-sm-5">'),
-			$input_group = $('<div class="input-group">'),
-			$input_group_btn = $('<div class="input-group-btn">'),
-			$span_col0 = $('<div class="col-sm-5 control-label text-muted text-left">'),
-			$span_col = $('<div class="col-sm-5 control-label text-muted text-left">'),
-			$span_col2 = $('<div class="col-sm-5 control-label text-muted text-left">'),
-			$label = $('<label class="col-sm-3 control-label">'),
-			$label_empty = $('<label class="col-sm-3 control-label">'),
-			$span = $('<div class="col-sm-3 control-label text-muted">'),
-			$input = $('<input>'),
-			$input2 = $('<input>'),
-			$plus_btn = $('<a href="javascript:void(0);" class="btn btn-default-white">');
-			$span_col.attr("class", "col-sm-2 col-xs-5");
-			$span_col2.attr("class", "col-sm-3 col-xs-6 row");
-
-			$.each($item.find(".row:not(.col-xs-6) input"), function(i) {
-				if($(this).val().length == 0) {
-					cont++;
-					$(this).focus();
-					return false;
-				}
-			});
-			if(cont == 0) {
-				$input.attr({
-					"type": "text",
-					"class": "form-control",
-					"id": "user_name",
-					"name": "user_name",
-					"placeholder": "Description text",
-					"value": ""
-				});
-				$input2.attr({
-					"type": "text",
-					"class": "form-control",
-					"id": "user_name",
-					"name": "user_name",
-					"placeholder": "Value",
-					"value": ""
-				});
-				$span_col.append($input);
-				$span_col2.append($input2);
-				$row.append($label_empty).append($span_col).append($span_col2);
-				$item.append('<br />').append($row);
-				$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
-				return false;
-			}
 		});
 	});
 };
