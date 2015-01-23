@@ -10,12 +10,14 @@ var i18n = {
                         "add_another_group_field": "Add another group field",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
+                        "invited_users": "Invited users",
                         "removed_item": "Removed {X}",
                         "enable_item": "Enable this item",
                         "disable_item": "Disable this item",
                         "managed_by": "User managed by",
                         "no_entries_found": "No entries found",
                         "no_active_users_yet": "There's no active users, yet",
+                        "no_invited_users_yet": "There's no invited users, yet",
                         "no_created_users": "No users created",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
@@ -140,7 +142,7 @@ var i18n = {
                         },
                         "undo_user_profile": {
                                 "title": "Are you sure to cancel all editings?",
-                                "message": "By choosing \"Yes\" you may lose your changes, do you want to continue?"
+                                "message": "By choosing \"Yes\" you may lose your changes.<br />Do you want to continue?"
                         },
                         "waiting": "Waiting..."
                 },

@@ -95,29 +95,25 @@ $.add_storage_space_in_panel = function(label, storage) {
  */
 $.get_user = function(user_id, callback) {
 	$("#loader").show();
-	var manager_id = "";
 	if($.storage_exists("pgrdg_user_cache.user_data.all." + user_id)) {
 		callback.call(this, storage.get("pgrdg_user_cache.user_data.all." + user_id));
 	} else {
 		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-			$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-				manager_id = $.get_user_id(mdata);
-			});
 			if(user_id === null || user_id === undefined || user_id === "") {
-				user_id = manager_id;
+				user_id = $.get_manager_id();
 			}
 			$.ask_cyphered_to_service({
 				storage_group: "pgrdg_user_cache.user_data.all",
 				data: {
 					"user_id": user_id,
-					"manager_id": manager_id
+					"manager_id": $.get_manager_id()
 				},
 				type: "get_user"
 			}, function(response) {
 				if(typeof callback == "function") {
 					$.each(response, function(id, ud) {
 						storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
-						callback.call(ud);
+						callback.call(this, ud);
 					});
 				}
 				$("#loader").hide();
@@ -129,21 +125,23 @@ $.get_user = function(user_id, callback) {
 	}
 };
 
+/**
+* Extract all managed users of a given user identifier
+* @param  string   		user_id  		The user Identifier
+* @param  function 		callback 		The function to execute when data are available
+*/
 $.get_managed_users = function(user_id, callback) {
 	if($.storage_exists("pgrdg_user_cache.user_data.managed." + user_id)) {
 		callback.call(this, storage.get("pgrdg_user_cache.user_data.managed." + user_id));
 	} else {
-		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-			manager_id = $.get_user_id(mdata);
-		});
 		if(user_id === null || user_id === undefined || user_id === "") {
-			user_id = manager_id;
+			user_id = $.get_manager_id();
 		}
 		$.ask_cyphered_to_service({
 			storage_group: "pgrdg_user_cache.user_data.managed",
 			data: {
 				"user_id": user_id,
-				"manager_id": manager_id
+				"manager_id": $.get_manager_id()
 			},
 			type: "get_managed_users"
 		}, function(response) {
@@ -164,19 +162,57 @@ $.get_managed_users = function(user_id, callback) {
 
 /**
  * Extract the user identifier from a given user data object
- * @param  object	user_data 		The user data object
- * @return string 			        The user identifier
+ * @param  object		user_data 		The user data object
+ * @return string 			   	     The user identifier
  */
 $.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
-$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
-$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] };
-$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
 
-$.fn.generate_manager_profile = function(manager_data) {
+/**
+* Extract the manager (logged) user identifier from the storage
+* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
+* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
+*/
+$.get_manager_id = function() {
 	var manager_id = "";
 	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
 		manager_id = $.get_user_id(mdata);
 	});
+	return manager_id;
+}
+
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
+* Extract the user image path from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user image source
+*/
+$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] };
+
+/**
+* Extract the count of user's managed users from a given user data object
+* @param  object		user_data 		The user data object
+* @return number 				        The count of managed users
+*/
+$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+
+/**
+* Extract the count of user's invites from a given user data object
+* @param  object		user_data 		The user data object
+* @return number 				        The count of invited users
+*/
+$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : parseInt(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+
+/**
+* Generate the manager top box
+* @param  object		manager_data 		The user manager data object
+*/
+$.fn.generate_manager_profile = function(manager_data) {
 	var $item = $(this),
 	$managers_box = $('<div id="managers">'),
 	$managers_box_title = $('<h1>').text(i18n[lang].messages.managed_by),
@@ -184,29 +220,34 @@ $.fn.generate_manager_profile = function(manager_data) {
 	$manager_box_name = $('<h2>'),
 	$manager_box_name_link = $('<a>').attr({
 		"href": "./Profile#" + $.get_user_id(manager_data)
-	}),
+	});
 	$manager_picture_img = $('<img>').attr({
 		"src": $.get_user_img_src(manager_data),
 		"alt": "me"
-	});
+	}),
 	$manager_box_name_link.append($manager_picture_img);
-	$manager_box_name_link.append($.get_user_full_name(manager_data))
-	if($.get_user_id(manager_data) == manager_id) {
+	$manager_box_name_link.append($.get_user_full_name(manager_data));
+	if($.get_user_id(manager_data) == $.get_manager_id()) {
 		$manager_box_name_link.attr("title", i18n[lang].interface.btns.back_to_your_profile);
 	}
 	$manager_box_name.append($manager_box_name_link);
 	$manager_box.append($manager_box_name);
 	$managers_box.append($managers_box_title);
 	$managers_box.append($manager_box);
-	console.log(manager_data);
 
 	$item.prepend($managers_box);
 };
+
 /**
- * Generate the profile content of a given (or the current) user
- * @param  void 		ud	 		The user ID to display, if no set will bring the current logged user
+ * Generate the profile of a given user
+ * @param  object 		user_data 		The user data object
  */
 $.fn.generate_profile = function(user_data) {
+	/**
+	 * Format a given type of user contact
+	 * @param  string 	item      		The kTAG of the contavt item to display
+	 * @param  object 	user_data 		The user data object
+	 */
 	$.fn.display_contact = function(item, user_data) {
 		var $item = $(this);
 		if(user_data[item] !== undefined) {
@@ -223,18 +264,51 @@ $.fn.generate_profile = function(user_data) {
 			$item.append($root_dt);
 			$item.append($root_dd);
 		}
-	}
-	var $item = $(this),
-	manager_id = "",
-	manager_data = {};
-	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-			manager_id = $.get_user_id(mdata);
-			manager_data = mdata;
+	};
+
+	$.fn.display_roles = function(user_data) {
+		var $item = $(this),
+		$roles_dl = $('<dl class="dl-horizontal roles">');
+		$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+			var $roles_dt = $('<dt>'),
+			$roles_dd = $('<dd>'),
+			icon = "";
+
+			switch(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE][k]) {
+				case kTYPE_ROLE_LOGIN:
+					icon = "fa fa-fw fa-sign-in";
+					break;
+				case kTYPE_ROLE_INVITE:
+					icon = "fa fa-fw fa-certificate";
+					break;
+				case kTYPE_ROLE_UPLOAD:
+					icon = "fa fa-fw fa-upload";
+					break;
+				case kTYPE_ROLE_EDIT:
+					icon = "fa fa-fw fa-file-text-o";
+					break;
+				case kTYPE_ROLE_USERS:
+					icon = "fa fa-fw fa-group";
+					break;
+			}
+			$roles_dt.html('<span class="' + icon + ' fa-3x text-success"></span>');
+			$roles_dd.html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + '<i class="help-block">' + v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</i>');
+			$roles_dl.append($roles_dt);
+			$roles_dl.append($roles_dd);
 		});
-		if(manager_id !== $.get_user_id(user_data)) {
+		$item.append($roles_dl);
+	};
+
+	var $item = $(this);
+	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
+		console.log($.get_manager_id(), $.get_user_id(user_data));
+		if($.get_manager_id() !== $.get_user_id(user_data)) {
 			// Managed user profile
-			$("#contents").generate_manager_profile(manager_data);
+			if($.storage_exists("pgrdg_user_cache.user_data.current")) {
+				$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, manager_data) {
+					$("#contents").generate_manager_profile(manager_data);
+				});
+			}
 		} else {
 			$("#managers").remove();
 		}
@@ -249,7 +323,7 @@ $.fn.generate_profile = function(user_data) {
 	$user_data_right_btns = $('<div class="col-xs-2 col-sm-5 col-lg-4 pull-right">'),
 	$title = $('<span class="text-left">'),
 	$contact_title = $('<h3>').text(i18n[lang].messages.contacts),
-	$roles_title = $('<h3>').text(((manager_id !== $.get_user_id(user_data)) ? i18n[lang].messages.user_permissions : i18n[lang].messages.you_can) + ":"),
+	$roles_title = $('<h3>').text((($.get_manager_id() !== $.get_user_id(user_data)) ? i18n[lang].messages.user_permissions : i18n[lang].messages.you_can) + ":"),
 	$contact_div = $('<div class="user_data">'),
 	$roles_div = $('<div class="user_data">'),
 	$edit_profile_btn = $('<a>').attr({
@@ -318,35 +392,7 @@ $.fn.generate_profile = function(user_data) {
 		// Roles title
 		$content_right_col.append($roles_title);
 		// Roles list
-		$roles_dl = $('<dl class="dl-horizontal roles">');
-		$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-			var $roles_dt = $('<dt>'),
-			$roles_dd = $('<dd>'),
-			icon = "";
-
-			switch(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE][k]) {
-				case kTYPE_ROLE_LOGIN:
-					icon = "fa fa-fw fa-sign-in";
-					break;
-				case kTYPE_ROLE_INVITE:
-					icon = "fa fa-fw fa-certificate";
-					break;
-				case kTYPE_ROLE_UPLOAD:
-					icon = "fa fa-fw fa-upload";
-					break;
-				case kTYPE_ROLE_EDIT:
-					icon = "fa fa-fw fa-file-text-o";
-					break;
-				case kTYPE_ROLE_USERS:
-					icon = "fa fa-fw fa-group";
-					break;
-			}
-			$roles_dt.html('<span class="' + icon + ' fa-3x text-success"></span>');
-			$roles_dd.html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + '<i class="help-block">' + v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</i>');
-			$roles_dl.append($roles_dt);
-			$roles_dl.append($roles_dd);
-		});
-		$roles_div.append($roles_dl);
+		$roles_div.display_roles(user_data);
 		$content_right_col.append($roles_div);
 	$form_col.append($content_right_col);
 
@@ -363,9 +409,18 @@ $.fn.generate_profile = function(user_data) {
 	*/
 	$item.load_active_users(user_data);
 
+	/**
+	 * Invited users display
+	 */
+	$("#managed_scroller").load_invited_users(user_data);
+
 	$("#loader").hide();
 };
 
+/**
+* Call the user profile generation depending if data of a given user id is store or not in the storage
+* @param  string		user_id 		The user ID string
+*/
 $.fn.load_user_data = function(user_id) {
 	var $item = $(this);
 	if(user_id === undefined || user_id === null || user_id === "") {
@@ -380,7 +435,7 @@ $.fn.load_user_data = function(user_id) {
 };
 
 /**
-* Load all managed users and gnerate a btns scroll of a given user data manager
+* Load all managed users and generate a btns scroll of a given user data manager
 * @param  void 			user_data 		The object of user data.
 */
 $.fn.load_active_users = function(user_data){
@@ -407,22 +462,15 @@ $.fn.load_active_users = function(user_data){
 	$managed_scroller_title_count_data = $('<small class="text-info">').text($.get_managed_users_count(user_data)),
 	$managed_scroller_title_count = $('<sup>').append($managed_scroller_title_count_data),
 	$managed_scroller_title = ($("#managed_scroller_title").length === 0) ? $('<h2 id="managed_scroller_title">') : $("#managed_scroller_title"),
-	manager_id = "",
 	user_id = $.get_user_id(user_data);
 	// Fill the managed users title
 	$managed_scroller_title.html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
 	$managed_scroller_title.append($managed_scroller_title_count);
-	// Extract manager identifier
-	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-			manager_id = $.get_user_id(mdata);
-		});
-	}
 	// Check if current user has managed accounts
 	if($.get_managed_users_count(user_data) === 0) {
 		// There's no managed accounts, load empty scroll
 		$managed_scroller.removeClass("has_data").html($.empty_scroller(user_data));
-		if(user_id !== manager_id) {
+		if(user_id !== $.get_manager_id()) {
 			$managed_scroller.find("p").html('<span class="fa fa-times fa-2x"></span><br />' + i18n[lang].messages.no_created_users);
 		}
 	} else {
@@ -435,8 +483,6 @@ $.fn.load_active_users = function(user_data){
 			$li = $('<li>');
 
 			$.each(managed_data, function(uid, ud) {
-			console.warn(uid, ud);
-				console.log(uid);
 				var $h1 = $('<h1>'),
 				$a = $('<a>').attr({
 					"href": "./Profile#" + $.get_user_id(ud),
@@ -456,19 +502,44 @@ $.fn.load_active_users = function(user_data){
 			if($hash[0] !== "Edit") {
 				$managed_scroller.fadeIn(300);
 			}
-			// } else {
-			// 	$managed_scroller.html($.empty_scroller());
-			// 	if($hash[0] !== "Edit") {
-			// 		$managed_scroller.fadeIn(300);
-			// 	}
-			// }
 		});
 	}
 	$managed_scroller.insertAfter($item);
 	$managed_scroller_title.insertBefore($managed_scroller);
 };
 
+/**
+* Load all invites of a given user data
+* @param  void 			user_data 		The object of user data.
+*/
+$.fn.load_invited_users = function(user_data) {
+	var $item = $(this),
+	$invited_box = ($("#data_box").length == 0) ? $('<div id="data_box">') : $("#data_box"),
+	$invited_box_title_count_data = $('<small class="text-info">').text($.get_invited_users_count(user_data)),
+	$invited_box_title_count = $('<sup>').append($invited_box_title_count_data),
+	$invited_box_title = ($("#invited_box_title").length === 0) ? $('<h2 id="invited_box_title">') : $("#invited_box_title"),
+	$invited_box_col = ($("#invited_box").length == 0) ? $('<div id="invited_box" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">') : $("#invited_box"),
+	$invite_user_btn = $('<a>').attr({
+		"href": "./Invite",
+		"class": "btn btn-default"
+	}).html(i18n[lang].interface.btns.invite_an_user + ' <span class="fa fa-plus"></span>');
+	user_id = $.get_user_id(user_data);
+	// Fill the managed users title
+		// Title provided by Service, replace when Milko come back to work
+		// $invited_box_title.html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
+	$invited_box_title.html(i18n[lang].messages.invited_users + " ");
+	$invited_box_title.append($invited_box_title_count);
 
+	if($.get_invited_users_count(user_data) > 0) {
+		// Proceed with invites extraction
+	} else {
+		$invited_box_col.html("<p>" + i18n[lang].messages.no_invited_users_yet + "</p><br />").append($invite_user_btn);
+		$invited_box.append($invited_box_col);
+	}
+
+	$invited_box.addClass("row").insertAfter($item);
+	$invited_box_title.insertBefore($invited_box);
+}
 /*=======================================================================================
 *	EDIT USER
 *======================================================================================*/
@@ -486,10 +557,11 @@ $.cancel_user_editing = function() {
 		}
 	});
 }
+
 /**
  * Generate form for manage user data
  */
-$.fn.load_user_data_in_form = function(usd) {
+$.fn.load_user_data_in_form = function(user_id) {
 	/**
 	 * Add forms for edit typed lists
 	 */
@@ -564,8 +636,8 @@ $.fn.load_user_data_in_form = function(usd) {
 		}
 	}
 
-	if(usd === undefined || usd === null || usd === "") {
-		usd = storage.get("pgrdg_user_cache.user_data.current");
+	if(user_id === undefined || user_id === null || user_id === "") {
+		user_id = $.get_manager_id();
 	}
 	var $item = $(this),
 	ud = {},
@@ -581,7 +653,7 @@ $.fn.load_user_data_in_form = function(usd) {
 	ud[kTAG_ENTITY_EMAIL] = {};
 	ud[kTAG_ENTITY_PHONE] = {};
 	ud[kTAG_ENTITY_ICON] = {};
-	$.each(usd, function(user_id, user_data) {
+	$.get_user(user_id, function(user_data) {
 		$.each(user_data, function(k, v){
 			ud[kTAG_VERSION][kAPI_PARAM_DATA_TYPE] = "static";
 			ud[kTAG_VERSION][kAPI_RESULT_ENUM_LABEL] = "Invited on";
@@ -707,14 +779,12 @@ $.fn.load_user_data_in_form = function(usd) {
 						$span.text(span_label);
 
 						var $ul = $('<ul class="list-unstyled">');
-						$.each(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP], function(kk, vv) {
+						$.each(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_VALUE], function(kk, vv) {
 							if($.is_obj(vv) || $.is_array(vv)) {
-								$.each(vv, function(kkk, vvv) {
-									$.each(vv, function(kkk, vvv) {
-										d = $.linkify(vv[kkk]);
-									});
+								$.get_authority(vv[kTAG_UNIT_REF], function(authority) {
+									console.log(authority);
+									$ul.append('<li>' + vv[kTAG_TYPE] + ": " + authority + '</li>');
 								});
-								$ul.append('<li>' + vv[kAPI_PARAM_RESPONSE_FRMT_NAME] + ": " + d + '</li>');
 							} else {
 								$ul.html('<li><i>none</i></li>');
 							}
@@ -938,7 +1008,7 @@ $.load_profile = function() {
 	if($hash.length > 0) {
 		if($hash[0] === "Edit") {
 			$.get_user($hash[1], function(){
-				$("#personal_data").load_user_data_in_form($(this));
+				$("#personal_data").load_user_data_in_form($hash[1]);
 				if($("#managed_scroller_title").length > 0) {
 					$("#managed_scroller_title").hide();
 				}

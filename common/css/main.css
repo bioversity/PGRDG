@@ -3025,7 +3025,7 @@ div.user_data dl.roles dd {
 }
 
 #personal_data + h2 {
-	color: #999;
+	/*color: #999;*/
 	margin-bottom: 0;
 	margin-top: 5%;
 	padding-left: 15px;
@@ -3034,7 +3034,8 @@ div.user_data dl.roles dd {
 	background: none repeat scroll 0 0 #2d2d2d;
 	box-shadow: 0 0 50px #000 inset;
 	color: rgba(255,255,255,0.3);
-	height: 180px;
+	min-height: 80px;
+	max-height: 180px;
 	margin: 5% -15px;
 	padding: 10px 0;
 	text-align: center;
@@ -3046,7 +3047,7 @@ div.user_data dl.roles dd {
 	background: #2d2d2d url("../media/img/loader_2d2d2d.gif") center center no-repeat;
 }
 #managed_scroller > p {
-	margin: 55px 0;
+	margin: 30px 0;
 }
 #managed_scroller > p > a {
 	color: rgba(255,255,255,0.6);
@@ -3099,6 +3100,9 @@ div.user_data dl.roles dd {
 	height: 100px;
 	padding: 2px;
 	width: 100px;
+}
+#data_box {
+	margin-bottom: 50px;
 }
 .btns-group {
 	margin-top: 5em;
