@@ -50,7 +50,7 @@
 		}
 
 		if($.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
-			var response = storage.get("pgrdg_cache." + opt.storage_group + "." + $.md5(param) + ".response");
+			var response = storage.get(opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
 				response.extra_data = opt.extra;
@@ -247,7 +247,7 @@
 			data: {},
 			type: "",
 		}, options);
-		console.warn(opt.data);
+		// console.warn(opt.data);
 		var st = opt.storage_group + "." + opt.data.user_id;
 		if($.storage_exists(st) && st !== "") {
 			var resp_obj = {};
@@ -267,6 +267,9 @@
 				},
 				success: function(response) {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0 && response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
+						if(!$.storage_exists(st)) {
+							storage.set(st, response[kAPI_RESPONSE_RESULTS]);
+						}
 						callback(response[kAPI_RESPONSE_RESULTS]);
 					}
 				}

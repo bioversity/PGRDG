@@ -19,7 +19,9 @@ var i18n = {
                         "no_created_users": "No users created",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
-                        "permissions": "User permissions",
+                        "user_permissions": "User permissions",
+                        "you": "You",
+                        "you_can": "You can",
                         "insert_password": {
                                 "title": "Confirm your identity",
                                 "message": "Please insert your password to validate your edits"
@@ -147,6 +149,7 @@ var i18n = {
                                 "activate": "Activate",
                                 "add": "Add",
                                 "advanced_search": "Advanced search",
+                                "back_to_your_profile": "Back to your profile",
                                 "cancel": "Cancel",
                                 "change_group_filters": "Change grouping filters",
                                 "choose": "Choose",

@@ -127,57 +127,56 @@ $.get_user = function(user_id, callback) {
 			document.location = "./Signin"
 		}
 	}
-
-	// if($.storage_exists("pgrdg_user_cache.user_data.all." + user_id)) {
-	// 	// Create function like "$.ask_to_service()"
-	// 	return storage.get("pgrdg_user_cache.user_data.all." + user_id);
-	// } else {
-	// 	var manager_id = "";
-	// 	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-	// 		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-	// 			manager_id = $.get_user_id(mdata);
-	// 		});
-	// 	}
-	// 	var data = {
-	// 		"user_id": user_id,
-	// 		"manager_id": manager_id
-	// 	};
-	// 	console.log(data);
-	//
-	//
-	// 	$.cryptAjax({
-	// 		url: "API/",
-	// 		dataType: "json",
-	// 		crossDomain: true,
-	// 		type: "POST",
-	// 		timeout: 30000,
-	// 		data: {
-	// 			jCryption: $.jCryption.encrypt(jQuery.param(data), password),
-	// 			type: "get_user"
-	// 		},
-	// 		success: function(response) {
-	//
-	// 		}
-	// 	});
-	// }
 };
+
+$.get_managed_users = function(user_id, callback) {
+	if($.storage_exists("pgrdg_user_cache.user_data.managed." + user_id)) {
+		callback.call(this, storage.get("pgrdg_user_cache.user_data.managed." + user_id));
+	} else {
+		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
+			manager_id = $.get_user_id(mdata);
+		});
+		if(user_id === null || user_id === undefined || user_id === "") {
+			user_id = manager_id;
+		}
+		$.ask_cyphered_to_service({
+			storage_group: "pgrdg_user_cache.user_data.managed",
+			data: {
+				"user_id": user_id,
+				"manager_id": manager_id
+			},
+			type: "get_managed_users"
+		}, function(response) {
+			if(typeof callback == "function") {
+				var managed = {};
+				$.each(response, function(id, ud) {
+					if($.storage_exists("pgrdg_user_cache.user_data.all." + $.get_user_id(ud))) {
+						storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
+					}
+					managed[$.get_user_id(ud)] = ud;
+				});
+				callback.call(this, managed);
+			}
+			$("#loader").hide();
+		});
+	}
+}
 
 /**
  * Extract the user identifier from a given user data object
  * @param  object	user_data 		The user data object
  * @return string 			        The user identifier
  */
-$.get_user_id = function(user_data) {
-	return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP];
-};
-$.get_user_full_name = function(user_data) {
-	return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP];
-};
-$.get_user_img_src = function(user_data) {
-	return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]
-}
+$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] };
+$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
 
 $.fn.generate_manager_profile = function(manager_data) {
+	var manager_id = "";
+	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
+		manager_id = $.get_user_id(mdata);
+	});
 	var $item = $(this),
 	$managers_box = $('<div id="managers">'),
 	$managers_box_title = $('<h1>').text(i18n[lang].messages.managed_by),
@@ -191,7 +190,10 @@ $.fn.generate_manager_profile = function(manager_data) {
 		"alt": "me"
 	});
 	$manager_box_name_link.append($manager_picture_img);
-	$manager_box_name_link.append($.get_user_full_name(manager_data));
+	$manager_box_name_link.append($.get_user_full_name(manager_data))
+	if($.get_user_id(manager_data) == manager_id) {
+		$manager_box_name_link.attr("title", i18n[lang].interface.btns.back_to_your_profile);
+	}
 	$manager_box_name.append($manager_box_name_link);
 	$manager_box.append($manager_box_name);
 	$managers_box.append($managers_box_title);
@@ -231,7 +233,7 @@ $.fn.generate_profile = function(user_data) {
 			manager_data = mdata;
 		});
 		if(manager_id !== $.get_user_id(user_data)) {
-			console.info("This is a managed user profile. The manager id is " + manager_id);
+			// Managed user profile
 			$("#contents").generate_manager_profile(manager_data);
 		} else {
 			$("#managers").remove();
@@ -247,7 +249,7 @@ $.fn.generate_profile = function(user_data) {
 	$user_data_right_btns = $('<div class="col-xs-2 col-sm-5 col-lg-4 pull-right">'),
 	$title = $('<span class="text-left">'),
 	$contact_title = $('<h3>').text(i18n[lang].messages.contacts),
-	$roles_title = $('<h3>').text(i18n[lang].messages.permissions),
+	$roles_title = $('<h3>').text(((manager_id !== $.get_user_id(user_data)) ? i18n[lang].messages.user_permissions : i18n[lang].messages.you_can) + ":"),
 	$contact_div = $('<div class="user_data">'),
 	$roles_div = $('<div class="user_data">'),
 	$edit_profile_btn = $('<a>').attr({
@@ -382,37 +384,44 @@ $.fn.load_user_data = function(user_id) {
 * @param  void 			user_data 		The object of user data.
 */
 $.fn.load_active_users = function(user_data){
-	$.empty_scroller = function() {
-		var $p = $('<p>');
-		$p.text(i18n[lang].messages.no_active_users_yet);
+	$.empty_scroller = function(user_data) {
+		var $p = $('<p>'),
+		$invite_user_btn = $('<a>').attr({
+			"href": "javascript:void(0);"
+		}).text(i18n[lang].interface.btns.invite_an_user);
 		/**
 		* Invite users button
 		*/
-		if($.inArray(kTYPE_ROLE_INVITE, user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) {
+		if($.inArray(kTYPE_ROLE_INVITE, user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) !== -1) {
+			$p.html('<span class="fa fa-times fa-2x"></span><br />' + i18n[lang].messages.no_active_users_yet);
 			$p.append('<br />');
 			$p.append($invite_user_btn);
+		} else {
+			$p.html('<span class="fa fa-times fa-2x"></span><br />' + i18n[lang].messages.no_created_users);
 		}
 		return $p;
 	};
 
-	$item = $(this);
-	var $managed_scroller = ($("#managed_scroller").length == 0) ? $('<div id="managed_scroller">') : $("#managed_scroller"),
-	$managed_scroller_title = ($("#managed_scroller_title").length == 0) ? $('<h2 id="managed_scroller_title">').html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + ' <sup><small class="text-info">' + user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</small></sup>') : $("#managed_scroller_title");
+	var $item = $(this),
+	$managed_scroller = ($("#managed_scroller").length == 0) ? $('<div id="managed_scroller">') : $("#managed_scroller"),
+	$managed_scroller_title_count_data = $('<small class="text-info">').text($.get_managed_users_count(user_data)),
+	$managed_scroller_title_count = $('<sup>').append($managed_scroller_title_count_data),
+	$managed_scroller_title = ($("#managed_scroller_title").length === 0) ? $('<h2 id="managed_scroller_title">') : $("#managed_scroller_title"),
 	manager_id = "",
-	user_id = $.get_user_id(user_data),
-	$invite_user_btn = $('<a>').attr({
-		"href": "javascript:void(0);"
-	}).text(i18n[lang].interface.btns.invite_an_user);
-	// Extract managed identifier
+	user_id = $.get_user_id(user_data);
+	// Fill the managed users title
+	$managed_scroller_title.html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
+	$managed_scroller_title.append($managed_scroller_title_count);
+	// Extract manager identifier
 	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
 			manager_id = $.get_user_id(mdata);
 		});
 	}
 	// Check if current user has managed accounts
-	if(parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]) === 0) {
+	if($.get_managed_users_count(user_data) === 0) {
 		// There's no managed accounts, load empty scroll
-		$managed_scroller.removeClass("has_data").html($.empty_scroller());
+		$managed_scroller.removeClass("has_data").html($.empty_scroller(user_data));
 		if(user_id !== manager_id) {
 			$managed_scroller.find("p").html('<span class="fa fa-times fa-2x"></span><br />' + i18n[lang].messages.no_created_users);
 		}
@@ -420,54 +429,39 @@ $.fn.load_active_users = function(user_data){
 		$managed_scroller.html("");
 		// Load managed users in scroll
 		$managed_scroller.addClass("has_data");
-		var data = {
-			"user_id": user_id,
-			"manager_id": manager_id
-		};
-		$.cryptAjax({
-			url: "API/",
-			dataType: "json",
-			crossDomain: true,
-			type: "POST",
-			timeout: 30000,
-			data: {
-				jCryption: $.jCryption.encrypt(jQuery.param(data), password),
-				type: "get_managed_users"
-			},
-			success: function(response) {
-				var $hash = $.url().fsegment();
+		$.get_managed_users($.get_user_id(user_data), function(managed_data) {
+			var $hash = $.url().fsegment(),
+			$managed_picture = $('<ul class="managed_picture list-inline">'),
+			$li = $('<li>');
 
-				if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0 && response[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
-					var $managed_picture = $('<ul class="managed_picture list-inline">'),
-					$li = $('<li>');
-
-					$.each(response[kAPI_RESPONSE_RESULTS], function(uid, ud) {
-						var $h1 = $('<h1>'),
-						$a = $('<a>').attr({
-							"href": "./Profile#" + $.get_user_id(ud),
-						});
-						$span = $('<span>'),
-						$user_img = $('<img>').attr({
-							"src": "./common/media/img/admin/user_images/" + ud[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
-							"alt": $.get_user_full_name(ud)
-						});
-						$span.text($.get_user_full_name(ud));
-						$a.append($user_img).append($span);
-						$h1.append($a);
-						$li.attr("maged-user-id", uid).append($h1);
-						$managed_picture.append($li);
-					});
-					$managed_scroller.append($managed_picture);
-					if($hash[0] !== "Edit") {
-						$managed_scroller.fadeIn(300);
-					}
-				} else {
-					$managed_scroller.html($.empty_scroller());
-					if($hash[0] !== "Edit") {
-						$managed_scroller.fadeIn(300);
-					}
-				}
+			$.each(managed_data, function(uid, ud) {
+			console.warn(uid, ud);
+				console.log(uid);
+				var $h1 = $('<h1>'),
+				$a = $('<a>').attr({
+					"href": "./Profile#" + $.get_user_id(ud),
+				});
+				$span = $('<span>'),
+				$user_img = $('<img>').attr({
+					"src": "./common/media/img/admin/user_images/" + ud[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
+					"alt": $.get_user_full_name(ud)
+				});
+				$span.text($.get_user_full_name(ud));
+				$a.append($user_img).append($span);
+				$h1.append($a);
+				$li.attr("maged-user-id", $.get_user_id(ud)).append($h1);
+				$managed_picture.append($li);
+			});
+			$managed_scroller.append($managed_picture);
+			if($hash[0] !== "Edit") {
+				$managed_scroller.fadeIn(300);
 			}
+			// } else {
+			// 	$managed_scroller.html($.empty_scroller());
+			// 	if($hash[0] !== "Edit") {
+			// 		$managed_scroller.fadeIn(300);
+			// 	}
+			// }
 		});
 	}
 	$managed_scroller.insertAfter($item);
