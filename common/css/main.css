@@ -2890,7 +2890,9 @@ a.list-group-item.related {
 #managers .manager a {
 	color: #aaa;
 }
-#managers .manager a:hover {
+#managers .manager a:hover,
+#managers .manager a:active,
+#managers .manager a:focus {
 	color: #ddd;
 	text-decoration: none;
 }

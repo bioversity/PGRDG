@@ -15,9 +15,9 @@
                 </div>
 
                 <!-- breadcrumb -->
-                <ol class="breadcrumb">
+                <!-- <ol class="breadcrumb"> -->
                         <!-- This is auto generated -->
-                </ol>
+                <!-- </ol> -->
                 <!-- end breadcrumb -->
 
                 <!-- You can also add more buttons to the

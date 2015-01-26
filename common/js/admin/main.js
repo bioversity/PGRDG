@@ -195,7 +195,6 @@ $.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PA
 */
 $.fn.get_user_work_position = function(user_data, show_authority) {
 	var $item = $(this);
-		console.warn(show_authority);
 	sha = (show_authority === undefined) ? true : show_authority;
 
 	$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
@@ -257,8 +256,9 @@ $.fn.generate_manager_profile = function(manager_data) {
 	$manager_box.append($manager_box_name);
 	$managers_box.append($managers_box_title);
 	$managers_box.append($manager_box);
-
-	$item.prepend($managers_box);
+	if($("#managers").length === 0) {
+		$item.prepend($managers_box);
+	}
 };
 
 /**
@@ -339,7 +339,6 @@ $.fn.generate_profile = function(user_data) {
 			$("#managers").remove();
 		}
 	}
-	console.log(user_data);
 	var $super_row = $('<div class="row">'),
 	$picture_col = $('<div class="col-xs-12 col-sm-3 col-md-4 col-lg-2 pull-left">'),
 	$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-10 pull-right">'),
@@ -450,7 +449,8 @@ $.fn.load_user_data = function(user_id) {
 	var $item = $(this);
 	if(user_id === undefined || user_id === null || user_id === "") {
 		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-			$item.generate_profile(storage.get("pgrdg_user_cache.user_data.current." + user_id));
+			window.location.hash = $.get_manager_id();
+			$item.generate_profile(storage.get("pgrdg_user_cache.user_data.current." + $.get_manager_id()));
 		}
 	} else {
 		$.get_user(user_id, function(ud){
@@ -510,11 +510,11 @@ $.fn.load_active_users = function(user_data){
 			$.each(managed_data, function(uid, ud) {
 				var $h1 = $('<h1>'),
 				$a = $('<a>').attr({
-					"href": "./Profile#" + $.get_user_id(ud),
+					"href": "./Profile#" + $.get_user_id(ud)
 				});
 				$span = $('<span>'),
 				$user_img = $('<img>').attr({
-					"src": "./common/media/img/admin/user_images/" + ud[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP],
+					"src": $.get_user_img_src(ud),
 					"alt": $.get_user_full_name(ud)
 				});
 				$span.text($.get_user_full_name(ud));
@@ -565,6 +565,8 @@ $.fn.load_invited_users = function(user_data) {
 	$invited_box.addClass("row").insertAfter($item);
 	$invited_box_title.insertBefore($invited_box);
 }
+
+
 /*=======================================================================================
 *	EDIT USER
 *======================================================================================*/
@@ -621,7 +623,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$span_col2.attr("class", "col-sm-3 col-xs-6 row");
 
 		$.each($item.find(".row:not(.col-xs-6) input"), function(i) {
-			if($(this).val().length == 0) {
+			if($(this).val().length === 0) {
 				cont++;
 				$(this).focus();
 				return false;
@@ -633,7 +635,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			dataitem = $(this).attr("data-item");
 			mid = dataitem + "_" + f;
 		});
-		if(cont == 0) {
+		if(cont === 0) {
 			$input.attr({
 				"type": "text",
 				"class": "form-control",
@@ -659,7 +661,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
 			return false;
 		}
-	}
+	};
 
 	if(user_id === undefined || user_id === null || user_id === "") {
 		user_id = $.get_manager_id();
@@ -735,7 +737,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
 		$picture_upload_btn_input = $('<input style="display: none;" type="file" multiple="" class="upload_btn_input" href="javascript:void(0);">'),
 		$picture_img = $('<img>').attr({
-			"src": "./common/media/img/admin/" + ((ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + ud[kTAG_ENTITY_ICON][kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP],
+			"src": $.get_user_img_src(user_data),
 			"alt": "me"
 		}),
 		$picture_div = $('<div id="picture">'),
@@ -746,7 +748,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$picture_div.append($picture_upload_btn);
 		$picture_div.append($picture_upload_btn_input);
 		$picture_col.append($picture_div);
-		$(this).html("");
+		$item.html("");
 
 		$.each(ud, function(k, v){
 			i++;
@@ -807,7 +809,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$.each(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_VALUE], function(kk, vv) {
 							if($.is_obj(vv) || $.is_array(vv)) {
 								$.get_authority(vv[kTAG_UNIT_REF], function(authority) {
-									console.log(authority);
 									$ul.append('<li>' + vv[kTAG_TYPE] + ": " + authority + '</li>');
 								});
 							} else {
@@ -970,9 +971,9 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$item.html($super_row);
 
 		$("#loader").hide();
-		$("a.add_typed").on("click", function() {
-
-		});
+		// $("a.add_typed").on("click", function() {
+		//
+		// });
 	});
 };
 
@@ -985,6 +986,11 @@ $.save_user_data = function() {
 		alert("ok");
 	});
 };
+
+
+/*=======================================================================================
+*	COMMON FUNCTIONS
+*======================================================================================*/
 
 $.log_activity = function(action){
 	var st = storage.get("pgrdg_user_cache.user_activity"),
@@ -1040,6 +1046,12 @@ $.load_profile = function() {
 				if($("#managed_scroller").length > 0) {
 					$("#managed_scroller").hide();
 				}
+				if($("#invited_box_title").length > 0) {
+					$("#invited_box_title").hide();
+				}
+				if($("#data_box").length > 0) {
+					$("#data_box").hide();
+				}
 			});
 		} else {
 			var user_id = ($hash[0].length > 0 ? $hash[0] : "");
@@ -1050,15 +1062,45 @@ $.load_profile = function() {
 			if($("#managed_scroller").length > 0) {
 				$("#managed_scroller").show();
 			}
+			if($("#invited_box_title").length > 0) {
+				$("#invited_box_title").show();
+			}
+			if($("#data_box").length > 0) {
+				$("#data_box").show();
+			}
 		}
 	} else {
 		$("#personal_data").load_user_data();
-		// if($("#managed_scroller").length > 0) {
-		// 	$("#managed_scroller").show();
-		// }
 	}
 };
 
+
+$.set_breadcrumb = function() {
+	var $hash = $.url().fsegment(),
+	user_name = "",
+	$ol = ($("#ribbon > ol.breadcrum").length === 0) ? $('<ol class="breadcrumb">') : $("#ribbon > ol.breadcrum"),
+	$li_home = $('<li>').addClass("home"),
+	$li_home_link = $('<a href="./Profile">'),
+	$li = $('<li>');
+
+	$("#ribbon > ol.breadcrum").remove();
+	$li_home_link.text(current_path);
+	$li_home.html($li_home_link);
+	$ol.html($li_home);
+	$.each($hash, function(k, v) {
+		if(v.length == 40) {
+			user_name = $.get_user_full_name(storage.get("pgrdg_user_cache.user_data.all." + v));
+			$li.text(user_name);
+
+			if($hash[1] !== undefined && $hash[1].length == 40) {
+				hash_title = $hash[1];
+			}
+			$li_home_link.attr("href", "./Profile#" + $hash.join("/"));
+			$ol.append($li);
+		}
+	});
+	$("#ribbon").html($ol);
+};
 
 /*======================================================================================*/
 
@@ -1087,9 +1129,9 @@ $(document).ready(function() {
 
 		$("#loader").addClass("decrypt").show();
 		$.load_profile();
-		window.onhashchange = function() {
+		$(window).on("hashchange", function(e) {
 			$.load_profile();
-		}
+		}).trigger("hashchange");
 
 		$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
 
@@ -1132,4 +1174,8 @@ $(document).ready(function() {
 		// 	}
 		// });
 	}
+	$.set_breadcrumb();
+	$(window).on("hashchange", function(e) {
+		$.set_breadcrumb();
+	}).trigger("hashchange");
 });
