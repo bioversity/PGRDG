@@ -2894,13 +2894,45 @@ a.list-group-item.related {
 	color: #ddd;
 	text-decoration: none;
 }
+#managers .manager a:hover:before {
+	color: #4d4d4d;
+	content: "‹";
+	font-family: "Roboto";
+	font-size: 75px;
+	font-weight: 100;
+	height: 51px;
+	left: 10px;
+	position: absolute;
+	top: 75px;
+	width: 25px;
+}
+
+#managers a > small {
+	font-family: "Roboto";
+	font-size: 16px;
+	font-weight: 100;
+	margin-top: 0;
+}
 #managers .manager img {
 	border: 1px dotted #222;
 	box-shadow: 0 0 3px #111;
 	height: 50px;
 	width: 50px;
 	margin-right: 15px;
+	float: left;
 }
+#managers .manager a:hover img:before {
+	content: "<";
+}
+#managers .manager a:hover img {
+	margin-left: 30px;
+}
+#managers .manager + .manager {
+	border-top: 1px solid #454545;
+	margin-top: 15px;
+	padding: 15px 10px 5px 12px;
+}
+
 #personal_data {
 	margin-top: 5px;
 }

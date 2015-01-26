@@ -178,7 +178,7 @@ $.get_manager_id = function() {
 		manager_id = $.get_user_id(mdata);
 	});
 	return manager_id;
-}
+};
 
 /**
 * Extract the user full name from a given user data object
@@ -186,6 +186,26 @@ $.get_manager_id = function() {
 * @return string 				        The user full name
 */
 $.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @param  bool			show_authority 		Display or not the authority name
+* @return string 				        The user full name
+*/
+$.fn.get_user_work_position = function(user_data, show_authority) {
+	var $item = $(this);
+		console.warn(show_authority);
+	sha = (show_authority === undefined) ? true : show_authority;
+
+	$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
+		var item_data = user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		if(sha) {
+			item_data += " at " + authority;
+		}
+		$item.html(item_data);
+	});
+};
 
 /**
 * Extract the user image path from a given user data object
@@ -220,13 +240,16 @@ $.fn.generate_manager_profile = function(manager_data) {
 	$manager_box_name = $('<h2>'),
 	$manager_box_name_link = $('<a>').attr({
 		"href": "./Profile#" + $.get_user_id(manager_data)
-	});
+	}),
+	$manager_box_name_position = $('<small class="help-block">'),
 	$manager_picture_img = $('<img>').attr({
 		"src": $.get_user_img_src(manager_data),
 		"alt": "me"
-	}),
+	});
+	$manager_box_name_position.get_user_work_position(manager_data, false);
 	$manager_box_name_link.append($manager_picture_img);
 	$manager_box_name_link.append($.get_user_full_name(manager_data));
+	$manager_box_name_link.append($manager_box_name_position);
 	if($.get_user_id(manager_data) == $.get_manager_id()) {
 		$manager_box_name_link.attr("title", i18n[lang].interface.btns.back_to_your_profile);
 	}
@@ -266,6 +289,10 @@ $.fn.generate_profile = function(user_data) {
 		}
 	};
 
+	/**
+	 * List formatted roles from given user data
+	 * @param  object 	user_data 		The user data object
+	 */
 	$.fn.display_roles = function(user_data) {
 		var $item = $(this),
 		$roles_dl = $('<dl class="dl-horizontal roles">');
@@ -301,7 +328,6 @@ $.fn.generate_profile = function(user_data) {
 
 	var $item = $(this);
 	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-		console.log($.get_manager_id(), $.get_user_id(user_data));
 		if($.get_manager_id() !== $.get_user_id(user_data)) {
 			// Managed user profile
 			if($.storage_exists("pgrdg_user_cache.user_data.current")) {
@@ -313,6 +339,7 @@ $.fn.generate_profile = function(user_data) {
 			$("#managers").remove();
 		}
 	}
+	console.log(user_data);
 	var $super_row = $('<div class="row">'),
 	$picture_col = $('<div class="col-xs-12 col-sm-3 col-md-4 col-lg-2 pull-left">'),
 	$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-10 pull-right">'),
@@ -363,9 +390,7 @@ $.fn.generate_profile = function(user_data) {
 	$super_row.append($picture_col);
 	$title.text($.get_user_full_name(user_data));
 	if(user_data[kTAG_ENTITY_TITLE] !== undefined) {
-		$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
-			$work_position.html(user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP] + " at " + authority);
-		});
+		$work_position.get_user_work_position(user_data, true);
 	}
 	// Title row
 		// User full name
