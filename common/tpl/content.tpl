@@ -22,9 +22,6 @@
 						$page->current_title = str_replace("_", " ", (($page->current == "") ? "home" : $page->current));
 					}
 				}
-				if($page->current !== "Profile") {
-					print "<h1 class=\"" . $page->title_class . "\">" . $page->title . "</h1>";
-				}
 
 				$md_page = str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md";
 				if(file_exists("common/md/" . $md_page)) {
@@ -32,8 +29,15 @@
 				}
 
 				if(strlen($page->template) && trim($page->template) !== "") {
-					require_once($page->template);
+					if(file_exists($page->template)) {
+						require_once($page->template);
+					} else {
+						require_once("common/tpl/unexisting_page.tpl");
+					}
 				}
+				// if($page->current !== "Profile") {
+				// 	print "<h1 class=\"" . $page->title_class . "\">" . $page->title . "</h1>";
+				// }
 			}
 			?>
 		</div>

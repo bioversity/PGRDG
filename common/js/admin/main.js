@@ -158,7 +158,7 @@ $.get_managed_users = function(user_id, callback) {
 			$("#loader").hide();
 		});
 	}
-}
+};
 
 /**
  * Extract the user identifier from a given user data object
@@ -240,7 +240,7 @@ $.fn.generate_manager_profile = function(manager_data) {
 	$manager_box_name_link = $('<a>').attr({
 		"href": "./Profile#" + $.get_user_id(manager_data)
 	}),
-	$manager_box_name_position = $('<small class="help-block">'),
+	$manager_box_name_position = $('<small class="help-block">').html(i18n[lang].messages.loading_profile),
 	$manager_picture_img = $('<img>').attr({
 		"src": $.get_user_img_src(manager_data),
 		"alt": "me"
@@ -583,7 +583,7 @@ $.cancel_user_editing = function() {
 			document.location = "./Profile#" + $hash[1];
 		}
 	});
-}
+};
 
 /**
  * Generate form for manage user data
@@ -989,6 +989,35 @@ $.save_user_data = function() {
 
 
 /*=======================================================================================
+*	INVITE USER
+*======================================================================================*/
+
+$.generate_invite_form = function() {
+	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
+	$super_row = $('<div class="row">'),
+	$form_col = $('<div class="col-xs-12 col-sm-8 col-lg-10 pull-right" id="invite_container">'),
+	$picture_shade = $('<div>'),
+	$picture_shade_content = $('<span class="fa fa-pencil"></span>'),
+	$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
+	$picture_upload_btn_input = $('<input style="display: none;" type="file" multiple="" class="upload_btn_input" href="javascript:void(0);">'),
+	$picture_img = $('<span class="ionicons ion-person-add">'),
+	$picture_div = $('<div id="picture">'),
+	$static_data = $('<small class="help-block">');
+	$picture_shade.append($picture_shade_content);
+	$picture_upload_btn.append($picture_shade);
+	$picture_upload_btn.append($picture_img);
+	$picture_div.append($picture_upload_btn);
+	$picture_div.append($picture_upload_btn_input);
+	// $picture_col.append($picture_div);
+
+	$super_row.append($form_col);
+
+	// $invite_div.html($super_row);
+	$("#loader").hide();
+};
+
+
+/*=======================================================================================
 *	COMMON FUNCTIONS
 *======================================================================================*/
 
@@ -1080,7 +1109,7 @@ $.set_breadcrumb = function() {
 	user_name = "",
 	$ol = ($("#ribbon > ol.breadcrum").length === 0) ? $('<ol class="breadcrumb">') : $("#ribbon > ol.breadcrum"),
 	$li_home = $('<li>').addClass("home"),
-	$li_home_link = $('<a href="./Profile">'),
+	$li_home_link = (current_path == "Profile") ? $('<a href="./Profile#' + $.get_manager_id() + '">') : $('<a href="./' + current_path + '">'),
 	$li = $('<li>');
 
 	$("#ribbon > ol.breadcrum").remove();
@@ -1095,7 +1124,6 @@ $.set_breadcrumb = function() {
 			if($hash[1] !== undefined && $hash[1].length == 40) {
 				hash_title = $hash[1];
 			}
-			$li_home_link.attr("href", "./Profile#" + $hash.join("/"));
 			$ol.append($li);
 		}
 	});
@@ -1105,77 +1133,83 @@ $.set_breadcrumb = function() {
 /*======================================================================================*/
 
 $(document).ready(function() {
-	if(current_path == "Profile") {
-		var url = "",
-		uploadButton = $('<button/>')
-		.addClass('btn btn-primary')
-		.prop('disabled', true)
-		.text('Processing...')
-		.on('click', function () {
-			var $this = $(this),
-			data = $this.data();
-			$this
-			.off('click')
-			.text('Abort')
-			.on('click', function () {
-				$this.remove();
-				data.abort();
-			});
-			data.submit().always(function () {
-				$this.remove();
-			});
-		});
-
-
-		$("#loader").addClass("decrypt").show();
-		$.load_profile();
-		$(window).on("hashchange", function(e) {
-			$.load_profile();
-		}).trigger("hashchange");
-
-		$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
-
-		$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
-		$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
-
-		$("#upload_btn").hover(function() {
-			// console.log("hover");
-			$("#upload_btn div").css("visibility", "visible");
-		}, function() {
-			// console.log("unhover");
-			$("#upload_btn div").css("visibility", "hidden");
-		});//.on("click", function() {
-		// 	$("#upload_btn_input").trigger("click");
-		// 	console.log("triggered");
-		// }).fileupload({
-		// 	url: url,
-		// 	dataType: "json",
-		// 	autoUpload: true,
-		// 	acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-		// 	maxFileSize: 3000000, // 3 MB
-		// 	// Enable image resizing, except for Android and Opera,
-		// 	// which actually support image resizing, but fail to
-		// 	// send Blob objects via XHR requests:
-		// 	disableImageResize: /Android(?!.*Chrome)|Opera/
-		// 	.test(window.navigator.userAgent),
-		// 	previewMaxWidth: 180,
-		// 	previewMaxHeight: 180,
-		// 	previewCrop: true,
-		// 	add: function (e, data) {
-		// 		data.context = $('<button/>').text('Upload')
-		// 		.appendTo(document.body)
-		// 		.click(function () {
-		// 			data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-		// 			data.submit();
-		// 		});
-		// 	},
-		// 	done: function (e, data) {
-		// 		data.context.text('Upload finished.');
-		// 	}
-		// });
-	}
 	$.set_breadcrumb();
 	$(window).on("hashchange", function(e) {
 		$.set_breadcrumb();
 	}).trigger("hashchange");
+	switch(current_path) {
+		case "Profile":
+			var url = "",
+			uploadButton = $('<button/>')
+			.addClass('btn btn-primary')
+			.prop('disabled', true)
+			.text('Processing...')
+			.on('click', function () {
+				var $this = $(this),
+				data = $this.data();
+				$this
+				.off('click')
+				.text('Abort')
+				.on('click', function () {
+					$this.remove();
+					data.abort();
+				});
+				data.submit().always(function () {
+					$this.remove();
+				});
+			});
+
+
+			$("#loader").addClass("decrypt").show();
+			$.load_profile();
+			$(window).on("hashchange", function(e) {
+				$.load_profile();
+			}).trigger("hashchange");
+
+			$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
+
+			$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
+			$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
+
+			$("#upload_btn").hover(function() {
+				// console.log("hover");
+				$("#upload_btn div").css("visibility", "visible");
+			}, function() {
+				// console.log("unhover");
+				$("#upload_btn div").css("visibility", "hidden");
+			});//.on("click", function() {
+			// 	$("#upload_btn_input").trigger("click");
+			// 	console.log("triggered");
+			// }).fileupload({
+			// 	url: url,
+			// 	dataType: "json",
+			// 	autoUpload: true,
+			// 	acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+			// 	maxFileSize: 3000000, // 3 MB
+			// 	// Enable image resizing, except for Android and Opera,
+			// 	// which actually support image resizing, but fail to
+			// 	// send Blob objects via XHR requests:
+			// 	disableImageResize: /Android(?!.*Chrome)|Opera/
+			// 	.test(window.navigator.userAgent),
+			// 	previewMaxWidth: 180,
+			// 	previewMaxHeight: 180,
+			// 	previewCrop: true,
+			// 	add: function (e, data) {
+			// 		data.context = $('<button/>').text('Upload')
+			// 		.appendTo(document.body)
+			// 		.click(function () {
+			// 			data.context = $('<p/>').text('Uploading...').replaceAll($(this));
+			// 			data.submit();
+			// 		});
+			// 	},
+			// 	done: function (e, data) {
+			// 		data.context.text('Upload finished.');
+			// 	}
+			// });
+			break;
+		case "Invite":
+			$("#loader").show();
+			$.generate_invite_form();
+			break;
+	}
 });

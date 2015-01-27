@@ -7,7 +7,7 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/apprise-bootstrap.js"></script>
 
 <?php
-if($page->current == "Profile") {
+if($page->is_backend) {
 	?>
 	<!-- jQuery-File-Upload -->
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.iframe-transport.js"></script>

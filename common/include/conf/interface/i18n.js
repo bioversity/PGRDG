@@ -5,59 +5,103 @@ var i18n = {
                         "message": "The Service is temporarily under maintainance.<br />This alert will close once the maintainance is over."
                 },
                 "messages": {
-                        "created_users": "Created users",
-                        "contacts": "Contacts",
+                        "activation": {
+                                "title": "Invite activation",
+                                "message": "We're activating your account and generating the key for enhance your privacy.<br />Please wait for a while"
+                        },
                         "add_another_group_field": "Add another group field",
-                        "item_added": "{X} added",
-                        "item_removed": "{X} removed",
-                        "invited_users": "Invited users",
-                        "removed_item": "Removed {X}",
-                        "enable_item": "Enable this item",
+                        "contacts": "Contacts",
+                        "created_users": "Created users",
                         "disable_item": "Disable this item",
-                        "managed_by": "User managed by",
-                        "no_entries_found": "No entries found",
-                        "no_active_users_yet": "There's no active users, yet",
-                        "no_invited_users_yet": "There's no invited users, yet",
-                        "no_created_users": "No users created",
-                        "no_results": "No results",
-                        "offsets": "{X} offsets",
-                        "user_permissions": "User permissions",
-                        "you": "You",
-                        "you_can": "You can",
-                        "insert_password": {
-                                "title": "Confirm your identity",
-                                "message": "Please insert your password to validate your edits"
-                        },
-                        "text_has_produced_zero_results": "Entered text has produced 0 results",
-                        "login": {
-                                "username": "Username or email",
-                                "password": "Password",
-                                "remember_me": "Remember me",
-                                "dont_have_account": "Don't have an account?",
-                                "signup_here": "Sign up here",
-                                "sign_in": "Sign in",
-                                "sign_in_btn": "Sign in",
-                                "honeypot_message": "If you see this field please leave it blank",
-                                "wrong_data": "Wrong username or password",
-                                "already_logged": {
-                                        "title": "Already logged",
-                                        "message": "You are already logged in as {USER_NAME}"
-                                }
-                        },
+                        "enable_item": "Enable this item",
                         "errors": {
                                 "404": "Page not found",
                                 "405": "Not allowed",
                                 "page_do_not_exists": "We're sorry but the page you are looking for do not exists in this Server",
                                 "page_requires_login": "This page requires that you're logged in"
                         },
-                        "activation": {
-                                "title": "Invite activation",
-                                "message": "We're activating your account and generating the key for enhance your privacy.<br />Please wait for a while"
+                        "forms": {
+                                "return_btn_disabled": "Return button disabled",
+                                "item_disabled": "This item is disabled"
                         },
-                        "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
+                        "generating_invite_form": "Creating the form for the invite...",
+                        "grouping": {
+                                "are_you_sure_to_remove": "Are you sure to remove all defined group filters?",
+                                "zero_results_remove_filter": "Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?",
+                                "reset_filters": {
+                                        "title": "Reset all group filters",
+                                        "mewssage": "Do you really want to cancel and remove all defined group filters?"
+                                },
+                                "no_combination_results": {
+                                        "title": "Nothing to display",
+                                        "message": "No results for this combination"
+                                }
+                        },
+                        "insert_password": {
+                                "title": "Confirm your identity",
+                                "message": "Please insert your password to validate your edits"
+                        },
+                        "invited_users": "Invited users",
+                        "item_added": "{X} added",
+                        "item_removed": "{X} removed",
+                        "loading_profile": "<i>Loading profile...</i>",
+                        "login": {
+                                "already_logged": {
+                                        "title": "Already logged",
+                                        "message": "You are already logged in as {USER_NAME}"
+                                },
+                                "dont_have_account": "Don't have an account?",
+                                "honeypot_message": "If you see this field please leave it blank",
+                                "password": "Password",
+                                "remember_me": "Remember me",
+                                "sign_in_btn": "Sign in",
+                                "sign_in": "Sign in",
+                                "signup_here": "Sign up here",
+                                "username": "Username or email",
+                                "wrong_data": "Wrong username or password"
+                        },
+                        "managed_by": "User managed by",
+                        "map": {
+                                "only_one_shape": {
+                                        "title": "Replace shape?",
+                                        "message": "There can only be one selection shape active at the time, since it will be used to search the database: are you sure you want to remove the previous shape?"
+                                },
+                                "selected_area": "Selected a {X} area of {Y} {Z}",
+                                "are_you_sure_to_remove": {
+                                        "title": "Confirm removal",
+                                        "message": "Are you sure to remove this selection?<br />"
+                                },
+                                "are_you_sure_to_remove_this_layer": {
+                                        "title": "Confirm removal",
+                                        "message": "Are you sure to remove this layer?<br />"
+                                },
+                                "no_data_found": {
+                                        "title": "No data found",
+                                        "message": "No objects were found in the selected area"
+                                }
+                        },
                         "map_limit_display": {
                                 "title": "Displayed {N} of {TOT} markers",
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."
+                        },
+                        "no_active_users_yet": "There's no active users, yet",
+                        "no_created_users": "No users created",
+                        "no_entries_found": "No entries found",
+                        "no_invited_users_yet": "There's no invited users, yet",
+                        "no_results": "No results",
+                        "offsets": "{X} offsets",
+                        "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
+                        "removed_item": "Removed {X}",
+                        "row_data": {
+                                "page": "Page",
+                                "current_page": "Current page",
+                                "of_page": "of {X}"
+                        },
+                        "static_forms": {
+                                "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
+                        },
+                        "statistics": {
+                                "statistics_list": "List of statistics"
                         },
                         "search": {
                                 "group_hierachy": "Group hierachy",
@@ -94,56 +138,14 @@ var i18n = {
                                         "geo_area_near": "Selected geographic area near {X}"
                                 }
                         },
-                        "grouping": {
-                                "are_you_sure_to_remove": "Are you sure to remove all defined group filters?",
-                                "zero_results_remove_filter": "Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?",
-                                "reset_filters": {
-                                        "title": "Reset all group filters",
-                                        "mewssage": "Do you really want to cancel and remove all defined group filters?"
-                                },
-                                "no_combination_results": {
-                                        "title": "Nothing to display",
-                                        "message": "No results for this combination"
-                                }
-                        },
-                        "statistics": {
-                                "statistics_list": "List of statistics"
-                        },
-                        "row_data": {
-                                "page": "Page",
-                                "current_page": "Current page",
-                                "of_page": "of {X}"
-                        },
-                        "forms": {
-                                "return_btn_disabled": "Return button disabled",
-                                "item_disabled": "This item is disabled"
-                        },
-                        "map": {
-                                "only_one_shape": {
-                                        "title": "Replace shape?",
-                                        "message": "There can only be one selection shape active at the time, since it will be used to search the database: are you sure you want to remove the previous shape?"
-                                },
-                                "selected_area": "Selected a {X} area of {Y} {Z}",
-                                "are_you_sure_to_remove": {
-                                        "title": "Confirm removal",
-                                        "message": "Are you sure to remove this selection?<br />"
-                                },
-                                "are_you_sure_to_remove_this_layer": {
-                                        "title": "Confirm removal",
-                                        "message": "Are you sure to remove this layer?<br />"
-                                },
-                                "no_data_found": {
-                                        "title": "No data found",
-                                        "message": "No objects were found in the selected area"
-                                }
-                        },
-                        "static_forms": {
-                                "no_data": "<h3 class=\"text-warning\"><span class=\"fa fa-times\"></span> Sorry, there's no data</h3>"
-                        },
+                        "text_has_produced_zero_results": "Entered text has produced 0 results",
                         "undo_user_profile": {
                                 "title": "Are you sure to cancel all editings?",
                                 "message": "By choosing \"Yes\" you may lose your changes.<br />Do you want to continue?"
                         },
+                        "user_permissions": "User permissions",
+                        "you_can": "You can",
+                        "you": "You",
                         "waiting": "Waiting..."
                 },
                 "interface": {

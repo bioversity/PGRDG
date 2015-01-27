@@ -10918,6 +10918,14 @@ aside {
   color: #BBB !important;
   text-decoration: none !Important;
 }
+#ribbon .breadcrumb > li + li:before {
+        content: "› ";
+        font-family: "Roboto";
+}
+#ribbon .breadcrumb li {
+        padding: 0 0px 0 2px;
+}
+
 #ribbon .breadcrumb > .active,
 #ribbon .breadcrumb li:last-child {
   color: #E4E4E4;
