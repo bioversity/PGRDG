@@ -206,7 +206,45 @@
         100%  { left: 40%; }
 }
 
-
+/**
+ * Blink the text in Advanced search page home
+ */
+@-webkit-keyframes rotate {
+        from {
+                margin-left: 2.5px;
+                margin-right: -2.5px;
+                color: #d0d0d0;
+        }
+        to {
+                margin-left: -5px;
+                margin-right: 5px;
+                color: #da680b;
+        }
+}
+@-moz-keyframes rotate {
+        from {
+                margin-left: 2.5px;
+                margin-right: -2.5px;
+                color: #d0d0d0;
+        }
+        to {
+                margin-left: -5px;
+                margin-right: 5px;
+                color: #da680b;
+        }
+}
+@-o-keyframes rotate {
+        from {
+                margin-left: 2.5px;
+                margin-right: -2.5px;
+                color: #d0d0d0;
+        }
+        to {
+                margin-left: -5px;
+                margin-right: 5px;
+                color: #da680b;
+        }
+}
 @keyframes blinker {
         from {
                 margin-left: 2.5px;
@@ -219,8 +257,29 @@
                 color: #da680b;
         }
 }
+
 /**
- * Pulse an item background
+ * Rotate an element
+ */
+@-webkit-keyframes rotate {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes rotate {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-o-keyframes rotate {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@keyframes rotate {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+
+/**
+ * Pulse an item's background
  */
 @-webkit-keyframes pulse {
         0%   { background-color: #000; box-shadow: 0 0 6px 6px #330000 inset; }

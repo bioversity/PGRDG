@@ -402,6 +402,10 @@ a:focus sup {
 	-o-animation: moveAround2 3s infinite;
 	animation: moveAround2 3s infinite;
 }
+#loader.system > div + div + div,
+#loader.system > div + div + div + div {
+	display: none;
+}
 #loader > div + div + div {
 	background-color: transparent;
 	border-color: rgba(255, 255, 255, 0.6) transparent transparent;
@@ -417,14 +421,10 @@ a:focus sup {
 	top: 50%;
 	width: 50px;
 
-	-webkit-animation: 1.8s linear 0s normal none infinite running spin;
-	-moz-animation: 1.8s linear 0s normal none infinite running spin;
-	-o-animation: 1.8s linear 0s normal none infinite running spin;
-	animation: 1.8s linear 0s normal none infinite running spin;
-}
-#loader.system > div + div + div,
-#loader.system > div + div + div + div {
-	display: none;
+	-webkit-animation: rotate 1.8s linear 0s infinite;
+	-moz-animation: rotate 1.8s linear 0s infinite;
+	-o-animation: rotate 1.8s linear 0s infinite;
+	animation: rotate 1.8s linear 0s infinite;
 }
 #loader > div + div + div + div {
 	background-color: transparent;
@@ -1230,6 +1230,9 @@ div[unselectable].fc-view {
 	}
 }
 #start h1[unselectable]:hover > span {
+	-webkit-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+	-moz-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+	-o-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 	animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
 #se h1[unselectable] + h2 {
@@ -3144,6 +3147,16 @@ div.user_data dl.roles dd {
 }
 #data_box {
 	margin-bottom: 50px;
+}
+
+#invite_user dt.bootstrap-switch {
+	font-weight: normal;
+}
+#invite_user h3 {
+	margin: 0;
+}
+#invite_container fieldset + fieldset {
+	margin-top: 30px;
 }
 .btns-group {
 	margin-top: 5em;

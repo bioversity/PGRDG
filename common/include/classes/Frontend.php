@@ -36,7 +36,7 @@ class frontend_api {
 		$priv_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem";
 		$pub_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_pub.pem";
 
-		header("Content-type: text/plain");
+		// header("Content-type: text/plain");
 		$config = array(
 			"private_key_bits" => 2048,
 			"private_key_type" => OPENSSL_KEYTYPE_RSA,

@@ -213,13 +213,13 @@ if($allow_signup) {
 				"class" => "btn btn-link"
 			),
 			"childs" => array(
-				"Personal settings" => array(
+				"Profile" => array(
 					"content" => array(
 						"icon" => "fa fa-user",
-						"text" => "Personal settings"
+						"text" => "Profile"
 					),
 					"attributes" => array(
-						"href" => "/Personal_settings"
+						"href" => "/Profile"
 					),
 					"divider" => "divider"
 				),

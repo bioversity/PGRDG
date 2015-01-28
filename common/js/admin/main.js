@@ -992,27 +992,150 @@ $.save_user_data = function() {
 *	INVITE USER
 *======================================================================================*/
 
+$.invite_user = function() {
+	alert("ok");
+}
+
 $.generate_invite_form = function() {
 	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
 	$super_row = $('<div class="row">'),
-	$form_col = $('<div class="col-xs-12 col-sm-8 col-lg-10 pull-right" id="invite_container">'),
-	$picture_shade = $('<div>'),
-	$picture_shade_content = $('<span class="fa fa-pencil"></span>'),
-	$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
-	$picture_upload_btn_input = $('<input style="display: none;" type="file" multiple="" class="upload_btn_input" href="javascript:void(0);">'),
-	$picture_img = $('<span class="ionicons ion-person-add">'),
-	$picture_div = $('<div id="picture">'),
-	$static_data = $('<small class="help-block">');
-	$picture_shade.append($picture_shade_content);
-	$picture_upload_btn.append($picture_shade);
-	$picture_upload_btn.append($picture_img);
-	$picture_div.append($picture_upload_btn);
-	$picture_div.append($picture_upload_btn_input);
-	// $picture_col.append($picture_div);
+	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
+	$send_btn = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.invite_user();",
+		"class": "btn btn-default pull-right"
+	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
+	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well"),
+	$fieldset_pd = $('<fieldset>'),
+	$fieldset_r = $('<fieldset>'),
+	$legend_pd = $('<legend>').text("User personal data"),
+	$legend_r = $('<legend>').text("Roles"),
+	$dl = $('<dl>').addClass("dl-horizontal roles");
+	var personal_data_form = [
+		{
+			"text": "Full name",
+			"iput-type": "text",
+			"id": "new_user_full_name",
+			"placeholder": "Full name",
+			"separated": false
+		},{
+			"text": "Work title",
+			"iput-type": "text",
+			"id": "new_user_work_title",
+			"placeholder": "Work title",
+			"separated": false
+		},{
+			"text": "E-mail address",
+			"iput-type": "email",
+			"id": "new_user_mail_address",
+			"placeholder": "E-mail address",
+			"separated": true
+		}
+	],
+	roles = [
+		{
+			"text": "Login",
+			"icon": "fa-sign-in",
+			"description": "The ability to login.",
+			"id": "role-login",
+			"value": ":roles:user-login",
+			"checked": "checked",
+			"data-off-color": "danger"
+		},{
+			"text": "Invite users",
+			"icon": "fa-sign-in",
+			"description": "The ability to compile a user profile and send an invitation.",
+			"id": "role-upload",
+			"value": ":roles:user-upload"
+		},{
+			"text": "Upload data",
+			"icon": "fa-upload",
+			"description": "The ability to upload data templates.",
+			"id": "role-upload",
+			"value": ":roles:user-upload"
+		},{
+			"text": "Edit pages",
+			"icon": "fa-file-text-o",
+			"description": "The ability to login.",
+			"id": "role-edit",
+			"value": ":roles:page-edit"
+		},{
+			"text": "Manage users",
+			"icon": "fa-group",
+			"description": "The ability to login.",
+			"id": "manage-users",
+			"value": ":roles:manage-users"
+		}
+	];
 
-	$super_row.append($form_col);
+	$fieldset_pd.append($legend_pd);
+	$.each(personal_data_form, function(k, v) {
+		var $form_group = $('<div class="form-group">'),
+		$row = $('<div class="row">'),
+		$label = $('<label>')
+		$label.addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v["id"]).text(v["text"]),
+		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
+		$field = $('<input>').attr({
+			"type": v["iput-type"],
+			"name": v["id"],
+			"id": v["id"],
+			"placeholder": v["placeholder"],
+			"value": ""
+		}).addClass("form-control");
 
-	// $invite_div.html($super_row);
+		$form_col.append($field);
+		$row.append($label);
+		$row.append($form_col);
+		$form_group.append($row);
+		if(v["separated"]) {
+			$fieldset_pd.append("<br />");
+		}
+		$fieldset_pd.append($form_group);
+	});
+
+	$fieldset_r.append($legend_r);
+	$.each(roles, function(kk, vv) {
+		var $dt = $('<dt>'),
+		$dd = $('<dd>'),
+		$checkbox = $('<input>').attr({
+			"type": "checkbox",
+			"id": vv["id"],
+			"value": vv["value"]
+		}),
+		$label = $('<label>').attr("for", vv["id"]),
+		$label_h3 = $('<h3>'),
+		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv["icon"]);
+
+		$label_h3.append($label_icon).append(vv["text"]).append('<small class="help-block">' + vv["description"] + '</small>');
+		$label.append($label_h3);
+
+		if(vv["checked"] !== undefined && vv["checked"] == "checked") {
+			$checkbox.attr("checked", vv["checked"]);
+		}
+		if(vv["data-off-color"] !== undefined) {
+			$checkbox.attr("data-off-color", vv["data-off-color"]);
+		}
+		$dt.append($checkbox);
+		$dd.append($label);
+		$dl.append($dt);
+		$dl.append($dd);
+	});
+	$fieldset_r.append($dl);
+
+	$invite_container.append($fieldset_pd);
+	$invite_container.append($fieldset_r);
+	$btn_row.append($send_btn);
+	$super_row.append($invite_container);
+	$super_row.append($btn_row);
+	$invite_div.html($super_row);
+	$invite_div.append("<br /><br />");
+
+	$("[type='checkbox']").bootstrapSwitch({
+		size: "normal",
+		inverse: true,
+		onText: "Yes",
+		offText: "No"
+	});
 	$("#loader").hide();
 };
 

@@ -24,7 +24,7 @@ var i18n = {
                                 "return_btn_disabled": "Return button disabled",
                                 "item_disabled": "This item is disabled"
                         },
-                        "generating_invite_form": "Creating the form for the invite...",
+                        "generating_invite_form": "Creating the invite form...",
                         "grouping": {
                                 "are_you_sure_to_remove": "Are you sure to remove all defined group filters?",
                                 "zero_results_remove_filter": "Your search has produced 0 results and there's no data to view.<br />You can obtain significant changes removing grouping filters.<br /><br />Would you like to retry excluding (not removing) filter groups?",
@@ -41,6 +41,7 @@ var i18n = {
                                 "title": "Confirm your identity",
                                 "message": "Please insert your password to validate your edits"
                         },
+                        "invite_an_user": "Invite an user",
                         "invited_users": "Invited users",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
@@ -164,6 +165,7 @@ var i18n = {
                                 "filter": "Filter",
                                 "group_by": "Group by...",
                                 "group": "Group",
+                                "invite": "Invite",
                                 "invite_an_user": "Invite an user",
                                 "move_bottom": "Move to bottom",
                                 "move_down": "Move down",

@@ -87,6 +87,9 @@ if($page->is_backend) {
 	<?php
 	if(LOGGED) {
 		?>
+		<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+		<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+		
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main.js"></script>
 		<?php
 	}
@@ -146,9 +149,6 @@ if($page->is_backend) {
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/EditToolbar.js"></script>
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
-
-			<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
-			<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/form.js"></script>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map.js"></script>
