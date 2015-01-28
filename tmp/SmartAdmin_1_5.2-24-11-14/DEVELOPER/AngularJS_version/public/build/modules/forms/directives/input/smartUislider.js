@@ -1,1 +1,0 @@
-define(["modules/forms/module","bootstrap-slider"],function(a){"use strict";return a.registerDirective("smartUislider",["$parse",function(){return{restrict:"A",compile:function(a){a.removeAttr("smart-uislider data-smart-uislider"),a.bootstrapSlider(),$(a.data("bootstrapSlider").sliderElem).prepend(a)}}}])});

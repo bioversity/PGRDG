@@ -1,1 +1,0 @@
-define(["modules/forms/module","select2"],function(a){"use strict";a.registerDirective("smartSelect2",function(){return{restrict:"A",compile:function(a){a.removeAttr("smart-select2 data-smart-select2"),a.select2()}}})});

@@ -1,1 +1,0 @@
-define(["modules/ui/module","jquery-ui"],function(a){"use strict";a.registerDirective("smartJquiAccordion",function(){return{restrict:"A",link:function(a,b){b.accordion({autoHeight:!1,heightStyle:"content",collapsible:!0,animate:300,icons:{header:"fa fa-plus",activeHeader:"fa fa-minus"},header:"h4"})}}})});

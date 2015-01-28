@@ -1,1 +1,0 @@
-define(["components/inbox/module","lodash"],function(a,b){"use strict";a.registerDirective("unreadMessagesCount",["InboxConfig",function(a){return{restrict:"A",link:function(c,d){a.success(function(a){d.html(b.find(a.folders,{key:"inbox"}).unread)})}}}])});

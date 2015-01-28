@@ -1,1 +1,0 @@
-define(["modules/forms/module","jquery-maskedinput"],function(a){"use strict";return a.registerDirective("smartMaskedInput",function(){return{restrict:"A",compile:function(a,b){a.removeAttr("smart-masked-input data-smart-masked-input");var c={};b.maskPlaceholder&&(c.placeholder=b.maskPlaceholder),a.mask(b.smartMaskedInput,c)}}})});

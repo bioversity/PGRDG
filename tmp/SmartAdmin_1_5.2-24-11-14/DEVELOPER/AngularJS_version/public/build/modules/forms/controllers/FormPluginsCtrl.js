@@ -1,1 +1,0 @@
-define(["modules/forms/module"],function(a){"use strict";return a.registerController("FormPluginsCtrl",["$scope","$log",function(a){a.editableOptions={mode:"popup",disabled:!1},a.toggleInline=function(){a.editableOptions.mode="popup"==a.editableOptions.mode?"inline":"popup"},a.toggleDisabled=function(){a.editableOptions.disabled=!a.editableOptions.disabled}}])});

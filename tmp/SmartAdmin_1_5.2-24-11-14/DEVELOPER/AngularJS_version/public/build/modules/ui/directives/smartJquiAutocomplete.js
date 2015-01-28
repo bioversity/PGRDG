@@ -1,1 +1,0 @@
-define(["modules/ui/module","jquery-ui"],function(a){"use strict";a.registerDirective("smartJquiAutocomplete",function(){return{restrict:"A",scope:{source:"="},link:function(a,b){b.autocomplete({source:a.source})}}})});
