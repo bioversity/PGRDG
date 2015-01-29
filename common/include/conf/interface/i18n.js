@@ -167,6 +167,7 @@ var i18n = {
                                 "group": "Group",
                                 "invite": "Invite",
                                 "invite_an_user": "Invite an user",
+                                "invite_an_user_as": "Invite an user managed by {X}",
                                 "move_bottom": "Move to bottom",
                                 "move_down": "Move down",
                                 "move_top": "Move to top",

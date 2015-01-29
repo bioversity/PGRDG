@@ -60,8 +60,8 @@ require_once(CLASSES_DIR . "Frontend.php");
 * Example:
 * ```php
 * $user_data = array(
-* 	"name" => "John Doe",
-*  	"email" => "john@example.net",
+* 	kTAG_NAME => "John Doe",
+*  	kTAG_ENTITY_EMAIL => "john@example.net",
 *   	"comment" => "",
 *    	"passphrase" => ""
 * );
@@ -170,7 +170,7 @@ class PGP {
         private function check_user_data($item = "", $display_message = true) {
                 if(is_array($this->user_data)) {
                         if($item == "") {
-                                $item = "email";
+                                $item = kTAG_ENTITY_EMAIL;
                         }
                         if(isset($this->user_data[$item]) && trim($this->user_data[$item]) !== "") {
                                 return true;
@@ -221,7 +221,7 @@ class PGP {
                         $data = $this->user_data;
                 }
                 foreach($data as $k => $v) {
-                        if($k == "name" ||  $k == "email" || $k == "fingerprint" || $k == "public_key") {
+                        if($k == kTAG_NAME ||  $k == kTAG_ENTITY_EMAIL || $k == "fingerprint" || $k == "public_key") {
                                 $store_user_data[$k] = $data[$k];
                         }
                 }
@@ -267,7 +267,7 @@ class PGP {
                                 chmod($log_path, 0777);
                         }
                 }
-                $log_file = $log_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]) . ".log";
+                $log_file = $log_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]) . ".log";
                 $log_message = "[" . date("Y-m-d H:i:s.u") . "] [" . strtoupper($type) . "] " . $message . "\n";
 
                 if($log) {
@@ -299,9 +299,9 @@ class PGP {
                                 chmod($this->gpg_path, 0777);
                         }
                 }
-                $this->user_conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
-                if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]))) {
-                        $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]);
+                $this->user_conf = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]) . ".conf";
+                if(is_dir($this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]))) {
+                        $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]);
                 } else {
                         $fingerprint = "";
                         if(!$this->check_user_data("fingerprint", false)) {
@@ -315,7 +315,7 @@ class PGP {
                                 $fingerprint = $this->$user_data["fingerprint"];
                         }
                         if(empty($fingerprint)) {
-                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data["email"]);
+                                $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]);
                         } else {
                                 $this->user_path = $this->gpg_path . DIRECTORY_SEPARATOR . $fingerprint;
                         }
@@ -400,11 +400,11 @@ class PGP {
                 $tmp_conf["Key-Length"] = 2048;
                 // $tmp_conf["Subkey-Type"] = "ELG-E";
                 // $tmp_conf["Subkey-Length"] = 2048;
-                $tmp_conf["Name-Real"] = utf8_decode($this->user_data["name"]);
+                $tmp_conf["Name-Real"] = utf8_decode($this->user_data[kTAG_NAME]);
                 if (!empty($this->user_data["comment"])){
                         $this->user_data["Name-Comment"] = utf8_decode($this->user_data["comment"]);
                 }
-                $tmp_conf["Name-Email"] = $this->user_data["email"];
+                $tmp_conf["Name-Email"] = $this->user_data[kTAG_ENTITY_EMAIL];
                 $tmp_conf["Expire-Date"] = 0;
                 $tmp_conf["Passphrase"] = $this->user_data["passphrase"];
                 $tmp_conf["%commit"] = "";
@@ -433,8 +433,8 @@ class PGP {
         * @uses   PGP::save_to_file()
         */
         private function save_user_data() {
-                $data["name"] = $this->user_data["name"];
-                $data["email"] = $this->user_data["email"];
+                $data[kTAG_NAME] = $this->user_data[kTAG_NAME];
+                $data[kTAG_ENTITY_EMAIL] = $this->user_data[kTAG_ENTITY_EMAIL];
                 $data["passphrase"] = $this->user_data["passphrase"];
                 $data["fingerprint"] = $this->fingerprint;
                 $data["public_key"] = $this->public_key;
@@ -443,7 +443,7 @@ class PGP {
                         return $k . " = " . '"' . $v . '"';
                 }, $data, array_keys($data)));
 
-                $config_file = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data["email"]) . ".conf";
+                $config_file = $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($this->user_data[kTAG_ENTITY_EMAIL]) . ".conf";
                 // Open file and dump the plaintext contents into it
                 $this->save_to_file($config_file, $tmp_config);
                 chmod($config_file, 0600);
@@ -500,7 +500,7 @@ class PGP {
                         $this->log(self::E, "Cannot retrieve fingerprint from the key with command: " . $command . " error_code: " . $error_code);
                         return(false);
                 }
-                
+
                 $sfingerprint = str_replace("Key fingerprint = ", "", trim($output[3]));
                 $fingerprint = preg_replace("[ ]", "", str_replace("Key fingerprint = ", "", trim($output[3])));
                 $this->user_data["fingerprint"] = array($fingerprint, $sfingerprint);
@@ -524,7 +524,7 @@ class PGP {
         public function export_key($save_file = false){
                 $pubring_file = $this->user_path . DIRECTORY_SEPARATOR . "pubring.asc";
                 if(!file_exists($pubring_file)) {
-                        $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --armor --export '" . $this->user_data["email"] . "'";
+                        $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --armor --export '" . $this->user_data[kTAG_ENTITY_EMAIL] . "'";
                         if(GEN_HTTP_LOG){
                                 $command .= " 2>/dev/null &";
                         }
@@ -569,10 +569,10 @@ class PGP {
         * @return  array                                An array with the fingerprint and the public key
         */
         public function generate_key() {
-                $this->check_user_data("name");
-                $this->check_user_data("email");
+                $this->check_user_data(kTAG_NAME);
+                $this->check_user_data(kTAG_ENTITY_EMAIL);
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
-                        $this->log(self::I, "The user '" . $this->user_data["email"] . "' has no comment for its key", false);
+                        $this->log(self::I, "The user '" . $this->user_data[kTAG_ENTITY_EMAIL] . "' has no comment for its key", false);
                 }
 
                 if($this->check_user_path(true)) {
@@ -641,15 +641,15 @@ class PGP {
                         $must_identify = true;
                 }
                 if($must_identify) {
-                        $identify = $this->identify($this->user_data["email"]);
+                        $identify = $this->identify($this->user_data[kTAG_ENTITY_EMAIL]);
                         if(!@chmod($this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"], 0600)) {
                                 $this->log(self::E, "Cannot change permission to dir '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
                         if(!@exec("rm -rf " . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"])) {
                                 $this->log(self::E, "Cannot remove directory '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
-                        if(!@exec("rm " . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify["email"]) . ".conf")) {
-                                $this->log(self::E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify["email"]) . "'. seems do not exists");
+                        if(!@exec("rm " . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify[kTAG_ENTITY_EMAIL]) . ".conf")) {
+                                $this->log(self::E, "Cannot remove user conf dir: '" . $this->gpg_path . DIRECTORY_SEPARATOR . "." . $this->mail_to_path($identify[kTAG_ENTITY_EMAIL]) . "'. seems do not exists");
                         }
 
                         return true;
@@ -671,7 +671,7 @@ class PGP {
                 $temp_file = $this->user_path . DIRECTORY_SEPARATOR . $token . "_message";
                 $this->save_to_file($temp_file, $message);
 
-                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --encrypt --armor -r " . escapeshellarg($this->user_data["email"]) . " " . $temp_file;
+                $command = GPG_BIN.GPG_PARAMS . escapeshellarg($this->user_path) . " --batch --encrypt --armor -r " . escapeshellarg($this->user_data[kTAG_ENTITY_EMAIL]) . " " . $temp_file;
 
                 if(GEN_HTTP_LOG){
                         $command .= " 2> " . escapeshellarg($this->user_path) . DIRECTORY_SEPARATOR . "log.txt < /dev/null &";

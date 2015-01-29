@@ -189,19 +189,22 @@ class Service_exchange {
                                 );
                                 break;
                         case "invite_user":
-                                if(empty($data["name"])) {
+                        // header("Content-type: text/plain");
+                        // print_r($data);
+                        // exit();
+                                if(empty($data[kTAG_NAME])) {
                                         print "No given name";
                                         return false;
                                 }
-                                if(empty($data["email"])) {
+                                if(empty($data[kTAG_ENTITY_EMAIL])) {
                                         print "No given email";
                                         return false;
                                 }
-                                if(empty($data["fingerprint"])) {
+                                if(empty($data[kTAG_ENTITY_PGP_FINGERPRINT])) {
                                         print "No given fingerprint";
                                         return false;
                                 }
-                                if(empty($data["public_key"])) {
+                                if(empty($data[kTAG_ENTITY_PGP_KEY])) {
                                         print "No given PGP public key";
                                         return false;
                                 }
@@ -214,15 +217,16 @@ class Service_exchange {
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data["inviter"],
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
                                         kAPI_PARAM_OBJECT => array(
-                                                kTAG_AUTHORITY => ((isset($data["authority"]) && strlen(trim($data["authority"])) > 0) ? $data["collection"] : "ITA406"),
-                                                kTAG_COLLECTION => ((isset($data["collection"]) && strlen(trim($data["collection"])) > 0) ? $data["collection"] : "pgrdiversity.bioversityinternational.org"),
-                                                kTAG_NAME => $data["name"],
-                                                kTAG_ENTITY_EMAIL => $data["email"],
-                                                kTAG_ROLES => array( kTYPE_ROLE_UPLOAD, kTYPE_ROLE_EDIT ), // ???
-                                                kTAG_ENTITY_PGP_KEY => $data["public_key"],
-                                                kTAG_ENTITY_PGP_FINGERPRINT => $data["fingerprint"],
+                                                kTAG_AUTHORITY => ((isset($data[kTAG_AUTHORITY]) && strlen(trim($data[kTAG_AUTHORITY])) > 0) ? $data[kTAG_AUTHORITY] : "ITA406"),
+                                                kTAG_COLLECTION => ((isset($data[kTAG_COLLECTION]) && strlen(trim($data[kTAG_COLLECTION])) > 0) ? $data[kTAG_COLLECTION] : "pgrdiversity.bioversityinternational.org"),
+                                                kTAG_NAME => $data[kTAG_NAME],
+                                                kTAG_ENTITY_TITLE => $data[kTAG_ENTITY_TITLE],
+                                                kTAG_ENTITY_EMAIL => $data[kTAG_ENTITY_EMAIL],
+                                                kTAG_ROLES => $data[kTAG_ROLES],
+                                                kTAG_ENTITY_PGP_KEY => $data[kTAG_ENTITY_PGP_KEY],
+                                                kTAG_ENTITY_PGP_FINGERPRINT => $data[kTAG_ENTITY_PGP_FINGERPRINT],
                                         )
                                 );
                                 break;

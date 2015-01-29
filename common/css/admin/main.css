@@ -12597,7 +12597,7 @@ img.away {
   -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
 }
 .disabled {
-  color: #ffffff;
+  /*color: #ffffff;*/
 }
 .btn-default.disabled {
   color: #999999;

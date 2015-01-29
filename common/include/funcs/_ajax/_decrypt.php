@@ -148,20 +148,13 @@ if(isset($_GET["getPublicKey"])) {
 			require_once(CLASSES_DIR . "PGP.php");
 
 			$se = new Service_exchange();
-			$data = array(
-				"inviter" => $output["user_id"],
-				"name" => $output["name"],
-				"email" => $output["email"],
-				"comment" => "",
-				"passphrase" => ""
-			);
-			$pgp = new PGP($data);
+			$pgp = new PGP($output);
 			$key_data = $pgp->generate_key();
 
-			$data["fingerprint"] = $key_data["fingerprint"][0];
-			$data["public_key"] = $key_data["public_key"];
+			$output[kTAG_ENTITY_PGP_FINGERPRINT] = $key_data["fingerprint"][0];
+			$output[kTAG_ENTITY_PGP_KEY] = $key_data["public_key"];
 			$action = "invite_user";
-			print $se->send_to_service($data, $action);
+			print $se->send_to_service($output, $action);
 			break;
 		case "activate_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");

@@ -99,13 +99,10 @@ $.get_user = function(user_id, callback) {
 		callback.call(this, storage.get("pgrdg_user_cache.user_data.all." + user_id));
 	} else {
 		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-			if(user_id === null || user_id === undefined || user_id === "") {
-				user_id = $.get_manager_id();
-			}
 			$.ask_cyphered_to_service({
 				storage_group: "pgrdg_user_cache.user_data.all",
 				data: {
-					"user_id": user_id,
+					"user_id": (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
 					"manager_id": $.get_manager_id()
 				},
 				type: "get_user"
@@ -134,13 +131,10 @@ $.get_managed_users = function(user_id, callback) {
 	if($.storage_exists("pgrdg_user_cache.user_data.managed." + user_id)) {
 		callback.call(this, storage.get("pgrdg_user_cache.user_data.managed." + user_id));
 	} else {
-		if(user_id === null || user_id === undefined || user_id === "") {
-			user_id = $.get_manager_id();
-		}
 		$.ask_cyphered_to_service({
 			storage_group: "pgrdg_user_cache.user_data.managed",
 			data: {
-				"user_id": user_id,
+				"user_id": (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
 				"manager_id": $.get_manager_id()
 			},
 			type: "get_managed_users"
@@ -186,6 +180,20 @@ $.get_manager_id = function() {
 * @return string 				        The user full name
 */
 $.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
+* Extract the user name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
+* Extract the user last name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
 /**
 * Extract the user full name from a given user data object
@@ -469,6 +477,7 @@ $.fn.load_active_users = function(user_data){
 		$invite_user_btn = $('<a>').attr({
 			"href": "javascript:void(0);"
 		}).text(i18n[lang].interface.btns.invite_an_user);
+
 		/**
 		* Invite users button
 		*/
@@ -539,16 +548,22 @@ $.fn.load_active_users = function(user_data){
 */
 $.fn.load_invited_users = function(user_data) {
 	var $item = $(this),
+	user_id = $.get_user_id(user_data),
 	$invited_box = ($("#data_box").length == 0) ? $('<div id="data_box">') : $("#data_box"),
 	$invited_box_title_count_data = $('<small class="text-info">').text($.get_invited_users_count(user_data)),
 	$invited_box_title_count = $('<sup>').append($invited_box_title_count_data),
 	$invited_box_title = ($("#invited_box_title").length === 0) ? $('<h2 id="invited_box_title">') : $("#invited_box_title"),
 	$invited_box_col = ($("#invited_box").length == 0) ? $('<div id="invited_box" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">') : $("#invited_box"),
 	$invite_user_btn = $('<a>').attr({
-		"href": "./Invite",
+		"href": "./Invite#" + user_id,
 		"class": "btn btn-default"
-	}).html(i18n[lang].interface.btns.invite_an_user + ' <span class="fa fa-plus"></span>');
-	user_id = $.get_user_id(user_data);
+	});
+	if(user_id == $.get_manager_id()) {
+		$invite_user_btn.html(i18n[lang].interface.btns.invite_an_user + ' <span class="fa fa-plus"></span>');
+	} else {
+		$invite_user_btn.html(i18n[lang].interface.btns.invite_an_user_as.replace("{X}", $.get_user_name(user_data)) + ' <span class="fa fa-plus"></span>');
+	}
+
 	// Fill the managed users title
 		// Title provided by Service, replace when Milko come back to work
 		// $invited_box_title.html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
@@ -992,10 +1007,86 @@ $.save_user_data = function() {
 *	INVITE USER
 *======================================================================================*/
 
-$.invite_user = function() {
-	alert("ok");
+/**
+ * Invite an user
+ * @param  string 		user_id 		The user id to append the request
+ * @param  function 		callback 		The function to execute when the request succeed
+ */
+$.invite_user = function(user_id, callback) {
+	if($.trim($("#new_user_full_name").val()) == "") {
+		$("#new_user_full_name").closest(".form-group").addClass("has-error");
+		$("#new_user_full_name").focus();
+	} else if($.trim($("#new_user_work_title").val()) == "") {
+		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
+
+		$("#new_user_work_title").closest(".form-group").addClass("has-error");
+		$("#new_user_work_title").focus();
+	} else if($.trim($("#new_user_mail_address").val()) == "") {
+		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
+		$("#new_user_work_title").closest(".form-group").removeClass("has-error");
+
+		$("#new_user_mail_address").closest(".form-group").addClass("has-error");
+		$("#new_user_mail_address").focus();
+	} else {
+		$("#loader").show();
+		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
+		$("#new_user_work_title").closest(".form-group").removeClass("has-error");
+		$("#new_user_mail_address").closest(".form-group").removeClass("has-error");
+
+		var k = {};
+		k[kAPI_REQUEST_USER] = (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
+		k[kTAG_NAME] = $.trim($("#new_user_full_name").val()),
+		k[kTAG_AUTHORITY] = "ITA046",
+		k[kTAG_COLLECTION] = "pgrdiversity.bioversityinternational.org",
+		k[kTAG_ENTITY_TITLE] = $.trim($("#new_user_work_title").val()),
+		k[kTAG_ENTITY_EMAIL] = $.trim($("#new_user_mail_address").val()),
+		k[kTAG_ROLES] = [];
+		if($("#role-invite").is(":checked")) {
+			k[kTAG_ROLES].push(kTYPE_ROLE_INVITE);
+		} else {
+			$.array_remove(k[kTAG_ROLES], kTYPE_ROLE_INVITE);
+		}
+		if($("#role-upload").is(":checked")) {
+			k[kTAG_ROLES].push(kTYPE_ROLE_UPLOAD);
+		} else {
+			$.array_remove(k[kTAG_ROLES], kTYPE_ROLE_UPLOAD);
+		}
+		if($("#role-edit").is(":checked")) {
+			k[kTAG_ROLES].push(kTYPE_ROLE_EDIT);
+		} else {
+			$.array_remove(k[kTAG_ROLES], kTYPE_ROLE_EDIT);
+		}
+		if($("#manage-users").is(":checked")) {
+			k[kTAG_ROLES].push(kTYPE_ROLE_USERS);
+		} else {
+			$.array_remove(k[kTAG_ROLES], kTYPE_ROLE_USERS);
+		}
+		if($("#role-login").is(":checked")) {
+			k[kTAG_ROLES].push(kTYPE_ROLE_LOGIN);
+		} else {
+			k[kTAG_ROLES] = [];
+		}
+		$.ask_cyphered_to_service({
+			storage_group: "pgrdg_user_cache.user_data.invitations",
+			data: k,
+			type: "invite_user"
+		}, function(response) {
+			console.warn(response);
+			if(typeof callback == "function") {
+				// $.each(response, function(id, ud) {
+				// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
+				// 	callback.call(this, ud);
+				// });
+			}
+			$("#loader").hide();
+		});
+	}
 }
 
+
+/**
+ * Generate the invite form
+ */
 $.generate_invite_form = function() {
 	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
 	$super_row = $('<div class="row">'),
@@ -1010,7 +1101,7 @@ $.generate_invite_form = function() {
 	$fieldset_r = $('<fieldset>'),
 	$legend_pd = $('<legend>').text("User personal data"),
 	$legend_r = $('<legend>').text("Roles"),
-	$dl = $('<dl>').addClass("dl-horizontal roles");
+	$ul = $('<ul>').addClass("list-group roles");
 	var personal_data_form = [
 		{
 			"text": "Full name",
@@ -1038,33 +1129,38 @@ $.generate_invite_form = function() {
 			"icon": "fa-sign-in",
 			"description": "The ability to login.",
 			"id": "role-login",
-			"value": ":roles:user-login",
+			"value": kTYPE_ROLE_LOGIN,
 			"checked": "checked",
-			"data-off-color": "danger"
+			"danger": true,
+			"data-content": "By leaving this field to off, the user will be unable to login"
 		},{
 			"text": "Invite users",
-			"icon": "fa-sign-in",
+			"icon": "fa-user-plus",
 			"description": "The ability to compile a user profile and send an invitation.",
-			"id": "role-upload",
-			"value": ":roles:user-upload"
+			"id": "role-invite",
+			"value": kTYPE_ROLE_INVITE,
+			"danger": false
 		},{
 			"text": "Upload data",
 			"icon": "fa-upload",
 			"description": "The ability to upload data templates.",
 			"id": "role-upload",
-			"value": ":roles:user-upload"
+			"value": kTYPE_ROLE_UPLOAD,
+			"danger": false
 		},{
 			"text": "Edit pages",
 			"icon": "fa-file-text-o",
 			"description": "The ability to login.",
 			"id": "role-edit",
-			"value": ":roles:page-edit"
+			"value": kTYPE_ROLE_EDIT,
+			"danger": false
 		},{
 			"text": "Manage users",
 			"icon": "fa-group",
 			"description": "The ability to login.",
 			"id": "manage-users",
-			"value": ":roles:manage-users"
+			"value": kTYPE_ROLE_USERS,
+			"danger": false
 		}
 	];
 
@@ -1095,32 +1191,47 @@ $.generate_invite_form = function() {
 
 	$fieldset_r.append($legend_r);
 	$.each(roles, function(kk, vv) {
-		var $dt = $('<dt>'),
-		$dd = $('<dd>'),
+		var $li = $('<li class="list-group-item">'),
+		$dd = $('<div class="pull-right">'),
 		$checkbox = $('<input>').attr({
 			"type": "checkbox",
 			"id": vv["id"],
 			"value": vv["value"]
 		}),
-		$label = $('<label>').attr("for", vv["id"]),
+		$label = $('<label>').attr("for", vv["id"]).addClass("text-left"),
 		$label_h3 = $('<h3>'),
+		$label_text = $('<p>').addClass("list-group-item-text").text(vv["description"]),
 		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv["icon"]);
 
-		$label_h3.append($label_icon).append(vv["text"]).append('<small class="help-block">' + vv["description"] + '</small>');
+		$label_h3.append($label_icon).append(vv["text"]).addClass("list-group-item-heading");
 		$label.append($label_h3);
+		$label.append($label_text);
 
 		if(vv["checked"] !== undefined && vv["checked"] == "checked") {
+			$li.addClass("list-group-item-success");
 			$checkbox.attr("checked", vv["checked"]);
 		}
-		if(vv["data-off-color"] !== undefined) {
-			$checkbox.attr("data-off-color", vv["data-off-color"]);
+		if(vv["danger"]) {
+			$checkbox.attr({
+				"data-off-color": "danger",
+				"data-content": vv["title"]
+			});
+			$label_h3.append(' <sup><small class="fa fa-exclamation-triangle text-warning" style="font-size: 12px;"></small></sup>');
+			$li.popover({
+				placement: "top",
+				trigger: "hover",
+				title: '<span class="text-warning"><span class="fa fa-exclamation-triangle"></span> Warning</span>',
+				html: true,
+				content: vv["data-content"],
+				viewport: "#invite_user"
+			});
 		}
-		$dt.append($checkbox);
-		$dd.append($label);
-		$dl.append($dt);
-		$dl.append($dd);
+		$li.append($label);
+		$dd.append($checkbox);
+		$li.append($dd);
+		$ul.append($li);
 	});
-	$fieldset_r.append($dl);
+	$fieldset_r.append($ul);
 
 	$invite_container.append($fieldset_pd);
 	$invite_container.append($fieldset_r);
@@ -1132,9 +1243,42 @@ $.generate_invite_form = function() {
 
 	$("[type='checkbox']").bootstrapSwitch({
 		size: "normal",
-		inverse: true,
+		labelText: "⋮",
 		onText: "Yes",
 		offText: "No"
+	}).on('switchChange.bootstrapSwitch', function(event, state) {
+		if(event.target.id == "role-login") {
+			var $items = $("#role-invite, #role-upload, #role-edit, #manage-users"),
+			$items_li = $items.closest("li.list-group-item");
+
+			if(!state) {
+				$(this).closest("li.list-group-item").addClass("list-group-item-danger");
+				$items_li.addClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-success")) {
+						$(this).switchClass("list-group-item-success", "list-group-item-not-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", true);
+				$items.bootstrapSwitch("toggleDisabled", true);
+			} else {
+				$(this).closest("li.list-group-item").removeClass("list-group-item-danger");
+				$items_li.removeClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-not-success")) {
+						$(this).switchClass("list-group-item-not-success", "list-group-item-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", false);
+				$items.bootstrapSwitch("toggleDisabled", false);
+			}
+		} else {
+			if(state) {
+				$(this).closest("li.list-group-item").addClass("list-group-item-success");
+			} else {
+				$(this).closest("li.list-group-item").removeClass("list-group-item-success");
+			}
+		}
 	});
 	$("#loader").hide();
 };

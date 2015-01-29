@@ -18,8 +18,8 @@
         *
         * This function is a porting of php's htmlentities()
         *
-        * @param  {string} 	The html string to encode
-        * @return {string}         The string encoded
+        * @param  string        str             The html string to encode
+        * @return string                        The string encoded
         */
         $.html_encode = function(str){ return $("<div/>").text(str).html(); };
 
@@ -28,8 +28,8 @@
         *
         * This function is a porting of php's html_entity_decode()
         *
-        * @param  {string} 	The htmlentity string to decode
-        * @return {string}         The string decoded
+        * @param  string 	str             The htmlentity string to decode
+        * @return string                        The string decoded
         */
         $.html_decode = function(str){ return $("<div/>").html(str).text(); };
 
@@ -38,8 +38,8 @@
         *
         * This function is a porting of php's rawurlencode()
         *
-        * @param  {string} 	The string to encode
-        * @return {string}         The string encoded
+        * @param  string        str      	The string to encode
+        * @return string                        The string encoded
         */
         $.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
 
@@ -48,8 +48,8 @@
         *
         * This function is a porting of php's rawurldecode()
         *
-        * @param  {string} 	The string to decode
-        * @return {string}         The string decoded
+        * @param  string        str             The string to decode
+        * @return string                        The string decoded
         */
         $.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
 
@@ -58,8 +58,8 @@
         *
         * This function is a porting of php's base64_encode()
         *
-        * @param  {string} 	The string to encode
-        * @return {string}         The string encoded
+        * @param  string 	str           The string to encode
+        * @return string                      The string encoded
         */
         $.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
 
@@ -68,8 +68,8 @@
         *
         * This function is a porting of php's base64_decode()
         *
-        * @param  {string} 	The string to decode
-        * @return {string}         The string decoded
+        * @param  string 	str           The string to decode
+        * @return string                      The string decoded
         */
         $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
 
@@ -78,33 +78,43 @@
         *
         * This function is a porting of php's ucfirst()
         *
-        * @param  {string}      The string to manipulate
-        * @return {string}      Ucase converted string
+        * @param  string      str               The string to manipulate
+        * @return string                        Ucase converted string
         */
         $.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
 
         /**
          * Repeat a string for 'n' times
          *
-         * @param  {string}     The string to repeat
-         * @return {string}     Repeated string
+         * @param  string     string            The string to repeat
+         * @param  number     n                 The number of times to repeat
+         * @return string                       Repeated string
          */
         $.str_repeat = function(string, n) { return new Array(parseInt(num) + 1).join(string); };
 
         /**
          * Removes duplicate values from an array
          *
-         * @param  {array}      The array to parse
-         * @return {array}      The filtered array
+         * @param  array      array             The array to parse
+         * @return array                        The filtered array
          */
         $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); }); };
 
-/**
- * Clean an array from empty fields
- * @param  {array}      The array to clean
- * @return {array}      The array cleaned
- */
-$.array_clean = function(array) { return array.filter(function(v){ return v !== ""; }); };
+        /**
+         * Clean an array from empty fields
+         * @param  array      array             The array to clean
+         * @return array                        The cleaned array
+         */
+        $.array_clean = function(array) { return array.filter(function(v){ return v !== ""; }); };
+
+        /**
+         * Remove an item from an array
+         * @param  array      array             The target array
+         * @param  string     item              The item to remove
+         * @return array                        The array without the provided item
+         */
+        $.array_remove = function(array, item) { y = $.grep(array, function(value) { return value != item; }); return y; };
+
 
 /**
 * Return if browser has cookie allowed
@@ -115,13 +125,13 @@ $.browser_cookie_status = function() { var cookieEnabled = (navigator.cookieEnab
 
 /**
 * Generates a random id
-* @return {string} Random uuid
+* @return string Random uuid
 */
 $.makeid = function() { var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; for(var i = 0; i <= 16; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); } return text; };
 
 /**
 * Generates a random uuid
-* @return {string} Random uuid
+* @return string Random uuid
 */
 $.uuid = function() { return Math.round(new Date().getTime() + (Math.random() * 100)); };
 
@@ -162,8 +172,8 @@ $.now = function() {
  * and return them in an html link.
  * Taken from http://stackoverflow.com/a/3890175
  *
- * @param       {string}        text            The text to be searched.
- * @param       {string}        ref             If text is passed will ask the service for the right name
+ * @param       string        text            The text to be searched.
+ * @param       string        ref             If text is passed will ask the service for the right name
  * @return an array of URLs.
  */
 $.linkify = function(string, address) {
@@ -223,8 +233,8 @@ $.detect_type = function(value) {
 
 /**
  * Detect the date type and returns in readable format
- * @param  {string} date The string to parse
- * @return {string}      The date in readable format
+ * @param  string date The string to parse
+ * @return string      The date in readable format
  */
 $.right_date = function(date) {
         $.addZero = function(i) {
@@ -254,7 +264,7 @@ $.right_date = function(date) {
  * Parse query string paramaters into an object.
  * taken from https://gist.github.com/kares/956897
  *
- * @param {string} query
+ * @param string query
  */
 $.parse_params = function(query) {
         var re = /([^&=]+)=?([^&]*)/g,
@@ -288,7 +298,7 @@ $.is_touch_device = function() { return "ontouchstart" in window || "onmsgesture
 *
 * Usage: call $.cryptAjax instead of simple $.ajax function
 *
-* @param {string} url     The request target
+* @param string url     The request target
 * @param {object} options Request params
 */
 $.cryptAjax = function(url, options) {

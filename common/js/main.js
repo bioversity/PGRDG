@@ -260,7 +260,7 @@
 				dataType: "json",
 				crossDomain: true,
 				type: "POST",
-				timeout: 30000,
+				timeout: 100000,
 				data: {
 					jCryption: $.jCryption.encrypt(jQuery.param(opt.data), password),
 					type: opt.type
