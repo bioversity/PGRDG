@@ -2985,7 +2985,7 @@ div.user_data dl.roles dd {
 	font-weight: 100;
 }
 
-#user_data_container label {
+#user_data_container .form-group label {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -3149,13 +3149,16 @@ div.user_data dl.roles dd {
 	margin-bottom: 50px;
 }
 
-#invite_user dt.bootstrap-switch {
+#invite_user dt.bootstrap-switch,
+#user_data_container dt.bootstrap-switch {
 	font-weight: normal;
 }
-#invite_user h3 {
+#invite_user h3,
+#user_data_container h3 {
 	margin: 0;
 }
-#invite_container fieldset + fieldset {
+#invite_container fieldset + fieldset.
+#user_data_container fieldset + fieldset {
 	margin-top: 30px;
 }
 .btns-group {

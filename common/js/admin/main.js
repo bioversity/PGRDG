@@ -634,8 +634,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 			"onclick": "$(this).add_typed();",
 			"class": "btn btn-default-white"
 		});
-		$span_col.attr("class", "col-sm-2 col-xs-5");
-		$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+		$span_col.attr("class", "col-sm-4 col-xs-5");
+		$span_col2.attr("class", "col-sm-4 col-xs-6 row");
 
 		$.each($item.find(".row:not(.col-xs-6) input"), function(i) {
 			if($(this).val().length === 0) {
@@ -745,8 +745,10 @@ $.fn.load_user_data_in_form = function(user_id) {
 		});
 
 		var $super_row = $('<div class="row">'),
-		$picture_col = $('<div class="col-xs-12 col-sm-4 col-lg-2 pull-left" id="picture_container">'),
-		$form_col = $('<div class="col-xs-12 col-sm-8 col-lg-10 pull-right" id="user_data_container">'),
+		$picture_col = $('<div class="col-xs-12 col-sm-3 col-lg-2 pull-left" id="picture_container">'),
+		$form_col = $('<div class="col-xs-12 col-sm-8 col-lg-6 well" id="user_data_container">'),
+		$fieldset_pd = $('<fieldset>'),
+		$legend_pd = $('<legend>').text("Personal data"),
 		$picture_shade = $('<div>'),
 		$picture_shade_content = $('<span class="fa fa-pencil"></span>'),
 		$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
@@ -763,11 +765,12 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$picture_div.append($picture_upload_btn);
 		$picture_div.append($picture_upload_btn_input);
 		$picture_col.append($picture_div);
+		$fieldset_pd.append($legend_pd);
 		$item.html("");
 
 		$.each(ud, function(k, v){
 			i++;
-			var $row = $('<div class="row">'),
+			var $row = $('<div class="">'),
 			$form_group = $('<div class="form-group">'),
 			$input_col = $('<div class="col-sm-5">'),
 			$input_group = $('<div class="input-group">'),
@@ -788,7 +791,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$cancel_btn = $('<a>').attr({
 				"href": "javascript:void(0);",
 				"onclick": "$.cancel_user_editing();",
-				"class": "btn btn-default-white pull-left col-sm-offset-1"
+				"class": "btn btn-default-white pull-left"
 			}).html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
 			$submit = $('<a>').attr({
 				"href": "javascript:void(0);",
@@ -835,7 +838,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$row.addClass($.md5(span_label));
 						$row.append($span);
 						$row.append($span_col);
-						$form_group.append($row);
+						$fieldset_pd.append($row);
 					} else {
 						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 						$span.text(span_label);
@@ -846,7 +849,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$form_group.append($span_col);
 					}
 
-					$form_col.append($form_group);
+					$fieldset_pd.append($form_group);
+					$form_col.append($fieldset_pd);
 					$super_row.append($form_col);
 					break;
 				case "read_edit":
@@ -882,8 +886,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 								"value": ""
 							});
 							$row.addClass($.md5(span_label));
-							$span_col.attr("class", "col-sm-2 col-xs-6 col-sm-offset-3").append($input);
-							$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+							$span_col.attr("class", "col-sm-4 col-xs-6 col-sm-offset-3").append($input);
+							$span_col2.attr("class", "col-sm-4 col-xs-6 row");
 							$plus_btn.html('<span class="fa fa-plus text-center">');
 							$input_group_btn.append($plus_btn);
 							$input_group.append($input2);
@@ -905,7 +909,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$form_group.append($span_col);
 					}
 					$form_group.addClass(v[kAPI_PARAM_DATA_TYPE] + "_item");
-					$form_col.append($form_group);
+					$fieldset_pd.append($form_group);
+					$form_col.append($fieldset_pd);
 					$super_row.append($form_col);
 					break;
 				case "edit":
@@ -937,8 +942,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 										"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 										"value": vv[kkk]
 									});
-									$span_col.attr("class", "col-sm-2 col-xs-6").append($input);
-									$span_col2.attr("class", "col-sm-3 col-xs-6 row");
+									$span_col.attr("class", "col-sm-4 col-xs-6").append($input);
+									$span_col2.attr("class", "col-sm-4 col-xs-6 row");
 									$plus_btn.html('<span class="fa fa-plus text-center">');
 									$input_group_btn.append($plus_btn);
 									$input_group.append($input2);
@@ -962,29 +967,34 @@ $.fn.load_user_data_in_form = function(user_id) {
 							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 							"value": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]
 						});
-						$input_col.attr("class", "col-sm-3 col-xs-12").append($input);
+						$input_col.attr("class", "col-sm-5 col-xs-12").append($input);
 						$row.append($input_col);
 					}
 
 					$row.addClass($.md5(span_label));
 					$form_group.addClass(v[kAPI_PARAM_DATA_TYPE] + "_item");
 					$form_group.append($row);
-					$form_col.append($form_group);
+					$fieldset_pd.append($form_group);
+					$form_col.append($fieldset_pd);
 					$super_row.append($form_col);
 
 					break;
 			}
 
 			if(i === $.obj_len(ud)) {
-				$span_col.attr("class", "col-xs-12 col-sm-8 col-md-8 col-lg-8 row").append($cancel_btn).append($submit);
-				$row.append($span_col).append($span_col);
-				$form_group.addClass("btns-group").append($row);
-				$form_col.append($form_group);
+				$span_col.attr("class", "col-xs-12 col-sm-8 col-md-8 col-lg-6 col-xs-offest-3 col-sm-offset-3 col-lg-offset-2").append($cancel_btn).append($submit);
+				$row.append($span_col);
+				$form_group.addClass("btns-group");
+				$form_col.append($fieldset_pd);
+				// Append the roles manager box
+				$form_col.roles_manager_box();
 				$super_row.append($form_col);
+				$super_row.append($row);
 			}
 		});
 		$item.html($super_row);
 
+		$.activate_roles_manager_box();
 		$("#loader").hide();
 		// $("a.add_typed").on("click", function() {
 		//
@@ -1083,56 +1093,28 @@ $.invite_user = function(user_id, callback) {
 	}
 }
 
-
 /**
- * Generate the invite form
+ * Generate the roles manager box
+ * @param  string 		user_id 		The user id to append the request
  */
-$.generate_invite_form = function() {
-	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
-	$super_row = $('<div class="row">'),
-	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
-	$send_btn = $('<a>').attr({
-		"href": "javascript:void(0);",
-		"onclick": "$.invite_user();",
-		"class": "btn btn-default pull-right"
-	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
-	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well"),
-	$fieldset_pd = $('<fieldset>'),
+$.fn.roles_manager_box = function(user_id) {
+	if(user_id === undefined || user_id === null) {
+		user_id = "";
+	}
+	var $item = $(this),
 	$fieldset_r = $('<fieldset>'),
-	$legend_pd = $('<legend>').text("User personal data"),
 	$legend_r = $('<legend>').text("Roles"),
-	$ul = $('<ul>').addClass("list-group roles");
-	var personal_data_form = [
-		{
-			"text": "Full name",
-			"iput-type": "text",
-			"id": "new_user_full_name",
-			"placeholder": "Full name",
-			"separated": false
-		},{
-			"text": "Work title",
-			"iput-type": "text",
-			"id": "new_user_work_title",
-			"placeholder": "Work title",
-			"separated": false
-		},{
-			"text": "E-mail address",
-			"iput-type": "email",
-			"id": "new_user_mail_address",
-			"placeholder": "E-mail address",
-			"separated": true
-		}
-	],
+	$ul = $('<ul>').addClass("list-group roles"),
 	roles = [
 		{
-			"text": "Login",
-			"icon": "fa-sign-in",
+			"text": "Active",
+			"icon": "fa-lock",
 			"description": "The ability to login.",
 			"id": "role-login",
 			"value": kTYPE_ROLE_LOGIN,
 			"checked": "checked",
 			"danger": true,
-			"data-content": "By leaving this field to off, the user will be unable to login"
+			"data-content": "If this field is set to off, the user will be unable to login"
 		},{
 			"text": "Invite users",
 			"icon": "fa-user-plus",
@@ -1164,32 +1146,6 @@ $.generate_invite_form = function() {
 		}
 	];
 
-	$fieldset_pd.append($legend_pd);
-	$.each(personal_data_form, function(k, v) {
-		var $form_group = $('<div class="form-group">'),
-		$row = $('<div class="row">'),
-		$label = $('<label>')
-		$label.addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v["id"]).text(v["text"]),
-		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
-		$field = $('<input>').attr({
-			"type": v["iput-type"],
-			"name": v["id"],
-			"id": v["id"],
-			"placeholder": v["placeholder"],
-			"value": ""
-		}).addClass("form-control");
-
-		$form_col.append($field);
-		$row.append($label);
-		$row.append($form_col);
-		$form_group.append($row);
-		if(v["separated"]) {
-			$fieldset_pd.append("<br />");
-		}
-		$fieldset_pd.append($form_group);
-	});
-
-	$fieldset_r.append($legend_r);
 	$.each(roles, function(kk, vv) {
 		var $li = $('<li class="list-group-item">'),
 		$dd = $('<div class="pull-right">'),
@@ -1229,20 +1185,26 @@ $.generate_invite_form = function() {
 		$li.append($label);
 		$dd.append($checkbox);
 		$li.append($dd);
-		$ul.append($li);
+		if(vv["value"] == kTYPE_ROLE_LOGIN) {
+			if(user_id !== $.get_manager_id()) {
+				$ul.append($li);
+			}
+		} else {
+			$ul.append($li);
+		}
 	});
+
+	$fieldset_r.append($legend_r);
 	$fieldset_r.append($ul);
+	$item.append($fieldset_r);
+}
 
-	$invite_container.append($fieldset_pd);
-	$invite_container.append($fieldset_r);
-	$btn_row.append($send_btn);
-	$super_row.append($invite_container);
-	$super_row.append($btn_row);
-	$invite_div.html($super_row);
-	$invite_div.append("<br /><br />");
-
+/**
+ * Activate the bootstrapSwitch feature on roles manager form
+ */
+$.activate_roles_manager_box = function() {
 	$("[type='checkbox']").bootstrapSwitch({
-		size: "normal",
+		size: "small",
 		labelText: "⋮",
 		onText: "Yes",
 		offText: "No"
@@ -1280,6 +1242,81 @@ $.generate_invite_form = function() {
 			}
 		}
 	});
+}
+
+/**
+ * Generate the invite form
+ */
+$.generate_invite_form = function() {
+	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
+	$super_row = $('<div class="row">'),
+	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
+	$send_btn = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.invite_user();",
+		"class": "btn btn-default pull-right"
+	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
+	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well"),
+	$fieldset_pd = $('<fieldset>'),
+	$legend_pd = $('<legend>').text("User personal data"),
+	personal_data_form = [
+		{
+			"text": "Full name",
+			"iput-type": "text",
+			"id": "new_user_full_name",
+			"placeholder": "Full name",
+			"separated": false
+		},{
+			"text": "Work title",
+			"iput-type": "text",
+			"id": "new_user_work_title",
+			"placeholder": "Work title",
+			"separated": false
+		},{
+			"text": "E-mail address",
+			"iput-type": "email",
+			"id": "new_user_mail_address",
+			"placeholder": "E-mail address",
+			"separated": true
+		}
+	];
+
+	$fieldset_pd.append($legend_pd);
+	$.each(personal_data_form, function(k, v) {
+		var $form_group = $('<div class="form-group">'),
+		$row = $('<div class="row">'),
+		$label = $('<label>')
+		$label.addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v["id"]).text(v["text"]),
+		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
+		$field = $('<input>').attr({
+			"type": v["iput-type"],
+			"name": v["id"],
+			"id": v["id"],
+			"placeholder": v["placeholder"],
+			"value": ""
+		}).addClass("form-control");
+
+		$form_col.append($field);
+		$row.append($label);
+		$row.append($form_col);
+		$form_group.append($row);
+		if(v["separated"]) {
+			$fieldset_pd.append("<br />");
+		}
+		$fieldset_pd.append($form_group);
+	});
+
+
+	$invite_container.append($fieldset_pd);
+	// Append the roles manager box
+	$invite_container.roles_manager_box();
+	$btn_row.append($send_btn);
+	$super_row.append($invite_container);
+	$super_row.append($btn_row);
+	$invite_div.html($super_row);
+	$invite_div.append("<br /><br />");
+
+	$.activate_roles_manager_box();
 	$("#loader").hide();
 };
 
