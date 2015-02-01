@@ -1,3 +1,4 @@
+<h1><?php print $page->title; ?></h1>
 <?php
 $super_root = "common/media/pdf/Conservation_Strategies";
 $super_root_files = array_diff(scandir($super_root), array("..", "."));

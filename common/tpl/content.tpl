@@ -25,6 +25,7 @@
 
 				$md_page = str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md";
 				if(file_exists("common/md/" . $md_page)) {
+					print "<h1>" . $page->title . "</h1>";
 					print optimize(Markdown(file_get_contents("common/md/" . $md_page)));
 				}
 

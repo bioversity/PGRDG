@@ -1,3 +1,4 @@
+<h1><?php print $page->title; ?></h1>
 <h3>Annual Species grown by households, area and contribution to food and income</h3>
 <br />
 <br />

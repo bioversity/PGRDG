@@ -209,9 +209,27 @@ class Parse_json {
 		// print_r($pp[$variable]);
 		// print_r($this->search($pp, "address", $page->current));
 		// exit();
-			if(strlen($page->current) == 0 || array_key_exists($page->current, $pp[$variable])) {
+			foreach($pp[$variable] as $k => $v) {
+				if(count($v["subpages"]) == 1) {
+					$pages_list[(($v["address"] !== "") ? $v["address"] : "Home")] = $v;
+				} else {
+					foreach($v as $kk => $vv) {
+						if($kk !== "subpages") {
+							$a[$kk] = $v[$kk];
+						}
+					}
+					$pages_list[(($v["address"] !== "") ? $v["address"] : "Home")] = $a;
+
+					foreach($v["subpages"] as $kkk => $vvv) {
+						$pages_list[(($vvv["address"] !== "") ? $vvv["address"] : "Home")] = $vvv;
+					}
+				}
+			}
+			// print_r($pages_list);
+			// exit();
+			if(strlen($page->current) == 0 || array_key_exists($page->current, $pages_list)) {
 				$page->exists = true;
-				foreach($this->search($pp, "address", $page->current)[0] as $i => $v) {
+				foreach($this->search($pages_list, "address", $page->current)[0] as $i => $v) {
 					$page->$i = $v;
 				};
 			} else {
@@ -240,8 +258,8 @@ class Parse_json {
 				}
 			}
 		}
-		return $page;
 		// print_r($page);
+		return $page;
 	}
 
 }

@@ -2,7 +2,11 @@
 if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !LOGGED) {
 	$page_class = "map";
 } else {
-	$page_class = implode(" ", $page->class);
+	if(count($page->class) > 1) {
+		$page_class = implode(" ", $page->class);
+	} else {
+		$page_class = "";
+	}
 }
 ?>
 <header class="main <?php print $page_class; ?>">
