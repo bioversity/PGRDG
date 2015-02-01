@@ -441,10 +441,10 @@ a:focus sup {
 	top: 50%;
 	width: 44px;
 
-	-webkit-animation: 1.2s linear 0s normal none infinite running spin;
-	-moz-animation: 1.2s linear 0s normal none infinite running spin;
-	-o-animation: 1.2s linear 0s normal none infinite running spin;
-	animation: 1.2s linear 0s normal none infinite running spin;
+	-webkit-animation: rotate 1.2s linear 0s infinite;
+	-moz-animation: rotate 1.2s linear 0s infinite;
+	-o-animation: rotate 1.2s linear 0s infinite;
+	animation: rotate 1.2s linear 0s infinite;
 }
 
 

@@ -179,7 +179,7 @@ $.get_manager_id = function() {
 * @param  object		user_data 		The user data object
 * @return string 				        The user full name
 */
-$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+$.get_user_full_name = function(user_data) { console.log(user_data); return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
 /**
 * Extract the user name from a given user data object
@@ -1408,7 +1408,14 @@ $.load_profile = function() {
 };
 
 
+/**
+ * [set_breadcrumb description]
+ */
 $.set_breadcrumb = function() {
+	$.fn.set_user_name = function(user_data) {
+		$(this).text($.get_user_full_name(user_data));
+	};
+
 	var $hash = $.url().fsegment(),
 	user_name = "",
 	$ol = ($("#ribbon > ol.breadcrum").length === 0) ? $('<ol class="breadcrumb">') : $("#ribbon > ol.breadcrum"),
@@ -1422,9 +1429,13 @@ $.set_breadcrumb = function() {
 	$ol.html($li_home);
 	$.each($hash, function(k, v) {
 		if(v.length == 40) {
-			user_name = $.get_user_full_name(storage.get("pgrdg_user_cache.user_data.all." + v));
-			$li.text(user_name);
-
+			if(!$.storage_exists("pgrdg_user_cache.user_data.all." + v)) {
+				$.get_user(v, function(user_data) {
+					$li.set_user_name(user_data);
+				});
+			} else {
+				$li.set_user_name(storage.get("pgrdg_user_cache.user_data.all." + v));
+			}
 			if($hash[1] !== undefined && $hash[1].length == 40) {
 				hash_title = $hash[1];
 			}

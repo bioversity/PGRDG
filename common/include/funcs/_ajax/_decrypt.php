@@ -123,11 +123,14 @@ if(isset($_GET["getPublicKey"])) {
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
 			$login = $se->send_to_service($output, "get_user");
-			$user_data = json_decode($login, 1);
+			$ud = json_decode($login, 1);
+			// foreach($ud as $k => $v){
+			// 	$user_data = $v;
+			// }
 			// header("Content-type: text/plain");
-			// print_r($login);
+			// print_r($user_data);
 			// exit();
-			print json_encode($user_data);
+			print json_encode($ud);
 			break;
 		case "get_managed_users":
 			require_once(CLASSES_DIR . "Service_exchange.php");
