@@ -243,7 +243,6 @@
                                         }
                                         $.sub_toolbox("tools");
                                         $("#tools li.selected").removeClass("selected");
-                                        console.warn($.get_drawned_bounds(evt));
                                         apprise(i18n[lang].messages.map.selected_area
                                                 .replace("{X}", evt.layerType)
                                                 .replace("{Y}", $.highlight(area.toFixed(3)))
@@ -269,7 +268,7 @@
                                                         // if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
                                                         //         formatted = storage.get("pgrdg_cache.search.criteria.select_map_area");
                                                         // } else {
-                                                                formatted = $.get_drawned_bounds(evt.layer);
+                                                                formatted = $.get_drawned_bounds(evt);
 
                                                                 storage.set("pgrdg_cache.search.criteria.select_map_area", formatted);
 

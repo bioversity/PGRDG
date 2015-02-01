@@ -89,7 +89,7 @@ if($page->is_backend) {
 		?>
 		<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 		<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
-		
+
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main.js"></script>
 		<?php
 	}
@@ -109,8 +109,8 @@ if($page->is_backend) {
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map3.js"></script-->
 
 		<!-- Leaflet -->
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/dist/leaflet.js"></script>
-		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/dist/leaflet.css" />
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/leaflet.js"></script>
+		<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/leaflet/Leaflet-0.7.3/leaflet.css" />
 			<!-- Providers -->
 			<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/leaflet-providers/leaflet-providers.js"></script>
 			<!-- Marker cluster-->
