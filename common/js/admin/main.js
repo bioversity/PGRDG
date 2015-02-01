@@ -179,7 +179,7 @@ $.get_manager_id = function() {
 * @param  object		user_data 		The user data object
 * @return string 				        The user full name
 */
-$.get_user_full_name = function(user_data) { console.log(user_data); return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
 /**
 * Extract the user name from a given user data object
@@ -681,6 +681,19 @@ $.fn.load_user_data_in_form = function(user_id) {
 	if(user_id === undefined || user_id === null || user_id === "") {
 		user_id = $.get_manager_id();
 	}
+	if($.storage_exists("pgrdg_user_cache.user_data.current")) {
+		if($.get_manager_id() !== user_id) {
+			// Managed user profile
+			if($.storage_exists("pgrdg_user_cache.user_data.current")) {
+				$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, manager_data) {
+					$("#contents").generate_manager_profile(manager_data);
+				});
+			}
+		} else {
+			$("#managers").remove();
+		}
+	}
+
 	var $item = $(this),
 	ud = {},
 	i = 0;
@@ -1164,7 +1177,11 @@ $.fn.roles_manager_box = function(user_id) {
 		$label.append($label_text);
 
 		if(vv["checked"] !== undefined && vv["checked"] == "checked") {
-			$li.addClass("list-group-item-success");
+			if(vv["value"] == kTYPE_ROLE_LOGIN) {
+				$li.addClass("list-group-item-success");
+			} else {
+				$li.addClass("list-group-item-success");
+			}
 			$checkbox.attr("checked", vv["checked"]);
 		}
 		if(vv["danger"]) {

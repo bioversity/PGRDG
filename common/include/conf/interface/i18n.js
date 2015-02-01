@@ -39,7 +39,7 @@ var i18n = {
                         },
                         "insert_password": {
                                 "title": "Confirm your identity",
-                                "message": "Please insert your password to validate your edits"
+                                "message": "Please insert your password to validate your identity"
                         },
                         "invite_an_user": "Invite an user",
                         "invited_users": "Invited users",
