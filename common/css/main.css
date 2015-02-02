@@ -3005,6 +3005,9 @@ div.user_data dl.roles dd {
 		margin-left: -95px;
 		left: 50%;
 	}
+	#picture + small {
+		display: none;
+	}
 	#user_data_container {
 		padding: 0 30px;
 	}

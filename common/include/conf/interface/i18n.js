@@ -12,6 +12,10 @@ var i18n = {
                         "add_another_group_field": "Add another group field",
                         "contacts": "Contacts",
                         "created_users": "Created users",
+                        "delete_invitation": {
+                                "title": "Are you sure to remove this invitation?",
+                                "message": "This user will not be able to accept his invitation."
+                        },
                         "disable_item": "Disable this item",
                         "enable_item": "Enable this item",
                         "errors": {

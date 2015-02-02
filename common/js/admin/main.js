@@ -197,6 +197,13 @@ $.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI
 $.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
 /**
+* Extract the user last name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_pgp_fingerprint = function(user_data) { return user_data[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
 * Extract the user full name from a given user data object
 * @param  object		user_data 		The user data object
 * @param  bool			show_authority 		Display or not the authority name
@@ -370,9 +377,9 @@ $.fn.generate_profile = function(user_data) {
 	}
 	var $super_row = $('<div class="row">'),
 	$picture_col = $('<div class="col-xs-12 col-sm-3 col-md-4 col-lg-2 pull-left">'),
-	$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-10 pull-right">'),
-	$content_left_col = $('<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">'),
-	$content_right_col = $('<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">'),
+	$form_col = $('<div class="col-xs-12 col-sm-9 col-md-8 col-lg-9 pull-right">'),
+	$content_left_col = $('<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">'),
+	$content_right_col = $('<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">'),
 	$user_data_title_row = $('<h1>'),
 	$user_data = $('<div class="col-xs-10 col-sm-7 col-sm-8 col-lg-8 pull-left">'),
 	$user_data_right_btns = $('<div class="col-xs-2 col-sm-5 col-lg-4 pull-right">'),
@@ -395,7 +402,7 @@ $.fn.generate_profile = function(user_data) {
 		"alt": "me"
 	}),
 	$picture_div = $('<div id="picture">'),
-	$static_data = $('<small class="help-block hidden-xs hidden-sm hidden-md">');
+	$static_data = $('<small class="help-block hidden-xs hidden-sm">');
 	$picture_col.append($picture_div);
 	var data_labels = [
 		{"label": "invited on","value": $.right_date(user_data[kTAG_VERSION][kAPI_PARAM_RESPONSE_FRMT_DISP])},
@@ -486,6 +493,20 @@ $.fn.load_user_data = function(user_id) {
 			$item.generate_profile(ud);
 		});
 	}
+};
+
+$.delete_invitation = function(invited_id) {
+	apprise(i18n[lang].messages.delete_invitation.message, {
+		title: i18n[lang].messages.delete_invitation.title,
+		icon: "warning",
+		confirm: true,
+		yesBtn: "Yes",
+		noBtn: "No"
+	}, function(r) {
+		if(r) {
+			// I NEED THE SERVICE
+		}
+	});
 };
 
 /**
@@ -624,9 +645,9 @@ $.fn.load_invited_users = function(user_data) {
 			invited_user_email = $.get_user_email(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]),
 			$li = $('<li class="list-group-item">'),
 			$div_row = $('<div class="row">'),
-			$div_col_left = $('<div class="col-lg-7">'),
-			$div_col_center = $('<div class="col-lg-3">'),
-			$div_col_right = $('<div class="col-lg-2 text-right">');
+			$div_col_left = $('<div class="col-xs-7">'),
+			$div_col_center = $('<div class="col-xs-3">'),
+			$div_col_right = $('<div class="col-xs-2 text-right">');
 
 			$a = $('<a>').attr({
 				"href": "mailto:" + invited_user_name
@@ -643,7 +664,7 @@ $.fn.load_invited_users = function(user_data) {
 			$p_roles.load_invited_roles_icon(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]);
 			$p_roles.tooltip();
 			$div_col_center.html($p_roles);
-			$div_col_right.html('<span class="btn btn-default-white"><span class="fa fa-trash"></span></span>');
+			$div_col_right.html('<a class="btn btn-default-white" href="javascript:void(0);" onclick="$.delete_invitation(\'' + $.get_user_pgp_fingerprint(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '\')"><span class="fa fa-trash"></span></span>');
 
 			$div_row.append($div_col_left).append($div_col_center).append($div_col_right);
 			$li.append($div_row);
