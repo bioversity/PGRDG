@@ -97,6 +97,7 @@ $.get_user = function(user_id, callback) {
 	$("#loader").show();
 	if($.storage_exists("pgrdg_user_cache.user_data.all." + user_id)) {
 		callback.call(this, storage.get("pgrdg_user_cache.user_data.all." + user_id));
+		console.log(storage.get("pgrdg_user_cache.user_data.all." + user_id));
 	} else {
 		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 			$.ask_cyphered_to_service({
@@ -117,7 +118,7 @@ $.get_user = function(user_id, callback) {
 			});
 		} else {
 			$.cookie("l", null, {path: "/"});
-			document.location = "./Signin"
+			document.location = "./Signin";
 		}
 	}
 };
@@ -215,11 +216,31 @@ $.fn.get_user_work_position = function(user_data, show_authority) {
 };
 
 /**
+* Extract the user default e-mail address from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
 * Extract the user image path from a given user data object
 * @param  object		user_data 		The user data object
 * @return string 				        The user image source
 */
-$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] == undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] };
+$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+/**
+ * Extract all user permissions and list in verbose mode from a given user data object
+ * @param  object 		user_data 		The user data object
+ * @return string           				A verbose string of user permissions
+ */
+$.get_user_roles_list = function(user_data) {
+	var list = [];
+	$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+		list.push(v[kAPI_PARAM_RESPONSE_FRMT_DISP]);
+	});
+	return list.join(", ");
+};
 
 /**
 * Extract the count of user's managed users from a given user data object
@@ -233,7 +254,7 @@ $.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG
 * @param  object		user_data 		The user data object
 * @return number 				        The count of invited users
 */
-$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : parseInt(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
 
 /**
 * Generate the manager top box
@@ -547,16 +568,42 @@ $.fn.load_active_users = function(user_data){
 * @param  void 			user_data 		The object of user data.
 */
 $.fn.load_invited_users = function(user_data) {
+	$.fn.load_invited_roles_icon = function(user_data) {
+		var $item = $(this);
+		$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE], function(k, v) {
+			var $span = $('<span class="fa fa-fw text-info">&nbsp;');
+			switch(v) {
+				case kTYPE_ROLE_LOGIN:
+					$span.addClass("fa-sign-in");
+					break;
+				case kTYPE_ROLE_INVITE:
+					$span.addClass("fa-certificate");
+					break;
+				case kTYPE_ROLE_UPLOAD:
+					$span.addClass("fa-upload");
+					break;
+				case kTYPE_ROLE_EDIT:
+					$span.addClass("fa-edit");
+					break;
+				case kTYPE_ROLE_USERS:
+					$span.addClass("fa-group");
+					break;
+			}
+			$item.append($span);
+		});
+	};
+
 	var $item = $(this),
 	user_id = $.get_user_id(user_data),
-	$invited_box = ($("#data_box").length == 0) ? $('<div id="data_box">') : $("#data_box"),
+	$invited_box = ($("#data_box").length === 0) ? $('<div id="data_box">') : $("#data_box"),
 	$invited_box_title_count_data = $('<small class="text-info">').text($.get_invited_users_count(user_data)),
 	$invited_box_title_count = $('<sup>').append($invited_box_title_count_data),
 	$invited_box_title = ($("#invited_box_title").length === 0) ? $('<h2 id="invited_box_title">') : $("#invited_box_title"),
-	$invited_box_col = ($("#invited_box").length == 0) ? $('<div id="invited_box" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">') : $("#invited_box"),
+	$invited_ul = $('<ul class="list-group">'),
+	$invited_box_col = ($("#invited_box").length === 0) ? $('<div id="invited_box" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">') : $("#invited_box"),
 	$invite_user_btn = $('<a>').attr({
 		"href": "./Invite#" + user_id,
-		"class": "btn btn-default"
+		"class": "btn btn-default pull-right"
 	});
 	if(user_id == $.get_manager_id()) {
 		$invite_user_btn.html(i18n[lang].interface.btns.invite_an_user + ' <span class="fa fa-plus"></span>');
@@ -566,20 +613,53 @@ $.fn.load_invited_users = function(user_data) {
 
 	// Fill the managed users title
 		// Title provided by Service, replace when Milko come back to work
-		// $invited_box_title.html(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
+		// $invited_box_title.html(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_NAME] + " ");
 	$invited_box_title.html(i18n[lang].messages.invited_users + " ");
 	$invited_box_title.append($invited_box_title_count);
 
 	if($.get_invited_users_count(user_data) > 0) {
 		// Proceed with invites extraction
+		$.each(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+			var invited_user_name = $.get_user_full_name(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]),
+			invited_user_email = $.get_user_email(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]),
+			$li = $('<li class="list-group-item">'),
+			$div_row = $('<div class="row">'),
+			$div_col_left = $('<div class="col-lg-7">'),
+			$div_col_center = $('<div class="col-lg-3">'),
+			$div_col_right = $('<div class="col-lg-2 text-right">');
+
+			$a = $('<a>').attr({
+				"href": "mailto:" + invited_user_name
+			}),
+			$p = $('<p>'),
+			$p_roles = $('<p>');
+			$a.text(invited_user_name);
+			$p.html('<span class="fa fa-user-secret fa-fw text-muted"></span> ');
+			$p.append($a);
+			$p.append(' <sup class="fa fa-envelope-o"></sup>');
+			$div_col_left.html($p);
+
+			$p_roles.attr("title", i18n[lang].messages.this_user_will_be_able_to + " " + $.get_user_roles_list(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]));
+			$p_roles.load_invited_roles_icon(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]);
+			$p_roles.tooltip();
+			$div_col_center.html($p_roles);
+			$div_col_right.html('<span class="btn btn-default-white"><span class="fa fa-trash"></span></span>');
+
+			$div_row.append($div_col_left).append($div_col_center).append($div_col_right);
+			$li.append($div_row);
+			$invited_ul.append($li);
+		});
+		$invited_box_col.html($invited_ul);
+		$invited_box_col.append($invite_user_btn);
+		$invited_box.html($invited_box_col);
 	} else {
-		$invited_box_col.html("<p>" + i18n[lang].messages.no_invited_users_yet + "</p><br />").append($invite_user_btn);
+		$invited_box_col.html('<p class="pull-left text-muted"><i>' + i18n[lang].messages.no_invited_users_yet + "</i></p>").append($invite_user_btn);
 		$invited_box.append($invited_box_col);
 	}
 
 	$invited_box.addClass("row").insertAfter($item);
 	$invited_box_title.insertBefore($invited_box);
-}
+};
 
 
 /*=======================================================================================
@@ -1036,15 +1116,15 @@ $.save_user_data = function() {
  * @param  function 		callback 		The function to execute when the request succeed
  */
 $.invite_user = function(user_id, callback) {
-	if($.trim($("#new_user_full_name").val()) == "") {
+	if($.trim($("#new_user_full_name").val()) === "") {
 		$("#new_user_full_name").closest(".form-group").addClass("has-error");
 		$("#new_user_full_name").focus();
-	} else if($.trim($("#new_user_work_title").val()) == "") {
+	} else if($.trim($("#new_user_work_title").val()) === "") {
 		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
 
 		$("#new_user_work_title").closest(".form-group").addClass("has-error");
 		$("#new_user_work_title").focus();
-	} else if($.trim($("#new_user_mail_address").val()) == "") {
+	} else if($.trim($("#new_user_mail_address").val()) === "") {
 		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
 		$("#new_user_work_title").closest(".form-group").removeClass("has-error");
 
@@ -1104,7 +1184,7 @@ $.invite_user = function(user_id, callback) {
 			$("#loader").hide();
 		});
 	}
-}
+};
 
 /**
  * Generate the roles manager box
@@ -1164,30 +1244,30 @@ $.fn.roles_manager_box = function(user_id) {
 		$dd = $('<div class="pull-right">'),
 		$checkbox = $('<input>').attr({
 			"type": "checkbox",
-			"id": vv["id"],
-			"value": vv["value"]
+			"id": vv.id,
+			"value": vv.value
 		}),
-		$label = $('<label>').attr("for", vv["id"]).addClass("text-left"),
+		$label = $('<label>').attr("for", vv.id).addClass("text-left"),
 		$label_h3 = $('<h3>'),
-		$label_text = $('<p>').addClass("list-group-item-text").text(vv["description"]),
-		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv["icon"]);
+		$label_text = $('<p>').addClass("list-group-item-text").text(vv.description),
+		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv.icon);
 
-		$label_h3.append($label_icon).append(vv["text"]).addClass("list-group-item-heading");
+		$label_h3.append($label_icon).append(vv.text).addClass("list-group-item-heading");
 		$label.append($label_h3);
 		$label.append($label_text);
 
-		if(vv["checked"] !== undefined && vv["checked"] == "checked") {
-			if(vv["value"] == kTYPE_ROLE_LOGIN) {
+		if(vv.checked !== undefined && vv.checked == "checked") {
+			if(vv.value == kTYPE_ROLE_LOGIN) {
 				$li.addClass("list-group-item-success");
 			} else {
 				$li.addClass("list-group-item-success");
 			}
-			$checkbox.attr("checked", vv["checked"]);
+			$checkbox.attr("checked", vv.checked);
 		}
-		if(vv["danger"]) {
+		if(vv.danger) {
 			$checkbox.attr({
 				"data-off-color": "danger",
-				"data-content": vv["title"]
+				"data-content": vv.title
 			});
 			$label_h3.append(' <sup><small class="fa fa-exclamation-triangle text-warning" style="font-size: 12px;"></small></sup>');
 			$li.popover({
@@ -1202,7 +1282,7 @@ $.fn.roles_manager_box = function(user_id) {
 		$li.append($label);
 		$dd.append($checkbox);
 		$li.append($dd);
-		if(vv["value"] == kTYPE_ROLE_LOGIN) {
+		if(vv.value == kTYPE_ROLE_LOGIN) {
 			if(user_id !== $.get_manager_id()) {
 				$ul.append($li);
 			}
@@ -1214,7 +1294,7 @@ $.fn.roles_manager_box = function(user_id) {
 	$fieldset_r.append($legend_r);
 	$fieldset_r.append($ul);
 	$item.append($fieldset_r);
-}
+};
 
 /**
  * Activate the bootstrapSwitch feature on roles manager form
@@ -1302,14 +1382,13 @@ $.generate_invite_form = function() {
 	$.each(personal_data_form, function(k, v) {
 		var $form_group = $('<div class="form-group">'),
 		$row = $('<div class="row">'),
-		$label = $('<label>')
-		$label.addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v["id"]).text(v["text"]),
+		$label = $('<label>').addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v.id).text(v.text),
 		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
 		$field = $('<input>').attr({
 			"type": v["iput-type"],
-			"name": v["id"],
-			"id": v["id"],
-			"placeholder": v["placeholder"],
+			"name": v.id,
+			"id": v.id,
+			"placeholder": v.placeholder,
 			"value": ""
 		}).addClass("form-control");
 
@@ -1317,7 +1396,7 @@ $.generate_invite_form = function() {
 		$row.append($label);
 		$row.append($form_col);
 		$form_group.append($row);
-		if(v["separated"]) {
+		if(v.separated) {
 			$fieldset_pd.append("<br />");
 		}
 		$fieldset_pd.append($form_group);

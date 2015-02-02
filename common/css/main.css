@@ -3149,6 +3149,9 @@ div.user_data dl.roles dd {
 	margin-bottom: 50px;
 }
 
+#invited_box p {
+	margin: 10px 0 0 0;
+}
 #invite_user dt.bootstrap-switch,
 #user_data_container dt.bootstrap-switch {
 	font-weight: normal;

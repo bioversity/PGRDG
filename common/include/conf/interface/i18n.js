@@ -88,7 +88,7 @@ var i18n = {
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
                         "no_entries_found": "No entries found",
-                        "no_invited_users_yet": "There's no invited users, yet",
+                        "no_invited_users_yet": "No users invited, yet",
                         "no_results": "No results",
                         "offsets": "{X} offsets",
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
@@ -140,6 +140,7 @@ var i18n = {
                                 }
                         },
                         "text_has_produced_zero_results": "Entered text has produced 0 results",
+                        "this_user_will_be_able_to": "This user will be able to:",
                         "undo_user_profile": {
                                 "title": "Are you sure to cancel all editings?",
                                 "message": "By choosing \"Yes\" you may lose your changes.<br />Do you want to continue?"
