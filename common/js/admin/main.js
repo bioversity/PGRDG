@@ -155,113 +155,144 @@ $.get_managed_users = function(user_id, callback) {
 	}
 };
 
-/**
- * Extract the user identifier from a given user data object
- * @param  object		user_data 		The user data object
- * @return string 			   	     The user identifier
- */
-$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the manager (logged) user identifier from the storage
-* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
-* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
-*/
-$.get_manager_id = function() {
-	var manager_id = "";
-	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-		manager_id = $.get_user_id(mdata);
-	});
-	return manager_id;
-};
+/*=======================================================================================
+*	USER DATA EXTRACTION
+*======================================================================================*/
 
-/**
-* Extract the user full name from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user full name
-*/
-$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	 * Extract the user identifier from a given user data object
+	 * @param  object		user_data 		The user data object
+	 * @return string 			   	     The user identifier
+	 */
+	$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the user name from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user full name
-*/
-$.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	* Extract the manager (logged) user identifier from the storage
+	* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
+	* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
+	*/
+	$.get_manager_id = function() {
+		var manager_id = "";
+		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
+			manager_id = $.get_user_id(mdata);
+		});
+		return manager_id;
+	};
 
-/**
-* Extract the user last name from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user full name
-*/
-$.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	* Extract the user full name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_database = function(user_data) { return user_data[kTAG_CONN_BASE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the user last name from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user full name
-*/
-$.get_user_pgp_fingerprint = function(user_data) { return user_data[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	* Extract the user full name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_authority = function(user_data) { return user_data[kTAG_AUTHORITY][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the user full name from a given user data object
-* @param  object		user_data 		The user data object
-* @param  bool			show_authority 		Display or not the authority name
-* @return string 				        The user full name
-*/
-$.fn.get_user_work_position = function(user_data, show_authority) {
-	var $item = $(this);
-	sha = (show_authority === undefined) ? true : show_authority;
+	/**
+	* Extract the user full name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
-		var item_data = user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP];
-		if(sha) {
-			item_data += " at " + authority;
-		}
-		$item.html(item_data);
-	});
-};
+	/**
+	* Extract the user name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_username = function(user_data) { return user_data[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the user default e-mail address from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user full name
-*/
-$.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	* Extract the user name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the user image path from a given user data object
-* @param  object		user_data 		The user data object
-* @return string 				        The user image source
-*/
-$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+	/**
+	* Extract the user last name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
- * Extract all user permissions and list in verbose mode from a given user data object
- * @param  object 		user_data 		The user data object
- * @return string           				A verbose string of user permissions
- */
-$.get_user_roles_list = function(user_data) {
-	var list = [];
-	$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-		list.push(v[kAPI_PARAM_RESPONSE_FRMT_DISP]);
-	});
-	return list.join(", ");
-};
+	/**
+	* Extract the user last name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_pgp_fingerprint = function(user_data) { return user_data[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-/**
-* Extract the count of user's managed users from a given user data object
-* @param  object		user_data 		The user data object
-* @return number 				        The count of managed users
-*/
-$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+	/**
+	* Extract the user full name from a given user data object
+	* @param  object		user_data 		The user data object
+	* @param  bool			show_authority 		Display or not the authority name
+	* @return string 				        The user full name
+	*/
+	$.fn.get_user_work_position = function(user_data, show_authority) {
+		var $item = $(this);
+		sha = (show_authority === undefined) ? true : show_authority;
 
-/**
-* Extract the count of user's invites from a given user data object
-* @param  object		user_data 		The user data object
-* @return number 				        The count of invited users
-*/
-$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
+		$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
+			var item_data = user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP];
+			if(sha) {
+				item_data += " at " + authority;
+			}
+			$item.html(item_data);
+		});
+	};
+
+	/**
+	* Extract the user default e-mail address from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user full name
+	*/
+	$.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+	/**
+	* Extract the user image path from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return string 				        The user image source
+	*/
+	$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+	/**
+	 * Extract all user permissions and list in verbose mode from a given user data object
+	 * @param  object 		user_data 		The user data object
+	 * @return string           				A verbose string of user permissions
+	 */
+	$.get_user_roles_list = function(user_data) {
+		var list = [];
+		$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+			list.push(v[kAPI_PARAM_RESPONSE_FRMT_DISP]);
+		});
+		return list.join(", ");
+	};
+
+	/**
+	* Extract the count of user's managed users from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return number 				        The count of managed users
+	*/
+	$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+
+	/**
+	* Extract the count of user's invites from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return number 				        The count of invited users
+	*/
+	$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
+
+
+/*=======================================================================================
+*	CONTENT GENERATION
+*======================================================================================*/
 
 /**
 * Generate the manager top box
@@ -493,20 +524,6 @@ $.fn.load_user_data = function(user_id) {
 			$item.generate_profile(ud);
 		});
 	}
-};
-
-$.delete_invitation = function(invited_id) {
-	apprise(i18n[lang].messages.delete_invitation.message, {
-		title: i18n[lang].messages.delete_invitation.title,
-		icon: "warning",
-		confirm: true,
-		yesBtn: "Yes",
-		noBtn: "No"
-	}, function(r) {
-		if(r) {
-			// I NEED THE SERVICE
-		}
-	});
 };
 
 /**
@@ -1101,7 +1118,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 				$form_group.addClass("btns-group");
 				$form_col.append($fieldset_pd);
 				// Append the roles manager box
-				$form_col.roles_manager_box();
+				$form_col.roles_manager_box(user_id, user_data[kTAG_ROLES]);
 				$super_row.append($form_col);
 				$super_row.append($row);
 			}
@@ -1130,6 +1147,243 @@ $.save_user_data = function() {
 /*=======================================================================================
 *	INVITE USER
 *======================================================================================*/
+
+/**
+* Generate the invite form
+*/
+$.generate_invite_form = function() {
+	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
+	$super_row = $('<div class="row">'),
+	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
+	$send_btn = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.invite_user();",
+		"class": "btn btn-default pull-right"
+	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
+	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well"),
+	$fieldset_pd = $('<fieldset>'),
+	$legend_pd = $('<legend>').text("User personal data"),
+	personal_data_form = [
+		{
+			"text": "Full name",
+			"iput-type": "text",
+			"id": "new_user_full_name",
+			"placeholder": "Full name",
+			"separated": false
+		},{
+			"text": "Work title",
+			"iput-type": "text",
+			"id": "new_user_work_title",
+			"placeholder": "Work title",
+			"separated": false
+		},{
+			"text": "E-mail address",
+			"iput-type": "email",
+			"id": "new_user_mail_address",
+			"placeholder": "E-mail address",
+			"separated": true
+		}
+	];
+
+	$fieldset_pd.append($legend_pd);
+	$.each(personal_data_form, function(k, v) {
+		var $form_group = $('<div class="form-group">'),
+		$row = $('<div class="row">'),
+		$label = $('<label>').addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v.id).text(v.text),
+		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
+		$field = $('<input>').attr({
+			"type": v["iput-type"],
+			"name": v.id,
+			"id": v.id,
+			"placeholder": v.placeholder,
+			"value": ""
+		}).addClass("form-control");
+
+		$form_col.append($field);
+		$row.append($label);
+		$row.append($form_col);
+		$form_group.append($row);
+		if(v.separated) {
+			$fieldset_pd.append("<br />");
+		}
+		$fieldset_pd.append($form_group);
+	});
+
+
+	$invite_container.append($fieldset_pd);
+	// Append the roles manager box
+	$invite_container.roles_manager_box();
+	$btn_row.append($send_btn);
+	$super_row.append($invite_container);
+	$super_row.append($btn_row);
+	$invite_div.html($super_row);
+	$invite_div.append("<br /><br />");
+
+	$.activate_roles_manager_box();
+	$("#loader").hide();
+};
+
+/**
+* Generate the roles manager box
+* @param  string 		user_id 		The user id to append the request
+* @param  string 		user_roles 		The full user roles object (user_data[kTAG_ROLES])
+*/
+$.fn.roles_manager_box = function(user_id, user_roles) {
+	if(user_id === undefined || user_id === null) {
+		user_id = "";
+	}
+	var $item = $(this),
+	$fieldset_r = $('<fieldset>'),
+	$legend_r = $('<legend>').text("Roles"),
+	$ul = $('<ul>').addClass("list-group roles"),
+	roles = [
+		{
+			"text": "Active",
+			"icon": "fa-lock",
+			"description": "The ability to login.",
+			"id": "role-login",
+			"value": kTYPE_ROLE_LOGIN,
+			"checked": ($.inArray(kTYPE_ROLE_LOGIN, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": true,
+			"data-content": "If this field is set to off, the user will be unable to login"
+		},{
+			"text": "Invite users",
+			"icon": "fa-user-plus",
+			"description": "The ability to compile a user profile and send an invitation.",
+			"id": "role-invite",
+			"value": kTYPE_ROLE_INVITE,
+			"checked": ($.inArray(kTYPE_ROLE_INVITE, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Upload data",
+			"icon": "fa-upload",
+			"description": "The ability to upload data templates.",
+			"id": "role-upload",
+			"value": kTYPE_ROLE_UPLOAD,
+			"checked": ($.inArray(kTYPE_ROLE_UPLOAD, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Edit pages",
+			"icon": "fa-file-text-o",
+			"description": "The ability to login.",
+			"id": "role-edit",
+			"value": kTYPE_ROLE_EDIT,
+			"checked": ($.inArray(kTYPE_ROLE_EDIT, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Manage users",
+			"icon": "fa-group",
+			"description": "The ability to login.",
+			"id": "manage-users",
+			"value": kTYPE_ROLE_USERS,
+			"checked": ($.inArray(kTYPE_ROLE_USERS, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		}
+	];
+
+	$.each(roles, function(kk, vv) {
+		var $li = $('<li class="list-group-item">'),
+		$dd = $('<div class="pull-right">'),
+		$checkbox = $('<input>').attr({
+			"type": "checkbox",
+			"id": vv.id,
+			"value": vv.value
+		}),
+		$label = $('<label>').attr("for", vv.id).addClass("text-left"),
+		$label_h3 = $('<h3>'),
+		$label_text = $('<p>').addClass("list-group-item-text").text(vv.description),
+		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv.icon);
+
+		$label_h3.append($label_icon).append(vv.text).addClass("list-group-item-heading");
+		$label.append($label_h3);
+		$label.append($label_text);
+
+		if(vv.checked !== undefined && vv.checked !== "" && vv.checked == "checked") {
+			if(vv.value == kTYPE_ROLE_LOGIN) {
+				$li.addClass("list-group-item-success");
+			} else {
+				$li.addClass("list-group-item-success");
+			}
+			$checkbox.attr("checked", vv.checked);
+		} else {
+			$checkbox.attr("checked", false);
+		}
+		if(vv.danger) {
+			$checkbox.attr({
+				"data-off-color": "danger",
+				"data-content": vv.title
+			});
+			$label_h3.append(' <sup><small class="fa fa-exclamation-triangle text-warning" style="font-size: 12px;"></small></sup>');
+			$li.popover({
+				placement: "top",
+				trigger: "hover",
+				title: '<span class="text-warning"><span class="fa fa-exclamation-triangle"></span> Warning</span>',
+				html: true,
+				content: vv["data-content"],
+				viewport: "#invite_user"
+			});
+		}
+		$li.append($label);
+		$dd.append($checkbox);
+		$li.append($dd);
+		if(vv.value == kTYPE_ROLE_LOGIN) {
+			if(user_id !== $.get_manager_id()) {
+				$ul.append($li);
+			}
+		} else {
+			$ul.append($li);
+		}
+	});
+
+	$fieldset_r.append($legend_r);
+	$fieldset_r.append($ul);
+	$item.append($fieldset_r);
+};
+
+/**
+* Activate the bootstrapSwitch feature on roles manager form
+*/
+$.activate_roles_manager_box = function() {
+	$("[type='checkbox']").bootstrapSwitch({
+		size: "small",
+		labelText: "⋮",
+		onText: "Yes",
+		offText: "No"
+	}).on('switchChange.bootstrapSwitch', function(event, state) {
+		if(event.target.id == "role-login") {
+			var $items = $("#role-invite, #role-upload, #role-edit, #manage-users"),
+			$items_li = $items.closest("li.list-group-item");
+
+			if(!state) {
+				$(this).closest("li.list-group-item").addClass("list-group-item-danger");
+				$items_li.addClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-success")) {
+						$(this).switchClass("list-group-item-success", "list-group-item-not-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", true);
+				$items.bootstrapSwitch("toggleDisabled", true);
+			} else {
+				$(this).closest("li.list-group-item").removeClass("list-group-item-danger");
+				$items_li.removeClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-not-success")) {
+						$(this).switchClass("list-group-item-not-success", "list-group-item-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", false);
+				$items.bootstrapSwitch("toggleDisabled", false);
+			}
+		} else {
+			if(state) {
+				$(this).closest("li.list-group-item").addClass("list-group-item-success");
+			} else {
+				$(this).closest("li.list-group-item").removeClass("list-group-item-success");
+			}
+		}
+	});
+};
 
 /**
  * Invite an user
@@ -1208,233 +1462,21 @@ $.invite_user = function(user_id, callback) {
 };
 
 /**
- * Generate the roles manager box
- * @param  string 		user_id 		The user id to append the request
- */
-$.fn.roles_manager_box = function(user_id) {
-	if(user_id === undefined || user_id === null) {
-		user_id = "";
-	}
-	var $item = $(this),
-	$fieldset_r = $('<fieldset>'),
-	$legend_r = $('<legend>').text("Roles"),
-	$ul = $('<ul>').addClass("list-group roles"),
-	roles = [
-		{
-			"text": "Active",
-			"icon": "fa-lock",
-			"description": "The ability to login.",
-			"id": "role-login",
-			"value": kTYPE_ROLE_LOGIN,
-			"checked": "checked",
-			"danger": true,
-			"data-content": "If this field is set to off, the user will be unable to login"
-		},{
-			"text": "Invite users",
-			"icon": "fa-user-plus",
-			"description": "The ability to compile a user profile and send an invitation.",
-			"id": "role-invite",
-			"value": kTYPE_ROLE_INVITE,
-			"danger": false
-		},{
-			"text": "Upload data",
-			"icon": "fa-upload",
-			"description": "The ability to upload data templates.",
-			"id": "role-upload",
-			"value": kTYPE_ROLE_UPLOAD,
-			"danger": false
-		},{
-			"text": "Edit pages",
-			"icon": "fa-file-text-o",
-			"description": "The ability to login.",
-			"id": "role-edit",
-			"value": kTYPE_ROLE_EDIT,
-			"danger": false
-		},{
-			"text": "Manage users",
-			"icon": "fa-group",
-			"description": "The ability to login.",
-			"id": "manage-users",
-			"value": kTYPE_ROLE_USERS,
-			"danger": false
-		}
-	];
-
-	$.each(roles, function(kk, vv) {
-		var $li = $('<li class="list-group-item">'),
-		$dd = $('<div class="pull-right">'),
-		$checkbox = $('<input>').attr({
-			"type": "checkbox",
-			"id": vv.id,
-			"value": vv.value
-		}),
-		$label = $('<label>').attr("for", vv.id).addClass("text-left"),
-		$label_h3 = $('<h3>'),
-		$label_text = $('<p>').addClass("list-group-item-text").text(vv.description),
-		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv.icon);
-
-		$label_h3.append($label_icon).append(vv.text).addClass("list-group-item-heading");
-		$label.append($label_h3);
-		$label.append($label_text);
-
-		if(vv.checked !== undefined && vv.checked == "checked") {
-			if(vv.value == kTYPE_ROLE_LOGIN) {
-				$li.addClass("list-group-item-success");
-			} else {
-				$li.addClass("list-group-item-success");
-			}
-			$checkbox.attr("checked", vv.checked);
-		}
-		if(vv.danger) {
-			$checkbox.attr({
-				"data-off-color": "danger",
-				"data-content": vv.title
-			});
-			$label_h3.append(' <sup><small class="fa fa-exclamation-triangle text-warning" style="font-size: 12px;"></small></sup>');
-			$li.popover({
-				placement: "top",
-				trigger: "hover",
-				title: '<span class="text-warning"><span class="fa fa-exclamation-triangle"></span> Warning</span>',
-				html: true,
-				content: vv["data-content"],
-				viewport: "#invite_user"
-			});
-		}
-		$li.append($label);
-		$dd.append($checkbox);
-		$li.append($dd);
-		if(vv.value == kTYPE_ROLE_LOGIN) {
-			if(user_id !== $.get_manager_id()) {
-				$ul.append($li);
-			}
-		} else {
-			$ul.append($li);
+* Delete an invitation
+* @param  string 		invited_id 		The id of user invited
+*/
+$.delete_invitation = function(invited_id) {
+	apprise(i18n[lang].messages.delete_invitation.message, {
+		title: i18n[lang].messages.delete_invitation.title,
+		icon: "warning",
+		confirm: true,
+		yesBtn: "Yes",
+		noBtn: "No"
+	}, function(r) {
+		if(r) {
+			// I NEED THE SERVICE
 		}
 	});
-
-	$fieldset_r.append($legend_r);
-	$fieldset_r.append($ul);
-	$item.append($fieldset_r);
-};
-
-/**
- * Activate the bootstrapSwitch feature on roles manager form
- */
-$.activate_roles_manager_box = function() {
-	$("[type='checkbox']").bootstrapSwitch({
-		size: "small",
-		labelText: "⋮",
-		onText: "Yes",
-		offText: "No"
-	}).on('switchChange.bootstrapSwitch', function(event, state) {
-		if(event.target.id == "role-login") {
-			var $items = $("#role-invite, #role-upload, #role-edit, #manage-users"),
-			$items_li = $items.closest("li.list-group-item");
-
-			if(!state) {
-				$(this).closest("li.list-group-item").addClass("list-group-item-danger");
-				$items_li.addClass("disabled");
-				$.each($items_li, function(kl, vl) {
-					if($(this).hasClass("list-group-item-success")) {
-						$(this).switchClass("list-group-item-success", "list-group-item-not-success");
-					}
-				});
-				$items.bootstrapSwitch("toggleIndeterminate", true);
-				$items.bootstrapSwitch("toggleDisabled", true);
-			} else {
-				$(this).closest("li.list-group-item").removeClass("list-group-item-danger");
-				$items_li.removeClass("disabled");
-				$.each($items_li, function(kl, vl) {
-					if($(this).hasClass("list-group-item-not-success")) {
-						$(this).switchClass("list-group-item-not-success", "list-group-item-success");
-					}
-				});
-				$items.bootstrapSwitch("toggleIndeterminate", false);
-				$items.bootstrapSwitch("toggleDisabled", false);
-			}
-		} else {
-			if(state) {
-				$(this).closest("li.list-group-item").addClass("list-group-item-success");
-			} else {
-				$(this).closest("li.list-group-item").removeClass("list-group-item-success");
-			}
-		}
-	});
-}
-
-/**
- * Generate the invite form
- */
-$.generate_invite_form = function() {
-	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
-	$super_row = $('<div class="row">'),
-	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
-	$send_btn = $('<a>').attr({
-		"href": "javascript:void(0);",
-		"onclick": "$.invite_user();",
-		"class": "btn btn-default pull-right"
-	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
-	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well"),
-	$fieldset_pd = $('<fieldset>'),
-	$legend_pd = $('<legend>').text("User personal data"),
-	personal_data_form = [
-		{
-			"text": "Full name",
-			"iput-type": "text",
-			"id": "new_user_full_name",
-			"placeholder": "Full name",
-			"separated": false
-		},{
-			"text": "Work title",
-			"iput-type": "text",
-			"id": "new_user_work_title",
-			"placeholder": "Work title",
-			"separated": false
-		},{
-			"text": "E-mail address",
-			"iput-type": "email",
-			"id": "new_user_mail_address",
-			"placeholder": "E-mail address",
-			"separated": true
-		}
-	];
-
-	$fieldset_pd.append($legend_pd);
-	$.each(personal_data_form, function(k, v) {
-		var $form_group = $('<div class="form-group">'),
-		$row = $('<div class="row">'),
-		$label = $('<label>').addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v.id).text(v.text),
-		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
-		$field = $('<input>').attr({
-			"type": v["iput-type"],
-			"name": v.id,
-			"id": v.id,
-			"placeholder": v.placeholder,
-			"value": ""
-		}).addClass("form-control");
-
-		$form_col.append($field);
-		$row.append($label);
-		$row.append($form_col);
-		$form_group.append($row);
-		if(v.separated) {
-			$fieldset_pd.append("<br />");
-		}
-		$fieldset_pd.append($form_group);
-	});
-
-
-	$invite_container.append($fieldset_pd);
-	// Append the roles manager box
-	$invite_container.roles_manager_box();
-	$btn_row.append($send_btn);
-	$super_row.append($invite_container);
-	$super_row.append($btn_row);
-	$invite_div.html($super_row);
-	$invite_div.append("<br /><br />");
-
-	$.activate_roles_manager_box();
-	$("#loader").hide();
 };
 
 
