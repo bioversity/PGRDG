@@ -1194,47 +1194,49 @@ $.save_user_data = function() {
 		return attr
 	};
 
-	var j = {};
 	var o = {};
 	o[kTAG_ROLES] = [];
 	var tag = "";
-	$.each($(".well.form :input"), function(k, v) {
-		var $va = $(v).getAttributes();
-		switch($va["data-type"]) {
-		 	case kTYPE_TYPED_LIST:
-				var $fg = $(v).closest("div.form-group");
-				$.each($fg.find("div.line"), function(kk, vv) {
-					// console.log(kk, $(vv));
-					$.each($(vv).find("input"), function(kkk, vvv) {
-						$vaa = $(vvv).getAttributes();
-						o[$va["data-tag"]] = [];
-						o[$vaa["data-tag"]][kk] = {};
-						if ($(vvv).val() !== undefined && $(vvv).val() !== null && $.trim($(vvv).val()) !== "") {
-							if($vaa["data-struct"] == "k") {
-								j[kTAG_TEXT] = $(vvv).val();
-							} else {
-								j[kTAG_TYPE] = $(vvv).val();
-							}
-
-							// WHY THE CONSOLE DISPLAY CORRECTLY AND THE OBJECT DID NOT?
-							o[$vaa["data-tag"]][kk] = j;
-							console.log(kk, j)
-						}
-					})
-				});
-				break;
-			case kTYPE_ROLE_LOGIN:
-			case kTYPE_ROLE_INVITE:
-			case kTYPE_ROLE_UPLOAD:
-			case kTYPE_ROLE_EDIT:
-			case kTYPE_ROLE_USERS:
-				if($(v).is(":checked")) {
-					o[kTAG_ROLES].push($va.value);
-				}
-				break;
-			default:
-				o[$va["data-tag"]] = $va.value;
-				break;
+	var u = 0;
+	$.each($('.well.form :input'), function(k, v) {
+		if($.trim($(v).val()) !== "") {
+			var $va = $(v).getAttributes();
+			switch($va["data-type"]) {
+			 	case kTYPE_TYPED_LIST:
+					u++;
+					if(u == 1) {
+						var jj = [];
+						// var $fg = $(v).closest("div.line");
+						$.each($(v).closest("div.form-group").find("div.line"), function(line_no, l) {
+							var j = {};
+							var serialized = $(l).find("input").serializeArray();
+							o[$va["data-tag"]] = [];
+							o[$va["data-tag"]][line_no] = {};
+							$.each(serialized, function(a, b) {
+								// console.log(a, b, serialized);
+								j[kTAG_TEXT] = serialized[0].value;
+								j[kTAG_TYPE] = serialized[1].value;
+							});
+							jj[line_no] = j;
+						});
+						console.log(jj)
+						o[$va["data-tag"]] = jj;
+						console.warn(o[$va["data-tag"]]);
+					}
+					break;
+				case kTYPE_ROLE_LOGIN:
+				case kTYPE_ROLE_INVITE:
+				case kTYPE_ROLE_UPLOAD:
+				case kTYPE_ROLE_EDIT:
+				case kTYPE_ROLE_USERS:
+					if($(v).is(":checked")) {
+						o[kTAG_ROLES].push($va.value);
+					}
+					break;
+				default:
+					o[$va["data-tag"]] = $va.value;
+					break;
+			}
 		}
 	});
 	console.info(o);
