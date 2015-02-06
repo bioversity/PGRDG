@@ -74,6 +74,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "get_user":
 					case "get_managed_users":
 					case "invite_user":
+					case "save_user_data":
 					case "login":
 					case "logout":
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");

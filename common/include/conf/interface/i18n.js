@@ -12,6 +12,10 @@ var i18n = {
                         "add_another_group_field": "Add another group field",
                         "contacts": "Contacts",
                         "created_users": "Created users",
+                        "data_saved": {
+                                "title": "Saved",
+                                "message": "Data saved successfully"
+                        },
                         "delete_invitation": {
                                 "title": "Are you sure to remove this invitation?",
                                 "message": "This user will not be able to accept his invitation."
@@ -22,7 +26,11 @@ var i18n = {
                                 "404": "Page not found",
                                 "405": "Not allowed",
                                 "page_do_not_exists": "We're sorry but the page you are looking for do not exists in this Server",
-                                "page_requires_login": "This page requires that you're logged in"
+                                "page_requires_login": "This page requires that you're logged in",
+                                "theres_an_error": {
+                                        "title": "Oops... something gone wrong",
+                                        "message": "There's an error in your request.<br />Please try again later or contact the administrator."
+                                }
                         },
                         "forms": {
                                 "return_btn_disabled": "Return button disabled",

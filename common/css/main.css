@@ -100,6 +100,34 @@ body.activation {
 		background-size: 100% !important;
 	}
 }
+a:hover {
+	text-decoration: none !important;
+}
+a[target="_blank"]:after {
+	color: #666;
+	content: " \f08e";
+	font-family: "FontAwesome";
+	font-size: smaller;
+	text-decoration: none !important;
+	vertical-align: super;
+}
+a[href^="https:"]:after {
+	color: #666;
+	content: " \f13e";
+	font-family: "FontAwesome";
+	font-size: smaller;
+	text-decoration: none !important;
+	vertical-align: super;
+}
+a[href^="mailto:"]:after {
+	color: #666;
+	content: " \f003";
+	font-family: "FontAwesome";
+	font-size: smaller;
+	text-decoration: none !important;
+	vertical-align: super;
+}
+
 
 h1,
 h2,
@@ -3163,10 +3191,13 @@ div.user_data dl.roles dd {
 #user_data_container h3 {
 	margin: 0;
 }
-#invite_container fieldset + fieldset.
+#invite_container fieldset + fieldset,
 #user_data_container fieldset + fieldset {
-	margin-top: 30px;
+	margin-top: 5em;
 }
 .btns-group {
 	margin-top: 5em;
+}
+#user_data_container div.line + div.line {
+	margin-top: 15px;
 }

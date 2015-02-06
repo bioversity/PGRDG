@@ -87,38 +87,59 @@ $.add_storage_space_in_panel = function(label, storage) {
 	$("#local_storage_space").append($li);
 };
 
-
 /**
  * Extract the user's data from given user identifier
  * @param  string   		user_id  		The user Identifier
+ * @param  bool   		force_renew  		Force the request to Service and renew the storage
  * @param  function 		callback 		The function to execute when data are available
  */
-$.get_user = function(user_id, callback) {
+$.get_user = function(user_id, force_renew, callback) {
+	/**
+	 * Execute the request
+	 * @param  string   		user_id  		The user Identifier
+	 * @param  bool   		force	  		Force the request to Service and renew the storage
+	 * @param  function 		callback 		The function to execute when data are available
+	 */
+	$.ask_user = function(user_id, force, callback) {
+		$.ask_cyphered_to_service({
+			storage_group: "pgrdg_user_cache.user_data.all",
+			data: {
+				"user_id": (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
+				"manager_id": $.get_manager_id()
+			},
+			type: "get_user",
+			force_renew: force
+		}, function(response) {
+			if(typeof callback == "function") {
+				$.each(response, function(id, ud) {
+					storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
+					if(user_id == $.get_manager_id()) {
+						storage.set("pgrdg_user_cache.user_data.current." + $.get_user_id(ud), ud);
+					}
+					callback.call(this, ud);
+				});
+			}
+		});
+	};
+
 	$("#loader").show();
-	if($.storage_exists("pgrdg_user_cache.user_data.all." + user_id)) {
-		callback.call(this, storage.get("pgrdg_user_cache.user_data.all." + user_id));
-		console.log(storage.get("pgrdg_user_cache.user_data.all." + user_id));
+	if(force_renew === undefined || force_renew === null || force_renew === "") {
+		force_renew = false;
+	}
+
+	if(force_renew) {
+		$.ask_user(user_id, true, callback);
 	} else {
-		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
-			$.ask_cyphered_to_service({
-				storage_group: "pgrdg_user_cache.user_data.all",
-				data: {
-					"user_id": (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
-					"manager_id": $.get_manager_id()
-				},
-				type: "get_user"
-			}, function(response) {
-				if(typeof callback == "function") {
-					$.each(response, function(id, ud) {
-						storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
-						callback.call(this, ud);
-					});
-				}
-				$("#loader").hide();
-			});
+		if($.storage_exists("pgrdg_user_cache.user_data.all." + user_id)) {
+			callback.call(this, storage.get("pgrdg_user_cache.user_data.all." + user_id));
+			// console.log(storage.get("pgrdg_user_cache.user_data.all." + user_id));
 		} else {
-			$.cookie("l", null, {path: "/"});
-			document.location = "./Signin";
+			if($.storage_exists("pgrdg_user_cache.user_data.current")) {
+				$.ask_user(user_id, false, callback);
+			} else {
+				$.cookie("l", null, {path: "/"});
+				document.location = "./Signin";
+			}
 		}
 	}
 };
@@ -157,6 +178,59 @@ $.get_managed_users = function(user_id, callback) {
 
 
 /*=======================================================================================
+*	INPUT TOOLS (MUST BE MOVED)
+*======================================================================================*/
+/**
+* Collect input attributes in an object
+* @return object 				All input attributes
+*/
+$.fn.getAttributes = function () {
+	var elem = this,
+	attr = {};
+
+	if(elem && elem.length) $.each(elem.get(0).attributes, function(v,n) {
+	n = n.nodeName||n.name;
+	v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
+	if(v != undefined && v !== false) attr[n] = v
+	})
+
+	return attr
+};
+
+/**
+* Check if an input is valid
+* @return void						Callback function if true, false if fail
+*/
+$.fn.check_input = function(callback) {
+	$.fn.isWrong = function() { $(this).closest("div.line").addClass("has-error"); $(this).focus(); };
+	$.fn.isRight = function() { $(this).closest("div.line").removeClass("has-error"); };
+
+	$input = $(this);
+	if($input.prop("required")) {
+		if($.trim($input.val()) == "") {
+			$input.isWrong();
+			// Callback
+			if(jQuery.type(callback) == "function") {
+				callback.call(this, $input, false);
+			}
+		} else {
+			$input.isRight();
+			// Callback
+			if(jQuery.type(callback) == "function") {
+				callback.call(this, $input, true);
+			}
+		}
+	} else {
+		$input.isRight();
+		// Callback
+		if(jQuery.type(callback) == "function") {
+			callback.call(this, $input, true);
+		}
+	}
+}
+
+
+/*=======================================================================================
 *	USER DATA EXTRACTION
 *======================================================================================*/
 
@@ -172,13 +246,7 @@ $.get_managed_users = function(user_id, callback) {
 	* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
 	* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
 	*/
-	$.get_manager_id = function() {
-		var manager_id = "";
-		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-			manager_id = $.get_user_id(mdata);
-		});
-		return manager_id;
-	};
+	$.get_manager_id = function() { var manager_id = ""; $.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) { manager_id = $.get_user_id(mdata); }); return manager_id;	};
 
 	/**
 	* Extract the user full name from a given user data object
@@ -288,6 +356,49 @@ $.get_managed_users = function(user_id, callback) {
 	* @return number 				        The count of invited users
 	*/
 	$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
+
+/**
+* Load profile form or interface depending on the hash
+*/
+$.load_profile = function() {
+	var $hash = $.url().fsegment();
+	if($hash.length > 0) {
+		if($hash[0] === "Edit") {
+			$.get_user($hash[1], false, function(){
+				$("#personal_data").load_user_data_in_form($hash[1]);
+				if($("#managed_scroller_title").length > 0) {
+					$("#managed_scroller_title").hide();
+				}
+				if($("#managed_scroller").length > 0) {
+					$("#managed_scroller").hide();
+				}
+				if($("#invited_box_title").length > 0) {
+					$("#invited_box_title").hide();
+				}
+				if($("#data_box").length > 0) {
+					$("#data_box").hide();
+				}
+			});
+		} else {
+			var user_id = ($hash[0].length > 0 ? $hash[0] : "");
+			$("#personal_data").load_user_data(user_id);
+			if($("#managed_scroller_title").length > 0) {
+				$("#managed_scroller_title").show();
+			}
+			if($("#managed_scroller").length > 0) {
+				$("#managed_scroller").show();
+			}
+			if($("#invited_box_title").length > 0) {
+				$("#invited_box_title").show();
+			}
+			if($("#data_box").length > 0) {
+				$("#data_box").show();
+			}
+		}
+	} else {
+		$("#personal_data").load_user_data();
+	}
+};
 
 
 /*=======================================================================================
@@ -520,7 +631,7 @@ $.fn.load_user_data = function(user_id) {
 			$item.generate_profile(storage.get("pgrdg_user_cache.user_data.current." + $.get_manager_id()));
 		}
 	} else {
-		$.get_user(user_id, function(ud){
+		$.get_user(user_id, false, function(ud){
 			$item.generate_profile(ud);
 		});
 	}
@@ -674,7 +785,6 @@ $.fn.load_invited_users = function(user_data) {
 			$a.text(invited_user_name);
 			$p.html('<span class="fa fa-user-secret fa-fw text-muted"></span> ');
 			$p.append($a);
-			$p.append(' <sup class="fa fa-envelope-o"></sup>');
 			$div_col_left.html($p);
 
 			$p_roles.attr("title", i18n[lang].messages.this_user_will_be_able_to + " " + $.get_user_roles_list(v[kAPI_PARAM_RESPONSE_FRMT_DOCU]));
@@ -704,6 +814,9 @@ $.fn.load_invited_users = function(user_data) {
 *	EDIT USER
 *======================================================================================*/
 
+/**
+ * Display dialog and come back to user profile
+ */
 $.cancel_user_editing = function() {
 	// console.log($(".well.form input").serialize())
 	apprise(i18n[lang].messages.undo_user_profile.message, {
@@ -738,7 +851,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 		cont = 0,
 		f = 0;
 
-		$row = $('<div class="line">'),
+		$row = $('<div class="line clearfix">'),
 		$form_group = $('<div class="form-group">'),
 		$input_col = $('<div class="col-sm-5">'),
 		$input_group = $('<div class="input-group">'),
@@ -756,6 +869,11 @@ $.fn.load_user_data_in_form = function(user_id) {
 			"onclick": "$(this).add_typed();",
 			"class": "btn btn-default-white"
 		});
+		$minus_btn = $('<a>').attr({
+			"href": "javascript:void(0);",
+			"onclick": "$(this).remove_typed();",
+			"class": "btn btn-default-white"
+		}).html('<span class="fa fa-minus text-center">');
 		$span_col.attr("class", "col-sm-4 col-xs-6");
 		$span_col2.attr("class", "col-sm-4 col-xs-6 row");
 
@@ -770,6 +888,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$input.attr({
 				"type": "text",
 				"class": "form-control",
+				"required": "required",
 				"data-item": $item.find("input:first").attr("data-item"),
 				"data-tag": $item.find("input:first").attr("data-tag"),
 				"data-type": $item.find("input:first").attr("data-type"),
@@ -783,6 +902,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$input2.attr({
 				"type": "text",
 				"class": "form-control",
+				"required": "required",
 				"data-item": $item.find("input:first").attr("data-item"),
 				"data-tag": $item.find("input:first").attr("data-tag"),
 				"data-type": $item.find("input:first").attr("data-type"),
@@ -794,13 +914,27 @@ $.fn.load_user_data_in_form = function(user_id) {
 				"value": ""
 			});
 			$span_col.append($input);
-			$span_col2.append($input2);
+			$input_group.append($input2);
+			$input_group_btn.append($minus_btn);
+			$input_group.append($input_group_btn);
+			$span_col2.append($input_group);
 			$row.append($label_empty).append($span_col).append($span_col2);
-			$item.append('<br /><br />').append($row);
+			$item.append($row);
 			$row.find("input[value='']:not(:checkbox,:button):visible:first").focus();
 			return false;
 		}
 	};
+
+	/**
+	 * Remove the typed list line previously added
+	 */
+	$.fn.remove_typed = function() {
+		var $item = $(this).closest(".line");
+		$item.fadeOut(300, function() {
+			$item.remove();
+		});
+	};
+
 
 	if(user_id === undefined || user_id === null || user_id === "") {
 		user_id = $.get_manager_id();
@@ -832,7 +966,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 	ud[kTAG_ENTITY_EMAIL] = {};
 	ud[kTAG_ENTITY_PHONE] = {};
 	ud[kTAG_ENTITY_ICON] = {};
-	$.get_user(user_id, function(user_data) {
+	$.get_user(user_id, false, function(user_data) {
 		$.each(user_data, function(k, v){
 			ud[kTAG_VERSION][kAPI_PARAM_DATA_TYPE] = "static";
 			ud[kTAG_VERSION][kAPI_RESULT_ENUM_LABEL] = "Invited on";
@@ -847,22 +981,26 @@ $.fn.load_user_data_in_form = function(user_id) {
 
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA_KIND] = "required";
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_FNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_FNAME];
 
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA_KIND] = "required";
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_ID] = user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_ENTITY_LNAME][kAPI_PARAM_DATA] = user_data[kTAG_ENTITY_LNAME];
 
 			ud[kTAG_NAME][kAPI_RESULT_ENUM_LABEL] = "Full name";
 			ud[kTAG_NAME][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_NAME][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_NAME][kAPI_PARAM_DATA_KIND] = "required";
 			ud[kTAG_NAME][kAPI_PARAM_ID] = user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_NAME][kAPI_PARAM_DATA] = user_data[kTAG_NAME];
 
 			ud[kTAG_CONN_CODE][kAPI_PARAM_DATA_TYPE] = "edit";
 			ud[kTAG_CONN_CODE][kAPI_PARAM_INPUT_TYPE] = "text";
+			ud[kTAG_CONN_CODE][kAPI_PARAM_DATA_KIND] = "required";
 			ud[kTAG_CONN_CODE][kAPI_RESULT_ENUM_LABEL] = "Username";
 			ud[kTAG_CONN_CODE][kAPI_PARAM_ID] = user_data[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_NAME].replace(/\s+/g, "_").toLowerCase();
 			ud[kTAG_CONN_CODE][kAPI_PARAM_DATA] = user_data[kTAG_CONN_CODE];
@@ -907,7 +1045,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 
 		$.each(ud, function(k, v){
 			i++;
-			var $row = $('<div class="line">'),
+			var $row = $('<div class="line clearfix">'),
 			$form_group = $('<div class="form-group">'),
 			$input_col = $('<div class="col-sm-5">'),
 			$input_group = $('<div class="input-group">'),
@@ -932,7 +1070,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			}).html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
 			$submit = $('<a>').attr({
 				"href": "javascript:void(0);",
-				"onclick": "$.save_user_data();",
+				"onclick": "$.save_user_data('" + user_id + "');",
 				"class": "btn btn-default pull-right"
 			}).html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
 
@@ -963,9 +1101,12 @@ $.fn.load_user_data_in_form = function(user_id) {
 						var $ul = $('<ul class="list-unstyled">');
 						$.each(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_VALUE], function(kk, vv) {
 							if($.is_obj(vv) || $.is_array(vv)) {
-								$.get_authority(vv[kTAG_UNIT_REF], function(authority) {
-									$ul.append('<li>' + vv[kTAG_TYPE] + ": " + authority + '</li>');
-								});
+								if(kTAG_UNIT_REF in vv) {
+									$ul.append('<li id="' + $.trim(vv[kTAG_TYPE]) + '"><i>Loading...</li>');
+									$.get_authority(vv[kTAG_UNIT_REF], function(authority) {
+										$('#' + $.trim(vv[kTAG_TYPE])).html(authority);
+									});
+								}
 							} else {
 								$ul.html('<li><i>none</i></li>');
 							}
@@ -1142,12 +1283,18 @@ $.fn.load_user_data_in_form = function(user_id) {
 							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 							"value": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]
 						});
+						if(v[kAPI_PARAM_DATA_KIND] == "required") {
+							$input.attr("required", "required")
+						}
 						$input_col.attr("class", "col-sm-5 col-xs-12").append($input);
 						$row.append($input_col);
 					}
 
 					$row.addClass($.md5(span_label));
 					$form_group.addClass(v[kAPI_PARAM_DATA_TYPE] + "_item");
+					if(v[kAPI_PARAM_DATA_KIND] == "required") {
+						$form_group.addClass("required")
+					}
 					$form_group.append($row);
 					$fieldset_pd.append($form_group);
 					$form_col.append($fieldset_pd);
@@ -1180,70 +1327,100 @@ $.fn.load_user_data_in_form = function(user_id) {
 /**
  * Save the user data
  */
-$.save_user_data = function() {
-	$.fn.getAttributes = function () {
-		var elem = this,
-		attr = {};
-
-		if(elem && elem.length) $.each(elem.get(0).attributes, function(v,n) {
-		n = n.nodeName||n.name;
-		v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
-		if(v != undefined && v !== false) attr[n] = v
-		})
-
-		return attr
-	};
-
+$.save_user_data = function(user_id) {
 	var o = {};
-	o[kTAG_ROLES] = [];
-	var tag = "";
-	var u = 0;
+	o[kTAG_ROLES] = [],
+	k = {},
+	tag = "",
+	errors = 0;
 	$.each($('.well.form :input'), function(k, v) {
-		if($.trim($(v).val()) !== "") {
-			var $va = $(v).getAttributes();
-			switch($va["data-type"]) {
-			 	case kTYPE_TYPED_LIST:
-					u++;
-					if(u == 1) {
-						var jj = [];
-						// var $fg = $(v).closest("div.line");
-						$.each($(v).closest("div.form-group").find("div.line"), function(line_no, l) {
-							var j = {};
-							var serialized = $(l).find("input").serializeArray();
-							o[$va["data-tag"]] = [];
-							o[$va["data-tag"]][line_no] = {};
-							$.each(serialized, function(a, b) {
-								// console.log(a, b, serialized);
-								j[kTAG_TEXT] = serialized[0].value;
-								j[kTAG_TYPE] = serialized[1].value;
+		$(v).check_input(function($input, status) {
+			if(!status) {
+				errors++;
+				return false;
+			} else {
+				var $va = $input.getAttributes();
+				tag = $va["data-tag"];
+				if($.trim($(v).val()) !== "") {
+					switch($va["data-type"]) {
+					 	case kTYPE_TYPED_LIST:
+							var jj = [];
+							$.each($input.closest("div.form-group").find("div.line"), function(line_no, l) {
+								var j = {};
+								var serialized = $(l).find('input').serializeArray();
+								o[tag] = [];
+								o[tag][line_no] = {};
+								$.each(serialized, function(a, b) {
+									// console.log(a, b, serialized);
+									j[kTAG_TYPE] = serialized[0].value;
+									j[kTAG_TEXT] = serialized[1].value;
+								});
+								if(serialized.length > 0) {
+									jj[line_no] = j;
+								}
 							});
-							jj[line_no] = j;
-						});
-						console.log(jj)
-						o[$va["data-tag"]] = jj;
-						console.warn(o[$va["data-tag"]]);
+							o[tag] = jj;
+							break;
+						case kTYPE_ROLE_LOGIN:
+						case kTYPE_ROLE_INVITE:
+						case kTYPE_ROLE_UPLOAD:
+						case kTYPE_ROLE_EDIT:
+						case kTYPE_ROLE_USERS:
+							if($input.is(":checked")) {
+								o[kTAG_ROLES].push($va.value);
+							}
+							break;
+						default:
+							o[tag] = $va.value;
+							break;
 					}
-					break;
-				case kTYPE_ROLE_LOGIN:
-				case kTYPE_ROLE_INVITE:
-				case kTYPE_ROLE_UPLOAD:
-				case kTYPE_ROLE_EDIT:
-				case kTYPE_ROLE_USERS:
-					if($(v).is(":checked")) {
-						o[kTAG_ROLES].push($va.value);
-					}
-					break;
-				default:
-					o[$va["data-tag"]] = $va.value;
-					break;
+				}
 			}
-		}
+		});
 	});
-	console.info(o);
-	$.require_password(function() {
-		// $.log_activity("edit personal data");
-		alert("ok");
-	});
+
+	k[kAPI_PARAM_OBJECT] = o;
+	if(errors === 0) {
+		$.require_password(function() {
+			$("#loader").show();
+			k[kAPI_REQUEST_USER] = $.get_manager_id();
+			k[kAPI_PARAM_ID] = user_id;
+
+			$.ask_cyphered_to_service({
+				storage_group: "pgrdg_user_cache.user_data.all." + user_id,
+				data: k,
+				type: "save_user_data"
+			}, function(response) {
+				if($.obj_len(response) > 0 && response[kAPI_STATUS_STATE] == "ok") {
+					// if(user_id == $.get_manager_id()) {
+					// 	storage.set("pgrdg_user_cache.user_data.current." + user_id, )
+					// }
+					$.get_user(user_id, true, function(user_data) {
+						console.log(user_data);
+						$("#loader").hide();
+						apprise(i18n[lang].messages.data_saved.message, {
+							title: i18n[lang].messages.data_saved.title,
+							icon: "fa-check",
+							titleClass: "text-success",
+						}, function(r) {
+							if(r) {
+								var $hash = $.url().fsegment();
+								document.location = "./Profile#" + $hash[1];
+							}
+						});
+					});
+				} else {
+					$("#loader").hide();
+
+					apprise(i18n[lang].messages.errors.theres_an_error.message, {
+						title: i18n[lang].messages.errors.theres_an_error.title,
+						icon: "fa-times",
+						titleClass: "text-danger",
+					});
+				}
+			});
+		});
+	}
 };
 
 
@@ -1580,6 +1757,7 @@ $.delete_invitation = function(invited_id) {
 		noBtn: "No"
 	}, function(r) {
 		if(r) {
+			// $.log_activity("Delete invitation for user " + invited_id);
 			// I NEED THE SERVICE
 		}
 	});
@@ -1590,6 +1768,10 @@ $.delete_invitation = function(invited_id) {
 *	COMMON FUNCTIONS
 *======================================================================================*/
 
+/**
+ * Log the user activity to the storage
+ * @param string 		action 			A description of the user's action
+ */
 $.log_activity = function(action){
 	var st = storage.get("pgrdg_user_cache.user_activity"),
 	log = {};
@@ -1629,52 +1811,9 @@ $.last_activity = function(full) {
 	return last_activity;
 };
 
-/**
- * Load profile form or interface depending on the hash
- */
-$.load_profile = function() {
-	var $hash = $.url().fsegment();
-	if($hash.length > 0) {
-		if($hash[0] === "Edit") {
-			$.get_user($hash[1], function(){
-				$("#personal_data").load_user_data_in_form($hash[1]);
-				if($("#managed_scroller_title").length > 0) {
-					$("#managed_scroller_title").hide();
-				}
-				if($("#managed_scroller").length > 0) {
-					$("#managed_scroller").hide();
-				}
-				if($("#invited_box_title").length > 0) {
-					$("#invited_box_title").hide();
-				}
-				if($("#data_box").length > 0) {
-					$("#data_box").hide();
-				}
-			});
-		} else {
-			var user_id = ($hash[0].length > 0 ? $hash[0] : "");
-			$("#personal_data").load_user_data(user_id);
-			if($("#managed_scroller_title").length > 0) {
-				$("#managed_scroller_title").show();
-			}
-			if($("#managed_scroller").length > 0) {
-				$("#managed_scroller").show();
-			}
-			if($("#invited_box_title").length > 0) {
-				$("#invited_box_title").show();
-			}
-			if($("#data_box").length > 0) {
-				$("#data_box").show();
-			}
-		}
-	} else {
-		$("#personal_data").load_user_data();
-	}
-};
-
 
 /**
- * [set_breadcrumb description]
+ * Generate the breadcrumb content
  */
 $.set_breadcrumb = function() {
 	$.fn.set_user_name = function(user_data) {
@@ -1695,7 +1834,7 @@ $.set_breadcrumb = function() {
 	$.each($hash, function(k, v) {
 		if(v.length == 40) {
 			if(!$.storage_exists("pgrdg_user_cache.user_data.all." + v)) {
-				$.get_user(v, function(user_data) {
+				$.get_user(v, false, function(user_data) {
 					$li.set_user_name(user_data);
 				});
 			} else {

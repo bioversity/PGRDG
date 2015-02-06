@@ -186,7 +186,7 @@ $.linkify = function(string, address) {
                 //URLs starting with http://, https://, or ftp://
                 replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
                 if(replacePattern1 !== undefined) {
-                        replacedText = string.replace(replacePattern1, '<a href="$1" target="_blank">$1</a> <sup class="fa fa-external-link"></sup>');
+                        replacedText = string.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
                 } else {
                         replacedText = string;
                 }
@@ -194,7 +194,7 @@ $.linkify = function(string, address) {
                 //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
                 replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
                 if(replacePattern2 !== undefined) {
-                        replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a> <sup class="fa fa-external-link"></sup>');
+                        replacedText = replacedText.replace(replacePattern2, '$1 <a href="http://$2" target="_blank">$2</a>');
                 } else {
                         replacedText = string;
                 }
@@ -202,7 +202,7 @@ $.linkify = function(string, address) {
                 //Change email addresses to mailto:: links.
                 replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
                 if(replacePattern3 !== undefined) {
-                        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a> <sup class="fa fa-envelope-o"></sup>');
+                        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
                 } else {
                         replacedText = string;
                 }

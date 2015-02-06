@@ -1776,6 +1776,10 @@ input[type="date"] {
 .form-group {
   margin-bottom: 15px;
 }
+.form-group.required .control-label:after {
+   content: " *";
+   color: #ff0000;
+}
 .radio,
 .checkbox {
   display: block;

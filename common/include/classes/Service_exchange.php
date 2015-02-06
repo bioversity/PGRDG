@@ -226,8 +226,25 @@ class Service_exchange {
                                                 kTAG_ENTITY_EMAIL => $data[kTAG_ENTITY_EMAIL],
                                                 kTAG_ROLES => $data[kTAG_ROLES],
                                                 kTAG_ENTITY_PGP_KEY => $data[kTAG_ENTITY_PGP_KEY],
-                                                kTAG_ENTITY_PGP_FINGERPRINT => $data[kTAG_ENTITY_PGP_FINGERPRINT],
+                                                kTAG_ENTITY_PGP_FINGERPRINT => $data[kTAG_ENTITY_PGP_FINGERPRINT]
                                         )
+                                );
+                                break;
+                        case "save_user_data":
+                        // header("Content-type: text/plain");
+                        // print_r($data);
+                        // exit();
+                                // Perform request
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_MOD_USER,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                                        kAPI_PARAM_ID => $data[kAPI_PARAM_ID],
+                                        kAPI_PARAM_OBJECT => $data[kAPI_PARAM_OBJECT]
                                 );
                                 break;
                         case "activate_user":
@@ -274,6 +291,9 @@ class Service_exchange {
                 }
                 $encoded = $this->encrypt_RSA($params);
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
+                // header("Content-type: text/plain");
+                // print_r($url);
+                // exit();
                 return $this->receive_from_service($this->frontend->browse($url));
         }
 
