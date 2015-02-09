@@ -56,17 +56,19 @@ $files = array_diff(scandir($super_root), array("..", "."));
 														<ul class="fa-ul lead">
 															<?php
 															$subdir = $sub_local . "/" . $file;
-															$subfiles = array_diff(scandir($subdir), array("..", "."));
+															$subfiles = array_values(array_diff(scandir($subdir), array("..", ".")));
 															$subdir_old = $sub_local . "/" . $file . "/older";
 															if(is_dir($subdir_old)) {
-																$subfiles_old = array_diff(scandir($subdir_old), array("..", "."));
+																$subfiles_old = array_values(array_diff(scandir($subdir_old), array("..", ".")));
 															}
-
+															if(count($subfiles_old) == 1) {
+																$subfile_old = $subfiles_old[0];
+															}
 															foreach($subfiles as $subfile) {
 																if(!is_dir($subdir . "/" . $subfile)) {
-																	$pos = strrpos($subfile, "_title");
+																	$pos = strrpos($subfile_old, "_title");
 									                                                                if ($pos === false) {
-																		if(file_exists($subdir_old . "/" . str_replace(".pdf", "_title", $subfile_old))) {
+																		if(count($subfiles_old) == 1 && file_exists($subdir_old . "/" . str_replace(".pdf", "_title", $subfile_old))) {
 																			$title = file_get_contents($subdir . "/" . str_replace(".pdf", "_title", $subfile));
 																		} else {
 																			$title = str_replace(array("_", ".pdf"), array(" ", ""), $subfile);

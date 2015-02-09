@@ -1205,8 +1205,7 @@ div[unselectable].fc-view {
 }
 #se_p h1[unselectable],
 #loader_bg h1[unselectable],
-#personal_data h1[unselectable],
-#invite_user h1[unselectable] {
+#content > .admin_content h1[unselectable]  {
 	opacity: 0.2;
 	text-align: center;
 	font-family: "Roboto", sans-serif;

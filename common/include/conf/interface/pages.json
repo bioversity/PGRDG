@@ -147,30 +147,6 @@
                         "is_system_page": false,
                         "subpages": ""
                 },
-                "Profile": {
-                        "title": "Profile",
-                        "title_class": "",
-                        "address": "Profile",
-                        "class": [],
-                        "template": "common/tpl/admin/Profile.tpl",
-                        "need_login": true,
-                        "is_main_page": false,
-                        "is_backend": true,
-                        "is_system_page": false,
-                        "subpages": ""
-                },
-                "Invite": {
-                        "title": "Invite",
-                        "title_class": "",
-                        "address": "Invite",
-                        "class": [],
-                        "template": "common/tpl/admin/Invite.tpl",
-                        "need_login": true,
-                        "is_main_page": false,
-                        "is_backend": true,
-                        "is_system_page": true,
-                        "subpages": ""
-                },
                 "Signin": {
                         "title": "Signin",
                         "title_class": "",
@@ -206,6 +182,79 @@
                         "is_backend": true,
                         "is_system_page": true,
                         "subpages": ""
+                },
+                "Invite": {
+                        "title": "Invite",
+                        "title_class": "",
+                        "address": "Invite",
+                        "class": [],
+                        "template": "common/tpl/admin/Invite.tpl",
+                        "need_login": true,
+                        "is_main_page": false,
+                        "is_backend": true,
+                        "is_system_page": true,
+                        "subpages": ""
+                },
+                "Profile": {
+                        "title": "Profile",
+                        "title_class": "",
+                        "address": "Profile",
+                        "class": [],
+                        "template": "common/tpl/admin/Profile.tpl",
+                        "need_login": true,
+                        "is_main_page": false,
+                        "is_backend": true,
+                        "is_system_page": false,
+                        "subpages": ""
+                },
+                "Contents": {
+                        "title": "Contents management",
+                        "title_class": "",
+                        "address": "Contents",
+                        "class": [],
+                        "template": "",
+                        "need_login": true,
+                        "is_main_page": false,
+                        "is_backend": true,
+                        "is_system_page": false,
+                        "subpages": {
+                                "Menu": {
+                                        "title": "Menu",
+                                        "title_class": "",
+                                        "address": "Menu",
+                                        "class": [],
+                                        "template": "common/tpl/admin/Manage_menu.tpl",
+                                        "need_login": true,
+                                        "is_main_page": false,
+                                        "is_backend": true,
+                                        "is_system_page": false,
+                                        "subpages": ""
+                                },
+                                "Pages": {
+                                        "title": "Pages management",
+                                        "title_class": "",
+                                        "address": "Pages",
+                                        "class": [],
+                                        "template": "common/tpl/admin/Manage_pages.tpl",
+                                        "need_login": true,
+                                        "is_main_page": false,
+                                        "is_backend": true,
+                                        "is_system_page": false,
+                                        "subpages": ""
+                                },
+                                "Blog": {
+                                        "title": "Blog",
+                                        "title_class": "",
+                                        "address": "Blog",
+                                        "class": [],
+                                        "template": "",
+                                        "need_login": true,
+                                        "is_main_page": false,
+                                        "is_backend": true,
+                                        "is_system_page": false,
+                                        "subpages": ""
+                                }
+                        }
                 }
         }
 }

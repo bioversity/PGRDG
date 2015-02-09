@@ -128,7 +128,7 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
                                                 "text" => "Static contents"
                                         ),
                                         "attributes" => array(
-                                                "href" => "/Contents/Summary",
+                                                "href" => "/Contents/Pages",
                                                 "title" => "Static contents",
                                                 "class" => "btn btn-link"
                                         )
@@ -139,7 +139,7 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
                                                 "text" => "Blog"
                                         ),
                                         "attributes" => array(
-                                                "href" => "/Blog",
+                                                "href" => "/Contents/Blog",
                                                 "title" => "Blog",
                                                 "class" => "btn btn-link"
                                         )

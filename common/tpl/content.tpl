@@ -29,6 +29,7 @@
 					print optimize(Markdown(file_get_contents("common/md/" . $md_page)));
 				}
 
+				// Load the path provided by pages.json
 				if(strlen($page->template) && trim($page->template) !== "") {
 					if(file_exists($page->template)) {
 						require_once($page->template);

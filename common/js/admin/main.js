@@ -1,3 +1,4 @@
+/*jshint scripturl:true*/
 /**
 * Main admin functions
 *
@@ -189,12 +190,14 @@ $.fn.getAttributes = function () {
 	attr = {};
 
 	if(elem && elem.length) $.each(elem.get(0).attributes, function(v,n) {
-	n = n.nodeName||n.name;
-	v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
-	if(v != undefined && v !== false) attr[n] = v
-	})
+		n = n.nodeName||n.name;
+		v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
+		if(v !== undefined && v !== false) {
+			attr[n] = v;
+		}
+	}
 
-	return attr
+	return attr;
 };
 
 /**
@@ -207,7 +210,7 @@ $.fn.check_input = function(callback) {
 
 	$input = $(this);
 	if($input.prop("required")) {
-		if($.trim($input.val()) == "") {
+		if($.trim($input.val()) === "") {
 			$input.isWrong();
 			// Callback
 			if(jQuery.type(callback) == "function") {
@@ -227,7 +230,7 @@ $.fn.check_input = function(callback) {
 			callback.call(this, $input, true);
 		}
 	}
-}
+};
 
 
 /*=======================================================================================
@@ -662,7 +665,7 @@ $.fn.load_active_users = function(user_data){
 	};
 
 	var $item = $(this),
-	$managed_scroller = ($("#managed_scroller").length == 0) ? $('<div id="managed_scroller">') : $("#managed_scroller"),
+	$managed_scroller = ($("#managed_scroller").length === 0) ? $('<div id="managed_scroller">') : $("#managed_scroller"),
 	$managed_scroller_title_count_data = $('<small class="text-info">').text($.get_managed_users_count(user_data)),
 	$managed_scroller_title_count = $('<sup>').append($managed_scroller_title_count_data),
 	$managed_scroller_title = ($("#managed_scroller_title").length === 0) ? $('<h2 id="managed_scroller_title">') : $("#managed_scroller_title"),
@@ -841,7 +844,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 	 */
 	$.fn.add_typed = function() {
 		var $item = $(this).closest(".form-group"),
-		$items = $item.find("div.line");
+		$items = $item.find("div.line"),
 		form_group_type = $.trim($item.attr("class").replace("form-group", "")),
 		placeholder = "",
 		dataitem = "",
@@ -849,8 +852,8 @@ $.fn.load_user_data_in_form = function(user_id) {
 		datatag = "",
 		mid = "",
 		cont = 0,
-		f = 0;
-
+		f = 0,
+		// DOM
 		$row = $('<div class="line clearfix">'),
 		$form_group = $('<div class="form-group">'),
 		$input_col = $('<div class="col-sm-5">'),
@@ -868,7 +871,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			"href": "javascript:void(0);",
 			"onclick": "$(this).add_typed();",
 			"class": "btn btn-default-white"
-		});
+		}),
 		$minus_btn = $('<a>').attr({
 			"href": "javascript:void(0);",
 			"onclick": "$(this).remove_typed();",
@@ -934,7 +937,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$item.remove();
 		});
 	};
-
 
 	if(user_id === undefined || user_id === null || user_id === "") {
 		user_id = $.get_manager_id();
@@ -1055,6 +1057,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 			$span_col2 = $('<div class="col-sm-5 control-label text-muted text-left">'),
 			$label = $('<label class="col-sm-3 control-label">'),
 			$label_empty = $('<label class="col-sm-3 control-label">'),
+			span_label = "",
 			$span = $('<div class="col-sm-3 control-label text-muted">'),
 			$input = $('<input>'),
 			$input2 = $('<input>'),
@@ -1062,7 +1065,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 				"href": "javascript:void(0);",
 				"onclick": "$(this).add_typed();",
 				"class": "btn btn-default-white"
-			});
+			}),
 			$cancel_btn = $('<a>').attr({
 				"href": "javascript:void(0);",
 				"onclick": "$.cancel_user_editing();",
@@ -1095,7 +1098,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 					break;
 				case "read":
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
-						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
+						span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 						$span.text(span_label);
 
 						var $ul = $('<ul class="list-unstyled">');
@@ -1118,7 +1121,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$row.append($span_col);
 						$fieldset_pd.append($row);
 					} else {
-						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
+						span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 						$span.text(span_label);
 						$span_col.text($.right_date(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]));
 
@@ -1133,7 +1136,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 					break;
 				case "read_edit":
 					if($.is_obj(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]) || $.is_array(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP])) {
-						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME]);
+						span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME]);
 						$label.attr("for", v[kAPI_PARAM_ID]);
 						$label.text(span_label);
 						$row.append($label);
@@ -1155,7 +1158,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 								"data-count": 0,
 								"id": v[kAPI_PARAM_ID] + "_k",
 								"name": v[kAPI_PARAM_ID] + "_k",
-								"data-tag": k,
 								"placeholder": $.ucfirst(kAPI_RESULT_ENUM_LABEL),
 								"value": ""
 							});
@@ -1169,7 +1171,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 								"data-count": 0,
 								"id": v[kAPI_PARAM_ID] + "_v",
 								"name": v[kAPI_PARAM_ID] + "_v",
-								"data-tag": k,
 								"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 								"value": ""
 							});
@@ -1188,7 +1189,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$form_group.append($row);
 						// $form_col.append('<hr />');
 					} else {
-						var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
+						span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Record ", ""));
 						$span.text(span_label);
 						$span_col.text($.right_date(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]));
 						// console.warn($.right_date(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]));
@@ -1202,7 +1203,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 							"data-count": 0,
 							"id": v[kAPI_PARAM_ID] + "_k",
 							"name": v[kAPI_PARAM_ID] + "_k",
-							"data-tag": k,
 							"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 							"value": ""
 						});
@@ -1217,7 +1217,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 					break;
 				case "edit":
 					// Chiedi a Milko di inserire "info" tra i tag
-					var span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Entity ", ""));
+					span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Entity ", ""));
 					$label.addClass("col-xs-12").attr("for", v[kAPI_PARAM_ID]);
 					$label.text(span_label);
 
@@ -1236,12 +1236,11 @@ $.fn.load_user_data_in_form = function(user_id) {
 										"data-count": 0,
 										"id": v[kAPI_PARAM_ID] + "_k",
 										"name": v[kAPI_PARAM_ID] + "_k",
-										"data-tag": k,
 										"placeholder": $.ucfirst(kAPI_RESULT_ENUM_LABEL),
 										"value": vv[kAPI_PARAM_RESPONSE_FRMT_NAME]
 									});
 									$input2.attr({
-										"type": (v[kAPI_PARAM_INPUT_TYPE] != undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
+										"type": (v[kAPI_PARAM_INPUT_TYPE] !== undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
 										"class": "form-control",
 										"data-item": v[kAPI_PARAM_ID],
 										"data-tag": k,
@@ -1250,7 +1249,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 										"data-count": 0,
 										"id": v[kAPI_PARAM_ID] + "_v",
 										"name": v[kAPI_PARAM_ID] + "_v",
-										"data-tag": k,
 										"placeholder": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME],
 										"value": vv[kkk]
 									});
@@ -1268,11 +1266,10 @@ $.fn.load_user_data_in_form = function(user_id) {
 						$span_col2.append($input_group);
 						$row.append($span_col).append($span_col2);
 						$form_group.append($row);
-						// $form_col.append('<hr />');
 					} else {
 						$row.append($label);
 						$input.attr({
-							"type": (v[kAPI_PARAM_INPUT_TYPE] != undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
+							"type": (v[kAPI_PARAM_INPUT_TYPE] !== undefined) ? v[kAPI_PARAM_INPUT_TYPE] : "text",
 							"class": "form-control",
 							"id": v[kAPI_PARAM_ID],
 							"name": v[kAPI_PARAM_ID],
@@ -1284,7 +1281,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 							"value": v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_DISP]
 						});
 						if(v[kAPI_PARAM_DATA_KIND] == "required") {
-							$input.attr("required", "required")
+							$input.attr("required", "required");
 						}
 						$input_col.attr("class", "col-sm-5 col-xs-12").append($input);
 						$row.append($input_col);
@@ -1293,7 +1290,7 @@ $.fn.load_user_data_in_form = function(user_id) {
 					$row.addClass($.md5(span_label));
 					$form_group.addClass(v[kAPI_PARAM_DATA_TYPE] + "_item");
 					if(v[kAPI_PARAM_DATA_KIND] == "required") {
-						$form_group.addClass("required")
+						$form_group.addClass("required");
 					}
 					$form_group.append($row);
 					$fieldset_pd.append($form_group);
@@ -1328,11 +1325,11 @@ $.fn.load_user_data_in_form = function(user_id) {
  * Save the user data
  */
 $.save_user_data = function(user_id) {
-	var o = {};
-	o[kTAG_ROLES] = [],
+	var o = {},
 	k = {},
 	tag = "",
 	errors = 0;
+	o[kTAG_ROLES] = [];
 	$.each($('.well.form :input'), function(k, v) {
 		$(v).check_input(function($input, status) {
 			if(!status) {
@@ -1695,12 +1692,12 @@ $.invite_user = function(user_id, callback) {
 		$("#new_user_mail_address").closest(".form-group").removeClass("has-error");
 
 		var k = {};
-		k[kAPI_REQUEST_USER] = (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id,
-		k[kTAG_NAME] = $.trim($("#new_user_full_name").val()),
-		k[kTAG_AUTHORITY] = "ITA046",
-		k[kTAG_COLLECTION] = "pgrdiversity.bioversityinternational.org",
-		k[kTAG_ENTITY_TITLE] = $.trim($("#new_user_work_title").val()),
-		k[kTAG_ENTITY_EMAIL] = $.trim($("#new_user_mail_address").val()),
+		k[kAPI_REQUEST_USER] = (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id;
+		k[kTAG_NAME] = $.trim($("#new_user_full_name").val());
+		k[kTAG_AUTHORITY] = "ITA046";
+		k[kTAG_COLLECTION] = "pgrdiversity.bioversityinternational.org";
+		k[kTAG_ENTITY_TITLE] = $.trim($("#new_user_work_title").val());
+		k[kTAG_ENTITY_EMAIL] = $.trim($("#new_user_mail_address").val());
 		k[kTAG_ROLES] = [];
 		if($("#role-invite").is(":checked")) {
 			k[kTAG_ROLES].push(kTYPE_ROLE_INVITE);
