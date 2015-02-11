@@ -1769,22 +1769,120 @@ $.delete_invitation = function(invited_id) {
 
 
 $.fn.edit_menu = function() {
+	/**
+	 * Get all available icons
+	 */
+	$.generate_available_icons = function(callback) {
+		if(!$.storage_exists("pgrdg_user_cache.local.available_icons")) {
+			$.ajax({
+				url: "common/include/funcs/_ajax/available_icons.php",
+				DataType: "json",
+				crossDomain: true,
+				type: "GET",
+				timeout: 10000,
+				success: function(response) {
+					storage.set("pgrdg_user_cache.local.available_icons", response.icons);
+					if (typeof callback == "function") {
+						callback(response.icons);
+					}
+				}
+			});
+		} else {
+			if (typeof callback == "function") {
+				callback(storage.get("pgrdg_user_cache.local.available_icons"));
+			}
+		}
+	};
+
+	/**
+	 * Generate a box containing all Font Awesome available icons
+	 */
+	$.fn.generate_available_icons_preview = function(current_icon) {
+		var $box = $('<ul class="list-inline">');
+
+		$.generate_available_icons(function(icons) {
+				console.warn(current_icon)
+			$.each(icons, function(k, icon) {
+				var $li = $('<li>'),
+				$a = $('<a>').attr({
+					"href": "javascript:void(0);",
+					"onclick": "set_icon('" + icon + "');"
+				}),
+				$span = $('<span>').addClass("fa fa-fw fa-2x " + icon);
+				console.log(icon)
+				$a.append($span);
+				$li.append($a);
+				$box.append($li);
+			});
+		});
+		$(this).append($box);
+	};
+
 	var $item = $(this),
-	data = $item.closest(".menu_data"),
-	title = data.find(".menu_title:first").text(),
+	data = $item.closest(".menu_data").first(),
+	title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
 	text = data.find(".menu_text:first").text(),
 	icon = $.trim(data.find(".menu_icon:first").attr("class").replace("menu_icon", "")),
-	link = data.find(".menu_link:first").text();
+	link = data.find(".menu_link:first").text().replace($.url().attr("host"), "");
 
-	console.log(title);
-	console.log(text);
+	// DOM generation
+	var $form = $('<div class="form-horizontal">'),
+	$div_text = $('<div class="form-group">'),
+	$div_title = $('<div class="form-group">'),
+	$div_link = $('<div class="form-group">'),
+	$div_icon = $('<div class="icon_box">'),
+
+	$text_label = $('<label class="control-label col-sm-2" for="menu_name">').text(i18n[lang].interface.forms.label_menu_text),
+	$title_label = $('<label class="control-label col-sm-2" for="menu_title">').text(i18n[lang].interface.forms.label_menu_title),
+	$link_label = $('<label class="control-label col-sm-2" for="menu_link">').text(i18n[lang].interface.forms.label_menu_link),
+	$icon_label = $('<label class="control-label col-sm-2" for="menu_icon">').text(i18n[lang].interface.forms.label_menu_icon),
+
+	$text_input_col = $('<div class="col-sm-10">'),
+	$title_input_col = $('<div class="col-sm-10">'),
+	$link_input_col = $('<div class="col-sm-10">'),
+	$icon_input_col = $('<div class="col-sm-10">'),
+	$link_input_group = $('<div class="input-group">'),
+	$link_input_group_span = $('<span class="input-group-btn">'),
+	$link_input_group_btn = $('<button class="btn btn-default-grey" title="Empty link" onclick="$(\'#menu_link\').val(\'javascript:void(0);\')">').html('<span class="fa fa-code">'),
+
+	$input_text = $('<input type="text" class="form-control" id="menu_name" name="menu_name" required value="' + text + '" />'),
+	$input_title = $('<input type="text" class="form-control" id="menu_title" name="menu_title" required value="' + title + '" />');
+	$input_link = $('<input type="url" class="form-control" id="menu_link" name="menu_link" required value="' + link + '" />');
+	$input_icon = $('<input type="hidden" id="menu_icon" name="menu_icon" value="' + icon + '" />');
+
+	$text_input_col.append($input_text);
+	$div_text.append($text_label);
+	$div_text.append($text_input_col);
+
+	$title_input_col.append($input_title);
+	$div_title.append($title_label);
+	$div_title.append($title_input_col);
+
+	$link_input_group.append($input_link);
+	$link_input_group.append($link_input_group_span);
+	$link_input_group_span.append($link_input_group_btn);
+	$link_input_col.append($link_input_group);
+	$div_link.append($link_label);
+	$div_link.append($link_input_col);
+
+	$div_icon.append($input_icon);
+	$div_icon.generate_available_icons_preview(icon);
+
+	$form.append($div_text);
+	$form.append($div_title);
+	$form.append($div_link);
+	$form.append('<hr />');
+	$form.append($div_icon);
+
+	// console.log(title);
+	// console.log(text);
 	console.log(icon);
-	console.log(link);
+	// console.log(link);
 	$(data).popover({
 		placement: "top",
 		html: true,
 		title: "Edit Menu",
-		content: "You have a <b>fanbase</b> of over 1000 Amount of fans they have."
+		content: $form
 		// hideOnHTMLClick: false,
 		// openEvent: 'localhost/project/common_ctrl/update_popup_status',
 		// trigger: 'hover',

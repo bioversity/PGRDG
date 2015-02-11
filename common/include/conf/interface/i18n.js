@@ -205,6 +205,12 @@ var i18n = {
                                 "view_map": "View map",
                                 "view_statistics": "View statistics"
                         },
+                        "forms": {
+                                "label_menu_text": "Text",
+                                "label_menu_link": "Link",
+                                "label_menu_title": "Title",
+                                "label_menu_icon": "Icon"
+                        },
                         "map_selection": "Map selection",
                         "zoom_in": "Zoom in",
                         "zoom_out": "Zoom out",

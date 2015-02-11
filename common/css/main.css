@@ -3230,7 +3230,7 @@ div.user_data dl.roles dd {
 	text-align: left;
 	color: #999;
 }
-.move-handle + div + .move-handle {
+.move-handle:last-child {
 	text-align: right;
 }
 .move-handle {
@@ -3249,4 +3249,34 @@ div.user_data dl.roles dd {
 }
 .list-group-item > .move-handle + div + .move-handle {
 	/*float: right;*/
+}
+
+.icon_box {
+	max-height: 200px;
+	overflow-y: scroll;
+	border: #dedede 1px solid;
+	padding: 5px;
+}
+.icon_box li {
+	padding: 5px !important;
+	width: 55px;
+	height: 55px;
+}
+.icon_box li a {
+	color: #666;
+	border: 1px solid #efefef;
+	margin: 0 !important;
+	padding: 5px;
+	text-align: center;
+	width: 45px;
+	height: 45px;
+	display: block
+}
+.icon_box li a:hover {
+	color: #ff9400;
+	border: 1px solid #ccc;
+	box-shadow: 0 0 20px #dedede inset;
+}
+.icon_box li a span {
+	margin: 2.5px 0 0 -2.5px;
 }

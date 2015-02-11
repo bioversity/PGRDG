@@ -763,6 +763,8 @@
 		if(storage.isSet(all_path.join("."))) {
 			if($.is_obj(storage.get(all_path.join("."))) && $.obj_len(storage.get(all_path.join("."))) > 0) {
 				is_set = true;
+			} else if($.is_array(storage.get(all_path.join("."))) && storage.get(all_path.join(".")).length > 0) {
+				is_set = true;
 			} else {
 				is_set = false;
 			}
