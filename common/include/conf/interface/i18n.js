@@ -178,6 +178,7 @@ var i18n = {
                                 "filter": "Filter",
                                 "group_by": "Group by...",
                                 "group": "Group",
+                                "hide": "Hide",
                                 "invite": "Invite",
                                 "invite_an_user": "Invite an user",
                                 "invite_an_user_as": "Invite an user managed by {X}",

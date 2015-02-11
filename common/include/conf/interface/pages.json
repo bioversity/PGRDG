@@ -219,7 +219,7 @@
                         "is_system_page": false,
                         "subpages": {
                                 "Menu": {
-                                        "title": "Menu",
+                                        "title": "Menu management",
                                         "title_class": "",
                                         "address": "Menu",
                                         "class": [],

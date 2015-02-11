@@ -1,5 +1,5 @@
 <?php
-require_once("common/tpl/defines.tpl");
+require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/tpl/defines.tpl");
 
 if(session_status() == PHP_SESSION_NONE) {
         session_start();
@@ -20,7 +20,7 @@ $menu["menu"]["admin"][0] = array(
                         "text" => "Home"
                 ),
                 "attributes" => array(
-                        "href" => "/",
+                        "href" => "./",
                         "title" => "Go to Main Page",
                         "class" => "btn btn-link"
                 )
@@ -47,7 +47,7 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                                 "text" => "All users"
                         ),
                         "attributes" => array(
-                                "href" => "/Users",
+                                "href" => "./Users",
                                 "title" => "See all users",
                                 "class" => "btn btn-link"
                         )
@@ -59,7 +59,7 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                         "text" => "Invite new"
                 ),
                 "attributes" => array(
-                        "href" => "/Users/Invite",
+                        "href" => "./Users/Invite",
                         "title" => "Invite an user",
                         "class" => "btn btn-link btn-default"
                 )
@@ -85,7 +85,7 @@ $menu["menu"]["admin"][2] = array(
                                         "text" => "History"
                                 ),
                                 "attributes" => array(
-                                        "href" => "/Your_data/History",
+                                        "href" => "./Your_data/History",
                                         "title" => "History",
                                         "class" => "btn btn-link"
                                 )
@@ -101,7 +101,7 @@ if(in_array(kTYPE_ROLE_UPLOAD, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                                 "text" => "Upload"
                         ),
                         "attributes" => array(
-                                "href" => "/Your_data/Upload",
+                                "href" => "./Your_data/Upload",
                                 "title" => "Upload",
                                 "class" => "btn btn-link"
                         )
@@ -122,14 +122,25 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
                                 "class" => "btn btn-link"
                         ),
                         "childs" => array(
-                                "Static_contents" => array(
+                                "Menu" => array(
                                         "content" => array(
-                                                "icon" => "fa fa-fw fa-file-text",
-                                                "text" => "Static contents"
+                                                "icon" => "fa fa-fw fa fa-list",
+                                                "text" => "Menu"
                                         ),
                                         "attributes" => array(
-                                                "href" => "/Contents/Pages",
-                                                "title" => "Static contents",
+                                                "href" => "./Menu",
+                                                "title" => "Menu",
+                                                "class" => "btn btn-link"
+                                        )
+                                ),
+                                "Pages" => array(
+                                        "content" => array(
+                                                "icon" => "fa fa-fw fa-file-text",
+                                                "text" => "Pages"
+                                        ),
+                                        "attributes" => array(
+                                                "href" => "./Pages",
+                                                "title" => "Pages",
                                                 "class" => "btn btn-link"
                                         )
                                 ),
@@ -139,7 +150,7 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
                                                 "text" => "Blog"
                                         ),
                                         "attributes" => array(
-                                                "href" => "/Contents/Blog",
+                                                "href" => "./Blog",
                                                 "title" => "Blog",
                                                 "class" => "btn btn-link"
                                         )
@@ -156,7 +167,7 @@ $menu["menu"]["admin"][] = array(
                         "text" => "Logout"
                 ),
                 "attributes" => array(
-                        "href" => "/Signout",
+                        "href" => "./Signout",
                         "title" => "",
                         "class" => "btn btn-link text-warning"
                 )

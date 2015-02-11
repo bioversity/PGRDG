@@ -189,12 +189,14 @@ $.fn.getAttributes = function () {
 	var elem = this,
 	attr = {};
 
-	if(elem && elem.length) $.each(elem.get(0).attributes, function(v,n) {
-		n = n.nodeName||n.name;
-		v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
-		if(v !== undefined && v !== false) {
-			attr[n] = v;
-		}
+	if(elem && elem.length) {
+		$.each(elem.get(0).attributes, function(v,n) {
+			n = n.nodeName||n.name;
+			v = elem.attr(n); // relay on $.fn.attr, it makes some filtering and checks
+			if(v !== undefined && v !== false) {
+				attr[n] = v;
+			}
+		});
 	}
 
 	return attr;
@@ -1762,6 +1764,34 @@ $.delete_invitation = function(invited_id) {
 
 
 /*=======================================================================================
+*	MENU EDITING FUNCTIONS
+*======================================================================================*/
+
+
+$.fn.edit_menu = function() {
+	var $item = $(this),
+	data = $item.closest(".menu_data"),
+	title = data.find(".menu_title:first").text(),
+	text = data.find(".menu_text:first").text(),
+	icon = $.trim(data.find(".menu_icon:first").attr("class").replace("menu_icon", "")),
+	link = data.find(".menu_link:first").text();
+
+	console.log(title);
+	console.log(text);
+	console.log(icon);
+	console.log(link);
+	$(data).popover({
+		placement: "top",
+		html: true,
+		title: "Edit Menu",
+		content: "You have a <b>fanbase</b> of over 1000 Amount of fans they have."
+		// hideOnHTMLClick: false,
+		// openEvent: 'localhost/project/common_ctrl/update_popup_status',
+		// trigger: 'hover',
+	});
+};
+
+/*=======================================================================================
 *	COMMON FUNCTIONS
 *======================================================================================*/
 
@@ -1853,6 +1883,7 @@ $(document).ready(function() {
 	$(window).on("hashchange", function(e) {
 		$.set_breadcrumb();
 	}).trigger("hashchange");
+
 	switch(current_path) {
 		case "Profile":
 			var url = "",
@@ -1926,6 +1957,14 @@ $(document).ready(function() {
 		case "Invite":
 			$("#loader").show();
 			$.generate_invite_form();
+			break;
+		case "Menu":
+			// $(".list-group-item").sortable({
+			// 	// connectWith: ".list-group",
+			// 	containment: "parent",
+			// 	axis: "y",
+			// 	handle: ".move-handle"
+			// }).disableSelection();
 			break;
 	}
 });

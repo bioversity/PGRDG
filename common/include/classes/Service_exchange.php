@@ -231,9 +231,6 @@ class Service_exchange {
                                 );
                                 break;
                         case "save_user_data":
-                        // header("Content-type: text/plain");
-                        // print_r($data);
-                        // exit();
                                 // Perform request
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_MOD_USER,
@@ -292,6 +289,7 @@ class Service_exchange {
                 $encoded = $this->encrypt_RSA($params);
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
                 // header("Content-type: text/plain");
+                // print_r($params);
                 // print_r($url);
                 // exit();
                 return $this->receive_from_service($this->frontend->browse($url));

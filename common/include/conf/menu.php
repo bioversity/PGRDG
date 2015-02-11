@@ -1,5 +1,5 @@
 <?php
-require_once("common/tpl/defines.tpl");
+require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/tpl/defines.tpl");
 $allow_signup = true;
 if(session_status() == PHP_SESSION_NONE) {
 	session_start();
@@ -36,7 +36,7 @@ $menu["menu"]["top"][] = array(
 			"text" => "Home"
 		),
 		"attributes" => array(
-			"href" => "/",
+			"href" => "./",
 			"title" => "Go to Main Page",
 			"class" => "btn btn-link"
 		)
@@ -48,7 +48,7 @@ $menu["menu"]["top"][] = array(
 			"text" => "Blog"
 		),
 		"attributes" => array(
-			"href" => "/Blog",
+			"href" => "./Blog",
 			"title" => "The PGRDG Blog"
 		)
 	),
@@ -69,7 +69,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "About us"
 				),
 				"attributes" => array(
-					"href" => "/About_us"
+					"href" => "./About_us"
 				)
 			),
 			"How_the_system_works" => array(
@@ -78,7 +78,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "How the system works"
 				),
 				"attributes" => array(
-					"href" => "/How_the_system_works"
+					"href" => "./How_the_system_works"
 				)
 			),
 			"Feedback" => array(
@@ -87,7 +87,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "Give us your feedback"
 				),
 				"attributes" => array(
-					"href" => "/Feedback"
+					"href" => "./Feedback"
 				)
 			),
 		)
@@ -108,7 +108,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "National Inventories"
 				),
 				"attributes" => array(
-					"href" => "/National_Inventories"
+					"href" => "./National_Inventories"
 				)
 			),
 			"Conservation Strategies" => array(
@@ -117,7 +117,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "Conservation Strategies"
 				),
 				"attributes" => array(
-					"href" => "/Conservation_Strategies"
+					"href" => "./Conservation_Strategies"
 				)
 			),
 			"Links" => array(
@@ -126,7 +126,7 @@ $menu["menu"]["top"][] = array(
 					"text" => "Links"
 				),
 				"attributes" => array(
-					"href" => "/Links"
+					"href" => "./Links"
 				)
 			)
 		)
@@ -137,7 +137,7 @@ $menu["menu"]["top"][] = array(
 			"text" => "Search"
 		),
 		"attributes" => array(
-			"href" => "/Search",
+			"href" => "./Search",
 			"class" => "btn btn-link"
 		)
 	),
@@ -147,9 +147,9 @@ $menu["menu"]["top"][] = array(
 			"text" => "Graphs"
 		),
 		"attributes" => array(
-			//"href" => "/Map"
-			"href" => "Graph",
-			"title" => "",
+			//"href" => "./Map"
+			"href" => "./Graph",
+			"title" => "Collected graphs",
 			"class" => "btn btn-link"
 		),
 		"divider" => "vertical-divider"
@@ -160,8 +160,8 @@ $menu["menu"]["top"][] = array(
 			"text" => "Map"
 		),
 		"attributes" => array(
-			//"href" => "/Map"
-			"href" => "Map",
+			//"href" => "./Map"
+			"href" => "./Map",
 			"title" => "Go to map view",
 			"class" => "btn btn-link"
 		),
@@ -174,7 +174,7 @@ $menu["menu"]["top"][] = array(
 			"text" => "Data"
 		),
 		"attributes" => array(
-			"href" => "/Data"
+			"href" => "./Data"
 		)
 	),
 	"Charts" => array(
@@ -183,7 +183,7 @@ $menu["menu"]["top"][] = array(
 			"text" => "Charts"
 		),
 		"attributes" => array(
-			"href" => "/Charts"
+			"href" => "./Charts"
 		),
 		"divider" => "vertical-divider"
 	),
@@ -198,7 +198,7 @@ if($allow_signup) {
 				"text" => "Sign in"
 			),
 			"attributes" => array(
-				"href" => "/Signin",
+				"href" => "./Signin",
 				"class" => "btn btn-link"
 			)
 		);
@@ -219,7 +219,7 @@ if($allow_signup) {
 						"text" => "Profile"
 					),
 					"attributes" => array(
-						"href" => "/Profile"
+						"href" => "./Profile"
 					),
 					"divider" => "divider"
 				),
@@ -229,13 +229,13 @@ if($allow_signup) {
 						"text" => "Sign out"
 					),
 					"attributes" => array(
-						"href" => "/Signout"
+						"href" => "./Signout"
 					)
 				)
 			)
 		);
 
-		require_once("common/include/conf/menu_admin.php");
+		require_once(INCLUDE_DIR . "conf/menu_admin.php");
 	}
 }
 

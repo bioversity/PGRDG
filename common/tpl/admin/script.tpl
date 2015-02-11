@@ -51,10 +51,10 @@
 <!-- PAGE RELATED PLUGIN(S) -->
 
 <!-- Flot Chart Plugin: Flot Engine, Flot Resizer, Flot Tooltip -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.cust.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.resize.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.time.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.tooltip.min.js"></script>
+<!-- // <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.cust.min.js"></script>
+// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.resize.min.js"></script>
+// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.time.min.js"></script>
+// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.tooltip.min.js"></script> -->
 
 <!-- Vector Maps Plugin: Vectormap engine, Vectormap language -->
 <script src="<?php print $domain; ?>/common/js/admin/plugin/vectormap/jquery-jvectormap-1.2.2.min.js"></script>
@@ -168,34 +168,34 @@ $(document).ready(function() {
         });
 
         // setup plot
-        var options = {
-                yaxis : {
-                        min : 0,
-                        max : 100
-                },
-                xaxis : {
-                        min : 0,
-                        max : 100
-                },
-                colors : [$UpdatingChartColors],
-                series : {
-                        lines : {
-                                lineWidth : 1,
-                                fill : true,
-                                fillColor : {
-                                        colors : [{
-                                                opacity : 0.4
-                                        }, {
-                                                opacity : 0
-                                        }]
-                                },
-                                steps : false
-
-                        }
-                }
-        };
-
-        var plot = $.plot($("#updating-chart"), [getRandomData()], options);
+        // var options = {
+        //         yaxis : {
+        //                 min : 0,
+        //                 max : 100
+        //         },
+        //         xaxis : {
+        //                 min : 0,
+        //                 max : 100
+        //         },
+        //         colors : [$UpdatingChartColors],
+        //         series : {
+        //                 lines : {
+        //                         lineWidth : 1,
+        //                         fill : true,
+        //                         fillColor : {
+        //                                 colors : [{
+        //                                         opacity : 0.4
+        //                                 }, {
+        //                                         opacity : 0
+        //                                 }]
+        //                         },
+        //                         steps : false
+        //
+        //                 }
+        //         }
+        // };
+        //
+        // var plot = $.plot($("#updating-chart"), [getRandomData()], options);
 
         /* live switch */
         $('input[type="checkbox"]#start_interval').click(function() {
@@ -227,80 +227,80 @@ $(document).ready(function() {
 
         /* TAB 2: Social Network  */
 
-        $(function() {
-                // jQuery Flot Chart
-                var twitter = [[1, 27], [2, 34], [3, 51], [4, 48], [5, 55], [6, 65], [7, 61], [8, 70], [9, 65], [10, 75], [11, 57], [12, 59], [13, 62]], facebook = [[1, 25], [2, 31], [3, 45], [4, 37], [5, 38], [6, 40], [7, 47], [8, 55], [9, 43], [10, 50], [11, 47], [12, 39], [13, 47]], data = [{
-                        label : "Twitter",
-                        data : twitter,
-                        lines : {
-                                show : true,
-                                lineWidth : 1,
-                                fill : true,
-                                fillColor : {
-                                        colors : [{
-                                                opacity : 0.1
-                                        }, {
-                                                opacity : 0.13
-                                        }]
-                                }
-                        },
-                        points : {
-                                show : true
-                        }
-                }, {
-                        label : "Facebook",
-                        data : facebook,
-                        lines : {
-                                show : true,
-                                lineWidth : 1,
-                                fill : true,
-                                fillColor : {
-                                        colors : [{
-                                                opacity : 0.1
-                                        }, {
-                                                opacity : 0.13
-                                        }]
-                                }
-                        },
-                        points : {
-                                show : true
-                        }
-                }];
-
-                var options = {
-                        grid : {
-                                hoverable : true
-                        },
-                        colors : ["#568A89", "#3276B1"],
-                        tooltip : true,
-                        tooltipOpts : {
-                                //content : "Value <b>$x</b> Value <span>$y</span>",
-                                defaultTheme : false
-                        },
-                        xaxis : {
-                                ticks : [
-                                        [1, "JAN"],
-                                        [2, "FEB"],
-                                        [3, "MAR"],
-                                        [4, "APR"],
-                                        [5, "MAY"],
-                                        [6, "JUN"],
-                                        [7, "JUL"],
-                                        [8, "AUG"],
-                                        [9, "SEP"],
-                                        [10, "OCT"],
-                                        [11, "NOV"],
-                                        [12, "DEC"],
-                                        [13, "JAN+1"]
-                                ]
-                        },
-                        yaxes : {
-
-                        }
-                };
-
-                var plot3 = $.plot($("#statsChart"), data, options);
-        });
+        // $(function() {
+        //         // jQuery Flot Chart
+        //         var twitter = [[1, 27], [2, 34], [3, 51], [4, 48], [5, 55], [6, 65], [7, 61], [8, 70], [9, 65], [10, 75], [11, 57], [12, 59], [13, 62]], facebook = [[1, 25], [2, 31], [3, 45], [4, 37], [5, 38], [6, 40], [7, 47], [8, 55], [9, 43], [10, 50], [11, 47], [12, 39], [13, 47]], data = [{
+        //                 label : "Twitter",
+        //                 data : twitter,
+        //                 lines : {
+        //                         show : true,
+        //                         lineWidth : 1,
+        //                         fill : true,
+        //                         fillColor : {
+        //                                 colors : [{
+        //                                         opacity : 0.1
+        //                                 }, {
+        //                                         opacity : 0.13
+        //                                 }]
+        //                         }
+        //                 },
+        //                 points : {
+        //                         show : true
+        //                 }
+        //         }, {
+        //                 label : "Facebook",
+        //                 data : facebook,
+        //                 lines : {
+        //                         show : true,
+        //                         lineWidth : 1,
+        //                         fill : true,
+        //                         fillColor : {
+        //                                 colors : [{
+        //                                         opacity : 0.1
+        //                                 }, {
+        //                                         opacity : 0.13
+        //                                 }]
+        //                         }
+        //                 },
+        //                 points : {
+        //                         show : true
+        //                 }
+        //         }];
+        //
+        //         var options = {
+        //                 grid : {
+        //                         hoverable : true
+        //                 },
+        //                 colors : ["#568A89", "#3276B1"],
+        //                 tooltip : true,
+        //                 tooltipOpts : {
+        //                         //content : "Value <b>$x</b> Value <span>$y</span>",
+        //                         defaultTheme : false
+        //                 },
+        //                 xaxis : {
+        //                         ticks : [
+        //                                 [1, "JAN"],
+        //                                 [2, "FEB"],
+        //                                 [3, "MAR"],
+        //                                 [4, "APR"],
+        //                                 [5, "MAY"],
+        //                                 [6, "JUN"],
+        //                                 [7, "JUL"],
+        //                                 [8, "AUG"],
+        //                                 [9, "SEP"],
+        //                                 [10, "OCT"],
+        //                                 [11, "NOV"],
+        //                                 [12, "DEC"],
+        //                                 [13, "JAN+1"]
+        //                         ]
+        //                 },
+        //                 yaxes : {
+        //
+        //                 }
+        //         };
+        //
+        //         var plot3 = $.plot($("#statsChart"), data, options);
+        // });
 
         // END TAB 2
 
@@ -576,54 +576,54 @@ $(document).ready(function() {
         * CHAT
         */
 
-        $.filter_input = $('#filter-chat-list');
-        $.chat_users_container = $('#chat-container > .chat-list-body')
-        $.chat_users = $('#chat-users')
-        $.chat_list_btn = $('#chat-container > .chat-list-open-close');
-        $.chat_body = $('#chat-body');
+        // $.filter_input = $('#filter-chat-list');
+        // $.chat_users_container = $('#chat-container > .chat-list-body')
+        // $.chat_users = $('#chat-users')
+        // $.chat_list_btn = $('#chat-container > .chat-list-open-close');
+        // $.chat_body = $('#chat-body');
 
         /*
         * LIST FILTER (CHAT)
         */
 
-        // custom css expression for a case-insensitive contains()
-        jQuery.expr[':'].Contains = function(a, i, m) {
-                return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-        };
-
-        function listFilter(list) {// header is any element, list is an unordered list
-                // create and add the filter form to the header
-
-                $.filter_input.change(function() {
-                        var filter = $(this).val();
-                        if (filter) {
-                                // this finds all links in a list that contain the input,
-                                // and hide the ones not containing the input while showing the ones that do
-                                $.chat_users.find("a:not(:Contains(" + filter + "))").parent().slideUp();
-                                $.chat_users.find("a:Contains(" + filter + ")").parent().slideDown();
-                        } else {
-                                $.chat_users.find("li").slideDown();
-                        }
-                        return false;
-                }).keyup(function() {
-                        // fire the above change event after every letter
-                        $(this).change();
-
-                });
-
-        }
-
-        // on dom ready
-        listFilter($.chat_users);
-
-        // open chat list
-        $.chat_list_btn.click(function() {
-                $(this).parent('#chat-container').toggleClass('open');
-        })
-
-        $.chat_body.animate({
-                scrollTop : $.chat_body[0].scrollHeight
-        }, 500);
+        // // custom css expression for a case-insensitive contains()
+        // jQuery.expr[':'].Contains = function(a, i, m) {
+        //         return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        // };
+        //
+        // function listFilter(list) {// header is any element, list is an unordered list
+        //         // create and add the filter form to the header
+        //
+        //         $.filter_input.change(function() {
+        //                 var filter = $(this).val();
+        //                 if (filter) {
+        //                         // this finds all links in a list that contain the input,
+        //                         // and hide the ones not containing the input while showing the ones that do
+        //                         $.chat_users.find("a:not(:Contains(" + filter + "))").parent().slideUp();
+        //                         $.chat_users.find("a:Contains(" + filter + ")").parent().slideDown();
+        //                 } else {
+        //                         $.chat_users.find("li").slideDown();
+        //                 }
+        //                 return false;
+        //         }).keyup(function() {
+        //                 // fire the above change event after every letter
+        //                 $(this).change();
+        //
+        //         });
+        //
+        // }
+        //
+        // // on dom ready
+        // listFilter($.chat_users);
+        //
+        // // open chat list
+        // $.chat_list_btn.click(function() {
+        //         $(this).parent('#chat-container').toggleClass('open');
+        // })
+        //
+        // $.chat_body.animate({
+        //         scrollTop : $.chat_body[0].scrollHeight
+        // }, 500);
 
 });
 
