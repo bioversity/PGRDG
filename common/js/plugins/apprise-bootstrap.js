@@ -1,9 +1,18 @@
-// Apprise for Bootstrap by Alessandro Gubitosi
-//
-// based on Apprie 1.5 by Daniel Raftery
-// http://thrivingkings.com/apprise
+/**
+ * Apprise for Bootstrap by Alessandro Gubitosi
+ *
+ * based on Apprie 1.5 by Daniel Raftery
+ * http://thrivingkings.com/apprise
+ */
 
-function apprise(string, args, callback) {
+/**
+ * Apprise function
+ * @param  string  	 	string    		The message to display
+ * @param  object   		args      		Options as arguments object
+ * @param  void 		callback  		The results after the user button clicking
+ * @param  function   		callback2 		The function to execute when the modal is hidden
+ */
+function apprise(string, args, callback, callback2) {
 	if(typeof(string) == "object") {
 		callback = args;
 		args = string;
@@ -14,6 +23,7 @@ function apprise(string, args, callback) {
 		"cancelBtnClass": "btn-default",
 		"confirm": false, 			// Ok and Cancel buttons
 		"double": false,
+		"form": false,
 		"input": false,
 		"input_type": "text",
 		"inputIP": false,
@@ -38,9 +48,9 @@ function apprise(string, args, callback) {
 		"title": "",
 		"titleClass": "text-primary"
 	};
-	if (args) {
+	if(args) {
 		for (var index in default_args) {
-			if (typeof(args[index]) == "undefined") args[index] = default_args[index];
+			if(typeof(args[index]) == "undefined") args[index] = default_args[index];
 		}
 	} else {
 		args = default_args;
@@ -57,14 +67,14 @@ function apprise(string, args, callback) {
 	panel = $('<div>'),
 	footer = $('<div class="modal-footer" style="margin-top: 0;">');
 
-	if (args) {
+	if(args) {
 		if(args.showHeader) {
-			if (args.title) {
-				if (args.title.length > 0) {
+			if(args.title) {
+				if(args.title.length > 0) {
 					var title_icon = "",
 					title_class = " text-primary";
 
-					if (args.icon) {
+					if(args.icon) {
 						switch(args.icon) {
 							case "success":
 								args.icon = "fa-check";
@@ -120,9 +130,9 @@ function apprise(string, args, callback) {
 		}
 	}
 
-	if (args) {
-		if (args.input) {
-			if (typeof(args.input) == 'string') {
+	if(args) {
+		if(args.input) {
+			if(typeof(args.input) == 'string') {
 				row.find("div.col-sm-12").append('<input type="' + args.input_type + '" class="form-control" value="' + args.input + '" /></div>');
 			} else {
 				if(args.fa_icon) {
@@ -132,11 +142,11 @@ function apprise(string, args, callback) {
 				}
 			}
 		}
-		if (args.inputIP) {
+		if(args.inputIP) {
 			row.prepend('<div class="form-group col-sm-5"><p>Tipo di indirizzo:</p><label><input type="radio" id="ipv4" name="ipaddr" class="ipaddr" checked /> <acronym title="Internet Protocol versione 4">IPv4</acronym></label><br /><label><input type="radio" id="ipv6" name="ipaddr" class="ipaddr" /> <acronym title="Internet Protocol versione 6">IPv6</acronym></label><br /><label><input type="radio" id="dns" name="ipaddr" class="ipaddr" /> <acronym title="Domain Name System">DNS</acronym></label></div>');
 
 			$.add_input = function(args) {
-				if (typeof(args.inputIP) == 'string') {
+				if(typeof(args.inputIP) == 'string') {
 					row.find("div.col-sm-12").append('<input type="text" class="form-control" value="' + args.inputIP + '" /></div>');
 				} else {
 					if(args.fa_icon) {
@@ -148,8 +158,11 @@ function apprise(string, args, callback) {
 			};
 			$.add_input(args);
 		}
-		if (args.message) {
-			if (typeof(args.message) == 'string') {
+		if(args.form) {
+			row.find("div.col-sm-12").append(args.message);
+		}
+		if(args.message) {
+			if(typeof(args.message) == 'string') {
 				row.find("div.col-sm-12").append('<textarea rows="5" class="form-control">' + args.message + '</textarea></div>');
 			} else {
 				if(args.fa_icon) {
@@ -160,12 +173,12 @@ function apprise(string, args, callback) {
 			}
 		}
 	}
-	if (args) {
+	if(args) {
 		var btn_group = $('<div class="">');
 		if(!args.double) {
 			btn_group.addClass("btn-group");
 		}
-		if (args.confirm || args.input || args.message || args.double) {
+		if(args.confirm || args.input || args.message || args.double) {
 			if(args.confirm) {
 				args.textOk = "Yes";
 				args.textCancel = "No";
@@ -173,17 +186,25 @@ function apprise(string, args, callback) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args.cancelBtnClass + ((args.double) ? ' pull-left' : '') + '">' + args.textCancel + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args.okBtnClass + ' right">' + args.textOk + '</button>');
 			btn_group.appendTo(footer);
-		} else if (args.invertedBtns) {
+		} else if(args.form) {
+			if(args.confirm) {
+				args.textOk = "Save";
+				args.textCancel = "Cancel";
+			}
+			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args.cancelBtnClass + ((args.double) ? ' pull-left' : '') + '">' + args.textCancel + '</button>');
+			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args.okBtnClass + ' save_btn right">' + args.textOk + '</button>');
+			btn_group.appendTo(footer);
+		} else if(args.invertedBtns) {
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-default">' + args.textOk + '</button>');
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args.okBtnClass + ' right">' + args.textCancel + '</button>');
 			btn_group.appendTo(footer);
 			btn_group.appendTo(footer);
-		} else if (args.perhaps) {
+		} else if(args.perhaps) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn ' + args.okBtnClass + ' right">' + args.textCancel + '</button>');
 			btn_group.append('<button value="perhaps" data-dismiss="modal" class="btn ' + args.PerhapsBtnClass + '">' + args.textPerhaps + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn btn-default">' + args.textOk + '</button>');
 			btn_group.appendTo(footer);
-		} else if (args.verify) {
+		} else if(args.verify) {
 			btn_group.append('<button value="cancel" data-dismiss="modal" class="btn btn-default">' + args.textNo + '</button>');
 			btn_group.append('<button value="ok" data-dismiss="modal" class="btn ' + args.okBtnClass + ' right">' + args.textYes + '</button>');
 			btn_group.appendTo(footer);
@@ -204,13 +225,17 @@ function apprise(string, args, callback) {
 	}
 	modal.prependTo('body');
 	$(".btn").click(function() {
-		if (callback && typeof(callback) === "function") {
+		if(callback && typeof(callback) === "function") {
 			if(args.input || args.message) {
 				callback(($('.form-control').val().length > 0) ? $('.form-control').val() : false);
+			} else if(args.form) {
+				if($(this).hasClass("save_btn")) {
+					callback(($(this).val() == "ok") ? $('.form-horizontal').serialize() : false);
+				}
 			} else if(args.perhaps) {
 				if($(this).val() == "ok") {
 					callback(true);
-				} else if ($(this).val() == "perhaps") {
+				} else if($(this).val() == "perhaps") {
 					callback("perhaps");
 				} else {
 					callback(false);
@@ -221,19 +246,21 @@ function apprise(string, args, callback) {
 		}
 	});
 	$("#apprise").modal(modal).on("shown.bs.modal", function() {
+		$("#loader").hide();
+
 		if(args.inputIP) {
 			$(this).find(".form-control").ipAddress().focus();
-		} else if(args.input) {
-			$(this).find(".form-control").focus();
+		} else if(args.input || args.form) {
+			$(this).find(".form-control:first").focus();
 		}
 		$(document).keydown(function (e) {
-			if (e.keyCode == 13) {
+			if(e.keyCode == 13) {
 				if(!args.input && !args.message) {
 					$('button[value="ok"]').click();
 				}
 			}
 			if(args.allowExit) {
-				if (e.keyCode == 27) { $("#apprise").modal("hide"); }
+				if(e.keyCode == 27) { $("#apprise").modal("hide"); }
 			}
 		});
 		$(".ipaddr").change(function() {
@@ -254,5 +281,19 @@ function apprise(string, args, callback) {
 		});
 		$("*[title]:not(acronym)").tooltip();
 		$("acronym[title]").tooltip({placement: "right"});
+	}).on("hidden.bs.modal", function() {
+		if($("#apprise").length > 0 && !$("#apprise").is(":visible")) {
+			$("#loader").hide();
+			$("#apprise").remove();
+
+			callback2.call(this);
+		}
 	});
 }
+
+/**
+ * And now in jquery mode
+ */
+$.apprise = function(string, args, callback, callback2) {
+	apprise(string, args, callback, callback2);
+};

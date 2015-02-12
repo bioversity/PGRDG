@@ -1767,8 +1767,16 @@ $.delete_invitation = function(invited_id) {
 *	MENU EDITING FUNCTIONS
 *======================================================================================*/
 
+$.fn.set_icon = function(icon) {
+	var $icon_box = $(this).closest(".icon_box"),
+	$input = $("input#menu_icon");
 
-$.fn.edit_menu = function() {
+	$input.val(icon);
+	$icon_box.find("a.selected").removeClass("selected");
+	$(this).addClass("selected");
+};
+
+$.fn.edit_menu = function(callback) {
 	/**
 	 * Get all available icons
 	 */
@@ -1782,13 +1790,13 @@ $.fn.edit_menu = function() {
 				timeout: 10000,
 				success: function(response) {
 					storage.set("pgrdg_user_cache.local.available_icons", response.icons);
-					if (typeof callback == "function") {
+					if(typeof callback == "function") {
 						callback(response.icons);
 					}
 				}
 			});
 		} else {
-			if (typeof callback == "function") {
+			if(typeof callback == "function") {
 				callback(storage.get("pgrdg_user_cache.local.available_icons"));
 			}
 		}
@@ -1801,49 +1809,56 @@ $.fn.edit_menu = function() {
 		var $box = $('<ul class="list-inline">');
 
 		$.generate_available_icons(function(icons) {
-				console.warn(current_icon)
-			$.each(icons, function(k, icon) {
+			for(var i = 0; i < icons.length; i++) {
 				var $li = $('<li>'),
-				$a = $('<a>').attr({
+				icon = icons[i];
+				var $a = $('<a>').attr({
 					"href": "javascript:void(0);",
-					"onclick": "set_icon('" + icon + "');"
+					"onclick": "$(this).set_icon('fa " + icon + "');",
+					"id": icon,
+					"title": $.ucfirst(icon.replace("fa-", "").replace("-o-", "-").replace("-o", "").replace(/\-/g, " ")),
+					"class": (current_icon.replace("fa ", "") == icon) ? "selected": ""
 				}),
-				$span = $('<span>').addClass("fa fa-fw fa-2x " + icon);
-				console.log(icon)
+				$span = $('<span>').addClass("fa fa-fw " + icon);
+				// console.log(icon)
 				$a.append($span);
 				$li.append($a);
 				$box.append($li);
-			});
+			}
 		});
 		$(this).append($box);
 	};
 
+	$("#loader").show();
 	var $item = $(this),
 	data = $item.closest(".menu_data").first(),
-	title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
+	list_id = $item.closest(".list-group-item").attr("id");
+	// console.log($item);
+	var title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
 	text = data.find(".menu_text:first").text(),
 	icon = $.trim(data.find(".menu_icon:first").attr("class").replace("menu_icon", "")),
 	link = data.find(".menu_link:first").text().replace($.url().attr("host"), "");
 
 	// DOM generation
-	var $form = $('<div class="form-horizontal">'),
+	var $form = $('<form class="form-horizontal">'),
 	$div_text = $('<div class="form-group">'),
 	$div_title = $('<div class="form-group">'),
 	$div_link = $('<div class="form-group">'),
+	$div_icon_container = $('<div class="icon_box_container">'),
 	$div_icon = $('<div class="icon_box">'),
 
 	$text_label = $('<label class="control-label col-sm-2" for="menu_name">').text(i18n[lang].interface.forms.label_menu_text),
 	$title_label = $('<label class="control-label col-sm-2" for="menu_title">').text(i18n[lang].interface.forms.label_menu_title),
 	$link_label = $('<label class="control-label col-sm-2" for="menu_link">').text(i18n[lang].interface.forms.label_menu_link),
-	$icon_label = $('<label class="control-label col-sm-2" for="menu_icon">').text(i18n[lang].interface.forms.label_menu_icon),
+	$icon_label = $('<label class="control-label" for="menu_icon">').text(i18n[lang].interface.forms.label_menu_icon),
 
-	$text_input_col = $('<div class="col-sm-10">'),
+	$text_input_col = $('<div class="col-sm-6">'),
 	$title_input_col = $('<div class="col-sm-10">'),
 	$link_input_col = $('<div class="col-sm-10">'),
 	$icon_input_col = $('<div class="col-sm-10">'),
 	$link_input_group = $('<div class="input-group">'),
 	$link_input_group_span = $('<span class="input-group-btn">'),
-	$link_input_group_btn = $('<button class="btn btn-default-grey" title="Empty link" onclick="$(\'#menu_link\').val(\'javascript:void(0);\')">').html('<span class="fa fa-code">'),
+	$link_input_group_btn = $('<button class="btn btn-default-grey" title="' + i18n[lang].interface.btns.empty_link + '" onclick="$(\'#menu_link\').val(\'javascript:void(0);\'); return false;">').html('<span class="fa fa-code">'),
 
 	$input_text = $('<input type="text" class="form-control" id="menu_name" name="menu_name" required value="' + text + '" />'),
 	$input_title = $('<input type="text" class="form-control" id="menu_title" name="menu_title" required value="' + title + '" />');
@@ -1865,27 +1880,34 @@ $.fn.edit_menu = function() {
 	$div_link.append($link_label);
 	$div_link.append($link_input_col);
 
-	$div_icon.append($input_icon);
+	$div_icon_container.append($icon_label);
+	$div_icon_container.append($input_icon);
 	$div_icon.generate_available_icons_preview(icon);
+	$div_icon_container.append($div_icon);
 
+	$form.html("");
 	$form.append($div_text);
 	$form.append($div_title);
 	$form.append($div_link);
-	$form.append('<hr />');
-	$form.append($div_icon);
+	$form.append($div_icon_container);
 
 	// console.log(title);
 	// console.log(text);
-	console.log(icon);
 	// console.log(link);
-	$(data).popover({
-		placement: "top",
-		html: true,
-		title: "Edit Menu",
-		content: $form
-		// hideOnHTMLClick: false,
-		// openEvent: 'localhost/project/common_ctrl/update_popup_status',
-		// trigger: 'hover',
+
+	$("#" + list_id).addClass("selected");
+	apprise($form[0].outerHTML, {
+		"title": "Edit menu",
+		"form": true,
+		"allowExit": false,
+		"cancelBtnClass": "btn-default-white",
+		"okBtnClass": "btn-default"
+	}, function(data) {
+		if(data !== false) {
+			console.info(data);
+		}
+	}, function() {
+		$("#" + list_id).removeClass("selected");
 	});
 };
 
@@ -2057,6 +2079,22 @@ $(document).ready(function() {
 			$.generate_invite_form();
 			break;
 		case "Menu":
+			var i = 0;
+
+			// $("body").on("click", function(e) {
+			// 	$(".edit_menu_btn").each(function() {
+			// 		if(!$(this).is(e.target) && $(this).has(e.target).length === 0 && $(".popover").has(e.target).length === 0) {
+			// 			$(this).popover("hide");
+			// 			$(this).popover("destroy");
+			// 			$(this).removeClass("active");
+			// 		}
+			// 	});
+			// }).on("hidden.bs.popover", function() {
+			// 	var popover = $(".popover").not(".in");
+			// 	if(popover) {
+			// 		popover.remove();
+			// 	}
+			// });
 			// $(".list-group-item").sortable({
 			// 	// connectWith: ".list-group",
 			// 	containment: "parent",

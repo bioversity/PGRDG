@@ -3215,7 +3215,6 @@ div.user_data dl.roles dd {
 }
 #menu_management .list-group-item,
 #menu_management .list-group {
-	background-color: #fff;
 	display: table;
 	width: 100%;
 }
@@ -3244,13 +3243,24 @@ div.user_data dl.roles dd {
 	margin-right: -30px;
 	display: table-cell;
 }
+.list-group-item {
+	background-color: #fff;
+}
+.list-group-item.selected {
+	border-color: #aaa;
+	box-shadow: 0 0 2em #aaa inset;
+}
 .list-group-item p.menu_title {
 	font-style: italic !important;
 }
 .list-group-item > .move-handle + div + .move-handle {
 	/*float: right;*/
 }
-
+.icon_box_container {
+	margin-top: 30px;
+	border-top: #dedede 1px solid;
+	padding-top: 10px;
+}
 .icon_box {
 	max-height: 200px;
 	overflow-y: scroll;
@@ -3263,7 +3273,7 @@ div.user_data dl.roles dd {
 	height: 55px;
 }
 .icon_box li a {
-	color: #666;
+	color: #787878;
 	border: 1px solid #efefef;
 	margin: 0 !important;
 	padding: 5px;
@@ -3273,10 +3283,15 @@ div.user_data dl.roles dd {
 	display: block
 }
 .icon_box li a:hover {
-	color: #ff9400;
+	color: #666;
 	border: 1px solid #ccc;
 	box-shadow: 0 0 20px #dedede inset;
 }
+.icon_box li a.selected {
+	border: 1px solid #bbb;
+	box-shadow: 0 0 15px #aaa inset;
+	color: #ff9400;
+}
 .icon_box li a span {
-	margin: 2.5px 0 0 -2.5px;
+	margin: 7.5px 0 0 0;
 }

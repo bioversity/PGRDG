@@ -1,12 +1,12 @@
 <?php
-function get_menu($menu) {
+function get_menu($menu, $i18nl) {
         foreach($menu as $k => $v) {
                 if($k !== "User") {
                         $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' :  $v["attributes"]["title"]);
                         $link = ($v["attributes"]["href"] !== "./") ? str_replace("./", $_SERVER["HTTP_HOST"] . "/", $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
                         $full_link = (strpos($v["attributes"]["href"], "javascript:") !== false) ? $link : '<a target="_blank" href="' . $link .'">' . $link . '</a>';
                         ?>
-                        <li class="list-group-item">
+                        <li class="list-group-item" id="<?php print md5($k); ?>">
                                 <?php
                                 if(isset($v["childs"])) {
                                         print '<div class="list-group">';
@@ -22,10 +22,10 @@ function get_menu($menu) {
 
                                                         <!-- Button groups -->
                                                         <div class="btn-group pull-right">
-                                                                <button class="btn btn-default-white" onclick="$(this).edit_menu();" title="<?php print $i18n[$lang]["interface"]["btns"]["edit"]; ?>" data-toggle="tooltip" data-placement="top">
+                                                                <button class="btn btn-default-white edit_menu_btn" onclick="$(this).edit_menu();" title="<?php print $i18nl["interface"]["btns"]["edit"]; ?>">
                                                                         <span class="fa fa-fw fa-edit"></span>
                                                                 </button>
-                                                                <button class="btn btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18n[$lang]["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
+                                                                <button class="btn btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
                                                                         <span class="fa fa-fw fa-eye-slash"></span>
                                                                 </button>
                                                         </div>
@@ -38,7 +38,7 @@ function get_menu($menu) {
                                                         ?>
                                                         <ul class="subpanel-body list-group">
                                                                 <?php
-                                                                get_menu($v["childs"]);
+                                                                get_menu($v["childs"], $i18nl);
                                                                 ?>
                                                         </ul>
                                                         <?php
@@ -81,7 +81,7 @@ function get_menu($menu) {
                         <div class="panel-body panel-collapse collapse in" id="menu_management_stage" style="">
                                 <ul class="list-group">
                                         <?php
-                                        get_menu($menu["menu"]["top"][0]);
+                                        get_menu($menu["menu"]["top"][0], $i18n[$lang]);
                                         ?>
                                 </ul>
                         </div>

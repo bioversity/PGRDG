@@ -175,6 +175,7 @@ var i18n = {
                                 "contained_in": "Contained in...",
                                 "edit": "Edit",
                                 "edit_profile": "Edit profile",
+                                "empty_link": "Empty link",
                                 "filter": "Filter",
                                 "group_by": "Group by...",
                                 "group": "Group",
