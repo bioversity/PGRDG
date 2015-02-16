@@ -102,6 +102,7 @@ var i18n = {
                         "no_entries_found": "No entries found",
                         "no_invited_users_yet": "No users invited, yet",
                         "no_results": "No results",
+                        "no_title": "No title for this entry",
                         "offsets": "{X} offsets",
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
                         "removed_item": "Removed {X}",

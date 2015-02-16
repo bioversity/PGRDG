@@ -56,8 +56,10 @@ function get_menu($menu, $i18nl) {
         include(INCLUDE_DIR . "conf/menu.php");
         $config = $menu;
         ?>
-
-        <h1><?php print $page->title; ?></h1>
+        <h1>
+                <?php print $page->title; ?>
+                <button class="btn btn-orange save_btn pull-right" onclick="$.save_menu();"><?php print $i18n[$lang]["interface"]["btns"]["save"]; ?>&nbsp;&nbsp;&nbsp;<span class="fa fa-chevron-right"></span></button>
+        </h1>
 
         <br />
         <br />

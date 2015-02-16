@@ -181,6 +181,7 @@ $.get_managed_users = function(user_id, callback) {
 /*=======================================================================================
 *	INPUT TOOLS (MUST BE MOVED)
 *======================================================================================*/
+
 /**
 * Collect input attributes in an object
 * @return object 					All input attributes
@@ -780,8 +781,7 @@ $.fn.load_invited_users = function(user_data) {
 			$div_row = $('<div class="row">'),
 			$div_col_left = $('<div class="col-xs-7">'),
 			$div_col_center = $('<div class="col-xs-3">'),
-			$div_col_right = $('<div class="col-xs-2 text-right">');
-
+			$div_col_right = $('<div class="col-xs-2 text-right">'),
 			$a = $('<a>').attr({
 				"href": "mailto:" + invited_user_name
 			}),
@@ -1391,6 +1391,9 @@ $.save_user_data = function(user_id) {
 				type: "save_user_data"
 			}, function(response) {
 				if($.obj_len(response) > 0 && response[kAPI_STATUS_STATE] == "ok") {
+					// Log
+					$.log_activity("Updated user data");
+
 					// if(user_id == $.get_manager_id()) {
 					// 	storage.set("pgrdg_user_cache.user_data.current." + user_id, )
 					// }
@@ -1733,10 +1736,12 @@ $.invite_user = function(user_id, callback) {
 		}, function(response) {
 			console.warn(response);
 			if(typeof callback == "function") {
-				// $.each(response, function(id, ud) {
+				$.each(response, function(id, ud) {
+					// Log
+					$.log_activity("Invited an user with id: " + $.get_user_id(ud));
 				// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
 				// 	callback.call(this, ud);
-				// });
+				});
 			}
 			$("#loader").hide();
 		});
@@ -1756,7 +1761,8 @@ $.delete_invitation = function(invited_id) {
 		noBtn: "No"
 	}, function(r) {
 		if(r) {
-			// $.log_activity("Delete invitation for user " + invited_id);
+			// Log
+			$.log_activity("Delete invitation for user " + invited_id);
 			// I NEED THE SERVICE
 		}
 	});
@@ -1775,7 +1781,7 @@ $.fn.hide_menu = function() {
 	$line.find(".title_row h4").first().find("tt").toggleClass("not-visible");
 	$line.find(".title_row p").first().toggleClass("not-visible");
 	$item.toggleClass("active");
-}
+};
 
 $.fn.edit_menu = function(callback) {
 	/**
@@ -1847,7 +1853,7 @@ $.fn.edit_menu = function(callback) {
 	var $item = $(this),
 	data = $item.closest(".menu_data").first(),
 	$title_row = $item.closest(".list-group-item").find(".title_row").first(),
-	title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
+	title = (data.find(".menu_title:first").text() !== i18n[lang].messages.no_title) ? data.find(".menu_title:first").text() : "",
 	text = data.find(".menu_name:first").text(),
 	icon = $.trim(data.find(".menu_icon:first").attr("class").replace("menu_icon", "")),
 	link = $.local_link_to_str(data.find(".menu_link:first").text());
@@ -1945,6 +1951,54 @@ $.fn.edit_menu = function(callback) {
 	});
 };
 
+$.save_menu = function() {
+	/**
+	 * Parse the row dom and extract relevant data
+	 * @return object 				An object with the row data
+	 */
+	$.fn.get_row_data = function() {
+		var data = {},
+		$item = $(this),
+		$menu_data = $item.find(".menu_data:first"),
+		name = $.trim($menu_data.find(".menu_name").text()),
+		obj_name = name.replace(/\s/g, "_"),
+		title = $.trim($menu_data.find(".menu_title").text().replace(i18n[lang].messages.no_title, "")),
+		icon = $.trim($menu_data.find("span.menu_icon").attr("class").replace("fa ", "").replace("menu_icon", "")),
+		link = $.local_link_to_str($menu_data.find(".menu_link").html());
+
+		data[obj_name] = {};
+		data[obj_name].content = {
+			"icon": "fa " + icon,
+			"text": name
+		};
+		data[obj_name].attributes = {
+			"href": link,
+			"title": title,
+			"class": "btn btn-link"
+		};
+
+		if($.obj_len($item.find(".list-group")) > 0) {
+			// var childs = {};
+			data[obj_name].childs = [];
+			$.each($item.find(".list-group > .subpanel-body > .list-group-item"), function(kk, vv) {
+				// childs = $(vv).get_row_data();
+				data[obj_name].childs.push($(vv).get_row_data());
+				// $.extend(data[obj_name].childs, childs);
+			});
+		}
+
+		return data;
+
+	};
+
+	var menu = [];
+	$.each($("#menu_management_stage > .list-group > .list-group-item"), function(k, v) {
+		menu.push($(v).get_row_data());
+	});
+	console.log(menu);
+};
+
+
 /*=======================================================================================
 *	COMMON FUNCTIONS
 *======================================================================================*/
@@ -1954,8 +2008,12 @@ $.fn.edit_menu = function(callback) {
  * @param string 		action 			A description of the user's action
  */
 $.log_activity = function(action){
-	var st = storage.get("pgrdg_user_cache.user_activity"),
+	var st = [],
 	log = {};
+
+	if($.storage_exists("pgrdg_user_cache.user_activity")) {
+		st = storage.get("pgrdg_user_cache.user_activity");
+	}
 	log[action] = $.now();
 	st.push(log);
 

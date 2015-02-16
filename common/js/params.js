@@ -178,7 +178,7 @@ $.now = function() {
  */
 $.linkify = function(string, address) {
         var replacedText, replacePattern1, replacePattern2, replacePattern3;
-        if(address == undefined) {
+        if(address === undefined) {
                 if($.type(string) == "array") {
                         string = string.join(", ");
                 }
@@ -233,9 +233,14 @@ $.str_to_local_link = function(string) {
 $.local_link_to_str = function(local_link) {
         var host = $.url().attr("host"),
         local_link_txt = local_link.replace(/(<([^>]+)>)/ig, "");
+        link_txt = "";
 
-        local_link_txt.replace(host, "");
-        return local_link_txt;
+        if(local_link_txt == host) {
+                link_txt = "./";
+        } else {
+                link_txt = local_link_txt.replace(host, "").replace(": ", ":").replace(/\s/g, "_");
+        }
+        return link_txt;
 };
 
 /**
