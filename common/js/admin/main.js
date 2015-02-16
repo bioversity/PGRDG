@@ -183,7 +183,7 @@ $.get_managed_users = function(user_id, callback) {
 *======================================================================================*/
 /**
 * Collect input attributes in an object
-* @return object 				All input attributes
+* @return object 					All input attributes
 */
 $.fn.getAttributes = function () {
 	var elem = this,
@@ -241,8 +241,8 @@ $.fn.check_input = function(callback) {
 
 	/**
 	 * Extract the user identifier from a given user data object
-	 * @param  object		user_data 		The user data object
-	 * @return string 			   	     The user identifier
+	 * @param  object		user_data		The user data object
+	 * @return string 			   		The user identifier
 	 */
 	$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
@@ -1767,14 +1767,15 @@ $.delete_invitation = function(invited_id) {
 *	MENU EDITING FUNCTIONS
 *======================================================================================*/
 
-$.fn.set_icon = function(icon) {
-	var $icon_box = $(this).closest(".icon_box"),
-	$input = $("input#menu_icon");
+$.fn.hide_menu = function() {
+	var $item = $(this),
+	$line = $item.closest(".list-group-item").first();
 
-	$input.val(icon);
-	$icon_box.find("a.selected").removeClass("selected");
-	$(this).addClass("selected");
-};
+	$line.find(".title_row h4").first().find("span").toggleClass("not-visible");
+	$line.find(".title_row h4").first().find("tt").toggleClass("not-visible");
+	$line.find(".title_row p").first().toggleClass("not-visible");
+	$item.toggleClass("active");
+}
 
 $.fn.edit_menu = function(callback) {
 	/**
@@ -1806,6 +1807,19 @@ $.fn.edit_menu = function(callback) {
 	 * Generate a box containing all Font Awesome available icons
 	 */
 	$.fn.generate_available_icons_preview = function(current_icon) {
+		/**
+		 * Set the icon on the edit stage to be saved
+		 * @param string 		icon 			The icon class to save
+		 */
+		$.fn.set_icon = function(icon) {
+			var $icon_box = $(this).closest(".icon_box"),
+			$input = $("input#menu_icon");
+
+			$input.val(icon);
+			$icon_box.find("a.selected").removeClass("selected");
+			$(this).addClass("selected");
+		};
+
 		var $box = $('<ul class="list-inline">');
 
 		$.generate_available_icons(function(icons) {
@@ -1832,12 +1846,11 @@ $.fn.edit_menu = function(callback) {
 	$("#loader").show();
 	var $item = $(this),
 	data = $item.closest(".menu_data").first(),
-	list_id = $item.closest(".list-group-item").attr("id");
-	// console.log($item);
-	var title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
-	text = data.find(".menu_text:first").text(),
+	$title_row = $item.closest(".list-group-item").find(".title_row").first(),
+	title = (data.find(".menu_title:first").text() !== "No title for this entry") ? data.find(".menu_title:first").text() : "",
+	text = data.find(".menu_name:first").text(),
 	icon = $.trim(data.find(".menu_icon:first").attr("class").replace("menu_icon", "")),
-	link = data.find(".menu_link:first").text().replace($.url().attr("host"), "");
+	link = $.local_link_to_str(data.find(".menu_link:first").text());
 
 	// DOM generation
 	var $form = $('<form class="form-horizontal">'),
@@ -1895,19 +1908,40 @@ $.fn.edit_menu = function(callback) {
 	// console.log(text);
 	// console.log(link);
 
-	$("#" + list_id).addClass("selected");
+	$title_row.addClass("selected");
 	apprise($form[0].outerHTML, {
-		"title": "Edit menu",
-		"form": true,
-		"allowExit": false,
-		"cancelBtnClass": "btn-default-white",
-		"okBtnClass": "btn-default"
-	}, function(data) {
-		if(data !== false) {
-			console.info(data);
+		title: "Edit menu",
+		form: true,
+		allowExit: false,
+		cancelBtnClass: "btn-default-white",
+		okBtnClass: "btn-default",
+		onShown: function(data) {
+			$(".icon_box").scrollTo("#" + icon.replace("fa ", ""), 800, {
+				offset: function() {
+					return {top: -70};
+				}
+			});
+		},
+		onSave: function(data) {
+			if(data !== false) {
+				$.each(data, function(k, v) {
+					switch(v.name) {
+						case "menu_icon":
+							$title_row.find("." + v.name).attr("class", "fa " + v.value + " menu_icon");
+							break;
+						case "menu_link":
+							$title_row.find("." + v.name).html($.str_to_local_link(v.value));
+							break;
+						default:
+							$title_row.find("." + v.name).text(v.value);
+							break;
+					}
+				});
+			}
+		},
+		onHidden: function(data) {
+			$title_row.removeClass("selected");
 		}
-	}, function() {
-		$("#" + list_id).removeClass("selected");
 	});
 };
 

@@ -12,41 +12,46 @@
  * @param  void 		callback  		The results after the user button clicking
  * @param  function   		callback2 		The function to execute when the modal is hidden
  */
-function apprise(string, args, callback, callback2) {
+function apprise(string, args, callback) {
 	if(typeof(string) == "object") {
 		callback = args;
 		args = string;
 		string = "";
 	}
 	var default_args = {
-		"allowExit": true,
-		"cancelBtnClass": "btn-default",
-		"confirm": false, 			// Ok and Cancel buttons
-		"double": false,
-		"form": false,
-		"input": false,
-		"input_type": "text",
-		"inputIP": false,
-		"invertedBtns": false,
-		"message": false, 			// Textarea (can be true or string for default text)
-		"progress": false,
-		"showFooter": true,
-		"showHeader": true,
-		"verify": false,			// Yes and No buttons
-		"perhaps": false,
-		"class": "",
-		"fa_icon": "",
-		"icon": "",
-		"okBtnClass": "btn-primary",		// Ok button class
-		"PerhapsBtnClass": "btn-default",	// Perhaps button class
-		"tag": "h4",
-		"textCancel": "Cancel",			// Cancel button default text
-		"textNo": "No", 			// No button default text
-		"textOk": "Ok", 			// Ok button default text
-		"textPerhaps": "Perhaps",		// Perhaps button default text
-		"textYes": "Si", 			// Yes button default text
-		"title": "",
-		"titleClass": "text-primary"
+		allowExit: true,
+		cancelBtnClass: "btn-default",
+		confirm: false, 			// Ok and Cancel buttons
+		double: false,
+		form: false,
+		input: false,
+		input_type: "text",
+		inputIP: false,
+		invertedBtns: false,
+		message: false, 			// Textarea (can be true or string for default text)
+		progress: false,
+		showFooter: true,
+		showHeader: true,
+		verify: false,			// Yes and No buttons
+		perhaps: false,
+		class: "",
+		fa_icon: "",
+		icon: "",
+		okBtnClass: "btn-primary",		// Ok button class
+		PerhapsBtnClass: "btn-default",	// Perhaps button class
+		tag: "h4",
+		textCancel: "Cancel",			// Cancel button default text
+		textNo: "No", 			// No button default text
+		textOk: "Ok", 			// Ok button default text
+		textPerhaps: "Perhaps",		// Perhaps button default text
+		textYes: "Si", 			// Yes button default text
+		title: "",
+		titleClass: "text-primary",
+		onSave: function() {},
+		onShow: function() {},
+		onShown: function() {},
+		onHide: function() {},
+		onHidden: function() {},
 	};
 	if(args) {
 		for (var index in default_args) {
@@ -225,23 +230,53 @@ function apprise(string, args, callback, callback2) {
 	}
 	modal.prependTo('body');
 	$(".btn").click(function() {
-		if(callback && typeof(callback) === "function") {
+		if(args.onSave && typeof(args.onSave) === "function" || callback && typeof(callback) === "function") {
 			if(args.input || args.message) {
-				callback(($('.form-control').val().length > 0) ? $('.form-control').val() : false);
+				if(args.onSave && typeof(args.onSave) === "function") {
+					args.onSave.call(this, ($('.form-control').val().length > 0) ? $('.form-control').val() : false);
+				}
+				if(callback && typeof(callback) === "function") {
+					callback(this, ($('.form-control').val().length > 0) ? $('.form-control').val() : false);
+				}
 			} else if(args.form) {
 				if($(this).hasClass("save_btn")) {
-					callback(($(this).val() == "ok") ? $('.form-horizontal').serialize() : false);
+					if(args.onSave && typeof(args.onSave) === "function") {
+						args.onSave.call(this, ($(this).val() == "ok") ? $('.form-horizontal').serializeArray() : false);
+					}
+					if(callback && typeof(callback) === "function") {
+						callback(this, ($(this).val() == "ok") ? $('.form-horizontal').serializeArray() : false);
+					}
 				}
 			} else if(args.perhaps) {
 				if($(this).val() == "ok") {
-					callback(true);
+					if(args.onSave && typeof(args.onSave) === "function") {
+						args.onSave.call(this, true);
+					}
+					if(callback && typeof(callback) === "function") {
+						callback(this, true);
+					}
 				} else if($(this).val() == "perhaps") {
-					callback("perhaps");
+					if(args.onSave && typeof(args.onSave) === "function") {
+						args.onSave.call(this, "perhaps");
+					}
+					if(callback && typeof(callback) === "function") {
+						callback(this, "perhaps");
+					}
 				} else {
-					callback(false);
+					if(args.onSave && typeof(args.onSave) === "function") {
+						args.onSave.call(this, false);
+					}
+					if(callback && typeof(callback) === "function") {
+						callback(this, false);
+					}
 				}
 			} else {
-				callback(($(this).val() == "ok") ? true : false);
+				if(args.onSave && typeof(args.onSave) === "function") {
+					args.onSave.call(this, ($(this).val() == "ok") ? true : false);
+				}
+				if(callback && typeof(callback) === "function") {
+					callback(this, ($(this).val() == "ok") ? true : false);
+				}
 			}
 		}
 	});
@@ -281,12 +316,26 @@ function apprise(string, args, callback, callback2) {
 		});
 		$("*[title]:not(acronym)").tooltip();
 		$("acronym[title]").tooltip({placement: "right"});
+
+		if(args.onShown && typeof(args.onShown) === "function") {
+			args.onShown.call(this);
+		}
+	}).on("show.bs.modal", function() {
+		if(args.onShow && typeof(args.onShown) === "function") {
+			args.onShow.call(this);
+		}
 	}).on("hidden.bs.modal", function() {
 		if($("#apprise").length > 0 && !$("#apprise").is(":visible")) {
 			$("#loader").hide();
 			$("#apprise").remove();
 
-			callback2.call(this);
+			if(args.onHidden && typeof(args.onHidden) === "function") {
+				args.onHidden.call(this);
+			}
+		}
+	}).on("hode.bs.modal", function() {
+		if(args.onHide && typeof(args.onHidden) === "function") {
+			args.onHide.call(this);
 		}
 	});
 }

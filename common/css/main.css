@@ -3211,7 +3211,7 @@ div.user_data dl.roles dd {
 #menu_management .subpanel-body {
 	border-right: 0 none;
 	margin-right: -16px;
-	padding: 20px 0 0;
+	padding: 10px 0 0;
 }
 #menu_management .list-group-item,
 #menu_management .list-group {
@@ -3220,6 +3220,7 @@ div.user_data dl.roles dd {
 }
 #menu_management .list-group-item > .list-group {
 	margin-bottom: 0;
+	padding: 0 25px;
 }
 .move-handle:before {
 	content: "\f0c9";
@@ -3243,10 +3244,24 @@ div.user_data dl.roles dd {
 	margin-right: -30px;
 	display: table-cell;
 }
-.list-group-item {
+#menu_management .list-group-item {
+	padding: 0;
 	background-color: #fff;
 }
-.list-group-item.selected {
+#menu_management .list-group-item > .title_row {
+	padding: 10px 15px;
+	display: table;
+	width: 100%;
+}
+#menu_management .list-group-item > .title_row span.not-visible,
+#menu_management .list-group-item > .title_row tt.not-visible,
+#menu_management .list-group-item > .title_row p.not-visible {
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+	-webkit-opacity: 0.5;
+	-o-opacity: 0.5;
+}
+#menu_management .list-group-item > .title_row.selected {
 	border-color: #aaa;
 	box-shadow: 0 0 2em #aaa inset;
 }

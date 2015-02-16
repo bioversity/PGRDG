@@ -214,6 +214,31 @@ $.linkify = function(string, address) {
 };
 
 /**
+ * Connvert a string to a local link
+ */
+$.str_to_local_link = function(string) {
+        var host = $.url().attr("host"),
+        link = string;
+        if(link === undefined || link === null || link === "" || link == "/" || link == "./") {
+                link = $.linkify(host, "http://" + host);
+        } else {
+                link = $.linkify(link);
+        }
+        return link;
+};
+
+/**
+ * Convert back a local link to a string
+ */
+$.local_link_to_str = function(local_link) {
+        var host = $.url().attr("host"),
+        local_link_txt = local_link.replace(/(<([^>]+)>)/ig, "");
+
+        local_link_txt.replace(host, "");
+        return local_link_txt;
+};
+
+/**
  * Detect the type of value for table sorting purposes
  */
 $.detect_type = function(value) {

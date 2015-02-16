@@ -15,6 +15,9 @@ if($page->is_backend) {
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-process.js"></script>
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-image.js"></script>
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-validate.js"></script>
+
+	<!-- jQuery scrollTo -->
+	<script src="<?php print $domain; ?>/common/js/plugins/jquery.scrollTo/jquery.scrollTo.min.js"></script>
 	<?php
 }
 ?>
