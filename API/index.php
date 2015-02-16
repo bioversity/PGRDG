@@ -69,14 +69,15 @@ if(empty($_REQUEST) && empty($_POST)) {
 				break;
 			case "type":
 				switch(trim($gv)) {
-					case "ask_service":
 					case "activate_user":
-					case "get_user":
+					case "ask_service":
 					case "get_managed_users":
+					case "get_user":
 					case "invite_user":
-					case "save_user_data":
 					case "login":
 					case "logout":
+					case "save_menu":
+					case "save_user_data":
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
 						break;
 				}

@@ -37,6 +37,8 @@ class Parse_json {
 		} else {
 			$the_array = $menu[$menu_position][$num];
 		}
+		// print_r($the_array);
+		// exit();
 		$menu_list = '';
 		foreach($the_array as $k => $v) {
 			if($k !== "_comment") {
@@ -47,7 +49,7 @@ class Parse_json {
 						$menu_list_text .= (isset($v["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
 					$menu_list .= implode(" ", $this->extract_attributes($v)) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
 					if(isset($v["childs"])) {
-						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs") . '</ul>';
+						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs", $num) . '</ul>';
 					}
 					$menu_list .= '</li>' . "\n";
 					if(isset($v["divider"])) {
@@ -103,6 +105,9 @@ class Parse_json {
 /* -------------------------------------------------------------------------- */
 
 	public function menu($menu_position, $ul_class = array()) {
+			// header("Content-type: text/plain");
+			// print_r(json_encode($this->json_conf));
+			// exit();
 		$menu_list = "";
 		foreach($this->json_conf["menu"][$menu_position] as $i => $j) {
 			if(!is_numeric($i)) {

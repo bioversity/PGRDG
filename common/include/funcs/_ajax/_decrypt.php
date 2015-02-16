@@ -169,6 +169,21 @@ if(isset($_GET["getPublicKey"])) {
 			$action = "save_user_data";
 			print $se->send_to_service($output, $action);
 			break;
+		case "save_menu":
+			// require_once(CLASSES_DIR . "Service_exchange.php");
+			header("Content-type: text/plain");
+
+			$fp = fopen(INCLUDE_DIR . "conf/__menu.json", "w");
+			fwrite($fp, stripslashes(json_encode($output)));
+			fclose($fp);
+
+			print "ok";
+			exit();
+			// print_r($output);
+			// $se = new Service_exchange();
+			// $action = "save_user_data";
+			// print $se->send_to_service($output, $action);
+			break;
 		case "activate_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();

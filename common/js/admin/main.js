@@ -1991,11 +1991,42 @@ $.save_menu = function() {
 
 	};
 
-	var menu = [];
+	var root = {};
+	root.menu = {}
+	root.menu.top = [];
 	$.each($("#menu_management_stage > .list-group > .list-group-item"), function(k, v) {
-		menu.push($(v).get_row_data());
+		root.menu.top.push($(v).get_row_data());
 	});
-	console.log(menu);
+
+	// Now save data to file
+	// var k = {};
+	// k[kAPI_REQUEST_USER] = (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id;
+	// k[kTAG_NAME] = $.trim($("#new_user_full_name").val());
+	// k[kTAG_AUTHORITY] = "ITA046";
+	// k[kTAG_COLLECTION] = "pgrdiversity.bioversityinternational.org";
+	// k[kTAG_ENTITY_TITLE] = $.trim($("#new_user_work_title").val());
+	// k[kTAG_ENTITY_EMAIL] = $.trim($("#new_user_mail_address").val());
+	// k[kTAG_ROLES] = [];
+	// $.require_password(function() {
+		$.ask_cyphered_to_service({
+			storage_group: "pgrdg_user_cache.local.menu",
+			data: root,
+			type: "save_menu"
+		}, function(response) {
+			if(response == "ok") {
+				alert("Menu saved");
+			}
+			// if(typeof callback == "function") {
+			// 	$.each(response, function(id, ud) {
+			// 		// Log
+			// 		$.log_activity("Invited an user with id: " + $.get_user_id(ud));
+			// 	// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
+			// 	// 	callback.call(this, ud);
+			// 	});
+			// }
+			$("#loader").hide();
+		});
+	// });
 };
 
 
