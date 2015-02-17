@@ -22,6 +22,8 @@ var i18n = {
                         },
                         "disable_item": "Disable this item",
                         "enable_item": "Enable this item",
+                        "edit_menu": "Edit menu",
+                        "new_menu_item": "New menu item",
                         "errors": {
                                 "404": "Page not found",
                                 "405": "Not allowed",
@@ -102,6 +104,7 @@ var i18n = {
                         "no_entries_found": "No entries found",
                         "no_invited_users_yet": "No users invited, yet",
                         "no_results": "No results",
+                        "no_menu_name": "No menu name",
                         "no_title": "No title for this entry",
                         "offsets": "{X} offsets",
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
@@ -167,6 +170,7 @@ var i18n = {
                         "btns": {
                                 "activate": "Activate",
                                 "add": "Add",
+                                "add_menu": "Add menu",
                                 "advanced_search": "Advanced search",
                                 "back_to_your_profile": "Back to your profile",
                                 "cancel": "Cancel",

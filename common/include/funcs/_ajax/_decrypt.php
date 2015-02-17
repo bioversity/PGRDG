@@ -99,7 +99,7 @@ if(isset($_GET["getPublicKey"])) {
 			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
 			$user_data = json_decode($login, 1);
 			// header("Content-type: text/plain");
-			// print_r($login);
+			// print_r($user_data);
 			// exit();
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 				foreach($user_data[kAPI_RESPONSE_RESULTS] as $uid => $ud) {

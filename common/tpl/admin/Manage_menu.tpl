@@ -2,7 +2,7 @@
 function get_menu($menu, $i18nl) {
         foreach($menu as $k => $v) {
                 if($k !== "User") {
-                        $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' :  $v["attributes"]["title"]);
+                        $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' : $v["attributes"]["title"]);
                         $link = ($v["attributes"]["href"] !== "./") ? str_replace("./", $_SERVER["HTTP_HOST"] . "/", $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
                         $full_link = (strpos($v["attributes"]["href"], "javascript:") !== false) ? $link : '<a target="_blank" href="' . $link .'">' . $link . '</a>';
                         ?>
@@ -58,7 +58,10 @@ function get_menu($menu, $i18nl) {
         ?>
         <h1>
                 <?php print $page->title; ?>
-                <button class="btn btn-orange save_btn pull-right" onclick="$.save_menu();"><?php print $i18n[$lang]["interface"]["btns"]["save"]; ?>&nbsp;&nbsp;&nbsp;<span class="fa fa-chevron-right"></span></button>
+                <div class="btn-group pull-right">
+                        <button class="btn btn-default-white save_btn" onclick="$.add_menu();"><?php print $i18n[$lang]["interface"]["btns"]["add_menu"]; ?>&nbsp;&nbsp;&nbsp;<span class="fa fa-plus"></span></button>
+                        <button class="btn btn-orange save_btn" onclick="$.save_menu();"><?php print $i18n[$lang]["interface"]["btns"]["save"]; ?>&nbsp;&nbsp;&nbsp;<span class="fa fa-chevron-right"></span></button>
+                </div>
         </h1>
 
         <br />

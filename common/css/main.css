@@ -156,8 +156,12 @@ h1 > [class^="fa-"], h1 > [class*=" fa-"] {
 	color: #666;
 	font-size: 24px;
 }
+.admin #content h1 button,
+.admin #content h1 .btn {
+	letter-spacing: normal;
+}
 .admin #content h1 + h2 {
-	font-weight: 100;
+	font-weight: 400;
 	margin: 10px 0 28px 0;
 	color: #666;
 	font-size: 18px;
@@ -3263,6 +3267,10 @@ div.user_data dl.roles dd {
 }
 #menu_management .list-group-item > .title_row.selected {
 	border-color: #aaa;
+	box-shadow: 0 0 2em #aaa inset;
+}
+#menu_management .list-group-item > .title_row.new_item {
+	border-color: #cc00ee;
 	box-shadow: 0 0 2em #aaa inset;
 }
 .list-group-item p.menu_title {

@@ -1773,6 +1773,69 @@ $.delete_invitation = function(invited_id) {
 *	MENU EDITING FUNCTIONS
 *======================================================================================*/
 
+/**
+ * Add a new menu
+ */
+$.add_menu = function() {
+	var allow_other = true,
+	$item = {};
+	$.each($("#menu_management_stage .list-group-item"), function(k, v) {
+		if($(v).find(".menu_name").html().length === 0) {
+			$item = $(v);
+			allow_other = false;
+			return false;
+		}
+	});
+	if(allow_other) {
+		var host = $.url().attr("host"),
+		$li = $('<li id="' + $.md5("new_node" + $.now()) + '" class="list-group-item">'),
+		$title_row = $('<div class="title_row">'),
+		$move_handle = $('<div class="move-handle"></div>'),
+		$move_handle2 = $('<div class="move-handle"></div>'),
+		$menu_data = $('<div class="menu_data">'),
+		$h4 = $('<h4 class="list-group-item-heading">'),
+		$menu_icon = $('<span class="fa fa-indent menu_icon">'),
+		$menu_name = $('<span class="menu_name">'),
+		$menu_link = $('<span class="menu_link">').text("javascript:void(0);"),
+		$fw = $('<span class="fa fa-fw">').html("&rsaquo;"),
+		$tt = $('<tt>'),
+		$btn_group = $('<div class="btn-group pull-right">'),
+		$btn_edit = $('<button>').attr({
+			"data-placement": "top",
+			"data-toggle": "tooltip",
+			"title": i18n[lang].messages.edit,
+			"onclick": "$(this).edit_menu();",
+			"class": "btn btn-default-white edit_menu_btn"
+		}).html('<span class="fa fa-fw fa-edit"></span>'),
+		$btn_hide = $('<button>').attr({
+			"data-placement": "top",
+			"data-toggle": "tooltip",
+			"title": i18n[lang].messages.hide,
+			"onclick": "$(this).hide_menu();",
+			"class": "btn btn-default-white"
+		}).html('<span class="fa fa-fw fa-eye-slash"></span>'),
+		$small = $('<small class="">'),
+		$p = $('<p>').attr({
+			"class": "list-group-item-text list-group-item-body clearfix menu_title"
+		}).html('<br />');
+
+		$tt.append($small).append($menu_link);
+		$btn_group.append($btn_edit).append($btn_hide);
+		$h4.append($menu_icon).append(" ").append($menu_name).append($fw).append($tt).append($btn_group);
+		$menu_data.append($h4).append($p);
+		$title_row.append($move_handle).append($menu_data).append($move_handle2);
+		$li.append($title_row);
+
+		$("#menu_management_stage > ul.list-group").prepend($li);
+		$btn_edit.edit_menu(i18n[lang].messages.new_menu_item);
+	} else {
+		$item.find(".edit_menu_btn").edit_menu(i18n[lang].messages.new_menu_item);
+	}
+}
+
+/**
+ * Toggle menu item visibility
+ */
 $.fn.hide_menu = function() {
 	var $item = $(this),
 	$line = $item.closest(".list-group-item").first();
@@ -1783,7 +1846,11 @@ $.fn.hide_menu = function() {
 	$item.toggleClass("active");
 };
 
-$.fn.edit_menu = function(callback) {
+/**
+ * Edit a menu item
+ * @param  string   		menu_name 		The menu title that appears on modal form
+ */
+$.fn.edit_menu = function(menu_name, callback) {
 	/**
 	 * Get all available icons
 	 */
@@ -1881,7 +1948,7 @@ $.fn.edit_menu = function(callback) {
 
 	$input_text = $('<input type="text" class="form-control" id="menu_name" name="menu_name" required value="' + text + '" />'),
 	$input_title = $('<input type="text" class="form-control" id="menu_title" name="menu_title" required value="' + title + '" />');
-	$input_link = $('<input type="url" class="form-control" id="menu_link" name="menu_link" required value="' + link + '" />');
+	$input_link = $('<input type="url" class="form-control" id="menu_link" name="menu_link" required disabled value="' + link + '" />');
 	$input_icon = $('<input type="hidden" id="menu_icon" name="menu_icon" value="' + icon + '" />');
 
 	$text_input_col.append($input_text);
@@ -1916,12 +1983,50 @@ $.fn.edit_menu = function(callback) {
 
 	$title_row.addClass("selected");
 	apprise($form[0].outerHTML, {
-		title: "Edit menu",
+		title: (menu_name !== undefined && menu_name !== null && menu_name !== "") ? menu_name : i18n[lang].messages.edit_menu,
 		form: true,
 		allowExit: false,
 		cancelBtnClass: "btn-default-white",
 		okBtnClass: "btn-default",
 		onShown: function(data) {
+			$.ajax({
+				url: "common/include/funcs/_ajax/get_all_pages.php",
+				DataType: "json",
+				crossDomain: true,
+				type: "GET",
+				timeout: 10000,
+				success: function(response) {
+					console.log(response);
+					var all_pages = new Bloodhound({
+						datumTokenizer: Bloodhound.tokenizers.obj.whitespace("title"),
+						queryTokenizer: Bloodhound.tokenizers.whitespace,
+						local: response
+					});
+					all_pages.initialize();
+
+					$("#menu_link").attr("disabled", false);
+					$("#menu_link").typeahead({
+						hint: true,
+						highlight: true,
+						minLength: 3
+					}, {
+						name: "pages",
+						displayKey: "title",
+						source: all_pages.ttAdapter()
+					}).bind("typeahead:selected", function(obj, selected, name) {
+						console.log(obj, selected, name)
+						$(this).on("blur", function() {
+							$(this).val(selected.link.replace(/_/g, " "));
+						});
+					}).bind("typeahead:autocompleted", function(obj, suggested, name) {
+						console.warn(obj, suggested, name)
+						// $(this).on("blur", function() {
+						// 	$(this).val(suggested.link.replace(/_/g, " "));
+						// });
+					});
+				}
+			});
+
 			$(".icon_box").scrollTo("#" + icon.replace("fa ", ""), 800, {
 				offset: function() {
 					return {top: -70};
@@ -1936,6 +2041,7 @@ $.fn.edit_menu = function(callback) {
 							$title_row.find("." + v.name).attr("class", "fa " + v.value + " menu_icon");
 							break;
 						case "menu_link":
+							console.info(v.value)
 							$title_row.find("." + v.name).html($.str_to_local_link(v.value));
 							break;
 						default:

@@ -11,6 +11,7 @@
                         "is_main_page": true,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "About_us": {
@@ -23,6 +24,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": {
                                 "Feedback": {
                                         "title": "Feedback",
@@ -34,6 +36,7 @@
                                         "is_main_page": false,
                                         "is_backend": false,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 },
                                 "How_the_system_works": {
@@ -46,6 +49,7 @@
                                         "is_main_page": false,
                                         "is_backend": false,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 }
                         }
@@ -60,6 +64,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": {
                                 "Conservation_Strategies": {
                                         "title": "Conservation Strategies",
@@ -71,6 +76,7 @@
                                         "is_main_page": false,
                                         "is_backend": false,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 },
                                 "Links": {
@@ -83,6 +89,7 @@
                                         "is_main_page": false,
                                         "is_backend": false,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 }
                         }
@@ -97,6 +104,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Advanced_search": {
@@ -109,6 +117,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Graph": {
@@ -121,6 +130,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Map": {
@@ -133,6 +143,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Blog": {
@@ -145,6 +156,7 @@
                         "is_main_page": false,
                         "is_backend": false,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Signin": {
@@ -157,6 +169,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": true,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Signout": {
@@ -169,6 +182,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": true,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Activation": {
@@ -181,6 +195,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": true,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Invite": {
@@ -193,6 +208,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": true,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Profile": {
@@ -205,6 +221,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": ""
                 },
                 "Contents": {
@@ -217,6 +234,7 @@
                         "is_main_page": false,
                         "is_backend": true,
                         "is_system_page": false,
+                        "is_visible": true,
                         "subpages": {
                                 "Menu": {
                                         "title": "Menu management",
@@ -228,6 +246,7 @@
                                         "is_main_page": false,
                                         "is_backend": true,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 },
                                 "Pages": {
@@ -240,6 +259,7 @@
                                         "is_main_page": false,
                                         "is_backend": true,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 },
                                 "Blog": {
@@ -252,6 +272,7 @@
                                         "is_main_page": false,
                                         "is_backend": true,
                                         "is_system_page": false,
+                                        "is_visible": true,
                                         "subpages": ""
                                 }
                         }

@@ -893,7 +893,7 @@
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 						// console.warn(response);
 						$.each(response[kAPI_RESPONSE_RESULTS], function(id, ud) {
-							if($.storage.exists("pgrdg_user_cache.user_data.current")) {
+							if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 								storage.remove("pgrdg_user_cache.user_data.current");
 							}
 							storage.set("pgrdg_user_cache.user_data.all." + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP], ud);
