@@ -1181,7 +1181,8 @@ panel span.info,
 }
 #start h1[unselectable], #se h1[unselectable],
 #se h1[unselectable] + h2,
-div[unselectable] {
+div[unselectable],
+.icon_box h1[unselectable] {
 	color: #d0d0d0;
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
@@ -1195,6 +1196,9 @@ div[unselectable] {
 }
 div[unselectable].fc-view {
 	max-width: 100%;
+}
+.icon_box h1[unselectable] {
+	text-align: center;
 }
 #loader_bg {
 	bottom: 0;
@@ -3284,8 +3288,11 @@ div.user_data dl.roles dd {
 	border-top: #dedede 1px solid;
 	padding-top: 10px;
 }
+.icon_box_header {
+	margin-bottom: 5px;
+}
 .icon_box {
-	max-height: 200px;
+	height: 250px;
 	overflow-y: scroll;
 	border: #dedede 1px solid;
 	padding: 5px;
@@ -3305,7 +3312,7 @@ div.user_data dl.roles dd {
 	height: 45px;
 	display: block
 }
-.icon_box li a:hover {
+.icon_box li a:hover, .icon_box li a.hovered {
 	color: #666;
 	border: 1px solid #ccc;
 	box-shadow: 0 0 20px #dedede inset;

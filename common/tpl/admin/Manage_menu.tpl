@@ -3,7 +3,7 @@ function get_menu($menu, $i18nl) {
         foreach($menu as $k => $v) {
                 if($k !== "User") {
                         $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' : $v["attributes"]["title"]);
-                        $link = ($v["attributes"]["href"] !== "./") ? str_replace("./", $_SERVER["HTTP_HOST"] . "/", $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
+                        $link = ($v["attributes"]["href"] !== "./") ? str_replace(array("./", "_"), array("", " "), $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
                         $full_link = (strpos($v["attributes"]["href"], "javascript:") !== false) ? $link : '<a target="_blank" href="' . $link .'">' . $link . '</a>';
                         ?>
                         <li class="list-group-item" id="<?php print md5($k); ?>">

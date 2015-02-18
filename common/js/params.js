@@ -222,7 +222,11 @@ $.str_to_local_link = function(string) {
         if(link === undefined || link === null || link === "" || link == "/" || link == "./") {
                 link = $.linkify(host, "http://" + host);
         } else {
-                link = $.linkify(link);
+                if(link.charAt(0) == "/" || link.charAt(0) == ".") {
+                        link = $.linkify(link.replace(/\//g, ""), "http://" + host + link.replace(/(\.)\//g, ""));
+                } else {
+                        link = $.linkify(link);
+                }
         }
         return link;
 };
