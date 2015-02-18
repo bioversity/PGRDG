@@ -2103,19 +2103,20 @@ $.save_menu = function() {
 		$menu_data = $item.find(".menu_data:first"),
 		name = $.trim($menu_data.find(".menu_name").text()),
 		obj_name = name.replace(/\s/g, "_"),
-		title = $.trim($menu_data.find(".menu_title").text().replace(i18n[lang].messages.no_title, "")),
-		icon = $.trim($menu_data.find("span.menu_icon").attr("class").replace("fa ", "").replace("menu_icon", "")),
+		visible = ((!$menu_data.find(".menu_icon").hasClass("not-visible")) ? true : false),
+		title = $.trim($menu_data.find(".menu_title").text().replace(i18n[lang].messages.no_title, "").replace("not-visible", "")),
+		icon = $.trim($menu_data.find("span.menu_icon").attr("class").replace("fa ", "").replace("menu_icon", "").replace("not-visible", "")),
 		link = $.local_link_to_str($menu_data.find(".menu_link").html());
-
 		data[obj_name] = {};
 		data[obj_name].content = {
 			"icon": "fa " + icon,
 			"text": name
 		};
+console.log(name, visible);
 		data[obj_name].attributes = {
 			"href": link,
 			"title": title,
-			"class": "btn btn-link"
+			"class": "btn btn-link" + ((!visible) ? " hidden" : "")
 		};
 
 		if($.obj_len($item.find(".list-group")) > 0) {
@@ -2133,7 +2134,7 @@ $.save_menu = function() {
 	};
 
 	var root = {};
-	root.menu = {}
+	root.menu = {};
 	root.menu.top = [];
 	$.each($("#menu_management_stage > .list-group > .list-group-item"), function(k, v) {
 		root.menu.top.push($(v).get_row_data());

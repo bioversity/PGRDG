@@ -4,13 +4,13 @@ class Parse_json {
 	function __construct($config = "") {
 		if(trim($config) == "") {
 			// Uncomment if you want to remote json menu
-			// $config = "common/include/conf/menu.json";
+			$config = "common/include/conf/__menu.json";
 			// include("../conf/menu.php");
-			include("common/include/conf/menu.php");
-			$config = $menu;
+			// include("common/include/conf/menu.php");
+			// $config = $menu;
+			$config = json_decode(file_get_contents($config), true);
 		}
 		// Same as comment before
-		//$this->json_conf = json_decode(file_get_contents($config), true);
 		$this->json_conf = $config;
 	}
 /* -------------------------------------------------------------------------- */

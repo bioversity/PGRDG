@@ -170,6 +170,8 @@ if(isset($_GET["getPublicKey"])) {
 			print $se->send_to_service($output, $action);
 			break;
 		case "save_menu":
+			// print_r($output);
+			// exit();
 			// require_once(CLASSES_DIR . "Service_exchange.php");
 			header("Content-type: text/plain");
 
