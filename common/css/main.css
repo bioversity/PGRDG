@@ -3325,3 +3325,34 @@ div.user_data dl.roles dd {
 .icon_box li a span {
 	margin: 7.5px 0 0 0;
 }
+#big_buttons {
+	margin-top: 6em;
+}
+#big_buttons a,
+#big_buttons a img {
+	border-radius: 10px;
+	width: 300px;
+	height: 147px;
+	display: block;
+}
+#big_buttons a img {
+	border: #666 1px solid;
+	width: 100%;
+}
+#big_buttons a span {
+	margin-top: -80px;
+	padding: 0 10px;
+	font-size: 4.5em;
+	font-family: "Roboto";
+	font-weight: 100;
+	color: rgba(255, 255, 255, 0.5);
+	display: flex;
+}
+#big_buttons a:hover span {
+	color: rgba(255, 255, 255, 0.85);
+}
+#big_buttons a:click span,
+#big_buttons a:focus span {
+	border: 0px none;
+	text-decoration: none !important;
+}

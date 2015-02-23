@@ -17,3 +17,16 @@
         The input field in the top of the left panel can be used to search for fields by name, type a word to have a selection of all fields containing that word; only fields which contain data will be selected.<br />
         The lower section of the left panel contains search fields organized by domain, you will find generic field sections, such as Taxon or Location, which are common to most objects in the database, while secions, as Accession or Forest, contain fields for specific domains; fields which have no associated data will be disabled.</p>
 </div>
+<div class="row" id="big_buttons">
+        <!-- CWR -->
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 vcenter">
+                <div title="">
+                        <a href="javascript: void(0);" onclick="">
+                                <img class="" src="common/media/img/map.png" />
+                                <span>Map</span>
+                        </a>
+                        <div class="panel-heading">
+                        </div>
+                </div>
+        </div>
+</div>

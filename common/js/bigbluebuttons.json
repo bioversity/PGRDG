@@ -1,0 +1,128 @@
+"buttons": {
+        "CWR": {
+                "refine": {
+                        "1": {
+                                "name": "CWR checklists",
+                                "options": "National (4)"
+                        },
+                        "2": {
+                                "name": "CWR checklists code",
+                                "options": "CWR codes"
+                        },
+                        "3": {
+                                "name": "Type of checklist (7599)",
+                                "options": [
+                                        "Complete CWR checklist",
+                                        "Annotated CWR checklist",
+                                        "Priority CWR checklist"
+                                ]
+                        },
+                        "4": {
+                                "name": "Taxonomy",
+                                "options": [
+                                        "Genus",
+                                        "Species",
+                                        "Scientific name"
+                                ]
+                        }
+                }
+        },
+        "Landraces": {},
+        "Breeding": {},
+        "Crops": {},
+        "Organizations": {},
+        "Forest": {},
+        "Checklists": {
+                "refine":
+                        [
+                                {
+                                        "name": "CWR checklists",
+                                        "options": [
+                                                "National (4)",
+                                                "European"
+                                        ],
+                                        "suboptions": [
+                                                "Country",
+                                                "Region"
+                                        ]
+                                },
+                                {
+                                        "name": "CWR checklists code",
+                                        "options": "CWR codes"
+                                },
+                                {
+                                        "name": "Type of checklist (7599)",
+                                        "options": [
+                                                "Complete CWR checklist",
+                                                "Annotated CWR checklist",
+                                                "Priority CWR checklist"
+                                        ]
+                                },
+                                {
+                                        "name": "Taxonomy",
+                                        "options": [
+                                                "Genus",
+                                                "Species",
+                                                "Scientific name"
+                                        ]
+                                }
+                        ]
+                }
+        },
+        "Inventories": {
+                "refine": {
+                        "1": {
+                                "name": "CWR",
+                                "options": [
+                                        "National (4)",
+                                        "European"
+                                ]
+                        },
+                        "2": {
+                                "name": "LR",
+                                "options": [
+                                        "Country",
+                                        "Region"
+                                ]
+                        },
+                        "3": {
+                                "name": "Inventory identifier",
+                                "options": [
+                                        "Site unit",
+                                        "Inventory code",
+                                        "Species",
+                                        "Version or date",
+                                        "Designation",
+                                        "Priority level",
+                                        "Relation to crop",
+                                        "Occurance status",
+                                        "List criteria for Prioritization"
+                                ]
+                        },
+                        "4": {
+                                "name": "Taxonomy",
+                                "options": [
+                                        "Genus",
+                                        "Species",
+                                        "Scientific name"
+                                ]
+                        },
+                        "5": {
+                                "name": "Uses",
+                                "options": [
+                                        "Animal food",
+                                        "environmantal uses",
+                                        "Fuels",
+                                        "Food additives",
+                                        "Weeds",
+                                        "Vertebrates",
+                                        "Social uses",
+                                        "Other uses"
+                                ]
+                        }
+                }},
+        "Samples": {},
+        "Collecting missions (sites)": {},
+        "Analysis": {},
+        "Maps": {},
+}
