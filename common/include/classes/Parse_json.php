@@ -25,7 +25,6 @@ class Parse_json {
 		}
 		// Same as comment before
 		$this->json_conf = $config;
-
 	}
 /* -------------------------------------------------------------------------- */
 /* PRIVATE FUNCTIONS
@@ -119,9 +118,9 @@ class Parse_json {
 /* -------------------------------------------------------------------------- */
 
 	public function menu($menu_position, $ul_class = array()) {
-			// header("Content-type: text/plain");
-			// print_r(json_encode($this->json_conf));
-			// exit();
+			header("Content-type: text/plain");
+			print_r(json_encode($this->json_conf));
+			exit();
 		$menu_list = "";
 		foreach($this->json_conf["menu"][$menu_position] as $i => $j) {
 			if(!is_numeric($i)) {
@@ -197,6 +196,20 @@ class Parse_json {
 
 	public function parse_js_config($variable) {
 		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
+	}
+
+	public function parseJson() {
+                if(file_exists($this->json_conf)) {
+                        $ext = pathinfo($this->json_conf, PATHINFO_EXTENSION);
+                        if(trim($ext) == "php") {
+                                ob_start();
+                                include($this->json_conf);
+                                $json = ob_get_clean();
+                        }
+                        return json_decode($json, 1);
+                } else {
+                        return json_decode(file_get_contents($this->json_conf), 1);
+                }
 	}
 
 	/**

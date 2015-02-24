@@ -913,7 +913,9 @@
 
 						$("#login-username").closest("div.input-group").addClass("has-error");
 						$("#login-password").closest("div.input-group").addClass("has-error");
-						$('<h4 class="text-danger"><span class="fa fa-exclamation"></span> ' + i18n[lang].messages.login.wrong_data + '</h4>').insertAfter("div.signin > h1");
+						if($(".signin > h4.text-danger").length == 0) {
+							$('<h4 class="text-danger"><span class="fa fa-exclamation"></span> ' + i18n[lang].messages.login.wrong_data + '</h4>').insertAfter("div.signin > h1");
+						}
 					}
 				}
 			});
@@ -1327,6 +1329,38 @@
 				$("#statistics_loader").html(stats.join("<br />"));
 			}
 		});
+	};
+
+	/**
+	 * Get System definitions
+	 * @param  string  	definition 	The definition type
+	 * @return object 		        An object with all definitions
+	 */
+	$.get_definitions = function(definition) {
+		if(!$.storage_exists("pgrdg_cache.local.definitions." + definition)) {
+			$.cryptAjax({
+				url: "API/",
+				dataType: "json",
+				crossDomain: true,
+				type: "POST",
+				timeout: 100000,
+				data: {
+					definitions: definition,
+					type: "json",
+				},
+				success: function(response) {
+					console.info(response);
+					if($.obj_len(response) > 0) {
+						if(!$.storage_exists("pgrdg_cache.local.definitions." + definition)) {
+							storage.set(definition, response);
+						}
+						return response
+					}
+				}
+			});
+		} else {
+			return (storage.get("pgrdg_cache.local.definitions." + definition))
+		}
 	};
 
 /*======================================================================================*/
