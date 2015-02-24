@@ -93,11 +93,46 @@ if(isset($_GET["getPublicKey"])) {
 		case "ask_service":
 			require_once("ask_service.php");
 			break;
+		case "get_user":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			$login = $se->send_to_service($output, "get_user");
+			$ud = json_decode($login, 1);
+			// foreach($ud as $k => $v){
+			// 	$user_data = $v;
+			// }
+			// header("Content-type: text/plain");
+			// print_r($user_data);
+			// exit();
+			print json_encode($ud);
+			break;
+		case "get_managed_users":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			$managed_users = $se->send_to_service($output, "get_managed_users");
+			$mu = json_decode($managed_users, 1);
+			print $managed_users;
+			break;
+		case "invite_user":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			require_once(CLASSES_DIR . "PGP.php");
+
+			$se = new Service_exchange();
+			$pgp = new PGP($output);
+			$key_data = $pgp->generate_key();
+
+			$output[kTAG_ENTITY_PGP_FINGERPRINT] = $key_data["fingerprint"][0];
+			$output[kTAG_ENTITY_PGP_KEY] = $key_data["public_key"];
+			$action = "invite_user";
+			print $se->send_to_service($output, $action);
+			break;
 		case "login":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
 			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
 			$user_data = json_decode($login, 1);
+			// setcookie("l", md5("7C4D3533C21C608B39E8EAB256B4AFB771FA534A"), time()+10800, "/");
+			// $_SESSION["user"] = $ud;
 			// header("Content-type: text/plain");
 			// print_r($user_data);
 			// exit();
@@ -119,45 +154,12 @@ if(isset($_GET["getPublicKey"])) {
 				print json_encode($user_data);
 			}
 			break;
-		case "get_user":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			$se = new Service_exchange();
-			$login = $se->send_to_service($output, "get_user");
-			$ud = json_decode($login, 1);
-			// foreach($ud as $k => $v){
-			// 	$user_data = $v;
-			// }
-			// header("Content-type: text/plain");
-			// print_r($user_data);
-			// exit();
-			print json_encode($ud);
-			break;
-		case "get_managed_users":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			$se = new Service_exchange();
-			$managed_users = $se->send_to_service($output, "get_managed_users");
-			$mu = json_decode($managed_users, 1);
-			print $managed_users;
-			break;
 		case "logout":
 			$_SESSION["user"] = array();
 			session_destroy();
 			setcookie("l", "", time()-3600);
 			unset($_COOKIE["l"]);
 			print "ok";
-			break;
-		case "invite_user":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			require_once(CLASSES_DIR . "PGP.php");
-
-			$se = new Service_exchange();
-			$pgp = new PGP($output);
-			$key_data = $pgp->generate_key();
-
-			$output[kTAG_ENTITY_PGP_FINGERPRINT] = $key_data["fingerprint"][0];
-			$output[kTAG_ENTITY_PGP_KEY] = $key_data["public_key"];
-			$action = "invite_user";
-			print $se->send_to_service($output, $action);
 			break;
 		case "save_user_data":
 			require_once(CLASSES_DIR . "Service_exchange.php");

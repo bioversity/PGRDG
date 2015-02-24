@@ -1,17 +1,31 @@
 <?php
-// Parse the menu defined by json object in "common/include/conf/menu.json"
+// header("Content-type: text/plain");
+/**
+* JSON Parser
+*
+* Parse the menu defined by json object in "common/include/conf/menu.json"
+*
+* @author Alessandro Gubitosi <gubi.ale@iod.io>
+* @version 1.0 13/05/2014
+*/
+
+if(!defined("SYSTEM_ROOT")) {
+        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
+}
+if(!defined("INCLUDE_DIR")) {
+        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
+}
+
 class Parse_json {
 	function __construct($config = "") {
 		if(trim($config) == "") {
-			// Uncomment if you want to remote json menu
-			$config = "common/include/conf/__menu.json";
-			// include("../conf/menu.php");
 			// include("common/include/conf/menu.php");
 			// $config = $menu;
-			$config = json_decode(file_get_contents($config), true);
+			$config = json_decode(file_get_contents(INCLUDE_DIR . "conf/__menu.json"), 1);
 		}
 		// Same as comment before
 		$this->json_conf = $config;
+
 	}
 /* -------------------------------------------------------------------------- */
 /* PRIVATE FUNCTIONS
@@ -49,7 +63,7 @@ class Parse_json {
 						$menu_list_text .= (isset($v["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
 					$menu_list .= implode(" ", $this->extract_attributes($v)) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
 					if(isset($v["childs"])) {
-						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs", $num) . '</ul>';
+						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs") . '</ul>';
 					}
 					$menu_list .= '</li>' . "\n";
 					if(isset($v["divider"])) {
