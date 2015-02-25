@@ -33,5 +33,5 @@ $i = -1;
 	</div>
 </div>
 <?php
-print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md")));
+print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "Home") ? "home" : $page->current)) . ".md")));
 ?>

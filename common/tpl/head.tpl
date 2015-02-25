@@ -23,7 +23,7 @@
 <link href="<?php print $domain; ?>/common/css/mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
 
 <?php
-if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
+if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         ?>
         <!-- Demo purpose only: goes with demo.js, you can delete this css when designing your own WebApp -->
         <!-- <link rel="stylesheet" type="text/css" media="screen" href="css/demo.min.css"> -->

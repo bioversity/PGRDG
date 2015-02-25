@@ -36,7 +36,7 @@
                 traditional href="" links. See documentation for details.
                 -->
                 <?php
-                print str_replace(array("btn btn-link"), array(""), $site_config->menu("admin", ""));
+                print $admin_menu->menu("admin");
                 ?>
         </nav>
         <!-- END DISPLAY USERS -->

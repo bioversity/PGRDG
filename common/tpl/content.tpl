@@ -19,11 +19,11 @@
 					$page->current_title = 'Links to other information systems';
 				} else {
 					if($page->current !== "Feedback" && $page->current !== "Blog" && $page->current !== "Se") {
-						$page->current_title = str_replace("_", " ", (($page->current == "") ? "home" : $page->current));
+						$page->current_title = str_replace("_", " ", (($page->current == "Home") ? "home" : $page->current));
 					}
 				}
 
-				$md_page = str_replace("_", " ", (($page->current == "") ? "home" : $page->current)) . ".md";
+				$md_page = str_replace("_", " ", (($page->current == "Home") ? "home" : $page->current)) . ".md";
 				if(file_exists("common/md/" . $md_page)) {
 					print "<h1>" . $page->title . "</h1>";
 					print optimize(Markdown(file_get_contents("common/md/" . $md_page)));

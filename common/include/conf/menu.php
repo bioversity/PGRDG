@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/tpl/defines.tpl");
+require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/funcs/defines.php");
 $allow_signup = true;
 if(session_status() == PHP_SESSION_NONE) {
 	session_start();

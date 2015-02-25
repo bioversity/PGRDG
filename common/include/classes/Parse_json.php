@@ -22,7 +22,18 @@ class Parse_json {
 			// include("common/include/conf/menu.php");
 			// $config = $menu;
 			$config = json_decode(file_get_contents(INCLUDE_DIR . "conf/__menu.json"), 1);
-		}
+		} else {
+                        if(file_exists($config)) {
+                                $ext = pathinfo($config, PATHINFO_EXTENSION);
+                                if(trim($ext) == "php") {
+                                        ob_start();
+                                        include($config);
+                                        $json = ob_get_clean();
+                                        $config = json_decode($json, 1);
+                                }
+                        }
+                }
+                // print_r($config);
 		// Same as comment before
 		$this->json_conf = $config;
 	}
@@ -44,50 +55,66 @@ class Parse_json {
 		}
 		return false;
 	}
-	private function build_menu($menu, $menu_position, $num = null) {
-		if($num === null) {
+
+        /**
+         * Build the menu html
+         * @param  array                        $menu                           The object with all menu items
+         * @param  string                       $menu_position                  The section of the interested part of menu
+         * @param  string                       $num                            The item object key wich contains the menu data
+         * @return string                                                       The builded html menu
+         */
+        private function build_menu($menu, $menu_position, $num = null) {
+		if($num === null || $num === 0) {
 			$the_array = $menu[$menu_position];
 		} else {
 			$the_array = $menu[$menu_position][$num];
 		}
-		// print_r($the_array);
-		// exit();
 		$menu_list = '';
-		foreach($the_array as $k => $v) {
-			if($k !== "_comment") {
-				if(!isset($v["show_on_page"]) || $v["show_on_page"] == $_GET["p"]) {
-					$menu_list .= '	<li' . (isset($v["childs"]) ? ($menu_position == "admin" ? (isset($v["content"]["class"]) ? ' class="' . $v["content"]["class"] . '"' : "") : ' class="btn-group"') : '') . '><a ';
-						$menu_list_icon = '<span class="' . $v["content"]["icon"] . ($menu_position == "admin" ? " fa-lg fa-fw": "") . '"></span>';
-						$menu_list_text = ($menu_position == "admin" ? '<span class="menu-item-parent">' . $v["content"]["text"] . '</span>' : $v["content"]["text"]);
-						$menu_list_text .= (isset($v["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
-					$menu_list .= implode(" ", $this->extract_attributes($v)) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
-					if(isset($v["childs"])) {
-						$menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($v["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">' . $this->build_menu($v, "childs") . '</ul>';
-					}
-					$menu_list .= '</li>' . "\n";
-					if(isset($v["divider"])) {
-						if($menu_position == "admin") {
-							$menu_list .= '	<li class="nav-divider"></li>' . "\n";
-						} else {
-							$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
-						}
-					}
+		if(!isset($the_array["show_on_page"]) || $the_array["show_on_page"] == $_GET["p"]) {
+			$menu_list .= '	<li' . (isset($the_array["childs"]) ? ($menu_position == "admin" ? (isset($the_array["content"]["class"]) ? ' class="' . $the_array["content"]["class"] . '"' : "") : ' class="btn-group"') : '') . '><a ';
+				$menu_list_icon = '<span class="' . $the_array["content"]["icon"] . ($menu_position == "admin" ? " fa-lg fa-fw": "") . '"></span>';
+				$menu_list_text = ($menu_position == "admin" ? '<span class="menu-item-parent">' . $the_array["content"]["text"] . '</span>' : $the_array["content"]["text"]);
+				$menu_list_text .= (isset($the_array["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
+			$menu_list .= implode(" ", $this->build_html_attributes($the_array, ($menu_position == "admin" ? true : false))) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
+			if(isset($the_array["childs"])) {
+                                $menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($the_array["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">';
+                                foreach($the_array["childs"] as $ck => $cv) {
+                                        $menu_list .= $this->build_menu($the_array, "childs", $ck);
+                                }
+                                $menu_list .= '</ul>';
+			}
+			$menu_list .= '</li>' . "\n";
+			if(isset($v["divider"])) {
+				if($menu_position == "admin") {
+					$menu_list .= '	<li class="nav-divider"></li>' . "\n";
+				} else {
+					$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
 				}
 			}
 		}
+
 		return $menu_list;
 	}
-	private function extract_attributes($map_toolbox) {
+
+        /**
+         * Get attributes from an object and create the corresponding html structure
+         * @param  array                        $object                         The array of attributes
+         * @param  bool                         $strip_btn_class                Remove "btn and "btn-link" from values (useful for certain menus)
+         * @return array                                                        An array with html attributes
+         */
+        private function build_html_attributes($object, $strip_btn_class) {
 		$attributes = array();
-		foreach($map_toolbox as $mo_key => $mo_val) {
+		foreach($object as $mo_key => $mo_val) {
 			if($mo_key !== "childs") {
 				if($mo_key == "attributes") {
 					foreach($mo_val as $attr_key => $attr_val) {
+                                                if($strip_btn_class) {
+                                                        $attr_val = str_replace(array("btn", "btn-link"), "", $attr_val);
+                                                }
 						$attributes[] = $attr_key . '="' . $attr_val . '"';
 					}
 				}
 			} else {
-				//print_r($this->walk($map_toolbox, $mo_key));
 				$attributes[] = 'class="dropdown-toggle" data-toggle="dropdown"';
 			}
 		}
@@ -96,64 +123,60 @@ class Parse_json {
 
 	/**
 	* Search recursive a value in an array and returns its parent key
-	* @param  array  $array        The target array
-	* @param  string $key          Which key must have the searched value
-	* @param  string $value        The value to search
-	* @return object               An object with the entire part of array
+	* @param  array                        $array                           The target array
+	* @param  string                       $key                             Which key must have the searched value
+	* @param  string                       $value                           The value to search
+	* @return object                                                        An object with the entire part of array
 	*/
 	private function search($array, $key, $value) {
 		$results = array();
 		if (is_array($array)){
-			if (isset($array[$key]) && $array[$key] == $value)
-			$results[] = $array;
+			if (isset($array[$key]) && $array[$key] == $value) {
+                                $results[] = $array;
+                        }
 
-			foreach ($array as $subarray)
-			$results = array_merge($results, $this->search($subarray, $key, $value));
+			foreach ($array as $k => $subarray) {
+                                $results = array_merge($results, $this->search($subarray, $key, $value));
+                        }
+                // print_r($results);
 		}
-		return $results;
+                // exit();
+                return $results;
 	}
 
 /* -------------------------------------------------------------------------- */
 /* PUBLIC FUNCTIONS
 /* -------------------------------------------------------------------------- */
 
+        /**
+         * Create the menu
+         * @param  string                       $menu_position                  The section of the interested part of menu
+         * @param  array                        $ul_class                       An array with html ul classes
+         * @return string                                                       The generated menu
+         */
 	public function menu($menu_position, $ul_class = array()) {
-			header("Content-type: text/plain");
-			print_r(json_encode($this->json_conf));
-			exit();
 		$menu_list = "";
+		$menu_list .= '<ul';
+		if(!is_array($ul_class)) {
+			$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
+		} else {
+			foreach($ul_class as $k => $v) {
+				$menu_list .= " " . $k . '="' . $v . '"';
+			}
+		}
+		if($menu_position == "admin") {
+			$menu_list .= ' class="nav"';
+		}
+		$menu_list .=  ">\n";
 		foreach($this->json_conf["menu"][$menu_position] as $i => $j) {
 			if(!is_numeric($i)) {
 				$num = 0;
 			} else {
 				$num = $i;
 			}
-			$menu_list .= '<ul';
-			if(!is_array($ul_class)) {
-				$menu_list .= (trim($ul_class) !== "" ? ' class="' . $ul_class . '"' : '');
-			} else {
-				foreach($ul_class as $k => $v) {
-					$menu_list .= " " . $k . '="' . $v . '"';
-				}
-			}
-			if($menu_position == "admin") {
-				$menu_list .= ' class="nav"';
-			}
-			$menu_list .=  ">\n";
-			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $num);
-			$menu_list .= "</ul>\n";
+			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $i);
 		}
-		/*
-		foreach($this->walk($this->json_conf, $menu_position) as $obj => $map_toolbox) {
-			if($obj !== "_comment") {
-				$menu_list .= '	<li' . (isset($map_toolbox["childs"]) ? ' class="btn-group"' : '') . '><a ';
-				$menu_list .= implode(" ", $this->extract_attributes($map_toolbox)) . '><span class="' . $map_toolbox["content"]["icon"] . '"></span>&nbsp;' . $map_toolbox["content"]["text"] . (isset($map_toolbox["childs"]) ? ' <span class="caret"></span>' : '') . '</a>' . (isset($map_toolbox["childs"]) ? '<ul class="dropdown-menu" role="menu"></ul>' : '') . '</li>' . "\n";
-				if(isset($map_toolbox["divider"])) {
-					$menu_list .= '	<li class="' . $divider . '"></li>' . "\n";
-				}
-			}
-		}
-		*/
+		$menu_list .= "</ul>\n";
 		return $menu_list;
 	}
 
@@ -194,10 +217,18 @@ class Parse_json {
 		return $menu_list;
 	}
 
+        /**
+         * Parse a javascript config and return it as a php array
+         * @param  string                       $variable                       The javascript variable that contains the config object
+         * @return array                                                        The config as a php array
+         */
 	public function parse_js_config($variable) {
 		return json_decode(trim(str_replace(array('var ' . $variable . ' = {', '};'), array('{', '}'), file_get_contents($this->json_conf))), 1);
 	}
 
+        /**
+         * Parse a json file and return it as a php array
+         */
 	public function parseJson() {
                 if(file_exists($this->json_conf)) {
                         $ext = pathinfo($this->json_conf, PATHINFO_EXTENSION);
@@ -213,13 +244,12 @@ class Parse_json {
 	}
 
 	/**
-	* Parse
-	* @param  [type] $pp [description]
-	* @return [type]     [description]
+	* Parse the page configuration script
+	* @param  string                       $variable                        The variable to load inside the json structure
+	* @return object                                                        An object with all pages configuration
 	*/
 	public function parse_page_config($variable) {
 		$pp = json_decode(trim(file_get_contents($this->json_conf)), 1);
-		// print_r($pp);
 		$page = new stdClass();
 		$fp = new stdClass();
 		$found = false;
@@ -234,13 +264,9 @@ class Parse_json {
 				}
 			}
 		} else {
-			$page->current = "";
+			$page->current = "Home";
 		}
 		if(is_array($pp)) {
-		// print_r($variable);
-		// print_r($pp[$variable]);
-		// print_r($this->search($pp, "address", $page->current));
-		// exit();
 			foreach($pp[$variable] as $k => $v) {
 				if(count($v["subpages"]) == 1) {
 					$pages_list[(($v["address"] !== "") ? $v["address"] : "Home")] = $v;
@@ -257,10 +283,9 @@ class Parse_json {
 					}
 				}
 			}
-			// print_r($pages_list);
-			// exit();
-			if(strlen($page->current) == 0 || array_key_exists($page->current, $pages_list)) {
+			if(strlen($page->current) == "" || array_key_exists($page->current, $pages_list)) {
 				$page->exists = true;
+                                // print "ok";
 				foreach($this->search($pages_list, "address", $page->current)[0] as $i => $v) {
 					$page->$i = $v;
 				};
@@ -290,13 +315,22 @@ class Parse_json {
 				}
 			}
 		}
-		// print_r($page);
 		return $page;
 	}
 
 }
+
+// require_once("/var/www/pgrdg/common/include/funcs/defines.php");
+//
 // header("Content-type: text/plain");
-// $site_config = new Parse_json();
-// print $site_config->menu("top", "list-unstyled text-center");
-// exit();
+// if(isset($_GET["m"]) && $_GET["m"] == "admin") {
+//         $admin_menu = new Parse_json(CONF_DIR . "menu_admin.php");
+//         print $admin_menu->menu("admin");
+// } else {
+//         $site_config = new Parse_json();
+//         $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
+// }
+// $pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+// $page = $pages_config->parse_page_config("pages");
+// print_r($page);
 ?>

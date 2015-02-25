@@ -1,5 +1,5 @@
 <?php
-header("Content-type: text/plain");
+// header("Content-type: text/plain");
 // session_start();
 // print_r($_SESSION["user"]);
 // exit();
@@ -45,7 +45,7 @@ if(!defined("LOGGED")) {
 }
 $site_config = new Parse_json();
 $admin_menu = new Parse_json(CONF_DIR . "menu_admin.php");
-$menu_admin = $admin_menu->parseJson();
+// $menu_admin = $admin_menu->parseJson();
 $map_config = new Parse_json(CONF_DIR . "map.json");
 $pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
 $i18n_config = new Parse_json(INTERFACE_CONF_DIR . "i18n.js");
@@ -53,9 +53,8 @@ $interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 $i18n = $i18n_config->parse_js_config("i18n");
 $interface = $interface_config->parse_js_config("config");
 $page = $pages_config->parse_page_config("pages");
-print_r($menu_admin);
-// print_r($menu_admin->menu("admin", ""));
-exit();
+// $admin_menu->menu("admin");
+// exit();
 
 if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $_COOKIE["lang"];
@@ -97,7 +96,7 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 					include(TEMPLATE_DIR . "script.tpl");
 				} else {
 					include(TEMPLATE_DIR . "loader.tpl");
-					if(LOGGED && $page->current == "" || LOGGED && $page->need_login) {
+					if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
 						include(TEMPLATE_DIR . "admin/index.tpl");
 					} else {
 						?>

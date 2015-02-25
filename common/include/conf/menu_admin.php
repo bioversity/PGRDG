@@ -9,6 +9,8 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
                 $user = json_decode(json_encode($_SESSION["user"]), 1);
         }
         $logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+} else {
+        exit();
 }
 if(!defined("LOGGED")) {
         define("LOGGED", $logged);
@@ -153,7 +155,7 @@ $m->menu->admin->Logout->attributes = array(
         "class" => "btn btn-link text-warning"
 );
 
-header("Content-type: text/plain");
+// header("Content-type: text/plain");
 print json_encode($m);
 
 ?>
