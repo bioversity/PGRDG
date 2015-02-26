@@ -17,29 +17,37 @@ if(!defined("INCLUDE_DIR")) {
 }
 
 class Parse_json {
-	function __construct($config = "") {
-		if(trim($config) == "") {
-			// include("common/include/conf/menu.php");
-			// $config = $menu;
-			$config = json_decode(file_get_contents(INCLUDE_DIR . "conf/__menu.json"), 1);
+	function __construct($config) {
+                if(strlen($config) == 0 && trim($config) == "") {
+                        throw new exception("No data passed");
 		} else {
                         if(file_exists($config)) {
                                 $ext = pathinfo($config, PATHINFO_EXTENSION);
-                                if(trim($ext) == "php") {
-                                        ob_start();
-                                        include($config);
-                                        $json = ob_get_clean();
-                                        $config = json_decode($json, 1);
+                                switch(trim($ext)) {
+                                        case "php":
+                                                ob_start();
+                                                include($config);
+                                                $json = ob_get_clean();
+                                                $this->json_conf = json_decode($json, 1);
+                                                break;
+                                        case "json":
+                                                $this->json_conf = json_decode(file_get_contents($config), 1);
+                                                break;
+                                        default:
+                                                // Same as comment before
+                                                $this->json_conf = $config;
+                                                break;
                                 }
+                        } else {
+                                throw new exception("Passed file do not exists");
                         }
                 }
-                // print_r($config);
-		// Same as comment before
-		$this->json_conf = $config;
+                // print_r($this->json_conf);
 	}
 /* -------------------------------------------------------------------------- */
 /* PRIVATE FUNCTIONS
 /* -------------------------------------------------------------------------- */
+        // private function
 	private function walk($array, $key) {
 		if(!is_array($array)) {
 			return false;
@@ -61,9 +69,10 @@ class Parse_json {
          * @param  array                        $menu                           The object with all menu items
          * @param  string                       $menu_position                  The section of the interested part of menu
          * @param  string                       $num                            The item object key wich contains the menu data
+         * @param  bool                         $strip_btn_class                Remove the link classes "btn" and "btn-link"
          * @return string                                                       The builded html menu
          */
-        private function build_menu($menu, $menu_position, $num = null) {
+        private function build_menu($menu, $menu_position, $num = null, $strip_btn_class = true) {
 		if($num === null || $num === 0) {
 			$the_array = $menu[$menu_position];
 		} else {
@@ -75,11 +84,11 @@ class Parse_json {
 				$menu_list_icon = '<span class="' . $the_array["content"]["icon"] . ($menu_position == "admin" ? " fa-lg fa-fw": "") . '"></span>';
 				$menu_list_text = ($menu_position == "admin" ? '<span class="menu-item-parent">' . $the_array["content"]["text"] . '</span>' : $the_array["content"]["text"]);
 				$menu_list_text .= (isset($the_array["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');
-			$menu_list .= implode(" ", $this->build_html_attributes($the_array, ($menu_position == "admin" ? true : false))) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
+			$menu_list .= implode(" ", $this->build_html_attributes($the_array, $strip_btn_class)) . '>' . $menu_list_icon . '&nbsp;' . $menu_list_text . '</a>';
 			if(isset($the_array["childs"])) {
                                 $menu_list .= '<ul class="' . ($menu_position == "admin" ? '' : 'dropdown-menu') . '" ' . (isset($the_array["content"]["class"]) ? 'style="display:block;"' : "") . 'role="menu">';
                                 foreach($the_array["childs"] as $ck => $cv) {
-                                        $menu_list .= $this->build_menu($the_array, "childs", $ck);
+                                        $menu_list .= $this->build_menu($the_array, "childs", $ck, $strip_btn_class);
                                 }
                                 $menu_list .= '</ul>';
 			}
@@ -88,7 +97,7 @@ class Parse_json {
 				if($menu_position == "admin") {
 					$menu_list .= '	<li class="nav-divider"></li>' . "\n";
 				} else {
-					$menu_list .= '	<li class="' . $v["divider"] . '"></li>' . "\n";
+					$menu_list .= '	<li class="' . $the_array["divider"] . '"></li>' . "\n";
 				}
 			}
 		}
@@ -109,7 +118,7 @@ class Parse_json {
 				if($mo_key == "attributes") {
 					foreach($mo_val as $attr_key => $attr_val) {
                                                 if($strip_btn_class) {
-                                                        $attr_val = str_replace(array("btn", "btn-link"), "", $attr_val);
+                                                        $attr_val = trim(str_replace(array("btn-link", "btn"), "", $attr_val));
                                                 }
 						$attributes[] = $attr_key . '="' . $attr_val . '"';
 					}
@@ -174,7 +183,7 @@ class Parse_json {
 			} else {
 				$num = $i;
 			}
-			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $i);
+			$menu_list .= $this->build_menu($this->json_conf["menu"], $menu_position, $i, ($menu_position == "admin" ? true : false));
 		}
 		$menu_list .= "</ul>\n";
 		return $menu_list;
@@ -228,6 +237,7 @@ class Parse_json {
 
         /**
          * Parse a json file and return it as a php array
+         *
          */
 	public function parseJson() {
                 if(file_exists($this->json_conf)) {
@@ -236,8 +246,8 @@ class Parse_json {
                                 ob_start();
                                 include($this->json_conf);
                                 $json = ob_get_clean();
+                                return json_decode($json, 1);
                         }
-                        return json_decode($json, 1);
                 } else {
                         return json_decode(file_get_contents($this->json_conf), 1);
                 }
@@ -249,7 +259,7 @@ class Parse_json {
 	* @return object                                                        An object with all pages configuration
 	*/
 	public function parse_page_config($variable) {
-		$pp = json_decode(trim(file_get_contents($this->json_conf)), 1);
+		$pp = $this->json_conf;
 		$page = new stdClass();
 		$fp = new stdClass();
 		$found = false;

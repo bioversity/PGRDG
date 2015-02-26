@@ -43,9 +43,12 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 if(!defined("LOGGED")) {
 	define("LOGGED", $logged);
 }
-$site_config = new Parse_json();
-$admin_menu = new Parse_json(CONF_DIR . "menu_admin.php");
-// $menu_admin = $admin_menu->parseJson();
+$global_menu = new Parse_json(CONF_DIR . "__menu.json");
+if(LOGGED) {
+	$admin_menu = new Parse_json(CONF_DIR . "menu_admin.php");
+	// print_r($admin_menu);
+	// exit();
+}
 $map_config = new Parse_json(CONF_DIR . "map.json");
 $pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
 $i18n_config = new Parse_json(INTERFACE_CONF_DIR . "i18n.js");
@@ -53,8 +56,7 @@ $interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 $i18n = $i18n_config->parse_js_config("i18n");
 $interface = $interface_config->parse_js_config("config");
 $page = $pages_config->parse_page_config("pages");
-// $admin_menu->menu("admin");
-// exit();
+
 
 if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $_COOKIE["lang"];

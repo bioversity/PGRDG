@@ -18,6 +18,11 @@ if($page->is_backend) {
 
 	<!-- jQuery scrollTo -->
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery.scrollTo/jquery.scrollTo.min.js"></script>
+
+	<!-- IMPORTANT: APP CONFIG -->
+	<script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
+	<!-- MAIN APP JS FILE -->
+	<script src="<?php print $domain; ?>/common/js/admin/app.js"></script>
 	<?php
 }
 ?>

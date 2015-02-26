@@ -129,6 +129,8 @@ if(isset($_GET["getPublicKey"])) {
 		case "login":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
+			// print_r($output);
+			// exit();
 			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
 			$user_data = json_decode($login, 1);
 			// setcookie("l", md5("7C4D3533C21C608B39E8EAB256B4AFB771FA534A"), time()+10800, "/");

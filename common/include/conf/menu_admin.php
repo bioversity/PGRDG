@@ -10,7 +10,7 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
         }
         $logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
 } else {
-        exit();
+        throw new exception("Expired session, cannot load admin menu");
 }
 if(!defined("LOGGED")) {
         define("LOGGED", $logged);
@@ -37,7 +37,8 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
         $m->menu->admin->Manage_user->attributes = array(
                 "href" => "javascript:void(0);",
                 "title" => "",
-                "class" => "btn btn-link"
+                "class" => "btn btn-link",
+                "id" => "manage_users_menu"
         );
         $m->menu->admin->Manage_user->childs = new stdClass();
         if($user[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_VALUE] > 0) {
@@ -68,13 +69,13 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
 $m->menu->admin->Your_data = new stdClass();
 $m->menu->admin->Your_data->content = array(
         "icon" => "fa fa-cubes",
-        "text" => "Your data",
-        "class" => "open"
+        "text" => "Your data"
 );
 $m->menu->admin->Your_data->attributes = array(
         "href" => "javascript:void(0);",
         "title" => "",
-        "class" => "btn btn-link"
+        "class" => "btn btn-link",
+        "id" => "your_data_menu"
 );
 $m->menu->admin->Your_data->childs = new stdClass();
 $m->menu->admin->Your_data->childs->History = new stdClass();
@@ -109,7 +110,8 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
         $m->menu->admin->Manage_contents->attributes = array(
                 "href" => "javascript:void(0);",
                 "title" => "",
-                "class" => "btn btn-link"
+                "class" => "btn btn-link",
+                "id" => "manage_contents_menu"
         );
         $m->menu->admin->Manage_contents->childs = new stdClass();
         $m->menu->admin->Manage_contents->childs->Menu = new stdClass();

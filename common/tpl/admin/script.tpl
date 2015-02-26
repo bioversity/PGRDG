@@ -4,6 +4,24 @@
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.easing.1.3.js"></script>
 
+<!-- jquery.cookie & storage -->
+<script src="<?php print $domain; ?>/common/js/plugins/jquery-cookie/jquery.cookie.js"></script>
+<script src="<?php print $domain; ?>/common/js/plugins/jquery-storage/jquery.storageapi.js"></script>
+<!-- Jcryption, MD5 & SHA1 -->
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.jcryption.3.0.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery-md5/jquery.md5.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.sha1.js"></script>
+<!-- Purl (A JavaScript URL parser) -->
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/purl/purl.js"></script>
+
+<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/i18n.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/site.js"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/API/?local=conf%2Frole_definitions.json"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&type=string&condensed=true"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&type=string&condensed=true"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/params.js"></script>
+
 <!-- IMPORTANT: APP CONFIG -->
 <script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
 <!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->
@@ -379,7 +397,7 @@ $(document).ready(function() {
                                         plot2.setData(d);
                                         plot2.draw();
                                 } else {
-                                        plot2 = $.plot(target, d, options);
+                                        // plot2 = $.plot(target, d, options);
                                 }
                         }
 

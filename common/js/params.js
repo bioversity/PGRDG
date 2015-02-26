@@ -424,6 +424,54 @@ $.site_conf = function(callback) {
         });
 };
 
+/**
+ * Load page config
+ * @return {[type]} [description]
+ */
+$.get_page_config = function(callback) {
+        $.iterate_pages_config = function(response, callback) {
+                if(current_path == "") {
+                        current_path = "Home";
+                }
+                $.each(response.pages, function(page_type, page_data) {
+                        if(current_path == page_type) {
+                                storage.set("pgrdg_cache.local.current_page", page_data);
+                                callback.call(this, page_data);
+                                return false;
+                        } else {
+                                if($.obj_len(page_data.subpages) > 0){
+                                        $.each(page_data.subpages, function(subpage_type, subpage_data) {
+                                                if(current_path == subpage_type) {
+                                                        storage.set("pgrdg_cache.local.current_page", page_data);
+                                                        callback.call(this, subpage_data);
+                                                        return false;
+                                                } else {
+                                                        return false;
+                                                }
+                                        });
+                                }
+                        }
+                });
+        };
+
+        if(storage.isSet("pgrdg_cache.local.pages")) {
+                $.iterate_pages_config(storage.get("pgrdg_cache.local"), function(conf) {
+                        callback.call(this, conf);
+                });
+        } else {
+                $.cryptAjax({
+                        url: "common/include/conf/interface/pages.json",
+                        dataType: "json",
+                        success: function(response) {
+                                storage.set("pgrdg_cache.local", response);
+                                $.iterate_pages_config(response, function(conf) {
+                                        callback.call(this, conf);
+                                });
+                        }
+                });
+        }
+};
+
 
 /*=======================================================================================
 *	GLOBAL VARIABLES
@@ -446,6 +494,18 @@ parent_path = url_paths[url_paths.length - 2],
 is_error_page = $("body").attr("data-error");
 
 $.site_conf(function() {
+        $.get_page_config(function(page_config) {
+                if(page_config.is_backend && page_config.data_parent_menu !== undefined) {
+                        $("#" + page_config.data_parent_menu).attr("aria-expanded", "true");
+                        $("#" + page_config.data_parent_menu).closest("li").addClass("open");
+                        $("#" + page_config.data_parent_menu).closest("li").find("ul").css("display", "block");
+                }
+                if(current_path == "Home") {
+                        $("#your_data_menu").attr("aria-expanded", "true");
+                        $("#your_data_menu").closest("li").addClass("open");
+                        $("#your_data_menu").closest("li").find("ul").css("display", "block");
+                }
+        });
         if(!load) {
                 return false;
         } else {

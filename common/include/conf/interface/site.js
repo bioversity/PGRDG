@@ -14,7 +14,7 @@ var config = {
                 "timestamp": 1414137020,
                 "developer_mode": false,
                 "default_language": "en",
-                "allow_signup": false,
+                "allow_signup": true,
                 "title": "PGRDG ~ Researching agricultural and forest biodiversity",
                 "html_title": "<acronym title=\"Plant Genetic Resource Diversity Gateway\">PGRDG</acronym> ~ Researching agricultural and forest biodiversity",
                 "project_name": "Plant Genetic Resource Diversity Gateway"
