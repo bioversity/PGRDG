@@ -60,7 +60,7 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                 "text" => "Invite new"
         );
         $m->menu->admin->Manage_user->childs->Invite_user->attributes = array(
-                "href" => "./Users/Invite",
+                "href" => "./Invite",
                 "title" => "Invite an user",
                 "class" => "btn btn-link btn-default"
         );
@@ -84,7 +84,7 @@ $m->menu->admin->Your_data->childs->History->content = array(
         "text" => "History"
 );
 $m->menu->admin->Your_data->childs->History->attributes = array(
-        "href" => "./Your_data/History",
+        "href" => "./History",
         "title" => "History",
         "class" => "btn btn-link"
 );
@@ -95,7 +95,7 @@ if(in_array(kTYPE_ROLE_UPLOAD, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                 "text" => "Upload"
         );
         $m->menu->admin->Your_data->childs->Upload->attributes = array(
-                "href" => "./Your_data/Upload",
+                "href" => "./Upload",
                 "title" => "Upload",
                 "class" => "btn btn-link"
         );

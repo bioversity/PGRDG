@@ -241,6 +241,18 @@ $.fn.check_input = function(callback) {
 *======================================================================================*/
 
 	/**
+	 * Extract current user data from storage
+	 * @param  object		user_data		The user data object
+	 */
+	$.get_current_user_data = function() {
+		var user_data = {};
+		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(uid, ud) {
+			user_data = ud;
+		});
+		return user_data;
+	};
+
+	/**
 	 * Extract the user identifier from a given user data object
 	 * @param  object		user_data		The user data object
 	 * @return string 			   		The user identifier
@@ -335,6 +347,13 @@ $.fn.check_input = function(callback) {
 	* @return string 				        The user image source
 	*/
 	$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+
+	/**
+	* Extract the user roles from a given user data object
+	* @param  object		user_data 		The user data object
+	* @return object 				        The user roles
+	*/
+	$.get_user_roles = function(user_data) { return user_data[kTAG_ROLES]; }
 
 	/**
 	 * Extract all user permissions and list in verbose mode from a given user data object
@@ -1512,7 +1531,13 @@ $.generate_invite_form = function() {
 */
 $.fn.roles_manager_box = function(user_id, user_roles) {
 	if(user_id === undefined || user_id === null) {
-		user_id = "";
+		if(user_roles === undefined) {
+			var user_data = $.get_current_user_data();
+			user_id = $.get_user_id(user_data);
+			user_roles = $.get_user_roles(user_data);
+		} else {
+			user_id = "";
+		}
 	}
 	var $item = $(this),
 	$fieldset_r = $('<fieldset>'),
