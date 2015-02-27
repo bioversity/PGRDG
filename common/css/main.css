@@ -1994,13 +1994,13 @@ ul.list-group.transparent ul {
 		linear-gradient(135deg, rgba(0, 0, 0, 0.5) 25%, transparent 25%,
 		transparent 50%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.5) 75%,
 		transparent 75%, transparent) 0 0 / 50px 50px, #c16;
-	background-size: 8px 8px;
-	*/
+	background-size: 8px 8px;*/
+
 	background-color: rgba(0, 0, 0, 0.3);
 	width: 100%;
 	height: 100%;
 	position: fixed;
-	z-index: 2;
+	z-index: 9999;
 }
 .modal-body ul.list-unstyled {
 	margin: 0;
@@ -2022,6 +2022,9 @@ ul.list-group.transparent ul {
 	text-shadow: 0 0 6px rgba(100, 100, 100, 0.8);
 	width: 80%;
 	z-index: 2;
+}
+#selected_zone > span.fa-lock {
+	cursor: not-allowed;
 }
 #information_zone {
 	color: rgba(255, 255, 255, 0.8);
@@ -2119,6 +2122,9 @@ ul.list-group.transparent ul {
 }
 #map_toolbox li.nav_divider {
 	background-color: #c1d82f;
+}
+#map_toolbox li.spacer {
+	height: 23.5px;
 }
 #map_toolbox a {
 	text-align: center;
@@ -2246,7 +2252,7 @@ ul.list-group.transparent ul {
     margin: -2px -12px;
 }
 #map_toolbox li.selected,
-#map_toolbox li:hover:not(.disabled),
+#map_toolbox li:hover:not(.disabled):not(.spacer),
 #map_sub_toolbox li.selected,
 #map_sub_toolbox li a.selected,
 #map_sub_toolbox li:hover,

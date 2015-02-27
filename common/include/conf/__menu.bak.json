@@ -1,7 +1,6 @@
 {
     "menu": {
-        "top": [
-            {
+        "top": {
                 "Home": {
                     "content": {
                         "icon": "fa fa-home",
@@ -135,8 +134,7 @@
                         "class": "btn btn-link"
                     }
                 }
-            }
-        ],
+        },
         "map_toolbox": [
             {
                 "Show_hide_menu": {

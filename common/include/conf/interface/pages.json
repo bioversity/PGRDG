@@ -14,20 +14,6 @@
                         "is_visible": true,
                         "subpages": ""
                 },
-                "Home_str": {
-                        "title": "Main page",
-                        "logged_title": "Dashboard",
-                        "title_class": "",
-                        "address": "Home",
-                        "class": [],
-                        "template": "",
-                        "need_login": false,
-                        "is_main_page": true,
-                        "is_backend": false,
-                        "is_system_page": false,
-                        "is_visible": true,
-                        "subpages": ""
-                },
                 "About_us": {
                         "title": "About us",
                         "title_class": "",

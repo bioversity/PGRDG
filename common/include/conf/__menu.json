@@ -1,316 +1,305 @@
 {
     "menu": {
         "top": {
-                "Home": {
-                    "content": {
-                        "icon": "fa fa-home",
-                        "text": "Home"
-                    },
-                    "attributes": {
-                        "href": "./",
-                        "title": "Go to Main Page",
-                        "class": "btn btn-link"
-                    }
+            "Home": {
+                "content": {
+                    "icon": "fa fa-home",
+                    "text": "Home"
                 },
-                "About us": {
-                    "content": {
-                        "icon": "fa fa-leaf",
-                        "text": "About us"
-                    },
-                    "attributes": {
-                        "href": "javascript: void(0);",
-                        "class": "btn btn-link"
-                    },
-                    "childs": {
-                        "About us": {
-                            "content": {
-                                "icon": "fa fa-comment-o",
-                                "text": "About us"
-                            },
-                            "attributes": {
-                                "href": "./About_us"
-                            }
+                "attributes": {
+                    "href": "./",
+                    "title": "Go to Main Page",
+                    "class": "btn btn-link"
+                }
+            },
+            "About us": {
+                "content": {
+                    "icon": "fa fa-leaf",
+                    "text": "About us"
+                },
+                "attributes": {
+                    "href": "javascript: void(0);",
+                    "class": "btn btn-link"
+                },
+                "childs": {
+                    "About us": {
+                        "content": {
+                            "icon": "fa fa-comment-o",
+                            "text": "About us"
                         },
-                        "How_the_system_works": {
-                            "content": {
-                                "icon": "fa fa-gears",
-                                "text": "How the system works"
-                            },
-                            "attributes": {
-                                "href": "./How_the_system_works"
-                            }
-                        },
-                        "Feedback": {
-                            "content": {
-                                "icon": "fa fa-comments-o",
-                                "text": "Give us your feedback"
-                            },
-                            "attributes": {
-                                "href": "./Feedback"
-                            }
+                        "attributes": {
+                            "href": "./About_us"
                         }
-                    }
-                },
-                "National Inventories": {
-                    "content": {
-                        "icon": "fa fa-sitemap",
-                        "text": "National Inventories"
                     },
-                    "attributes": {
-                        "href": "javascript: void(0);",
-                        "class": "btn btn-link"
-                    },
-                    "childs": {
-                        "National Inventories": {
-                            "content": {
-                                "icon": "fa fa-list",
-                                "text": "National Inventories"
-                            },
-                            "attributes": {
-                                "href": "./National_Inventories"
-                            }
+                    "How_the_system_works": {
+                        "content": {
+                            "icon": "fa fa-gears",
+                            "text": "How the system works"
                         },
-                        "Conservation Strategies": {
-                            "content": {
-                                "icon": "ionicons ion-fork-repo",
-                                "text": "Conservation Strategies"
-                            },
-                            "attributes": {
-                                "href": "./Conservation_Strategies"
-                            }
-                        },
-                        "Links": {
-                            "content": {
-                                "icon": "fa fa-link",
-                                "text": "Links"
-                            },
-                            "attributes": {
-                                "href": "./Links"
-                            }
+                        "attributes": {
+                            "href": "./How_the_system_works"
                         }
-                    }
-                },
-                "Search": {
-                    "content": {
-                        "icon": "fa fa-search",
-                        "text": "Search"
                     },
-                    "attributes": {
-                        "href": "./Search",
-                        "class": "btn btn-link"
-                    }
-                },
-                "Graphs": {
-                    "content": {
-                        "icon": "fa fa-pie-chart",
-                        "text": "Graphs"
-                    },
-                    "attributes": {
-                        "href": "./Graph",
-                        "title": "Collected graphs",
-                        "class": "btn btn-link"
-                    },
-                    "divider": "vertical-divider"
-                },
-                "Map": {
-                    "content": {
-                        "icon": "fa fa-globe",
-                        "text": "Map"
-                    },
-                    "attributes": {
-                        "href": "./Map",
-                        "title": "Go to map view",
-                        "class": "btn btn-link"
-                    },
-                    "divider": "vertical-divider"
-                },
-                "Sign in": {
-                    "content": {
-                        "icon": "fa fa-sign-in",
-                        "text": "Sign in"
-                    },
-                    "attributes": {
-                        "href": "./Signin",
-                        "class": "btn btn-link"
+                    "Feedback": {
+                        "content": {
+                            "icon": "fa fa-comments-o",
+                            "text": "Give us your feedback"
+                        },
+                        "attributes": {
+                            "href": "./Feedback"
+                        }
                     }
                 }
+            },
+            "National Inventories": {
+                "content": {
+                    "icon": "fa fa-sitemap",
+                    "text": "National Inventories"
+                },
+                "attributes": {
+                    "href": "javascript: void(0);",
+                    "class": "btn btn-link"
+                },
+                "childs": {
+                    "National Inventories": {
+                        "content": {
+                            "icon": "fa fa-list",
+                            "text": "National Inventories"
+                        },
+                        "attributes": {
+                            "href": "./National_Inventories"
+                        }
+                    },
+                    "Conservation Strategies": {
+                        "content": {
+                            "icon": "ionicons ion-fork-repo",
+                            "text": "Conservation Strategies"
+                        },
+                        "attributes": {
+                            "href": "./Conservation_Strategies"
+                        }
+                    },
+                    "Links": {
+                        "content": {
+                            "icon": "fa fa-link",
+                            "text": "Links"
+                        },
+                        "attributes": {
+                            "href": "./Links"
+                        }
+                    }
+                }
+            },
+            "Search": {
+                "content": {
+                    "icon": "fa fa-search",
+                    "text": "Search"
+                },
+                "attributes": {
+                    "href": "./Search",
+                    "class": "btn btn-link"
+                }
+            },
+            "Graphs": {
+                "content": {
+                    "icon": "fa fa-pie-chart",
+                    "text": "Graphs"
+                },
+                "attributes": {
+                    "href": "./Graph",
+                    "title": "Collected graphs",
+                    "class": "btn btn-link"
+                },
+                "divider": "vertical-divider"
+            },
+            "Map": {
+                "content": {
+                    "icon": "fa fa-globe",
+                    "text": "Map"
+                },
+                "attributes": {
+                    "href": "./Map",
+                    "title": "Go to map view",
+                    "class": "btn btn-link"
+                },
+                "divider": "vertical-divider"
+            },
+            "Sign in": {
+                "content": {
+                    "icon": "fa fa-sign-in",
+                    "text": "Sign in"
+                },
+                "attributes": {
+                    "href": "./Signin",
+                    "class": "btn btn-link"
+                }
+            }
         },
-        "map_toolbox": [
-            {
-                "Show_hide_menu": {
-                    "content": {
-                        "icon": "ion-navicon",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.sh_menu()",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "show_hide_menu_btn",
-                        "title": "Show or hide main menu (ALT+M)"
-                    },
-                    "divider": "divider nav_divider"
+        "map_toolbox": {
+            "Show_hide_menu": {
+                "content": {
+                    "icon": "ion-navicon",
+                    "text": ""
                 },
-                "Show_hide_breadcrumb": {
-                    "content": {
-                        "icon": "fa fa-history",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.sh_breadcrumb()",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "show_hide_breadcrumb_btn",
-                        "title": "Show or hide breadcrumb (ALT+B)"
-                    }
+                "attributes": {
+                    "onclick": "$.sh_menu()",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "show_hide_menu_btn",
+                    "title": "Show or hide main menu (ALT+M)"
+                },
+                "divider": "divider nav_divider"
+            },
+            "Show_hide_breadcrumb": {
+                "content": {
+                    "icon": "fa fa-history",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.sh_breadcrumb()",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "show_hide_breadcrumb_btn",
+                    "title": "Show or hide breadcrumb (ALT+B)"
+                },
+                "spacer": ""
+            },
+            "Find_location": {
+                "content": {
+                    "icon": "ion-search",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.sub_toolbox('find_location');",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "find_location_btn",
+                    "title": "Find a location (ALT+F)"
                 }
             },
-            {
-                "Find_location": {
-                    "content": {
-                        "icon": "ion-search",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.sub_toolbox('find_location');",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "find_location_btn",
-                        "title": "Find a location (ALT+F)"
-                    }
+            "Change_map": {
+                "content": {
+                    "icon": "ion-map",
+                    "text": ""
                 },
-                "Change_map": {
-                    "content": {
-                        "icon": "ion-map",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.sub_toolbox('change_map');",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "change_map_btn",
-                        "title": "Change map type (ALT+T)"
-                    }
-                },
-                "Selection": {
-                    "content": {
-                        "icon": "icon-vector-selection",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.sub_toolbox('tools');",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "selection_btn",
-                        "title": "Show/hide selection tools"
-                    },
-                    "divider": "divider"
-                },
-                "Lock_view": {
-                    "content": {
-                        "icon": "fa fa-lock",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.toggle_lock_view();",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "lock_view_btn",
-                        "title": "Lock/unlock this view (ALT+L)"
-                    }
+                "attributes": {
+                    "onclick": "$.sub_toolbox('change_map');",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "change_map_btn",
+                    "title": "Change map type (ALT+T)"
                 }
             },
-            {
-                "Help": {
-                    "content": {
-                        "icon": "ion-help",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "help_btn",
-                        "title": "Help (F1)",
-                        "onclick": "$.show_help();"
-                    }
-                }
-            }
-        ],
-        "tools": [
-            {
-                "Draw_polygon": {
-                    "content": {
-                        "icon": "icon-vector-polygon",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.draw_polygon();",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "draw_polygon_btn",
-                        "title": "Select custom area"
-                    }
+            "Selection": {
+                "content": {
+                    "icon": "icon-vector-selection",
+                    "text": ""
                 },
-                "Draw_rectangle": {
-                    "content": {
-                        "icon": "icon-vector-rectangle",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.draw_rectangle();",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "draw_rectangle_btn",
-                        "title": "Select squared area"
-                    }
+                "attributes": {
+                    "onclick": "$.sub_toolbox('tools');",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "selection_btn",
+                    "title": "Show/hide selection tools"
                 },
-                "Draw_circle": {
-                    "content": {
-                        "icon": "icon-vector-circle",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "onclick": "$.draw_circle();",
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "id": "draw_circle_btn",
-                        "title": "Select circular area"
-                    }
+                "divider": "divider"
+            },
+            "Lock_view": {
+                "content": {
+                    "icon": "fa fa-lock",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.toggle_lock_view();",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "lock_view_btn",
+                    "title": "Lock/unlock this view (ALT+L)"
+                }
+            },
+            "Help": {
+                "content": {
+                    "icon": "ion-help",
+                    "text": ""
+                },
+                "attributes": {
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "help_btn",
+                    "title": "Help (F1)",
+                    "onclick": "$.show_help();"
                 }
             }
-        ],
-        "map_contextmenu": [
-            {
-                "Get_point": {
-                    "content": {
-                        "icon": "fa fa-crosshairs",
-                        "text": "Get informations of this point"
-                    },
-                    "attributes": {
-                        "href": "javascript:void(0);",
-                        "class": "btn",
-                        "title": "Help",
-                        "onclick": "$.get_click_info();"
-                    },
-                    "divider": "divider"
+        },
+        "tools": {
+            "Draw_polygon": {
+                "content": {
+                    "icon": "icon-vector-polygon",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.draw_polygon();",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "draw_polygon_btn",
+                    "title": "Select custom area"
+                }
+            },
+            "Draw_rectangle": {
+                "content": {
+                    "icon": "icon-vector-rectangle",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.draw_rectangle();",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "draw_rectangle_btn",
+                    "title": "Select squared area"
+                }
+            },
+            "Draw_circle": {
+                "content": {
+                    "icon": "icon-vector-circle",
+                    "text": ""
+                },
+                "attributes": {
+                    "onclick": "$.draw_circle();",
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "id": "draw_circle_btn",
+                    "title": "Select circular area"
                 }
             }
-        ],
-        "map_knob_contextmenu": [
-            {
-                "Point_info": {
-                    "content": {
-                        "icon": "fa fa-info-circle",
-                        "text": ""
-                    },
-                    "attributes": {
-                        "href": "javascript:void(0);",
-                        "class": "",
-                        "title": "Get informations of this point",
-                        "onclick": "$.get_click_info();"
-                    }
+        },
+        "map_contextmenu": {
+            "Get_point": {
+                "content": {
+                    "icon": "fa fa-crosshairs",
+                    "text": "Get informations of this point"
+                },
+                "attributes": {
+                    "href": "javascript:void(0);",
+                    "class": "btn",
+                    "title": "Help",
+                    "onclick": "$.get_click_info();"
+                },
+                "divider": "divider"
+            }
+        },
+        "map_knob_contextmenu": {
+            "Point_info": {
+                "content": {
+                    "icon": "fa fa-info-circle",
+                    "text": ""
+                },
+                "attributes": {
+                    "href": "javascript:void(0);",
+                    "class": "",
+                    "title": "Get informations of this point",
+                    "onclick": "$.get_click_info();"
                 }
             }
-        ]
+        }
     }
 }

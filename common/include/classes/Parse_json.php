@@ -93,12 +93,15 @@ class Parse_json {
                                 $menu_list .= '</ul>';
 			}
 			$menu_list .= '</li>' . "\n";
-			if(isset($v["divider"])) {
+			if(isset($the_array["divider"])) {
 				if($menu_position == "admin") {
 					$menu_list .= '	<li class="nav-divider"></li>' . "\n";
 				} else {
 					$menu_list .= '	<li class="' . $the_array["divider"] . '"></li>' . "\n";
 				}
+			}
+			if(isset($the_array["spacer"])) {
+				$menu_list .= '	<li class="spacer"></li>' . "\n";
 			}
 		}
 
