@@ -29,7 +29,7 @@ if($page->is_backend) {
 <!-- jQuery timeago -->
 <script src="<?php print $domain; ?>/common/js/plugins/jquery-timeago/jquery.timeago.js" type="text/javascript"></script>
 <!-- FitText.js -->
-<!--script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script-->
+<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script>
 <!-- jquery.cookie & storage -->
 <script src="<?php print $domain; ?>/common/js/plugins/jquery-cookie/jquery.cookie.js"></script>
 <script src="<?php print $domain; ?>/common/js/plugins/jquery-storage/jquery.storageapi.js"></script>

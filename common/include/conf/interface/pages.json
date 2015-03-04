@@ -165,7 +165,7 @@
                         "template": "common/tpl/pages/Blog.tpl",
                         "need_login": false,
                         "is_main_page": false,
-                        "is_article_page": false,
+                        "is_article_page": true,
                         "is_backend": false,
                         "is_system_page": false,
                         "is_visible": true,

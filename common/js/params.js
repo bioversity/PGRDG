@@ -424,6 +424,24 @@ $.site_conf = function(callback) {
         });
 };
 
+$.get_all_pages_config = function(callback) {
+        if(storage.isSet("pgrdg_cache.local.pages")) {
+                if(typeof callback == "function") {
+                        callback.call(this, storage.get("pgrdg_cache.local"));
+                }
+        } else {
+                $.cryptAjax({
+                        url: "common/include/conf/interface/pages.json",
+                        dataType: "json",
+                        success: function(response) {
+                                storage.set("pgrdg_cache.local", response);
+                                if(typeof callback == "function") {
+                                        callback.call(this, response);
+                                }
+                        }
+                });
+        }
+};
 /**
  * Load page config
  * @return {[type]} [description]
@@ -456,7 +474,9 @@ $.get_page_config = function(callback) {
 
         if(storage.isSet("pgrdg_cache.local.pages")) {
                 $.iterate_pages_config(storage.get("pgrdg_cache.local"), function(conf) {
-                        callback.call(this, conf);
+                        if(typeof callback == "function") {
+                                callback.call(this, conf);
+                        }
                 });
         } else {
                 $.cryptAjax({
@@ -465,7 +485,9 @@ $.get_page_config = function(callback) {
                         success: function(response) {
                                 storage.set("pgrdg_cache.local", response);
                                 $.iterate_pages_config(response, function(conf) {
-                                        callback.call(this, conf);
+                                        if(typeof callback == "function") {
+                                                callback.call(this, conf);
+                                        }
                                 });
                         }
                 });
@@ -494,6 +516,10 @@ parent_path = url_paths[url_paths.length - 2],
 is_error_page = $("body").attr("data-error");
 
 $.site_conf(function() {
+        $(".fittext").fitText(1.2, {
+                minFontSize: "20px",
+                maxFontSize: "40px"
+        });
         $.get_page_config(function(page_config) {
                 if(page_config.is_backend && page_config.data_parent_menu !== undefined) {
                         $("#" + page_config.data_parent_menu).attr("aria-expanded", "true");
