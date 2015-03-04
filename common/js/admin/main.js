@@ -2137,7 +2137,7 @@ $.save_menu = function() {
 			"icon": "fa " + icon,
 			"text": name
 		};
-console.log(name, visible);
+		console.log(name, visible);
 		data[obj_name].attributes = {
 			"href": link,
 			"title": title,
@@ -2194,6 +2194,19 @@ console.log(name, visible);
 			$("#loader").hide();
 		});
 	// });
+};
+
+
+/*=======================================================================================
+*	PAGE EDITING FUNCTIONS
+*======================================================================================*/
+
+/**
+ * Edit a selected page
+ * @param  string   		page_address 		The address of the selected page
+ */
+$.edit_page = function(page_address) {
+	console.log(page_address);
 };
 
 
@@ -2426,6 +2439,7 @@ $(document).ready(function() {
 				$col = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">'),
 				$link = $('<a>').attr({
 					"href": "javascript:void(0);",
+					"onclick": "$.edit_page('" + page_data.address + "');"
 					"class": "big_btn",
 					"data-content": "",
 					"style": function() {
