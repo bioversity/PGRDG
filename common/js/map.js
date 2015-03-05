@@ -230,7 +230,8 @@
                                                 formatted.radius = Math.ceil(evt.layer._mRadius);
                                         }
 
-                                        return L.GeometryUtil.geodesicArea(evt.layer._latlngs);
+                                        // return L.GeometryUtil.geodesicArea(evt.layer._latlngs);
+                                        return formatted;
                                 };
                                 $.execute = function(evt) {
                                         var meters = "", area = "";
@@ -265,9 +266,9 @@
                                                         if($.storage_exists("pgrdg_cache.search.criteria")) {
                                                                 criteria = $.get_storage_selected_forms();
                                                         }
-                                                        // if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
-                                                        //         formatted = storage.get("pgrdg_cache.search.criteria.select_map_area");
-                                                        // } else {
+                                                        if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
+                                                                formatted = storage.get("pgrdg_cache.search.criteria.select_map_area");
+                                                        } else {
                                                                 formatted = $.get_drawned_bounds(evt);
 
                                                                 storage.set("pgrdg_cache.search.criteria.select_map_area", formatted);
@@ -287,7 +288,7 @@
                                                                                 storage.set("pgrdg_cache.search.criteria.select_map_area.zone", {name: datap.display_name, ccode: datap.address.country_code});
                                                                         }
                                                                 });
-                                                        // }
+                                                        }
                                                         kAPI.storage_group = "pgrdg_cache.summary";
                                                         kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
                                                         kAPI.parameters = {};
@@ -305,10 +306,12 @@
                                                                 }
                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
                                                         kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE_DISP;
-                                                        // kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE] = formatted;
+
                                                         $.ask_to_service(kAPI, function(res) {
                                                                 if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
                                                                         $.activate_panel("summary", {res: res}, function(){
+// --> REMOVE ALL .map CLASSES ------------------------------------------------------------------------------------------ //
+
                                                                                 // $("#se_p").show();
                                                                                 // $("#breadcrumb").show();
                                                                                 $.restore_stage();

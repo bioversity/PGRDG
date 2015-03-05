@@ -3491,3 +3491,6 @@ div.user_data dl.roles dd {
 #page_management .row > div {
 	margin-bottom: 2em;
 }
+#page_management_edit {
+	display: none;
+}

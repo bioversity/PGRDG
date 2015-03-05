@@ -236,7 +236,7 @@ function apprise(string, args, callback) {
 					args.onSave.call(this, ($('.form-control').val().length > 0) ? $('.form-control').val() : false);
 				}
 				if(callback && typeof(callback) === "function") {
-					callback(this, ($('.form-control').val().length > 0) ? $('.form-control').val() : false);
+					callback(($('.form-control').val().length > 0) ? $('.form-control').val() : false);
 				}
 			} else if(args.form) {
 				if($(this).hasClass("save_btn")) {
@@ -244,7 +244,7 @@ function apprise(string, args, callback) {
 						args.onSave.call(this, ($(this).val() == "ok") ? $('.form-horizontal').serializeArray() : false);
 					}
 					if(callback && typeof(callback) === "function") {
-						callback(this, ($(this).val() == "ok") ? $('.form-horizontal').serializeArray() : false);
+						callback(($(this).val() == "ok") ? $('.form-horizontal').serializeArray() : false);
 					}
 				}
 			} else if(args.perhaps) {
@@ -253,21 +253,21 @@ function apprise(string, args, callback) {
 						args.onSave.call(this, true);
 					}
 					if(callback && typeof(callback) === "function") {
-						callback(this, true);
+						callback(true);
 					}
 				} else if($(this).val() == "perhaps") {
 					if(args.onSave && typeof(args.onSave) === "function") {
 						args.onSave.call(this, "perhaps");
 					}
 					if(callback && typeof(callback) === "function") {
-						callback(this, "perhaps");
+						callback("perhaps");
 					}
 				} else {
 					if(args.onSave && typeof(args.onSave) === "function") {
 						args.onSave.call(this, false);
 					}
 					if(callback && typeof(callback) === "function") {
-						callback(this, false);
+						callback(false);
 					}
 				}
 			} else {
@@ -275,7 +275,7 @@ function apprise(string, args, callback) {
 					args.onSave.call(this, ($(this).val() == "ok") ? true : false);
 				}
 				if(callback && typeof(callback) === "function") {
-					callback(this, ($(this).val() == "ok") ? true : false);
+					callback(($(this).val() == "ok") ? true : false);
 				}
 			}
 		}

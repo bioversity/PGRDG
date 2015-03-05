@@ -448,43 +448,44 @@ $.get_all_pages_config = function(callback) {
  */
 $.get_page_config = function(callback) {
         $.iterate_pages_config = function(response, callback) {
-                if(current_path == "") {
+                if(current_path === "") {
                         current_path = "Home";
                 }
+                // Collect all pages and subpages to an array
+                var pages = [];
                 $.each(response.pages, function(page_type, page_data) {
-                        if(current_path == page_type) {
-                                storage.set("pgrdg_cache.local.current_page", page_data);
-                                callback.call(this, page_data);
-                                return false;
-                        } else {
-                                if($.obj_len(page_data.subpages) > 0){
-                                        $.each(page_data.subpages, function(subpage_type, subpage_data) {
-                                                if(current_path == subpage_type) {
-                                                        storage.set("pgrdg_cache.local.current_page", page_data);
-                                                        callback.call(this, subpage_data);
-                                                        return false;
-                                                } else {
-                                                        return false;
-                                                }
-                                        });
+                        if($.obj_len(page_data.subpages) === 0) {
+                                if(current_path == page_data.address) {
+                                        storage.set("pgrdg_cache.local.current_page", page_data);
                                 }
+                                pages.push(page_data);
+                        } else {
+                                $.each(page_data.subpages, function(subpage_type, subpage_data) {
+                                        if(current_path == subpage_data.address) {
+                                                storage.set("pgrdg_cache.local.current_page", page_data);
+                                        }
+                                        pages.push(subpage_data);
+                                });
                         }
                 });
+                callback.call(this, pages);
         };
 
         if(storage.isSet("pgrdg_cache.local.pages")) {
-                $.iterate_pages_config(storage.get("pgrdg_cache.local"), function(conf) {
+                conf = storage.get("pgrdg_cache.local.pages");
+                // $.iterate_pages_config(storage.get("pgrdg_cache.local.pages"), function(conf) {
                         if(typeof callback == "function") {
+        console.dir(conf);
                                 callback.call(this, conf);
                         }
-                });
+                // });
         } else {
                 $.cryptAjax({
                         url: "common/include/conf/interface/pages.json",
                         dataType: "json",
                         success: function(response) {
-                                storage.set("pgrdg_cache.local", response);
                                 $.iterate_pages_config(response, function(conf) {
+                                        storage.set("pgrdg_cache.local.pages", conf);
                                         if(typeof callback == "function") {
                                                 callback.call(this, conf);
                                         }

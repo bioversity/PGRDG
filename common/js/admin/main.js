@@ -240,147 +240,147 @@ $.fn.check_input = function(callback) {
 *	USER DATA EXTRACTION
 *======================================================================================*/
 
-	/**
-	 * Extract current user data from storage
-	 * @param  object		user_data		The user data object
-	 */
-	$.get_current_user_data = function() {
-		var user_data = {};
-		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(uid, ud) {
-			user_data = ud;
-		});
-		return user_data;
-	};
+/**
+ * Extract current user data from storage
+ * @param  object		user_data		The user data object
+ */
+$.get_current_user_data = function() {
+	var user_data = {};
+	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(uid, ud) {
+		user_data = ud;
+	});
+	return user_data;
+};
 
-	/**
-	 * Extract the user identifier from a given user data object
-	 * @param  object		user_data		The user data object
-	 * @return string 			   		The user identifier
-	 */
-	$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+ * Extract the user identifier from a given user data object
+ * @param  object		user_data		The user data object
+ * @return string 			   		The user identifier
+ */
+$.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the manager (logged) user identifier from the storage
-	* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
-	* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
-	*/
-	$.get_manager_id = function() { var manager_id = ""; $.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) { manager_id = $.get_user_id(mdata); }); return manager_id;	};
+/**
+* Extract the manager (logged) user identifier from the storage
+* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
+* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
+*/
+$.get_manager_id = function() { var manager_id = ""; $.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) { manager_id = $.get_user_id(mdata); }); return manager_id;	};
 
-	/**
-	* Extract the user full name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_database = function(user_data) { return user_data[kTAG_CONN_BASE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_database = function(user_data) { return user_data[kTAG_CONN_BASE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user full name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_authority = function(user_data) { return user_data[kTAG_AUTHORITY][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_authority = function(user_data) { return user_data[kTAG_AUTHORITY][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user full name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_full_name = function(user_data) { return user_data[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_username = function(user_data) { return user_data[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_username = function(user_data) { return user_data[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_name = function(user_data) { return user_data[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user last name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user last name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_last_name = function(user_data) { return user_data[kTAG_ENTITY_LNAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user last name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_pgp_fingerprint = function(user_data) { return user_data[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user last name from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_pgp_fingerprint = function(user_data) { return user_data[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user full name from a given user data object
-	* @param  object		user_data 		The user data object
-	* @param  bool			show_authority 		Display or not the authority name
-	* @return string 				        The user full name
-	*/
-	$.fn.get_user_work_position = function(user_data, show_authority) {
-		var $item = $(this);
-		sha = (show_authority === undefined) ? true : show_authority;
+/**
+* Extract the user full name from a given user data object
+* @param  object		user_data 		The user data object
+* @param  bool			show_authority 		Display or not the authority name
+* @return string 				        The user full name
+*/
+$.fn.get_user_work_position = function(user_data, show_authority) {
+	var $item = $(this);
+	sha = (show_authority === undefined) ? true : show_authority;
 
-		$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
-			var item_data = user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP];
-			if(sha) {
-				item_data += " at " + authority;
-			}
-			$item.html(item_data);
-		});
-	};
+	$.get_authority(user_data[kTAG_ENTITY_AFFILIATION][kAPI_PARAM_RESPONSE_FRMT_VALUE][0][kTAG_UNIT_REF], function(authority) {
+		var item_data = user_data[kTAG_ENTITY_TITLE][kAPI_PARAM_RESPONSE_FRMT_DISP];
+		if(sha) {
+			item_data += " at " + authority;
+		}
+		$item.html(item_data);
+	});
+};
 
-	/**
-	* Extract the user default e-mail address from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user full name
-	*/
-	$.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user default e-mail address from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user full name
+*/
+$.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user image path from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return string 				        The user image source
-	*/
-	$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
+/**
+* Extract the user image path from a given user data object
+* @param  object		user_data 		The user data object
+* @return string 				        The user image source
+*/
+$.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + ((user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME] === undefined) ? "user_rand_images/" : "user_images/") + user_data[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
-	/**
-	* Extract the user roles from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return object 				        The user roles
-	*/
-	$.get_user_roles = function(user_data) { return user_data[kTAG_ROLES]; }
+/**
+* Extract the user roles from a given user data object
+* @param  object		user_data 		The user data object
+* @return object 				        The user roles
+*/
+$.get_user_roles = function(user_data) { return user_data[kTAG_ROLES]; }
 
-	/**
-	 * Extract all user permissions and list in verbose mode from a given user data object
-	 * @param  object 		user_data 		The user data object
-	 * @return string           				A verbose string of user permissions
-	 */
-	$.get_user_roles_list = function(user_data) {
-		var list = [];
-		$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
-			list.push(v[kAPI_PARAM_RESPONSE_FRMT_DISP]);
-		});
-		return list.join(", ");
-	};
+/**
+ * Extract all user permissions and list in verbose mode from a given user data object
+ * @param  object 		user_data 		The user data object
+ * @return string           				A verbose string of user permissions
+ */
+$.get_user_roles_list = function(user_data) {
+	var list = [];
+	$.each(user_data[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_DISP], function(k, v) {
+		list.push(v[kAPI_PARAM_RESPONSE_FRMT_DISP]);
+	});
+	return list.join(", ");
+};
 
-	/**
-	* Extract the count of user's managed users from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return number 				        The count of managed users
-	*/
-	$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
+/**
+* Extract the count of user's managed users from a given user data object
+* @param  object		user_data 		The user data object
+* @return number 				        The count of managed users
+*/
+$.get_managed_users_count = function(user_data) { return parseInt(user_data[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_DISP]); };
 
-	/**
-	* Extract the count of user's invites from a given user data object
-	* @param  object		user_data 		The user data object
-	* @return number 				        The count of invited users
-	*/
-	$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
+/**
+* Extract the count of user's invites from a given user data object
+* @param  object		user_data 		The user data object
+* @return number 				        The count of invited users
+*/
+$.get_invited_users_count = function(user_data) { return (user_data[kTAG_INVITES] === undefined) ? 0 : $.obj_len(user_data[kTAG_INVITES][kAPI_PARAM_RESPONSE_FRMT_DOCU]); };
 
 /**
 * Load profile form or interface depending on the hash
@@ -2205,8 +2205,14 @@ $.save_menu = function() {
  * Edit a selected page
  * @param  string   		page_address 		The address of the selected page
  */
-$.edit_page = function(page_address) {
-	console.log(page_address);
+$.edit_page = function(page_data) {
+	$("#page_management").hide();
+	$("#page_management_edit").append('<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> ' + i18n[lang].messages.loading_form + '</h1>').show();
+	setTimeout(function () {
+		$("#page_management").show();
+		$("#page_management_edit").hide().html("");
+	}, 60000);
+	console.log($.parseJSON(page_data));
 };
 
 
@@ -2266,6 +2272,7 @@ $.last_activity = function(full) {
  * Generate the breadcrumb content
  */
 $.set_breadcrumb = function() {
+	console.log($.get_page_config());
 	$.fn.set_user_name = function(user_data) {
 		$(this).text($.get_user_full_name(user_data));
 	};
@@ -2280,6 +2287,7 @@ $.set_breadcrumb = function() {
 	$("#ribbon > ol.breadcrum").remove();
 	$li_home_link.text(current_path);
 	$li_home.html($li_home_link);
+
 	$ol.html($li_home);
 	$.each($hash, function(k, v) {
 		if(v.length == 40) {
@@ -2307,18 +2315,18 @@ $(document).ready(function() {
 		$.set_breadcrumb();
 	}).trigger("hashchange");
 
-	$("img[data-url]").each(function() {
-		// $.ajax({
-		// 	url: "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=" + $(this).data("url") + "&screenshot=true",
-		// 	context: this,
-		// 	type: "GET",
-		// 	dataType: "json",
-		// 	success: function(data) {
-		// 		data = data.screenshot.data.replace(/_/g, '/').replace(/-/g, '+');
-		// 		$(this).attr('src', 'data:image/jpeg;base64,' + data);
-		// 	}
-		// });
-	});
+	// $("img[data-url]").each(function() {
+	// 	$.ajax({
+	// 		url: "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?url=" + $(this).data("url") + "&screenshot=true",
+	// 		context: this,
+	// 		type: "GET",
+	// 		dataType: "json",
+	// 		success: function(data) {
+	// 			data = data.screenshot.data.replace(/_/g, '/').replace(/-/g, '+');
+	// 			$(this).attr('src', 'data:image/jpeg;base64,' + data);
+	// 		}
+	// 	});
+	// });
 
 	switch(current_path) {
 		case "Profile":
@@ -2439,7 +2447,7 @@ $(document).ready(function() {
 				$col = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">'),
 				$link = $('<a>').attr({
 					"href": "javascript:void(0);",
-					"onclick": "$.edit_page('" + page_data.address + "');",
+					"onclick": "$.edit_page('" + JSON.stringify(page_data) + "');",
 					"class": "big_btn",
 					"data-content": "",
 					"style": function() {

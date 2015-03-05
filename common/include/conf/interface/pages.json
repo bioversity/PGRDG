@@ -1,6 +1,7 @@
 {
         "pages": {
                 "Home": {
+                        "_id": "8f8d2783d036ec8dbe4b6b9c1d0fed0d",
                         "title": "Main page",
                         "logged_title": "Dashboard",
                         "title_class": "",
@@ -16,6 +17,7 @@
                         "subpages": ""
                 },
                 "About_us": {
+                        "_id": "cf23ee279844016288ea1c076638f3be",
                         "title": "About us",
                         "title_class": "",
                         "address": "About_us",
@@ -29,6 +31,7 @@
                         "is_visible": true,
                         "subpages": {
                                 "Feedback": {
+                                        "_id": "bea4c2c8eb82d05891ddd71584881b56",
                                         "title": "Feedback",
                                         "title_class": "",
                                         "address": "Feedback",
@@ -43,6 +46,7 @@
                                         "subpages": ""
                                 },
                                 "How_the_system_works": {
+                                        "_id": "7f5f3815b277e44f3db99a12ada9263d",
                                         "title": "How the system works",
                                         "title_class": "",
                                         "address": "How_the_system_works",
@@ -59,6 +63,7 @@
                         }
                 },
                 "National_Inventories": {
+                        "_id": "3d23eb3486d2e308bd967510ed4cbde7",
                         "title": "National Inventories",
                         "title_class": "",
                         "address": "National_Inventories",
@@ -72,6 +77,7 @@
                         "is_visible": true,
                         "subpages": {
                                 "Conservation_Strategies": {
+                                        "_id": "bbf5223255693cfb6ea7f2a110d3f602",
                                         "title": "Conservation Strategies",
                                         "title_class": "",
                                         "address": "Conservation_Strategies",
@@ -86,6 +92,7 @@
                                         "subpages": ""
                                 },
                                 "Links": {
+                                        "_id": "256c4a78d225e906cf6ae64f28d867c6",
                                         "title": "Links to other information systems",
                                         "title_class": "",
                                         "address": "Links",
@@ -102,6 +109,7 @@
                         }
                 },
                 "Search": {
+                        "_id": "13348442cc6a27032d2b4aa28b75a5d3",
                         "title": "Search",
                         "title_class": "",
                         "address": "Search",
@@ -116,6 +124,7 @@
                         "subpages": ""
                 },
                 "Advanced_search": {
+                        "_id": "7cb8ad465602a887dd56378d51dd85a2",
                         "title": "Advanced search",
                         "title_class": "",
                         "address": "Advanced_search",
@@ -130,6 +139,7 @@
                         "subpages": ""
                 },
                 "Graph": {
+                        "_id": "4cdbd2bafa8193091ba09509cedf94fd",
                         "title": "Graph",
                         "title_class": "",
                         "address": "Graph",
@@ -144,6 +154,7 @@
                         "subpages": ""
                 },
                 "Map": {
+                        "_id": "46f3ea056caa3126b91f3f70beea068c",
                         "title": "Map",
                         "title_class": "",
                         "address": "Map",
@@ -158,6 +169,7 @@
                         "subpages": ""
                 },
                 "Blog": {
+                        "_id": "be8df1f28c0abc85a0ed0c6860e5d832",
                         "title": "Blog",
                         "title_class": "",
                         "address": "Blog",
@@ -172,6 +184,7 @@
                         "subpages": ""
                 },
                 "Signin": {
+                        "_id": "c7f1679e14c78ce3a85e0fb036061b80",
                         "title": "Signin",
                         "title_class": "",
                         "class": ["signin"],
@@ -186,6 +199,7 @@
                         "subpages": ""
                 },
                 "Signout": {
+                        "_id": "08ad2b8a4f34af6729368df602e9f941",
                         "title": "Signout",
                         "title_class": "",
                         "class": "",
@@ -200,6 +214,7 @@
                         "subpages": ""
                 },
                 "Activation": {
+                        "_id": "5eb5462f9d36b81e45e5d1f2e5a1d5e2",
                         "title": "Invite activation",
                         "title_class": "",
                         "class": ["activation", "map"],
@@ -214,6 +229,7 @@
                         "subpages": ""
                 },
                 "Invite": {
+                        "_id": "c6a00f137b92ad22c007677fb2113a9f",
                         "title": "Invite",
                         "title_class": "",
                         "address": "Invite",
@@ -229,6 +245,7 @@
                         "subpages": ""
                 },
                 "Profile": {
+                        "_id": "cce99c598cfdb9773ab041d54c3d973a",
                         "title": "Profile",
                         "title_class": "",
                         "address": "Profile",
@@ -244,6 +261,7 @@
                         "subpages": ""
                 },
                 "Manage_contents": {
+                        "_id": "865f9e9b31ed7f3a57f9a821ee2d08ef",
                         "title": "Contents management",
                         "title_class": "",
                         "address": "Contents",
@@ -258,6 +276,7 @@
                         "is_visible": true,
                         "subpages": {
                                 "Menu": {
+                                        "_id": "f4ff446150fc3400723f2606c72b98df",
                                         "title": "Menu management",
                                         "title_class": "",
                                         "address": "Menu",
@@ -273,6 +292,7 @@
                                         "subpages": ""
                                 },
                                 "Pages": {
+                                        "_id": "3428cfeb6e7678a92c2c90b033b1c477",
                                         "title": "Pages management",
                                         "title_class": "",
                                         "address": "Pages",
@@ -288,6 +308,7 @@
                                         "subpages": ""
                                 },
                                 "Blog": {
+                                        "_id": "be8df1f28c0abc85a0ed0c6860e5d832",
                                         "title": "Blog",
                                         "title_class": "",
                                         "address": "Blog",
