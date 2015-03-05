@@ -151,6 +151,7 @@ h1 > [class^="fa-"], h1 > [class*=" fa-"] {
 	font-size: 2.1em;
 }
 .admin #content h1 {
+	font-family: "Roboto", sans-serif;
 	font-weight: 400;
 	margin: 12px 0 0 0;
 	color: #666;
@@ -414,8 +415,9 @@ a.big_btn > .folded::before {
 	box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.2), -1px 1px 1px rgba(0, 0, 0, 0.2);
 	content: "";
 	display: block;
+	margin-right: -126px;
 	position: absolute;
-	left: 305px;
+	right: 50%;
 	top: 11px;
 	width: 0;
 }
@@ -430,9 +432,10 @@ a.big_btn .big_btn_title {
 	color: #fff;
 	font-family: "Roboto";
 	font-weight: 100;
-	left: 79px;
-	margin-bottom: 10px;
+	left: 50%;
 	margin-right: 0;
+	margin-bottom: 10px;
+	margin-left: -126px;
 	position: absolute;
 	text-transform: uppercase;
 	width: 252px;
@@ -445,9 +448,9 @@ a.big_btn:hover .big_btn_title {
 	font-family: "Roboto";
 	font-weight: 100;
 	height: 200px;
-	left: 79px;
-	margin-bottom: 10px;
-	margin-right: 0;
+	/*left: 50%;*/
+	margin-bottom: 11px;
+	/*margin-right: 0;*/
 	position: absolute;
 	text-transform: uppercase;
 	width: 252px;
@@ -1296,17 +1299,21 @@ panel span.info,
 	left: 0;
 	padding-left: 15px;
 }
-#start h1[unselectable], #se h1[unselectable],
+#start h1[unselectable],
+#se h1[unselectable],
 #se h1[unselectable] + h2,
 div[unselectable],
 .icon_box h1[unselectable] {
 	color: #d0d0d0;
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
-	font-size: 1.5em;
-	margin-top: 53px;
+	font-size: 2.2em;
+	margin-top: 50px;
 	margin-bottom: 5px;
 	text-indent: -20px;
+}
+#start h1[unselectable] > span {
+	vertical-align: text-top;
 }
 div[unselectable] {
 	max-width: 35%;
@@ -1406,6 +1413,7 @@ div[unselectable].fc-view {
 #start > div {
 	margin-top: -80px;
 	padding-left: 10px;
+	padding-right: 20px;
 }
 @media only screen and (max-width:420px) {
 	#start > div {

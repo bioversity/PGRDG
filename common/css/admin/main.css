@@ -12394,6 +12394,7 @@ img.away {
   margin: 0;
   height: 34px;
   font-size: 23px;
+  padding: 0;
 }
 .minified .minifyme .fa:before {
   content: "\f0a9";

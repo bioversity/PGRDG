@@ -2439,14 +2439,14 @@ $(document).ready(function() {
 				$col = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">'),
 				$link = $('<a>').attr({
 					"href": "javascript:void(0);",
-					"onclick": "$.edit_page('" + page_data.address + "');"
+					"onclick": "$.edit_page('" + page_data.address + "');",
 					"class": "big_btn",
 					"data-content": "",
 					"style": function() {
 						if($.obj_len(page_data.subpages) > 0) {
-							return "box-shadow: 0 0 15px rgb(" + colour + ") inset;";
+							return "box-shadow: 0 0 9px rgb(" + colour + ") inset;";
 						} else if(!root) {
-							return "box-shadow: 0 0 15px rgba(" + colour + ", 0.35) inset;";
+							return "box-shadow: 0 0 9px rgba(" + colour + ", 0.35) inset;";
 						} else {
 							return "";
 						}
