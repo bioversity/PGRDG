@@ -2206,13 +2206,68 @@ $.save_menu = function() {
  * @param  string   		page_address 		The address of the selected page
  */
 $.edit_page = function(page_data) {
+	p_data = $.parseJSON(page_data);
+
 	$("#page_management").hide();
 	$("#page_management_edit").append('<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> ' + i18n[lang].messages.loading_form + '</h1>').show();
-	setTimeout(function () {
-		$("#page_management").show();
-		$("#page_management_edit").hide().html("");
-	}, 60000);
+
+	var $row = $('<div class="row">'),
+	$form_container = $('<div id="page_management_form_container" class="col-xs-offset-1 col-sm-offset-3 col-xs-12 col-sm-8 col-lg-6 well form">'),
+	$fieldset = $('<fieldset>'),
+	$legend = $('<legend>').text('Editing page "' + p_data.title + '"'),
+	$frm = $('<form class="form-horizontal">'),
+	$btn_div = $('<div class="col-xs-offest-3 col-sm-offset-3 col-xs-12 col-sm-8 col-md-8 col-lg-6">'),
+	$cancel_btn = $('<a href="javascript:void(0);" onclick="$.cancel_page_editing();" class="btn btn-default-white pull-left">').html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
+	$save_btn = $('<a href="javascript:void(0);" onclick="$.save_page_data();" class="btn btn-default pull-right">').html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
+
+	$.each(p_data, function(k, v) {
+		if(k !== "_id" && k !== "subpages" && k != "is_system_page") {
+			if($.is_array(v)) {
+				v = v.join(", ");
+			}
+
+			var $form_group = $('<div class="form-group">'),
+			$label = $('<label class="col-sm-3 control-label col-xs-12" for="' + $.md5(k) + '">' + $.ucfirst(k.replace(/\_/g, " ")) + '</label>'),
+			$input_div = $('<div class="col-sm-5 col-xs-12">');
+			if($.type(v) == "boolean") {
+				var $input = $('<input type="checkbox" id="' + $.md5(k) + '"' + ((v === true) ? ' checked="true"' : "") + ' />');
+			} else {
+				var $input = $('<input type="text" class="form-control" value="' + v + '" />')
+			}
+			$input.on("focus", function() {
+				var this_val = $(this).val();
+				$(this).val(this_val.replace(/\_/g, " "));
+			}).on("blur", function() {
+				var this_val = $(this).val();
+				$(this).val($.trim(this_val).replace(/\s/g, "_"));
+			});
+			$input_div.append($input);
+			$form_group.append($label);
+			$form_group.append($input_div);
+			$frm.append($form_group);
+		}
+	});
+
+	$fieldset.append($legend);
+	$fieldset.append($frm);
+	$btn_div.append($cancel_btn).append($save_btn);
+	$form_container.append($fieldset)
+	$row.append($form_container);
+	$row.append($btn_div);
+	$("#page_management_edit").html($row);
+
+	$("[type='checkbox']").bootstrapSwitch({
+		size: "small",
+		labelText: "⋮",
+		onText: "Yes",
+		offText: "No"
+	});
 	console.log($.parseJSON(page_data));
+
+	// setTimeout(function () {
+	// 	$("#page_management").show();
+	// 	$("#page_management_edit").hide().html("");
+	// }, 60000);
 };
 
 
