@@ -2212,27 +2212,33 @@ $.edit_page = function(page_data) {
 	$("#page_management_edit").append('<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> ' + i18n[lang].messages.loading_form + '</h1>').show();
 
 	var $row = $('<div class="row">'),
-	$form_container = $('<div id="page_management_form_container" class="col-xs-offset-1 col-sm-offset-3 col-xs-12 col-sm-8 col-lg-6 well form">'),
+	$form_container = $('<div id="page_management_form_container" class="col-xs-offset-1 col-sm-offset-1 col-xs-12 col-sm-8 col-lg-10 well form">'),
 	$fieldset = $('<fieldset>'),
 	$legend = $('<legend>').text('Editing page "' + p_data.title + '"'),
 	$frm = $('<form class="form-horizontal">'),
-	$btn_div = $('<div class="col-xs-offest-3 col-sm-offset-3 col-xs-12 col-sm-8 col-md-8 col-lg-6">'),
+	$editor = $('<textarea id="text_editor" class="form-control">').text("### Ok");
+	$btn_div = $('<div class="col-xs-offset-1 col-sm-offset-1 col-xs-12 col-sm-8 col-lg-10">'),
 	$cancel_btn = $('<a href="javascript:void(0);" onclick="$.cancel_page_editing();" class="btn btn-default-white pull-left">').html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
 	$save_btn = $('<a href="javascript:void(0);" onclick="$.save_page_data();" class="btn btn-default pull-right">').html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
 
 	$.each(p_data, function(k, v) {
-		if(k !== "_id" && k !== "subpages" && k != "is_system_page") {
+		if(k !== "_id" && k !== "subpages" && k != "is_system_page" && k != "is_main_page") {
 			if($.is_array(v)) {
 				v = v.join(", ");
 			}
 
 			var $form_group = $('<div class="form-group">'),
-			$label = $('<label class="col-sm-3 control-label col-xs-12" for="' + $.md5(k) + '">' + $.ucfirst(k.replace(/\_/g, " ")) + '</label>'),
+			$boolean_group = $('<div>'),
+			$label = $('<label class="col-sm-3 control-label col-xs-12" for="' + $.md5(k) + '">' + $.ucfirst($.trim(k.replace("is", "").replace(/\_/g, " "))) + '</label>'),
 			$input_div = $('<div class="col-sm-5 col-xs-12">');
+			$input = $('<input>');
 			if($.type(v) == "boolean") {
-				var $input = $('<input type="checkbox" id="' + $.md5(k) + '"' + ((v === true) ? ' checked="true"' : "") + ' />');
+				$input.attr({ "type": "checkbox", "id": $.md5(k) });
+				if(v === true) {
+					$input.attr({"checked": "true"});
+				}
 			} else {
-				var $input = $('<input type="text" class="form-control" value="' + v + '" />')
+				$input.attr({ "type": "text", "class": "form-control", "value": v });
 			}
 			$input.on("focus", function() {
 				var this_val = $(this).val();
@@ -2247,7 +2253,22 @@ $.edit_page = function(page_data) {
 			$frm.append($form_group);
 		}
 	});
+	$.ajax({
+		url: "common/md/" + p_data.address.replace(/\_/g, " ") + ".md",
+		context: this,
+		type: "GET",
+		dataType: "text",
+		success: function(data) {
+			console.warn(data);
+		},
+		error: function() {
+			console.warn("The file do not exists");
+		}
+	});
 
+	$frm.append('<hr />');
+	$frm.append('<div class="alert alert-info"><b>Note:</b> For collaborative editing, you can also work on <a href="https://stackedit.io/" target="_blank">StackEdit</a> and paste the Markdown content here</div>');
+	$frm.append($editor);
 	$fieldset.append($legend);
 	$fieldset.append($frm);
 	$btn_div.append($cancel_btn).append($save_btn);
@@ -2262,6 +2283,8 @@ $.edit_page = function(page_data) {
 		onText: "Yes",
 		offText: "No"
 	});
+
+	$("#text_editor").markItUp(mySettings);
 	console.log($.parseJSON(page_data));
 
 	// setTimeout(function () {

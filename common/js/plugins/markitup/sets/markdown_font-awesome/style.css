@@ -1,0 +1,64 @@
+/* -------------------------------------------------------------------
+// markItUp!
+// By Jay Salvat - http://markitup.jaysalvat.com/
+// ------------------------------------------------------------------*/
+.markItUp, .markItUpEditor {
+	width: 100%;
+}
+.markItUpEditor {
+	min-height: 350px;
+	font-size: 14px;
+}
+.markItUpHeader {
+	height: 40px;
+}
+.markItUpHeader ul a {
+	display: block;
+	font-size: 1.3em;
+	height: 20px;
+	padding: 3px;
+	width: 20px;
+	text-indent: 0;
+	overflow: hidden;
+	color: transparent !important;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+/*.markItUp .markItUpButton1 a,
+.markItUp .markItUpButton2 a,
+.markItUp .markItUpButton3 a,
+.markItUp .markItUpButton4 a,
+.markItUp .markItUpButton5 a,
+.markItUp .markItUpButton6 a,
+.markItUp .markItUpButton7 a,
+.markItUp .markItUpButton8 a,
+.markItUp .markItUpButton9 a,
+.markItUp .markItUpButton10 a,
+.markItUp .markItUpButton11 a,
+.markItUp .markItUpButton12 a,
+.markItUp .markItUpButton13 a,
+.markItUp .markItUpButton14 a {
+	position: relative;
+}*/
+
+.markItUp li a:before {
+	color: #666;
+	display: block;
+	text-align: center;
+        font-family: "FontAwesome";
+}
+.markItUp li.heading a:before { content: "\f1dc"; }
+.markItUp li.bold a:before { content: "\f032"; }
+.markItUp li.italic a:before { content: "\f033"; }
+.markItUp li.blist a:before { content: "\f0ca"; }
+.markItUp li.nlist a:before { content: "\f0cb"; }
+.markItUp li.picture a:before { content: "\f03e"; }
+.markItUp li.link a:before { content: "\f0c1"; }
+.markItUp li.blockquote a:before { content: "\f03c"; }
+.markItUp li.code a:before { content: "\f121"; }
+.markItUp li.hrule a:before { content: "\f141"; }
+.markItUp .preview a:before { content: "\f00c"; }

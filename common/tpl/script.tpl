@@ -23,6 +23,10 @@ if($page->is_backend) {
 	<script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
 	<!-- MAIN APP JS FILE -->
 	<script src="<?php print $domain; ?>/common/js/admin/app.js"></script>
+
+	<!-- Markitup Editor -->
+	<script src="<?php print $domain; ?>/common/js/plugins/markitup/jquery.markitup.js"></script>
+	<script src="<?php print $domain; ?>/common/js/plugins/markitup/sets/markdown_font-awesome/set.js"></script>
 	<?php
 }
 ?>

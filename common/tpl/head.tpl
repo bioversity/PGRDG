@@ -45,6 +45,13 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         <!-- #GOOGLE FONT -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
         <?php
+        if($page->is_backend) {
+                ?>
+        	<!-- Markitup Editor -->
+                <link href="<?php print $domain; ?>/common/js/plugins/markitup/skins/simple/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <link href="<?php print $domain; ?>/common/js/plugins/markitup/sets/markdown_font-awesome/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <?php
+        }
 } else {
         ?>
         <link rel="stylesheet" type="text/css" media="all"  href="<?php print $domain; ?>/common/css/bioversity.css" />
