@@ -1,3 +1,4 @@
+/*jshint scripturl:true*/
 /**
 * Form functions
 *
@@ -108,7 +109,7 @@
 
 		$.fn.load_splice = function(ref, domain) {
 			// console.log(ref);
-			if($("#" + $(this).attr("id") + "_ul").length == 0) {
+			if($("#" + $(this).attr("id") + "_ul").length === 0) {
 				var item_id = $(this).attr("id");
 				var $dropdown_container = $('<div>')
 					.addClass("dropdown-menu dropdown-menu-right")
@@ -1012,7 +1013,7 @@
 							}
 							$("#forms").fadeIn(300);
 							if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length === 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
@@ -1032,7 +1033,7 @@
 									location = storage.get("pgrdg_cache.search.criteria.select_map_area.coordinates").join(", ");
 								}
 								ccode = storage.get("pgrdg_cache.search.criteria.select_map_area.zone.ccode");
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length === 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area")),
 										class: "select_map_area_search",
@@ -1242,7 +1243,7 @@
 							// Create forms
 							var forms = $.create_form(response, true);
 							if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length === 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
@@ -1254,7 +1255,7 @@
 								}
 							}
 							if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length === 0) {
 									var location = "",
 									ccode;
 									if($.storage_exists("pgrdg_cache.search.criteria.select_map_area.zone")) {
@@ -1289,7 +1290,6 @@
 					}
 				});
 				return true;
-				break;
 			case "input":
 				if($("#main_search").val().length >= 3) {
 					if(!is_autocompleted) {
@@ -1331,7 +1331,7 @@
 									}
 									$("#forms").fadeIn(300);
 									if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
-										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length === 0) {
 											$("#forms-body .content-body").addCollapsible({
 												id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 												class: "fulltext_search",
@@ -1343,7 +1343,7 @@
 										}
 									}
 									if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
-										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length == 0) {
+										if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length === 0) {
 											var location = "",
 											ccode = "";
 											if($.storage_exists("pgrdg_cache.search.criteria.select_map_area.zone")) {
@@ -1381,7 +1381,6 @@
 					}
 				}
 				return false;
-				break;
 			case "restore":
 				var form_data = {},
 				btn_disabled = "";
@@ -1464,7 +1463,7 @@
 							}
 							$("#forms").fadeIn(300);
 							if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length === 0) {
 									$("#forms-body .content-body").addCollapsible({
 										id: $.md5(storage.get("pgrdg_cache.search.criteria.fulltext")),
 										class: "fulltext_search",
@@ -1476,7 +1475,7 @@
 								}
 							}
 							if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
-								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length == 0) {
+								if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length === 0) {
 									var location = "",
 									ccode = "";
 									if($.storage_exists("pgrdg_cache.search.criteria.select_map_area.zone")) {
@@ -1554,7 +1553,7 @@
 					}
 					$("#forms").fadeIn(300);
 					if($.storage_exists("pgrdg_cache.search.criteria.fulltext")) {
-						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length == 0) {
+						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.fulltext"))).length === 0) {
 							var names = [], nn = "";
 							if($.storage_exists("pgrdg_cache.search.criteria.grouping._ordering")) {
 								nn = ', <i class="text-muted">grouped by ';
@@ -1584,8 +1583,9 @@
 						}
 					}
 					if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
-						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length == 0) {
-							var names = [], nn = "";
+						if($("#" + $.md5(storage.get("pgrdg_cache.search.criteria.select_map_area"))).length === 0) {
+							var names = [],
+							nn = "";
 							if($.storage_exists("pgrdg_cache.search.criteria.grouping._ordering")) {
 								nn = ', <i class="text-muted">grouped by ';
 								$.each(storage.get("pgrdg_cache.search.criteria.grouping._ordering"), function(k, v) {
@@ -2390,7 +2390,7 @@
 						$("#" + $.md5(id)).slideUp(600);
 						$icon.removeClass("fa-rotate-90");
 					} else {
-						console.warn($("#" + $.md5(id)))
+						console.warn($("#" + $.md5(id)));
 						// Row is opened
 						$("#" + $.md5(id) + " td").html('<center class="text-muted"><span class="fa fa-refresh fa-spin"></span> ' + i18n[lang].messages.waiting + '</center>');
 						$.show_raw_row_content(res_id, id);
@@ -2680,7 +2680,7 @@
 				if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG] = {};
 					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_SHAPE;
-					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_SHAPE] = storage.get("pgrdg_cache.search.criteria.select_map_area");;
+					kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_SHAPE] = storage.get("pgrdg_cache.search.criteria.select_map_area");
 				}
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = ids;
 			kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE_DISP;
@@ -3411,7 +3411,7 @@
 						if($.storage_exists("pgrdg_cache.search.criteria.select_map_area")) {
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG] = {};
 							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_INPUT_TYPE] = kAPI_PARAM_INPUT_SHAPE;
-							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_SHAPE] = storage.get("pgrdg_cache.search.criteria.select_map_area");;
+							objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA][kAPI_SHAPE_TAG][kAPI_PARAM_SHAPE] = storage.get("pgrdg_cache.search.criteria.select_map_area");
 						}
 					}
 				}
@@ -3787,7 +3787,7 @@
 						var alert_title = i18n[lang].messages.map_limit_display.title;
 							alert_title.replace("{N}", objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
 							alert_title.replace("{TOT}", res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]);
-						var alert_message = i18n[lang].messages.map_limit_display.message
+						var alert_message = i18n[lang].messages.map_limit_display.message;
 							alert_message.replace(/\{X\}/g, objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
 						setTimeout(function() {
 							apprise(alert_message, {
@@ -4404,7 +4404,7 @@
 					}, 1000);
 
 				});
-			}
+			};
 
 			var i = 0,
 			v = JSON.parse($.rawurldecode(obj)),
@@ -4509,6 +4509,96 @@
 
 /*======================================================================================*/
 
+$.build_big_buttons_menu = function() {
+	/**
+	 * Iterate the menu buttons and sub-buttons and build a tree of links
+	 * @param  object|array 		v    		The object or array to parse
+	 * @param  bool 			root 		We are on the root of the tree?
+	 * @return string      					The html of the builded tree
+	 */
+	$.iterate_buttons = function(v, root) {
+		/**
+		 * Open or close the submenu depending its presence and status
+		 */
+		$.fn.collapse_submenu = function() {
+			var $next = $(this).next();
+			if($next.is("ul")) {
+				if($next.is(":visible")) {
+					$next.slideUp(300);
+				} else {
+					$next.slideDown(300);
+				}
+			}
+		};
+
+		var $divc = $('<div>'),
+		$ul = $('<ul class="' + ((root) ? "list-unstyled" : "fa-ul") + '" style="' + ((!root) ? "display: none;" : "") + '">'),
+		groups = ((root) ? v.refines : v.options);
+		$.each(groups, function(kk, vv) {
+			var $li = $('<li>'),
+			$icon = $('<span class="fa-fw fa fa-caret-right"></span>'),
+			$sublink = $('<a>').attr({
+				"href": "javascript:void(0);",
+				"onclick": "$(this).collapse_submenu();",
+				"class": ((root) ? "text-info" : "btn-link")
+			});
+			if(root) {
+				$sublink.text(vv.name);
+			} else {
+				$sublink.text(vv);
+			}
+			if(root) {
+				$li.append($icon);
+			}
+			$li.append($sublink);
+			if(vv.options !== undefined && vv.options.length > 0) {
+				$li.append($.iterate_buttons(vv, false));
+			}
+			$ul.append($li);
+		});
+		$divc.append($ul);
+		return $divc.html();
+	};
+
+	$.ajax({
+		url: "common/include/conf/bbb.json",
+		DataType: "json",
+		crossDomain: true,
+		type: "GET",
+		timeout: 10000,
+		success: function(response) {
+			storage.set("pgrdg_cache.local.advanced_search_buttons", response.buttons);
+
+			$.each(response.buttons, function(k, v) {
+				if(v.icon !== "") {
+					var $div = $('<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 text-center">'),
+					$link = $('<a>').attr({
+						"href": "javascript: void(0);",
+						"class": (($.obj_len(v.refines) === 0) ? "disabled" : "")
+					}),
+					$img = $('<img class="" src="' + v.icon + '" />'),
+					$h3 = $('<h3>').text(v.name);
+					if($.obj_len(v.refines) === 0) {
+						$h3.attr("class", "disabled");
+					}
+
+					$link.append($img).append($h3);
+					$div.append($link);
+					$("#big_buttons").append($div);
+					$("#big_buttons a").popover({
+						placement: "auto",
+						html: true,
+						trigger: "click",
+						viewport: "body",
+						content: function() {
+							return $.iterate_buttons(v, true);
+						}
+					});
+				}
+			});
+		}
+	});
+};
 // Save the current page if user change
 /*window.onbeforeunload = function() {
 	storage.set("pgrdg_cache.html", $.utf8_to_b64($("body").html()));
@@ -4533,6 +4623,7 @@ $(document).ready(function() {
 	} else if(current_path == "Advanced_search") {
 		$.get_static_forms();
 		$.restore_form();
+		$.build_big_buttons_menu();
 	}
 	// Adjust dropdown buttons visualization
 	$("button.dropdown-toggle").on("click", function(e) {

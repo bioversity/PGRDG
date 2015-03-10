@@ -3459,31 +3459,46 @@ div.user_data dl.roles dd {
 #big_buttons {
 	margin-top: 6em;
 }
-#big_buttons a,
-#big_buttons a img {
-	border-radius: 10px;
-	width: 300px;
-	height: 147px;
+
+#big_buttons > div > a {
+	border: 5px solid #aec12e !important;
+	border-radius: 50px;
 	display: block;
+	height: 100px;
+	margin: 0 auto 6em auto;
+	padding: 23px;
+	vertical-align: middle;
+	width: 100px;
 }
-#big_buttons a img {
-	border: #666 1px solid;
+#big_buttons > div > a img {
+	height: 100%;
 	width: 100%;
 }
-#big_buttons a span {
-	margin-top: -80px;
-	padding: 0 10px;
-	font-size: 4.5em;
+#big_buttons > div > a.disabled {
+	pointer-events: none;
+	cursor: default;
+	opacity: 0.35;
+}
+#big_buttons > div > a:hover {
+	border-color: #f2cd8e !important;
+	box-shadow: 0 0 5px #f2cd8e inset;
+}
+#big_buttons > div > a h3 {
+	color: #666 !important;
 	font-family: "Roboto";
+	font-size: 2em;
 	font-weight: 100;
-	color: rgba(255, 255, 255, 0.5);
-	display: flex;
+	left: 0;
+	margin: 0;
+	position: absolute;
+	top: 110px;
 }
-#big_buttons a:hover span {
-	color: rgba(255, 255, 255, 0.85);
+#big_buttons > div > a:hover h3 {
+	color: #333 !important;
 }
-#big_buttons a:click span,
-#big_buttons a:focus span {
+
+#big_buttons > div > a:active,
+#big_buttons > div > a:focus {
 	border: 0px none;
 	text-decoration: none !important;
 }

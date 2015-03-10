@@ -627,7 +627,7 @@ audio:not([controls]) { display:none;height:0 }
 [hidden] { display:none }
 html { font-size:0.875em;-webkit-text-size-adjust:0.875em;-ms-text-size-adjust:0.875em }
 body { margin:0;padding:0;font-family:'HelveticaNeueW01-55Roma';text-align:center;font-weight:normal }
-h1 { clear:both;font-size:2em;margin-top:5px;font-family:'HelveticaNeueW01-45Ligh';color:#395600;padding:0;font-weight:normal }
+h1 { clear:both;font-size:2em;margin-top:5px;font-family:'HelveticaNeueW01-45Ligh';/*color:#395600;*/padding:0;font-weight:normal }
 h2 { font-size:1.5em;padding-bottom:3px;margin:5p 0;font-family:"HelveticaNeueW01-65Medi";color:#666;line-height:1.05em;font-weight:normal;border-bottom:1px solid #395600;width:100% }
 h2 a:hover { text-decoration:underline }
 h3 { font-size:1.25em;line-height:1 !important;margin:1% 0;padding-bottom:1%;font-family:'HelveticaNeueW01-55Roma';color:#333;line-height:1.15em;font-weight:normal;width:100% }
