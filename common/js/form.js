@@ -2651,6 +2651,7 @@
 		* @param  {bool} with_grouping
 		*/
 		$.show_summary = function(active_forms, with_grouping, callback) {
+			console.info(active_forms, with_grouping);
 			if(with_grouping === undefined || with_grouping === null || with_grouping === "") {
 				with_grouping = true;
 			}
@@ -2663,6 +2664,9 @@
 						ids.push(data.id);
 					});
 				}
+			}
+			if(query.groupby !== undefined) {
+				ids = query.groupby.replace(/(\[|\])/g, "").split(",");
 			}
 			kAPI.storage_group = "pgrdg_cache.summary";
 			kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
@@ -4614,7 +4618,12 @@ $(document).ready(function() {
 			if($.storage_exists("pgrdg_cache.search.criteria.grouping._ordering")) {
 			 	$.restore_stage();
 			} else {
-				$.search_fulltext(query.q);
+				if(query.groupby !== undefined) {
+					var groups = query.groupby.replace(/(\[|\])/g, "").split(",");
+
+				} else {
+					$.search_fulltext(query.q);
+				}
 			}
 		}
 		//$.reset_contents("forms", true);

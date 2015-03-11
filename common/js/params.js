@@ -475,7 +475,6 @@ $.get_page_config = function(callback) {
                 conf = storage.get("pgrdg_cache.local.pages");
                 // $.iterate_pages_config(storage.get("pgrdg_cache.local.pages"), function(conf) {
                         if(typeof callback == "function") {
-        console.dir(conf);
                                 callback.call(this, conf);
                         }
                 // });

@@ -8,13 +8,7 @@
 * @author Alessandro Gubitosi <gubi.ale@iod.io>
 * @version 1.0 13/05/2014
 */
-
-if(!defined("SYSTEM_ROOT")) {
-        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-}
-if(!defined("INCLUDE_DIR")) {
-        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
+require_once($_SERVER["DOCUMENT_ROOT"] . "/common/include/funcs/defines.php");
 
 class Parse_json {
 	function __construct($config) {

@@ -11,27 +11,16 @@
 * @const CLASSES_DIR           Classes dir
 * @const CONF_DIR              Conf dir
 */
-if(!defined("SYSTEM_ROOT")) {
-        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-}
-if(!defined("INCLUDE_DIR")) {
-        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
-if(!defined("CLASSES_DIR")) {
-        define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-}
-if(!defined("CONF_DIR")) {
-        define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
-}
+require_once($_SERVER["DOCUMENT_ROOT"] . "/common/include/funcs/defines.php");
 
 /*=======================================================================================
 *																						*
-*										PGP.php										*
+*										Service_exchange.php										*
 *																						*
 *======================================================================================*/
 
 /**
-* PGP object
+* Service_exchange object
 *
 * PHP Version 5.3
 *
@@ -50,7 +39,7 @@ if(!defined("CONF_DIR")) {
 *   	"comment" => "",
 *    	"passphrase" => ""
 * );
-* $pgp = new PGP($user_data);
+* $pgp = new Service_exchange($user_data);
 * $pgp->generate_key();
 *
 * $txt = "Lorem ipsum dolor sit amet, nam ut omittam eleifend, eu facer labore oporteat his. Facete vituperata per ei. Pri causae vulputate pertinacia ea, alia facete dignissim ad sed. Eam ad mazim exerci pericula, pro ex malorum postulant. Ex unum nominavi nam, lorem propriae et sea. No vel denique dissentiunt definitionem, vis ne praesent postulant.";
@@ -121,7 +110,7 @@ class Service_exchange {
         public function get_site_config() {
                 require_once(CLASSES_DIR . "Parse_json.php");
 
-                $parse_json = new Parse_json(CONF_DIR . "site.js");
+                $parse_json = new Parse_json(INTERFACE_CONF_DIR . "site.js");
                 return $parse_json->parse_js_config("config");
         }
 
@@ -189,9 +178,9 @@ class Service_exchange {
                                 );
                                 break;
                         case "invite_user":
-                        // header("Content-type: text/plain");
-                        // print_r($data);
-                        // exit();
+                                // header("Content-type: text/plain");
+                                // print_r($data);
+                                // exit();
                                 if(empty($data[kTAG_NAME])) {
                                         print "No given name";
                                         return false;

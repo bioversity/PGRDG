@@ -1,4 +1,19 @@
 {
+        "info": {
+                "_id": "The page identifier",
+                "title": "The title of the page",
+                "logged_title": "The title displayed when the the user is logged",
+                "address": "The address of the page",
+                "class": "An array of classes of the page",
+                "template": "The script to load when displaying the page",
+                "need_login": "This page need to be logged in?",
+                "load_at_start": "Show the loader during the page first loading",
+                "is_main_page": "Is the main page?",
+                "is_article_page": "Is a page with a series of articles?",
+                "is_backend": "Is a backend page?",
+                "is_system_page": "Is a System page?",
+                "is_visible": "Is visible"
+        },
         "pages": {
                 "Home": {
                         "_id": "8f8d2783d036ec8dbe4b6b9c1d0fed0d",

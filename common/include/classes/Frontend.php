@@ -123,6 +123,7 @@ class frontend_api {
 		} else {
 			$url = $base64_url;
 		}
+		$this->get_definitions("api", false, "obj");
 		if($this->debug) {
 			/**
 			* Screen output
@@ -138,7 +139,6 @@ class frontend_api {
 		// $this->get_definitions("api", false, "obj");
 		// print_r($definitions);
 		// exit();
-
 		$url_query = $this->compose_url($parsed_query, kAPI_REQUEST_PARAMETERS, true);
 		/**
 		* Screen output

@@ -2205,8 +2205,9 @@ $.save_menu = function() {
  * Edit a selected page
  * @param  string   		page_address 		The address of the selected page
  */
-$.edit_page = function(page_data) {
+$.edit_page = function(page_data, info) {
 	p_data = $.parseJSON(page_data);
+	i = $.parseJSON(info);
 
 	$("#page_management").hide();
 	$("#page_management_edit").append('<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> ' + i18n[lang].messages.loading_form + '</h1>').show();
@@ -2222,7 +2223,7 @@ $.edit_page = function(page_data) {
 	$save_btn = $('<a href="javascript:void(0);" onclick="$.save_page_data();" class="btn btn-default pull-right">').html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
 
 	$.each(p_data, function(k, v) {
-		if(k !== "_id" && k !== "subpages" && k != "is_system_page" && k != "is_main_page") {
+		if(k !== "_id" && k !== "title_class" && k !== "subpages" && k != "is_system_page" && k != "is_main_page") {
 			if($.is_array(v)) {
 				v = v.join(", ");
 			}
@@ -2232,25 +2233,65 @@ $.edit_page = function(page_data) {
 			$label = $('<label class="col-sm-3 control-label col-xs-12" for="' + $.md5(k) + '">' + $.ucfirst($.trim(k.replace("is", "").replace(/\_/g, " "))) + '</label>'),
 			$input_div = $('<div class="col-sm-5 col-xs-12">');
 			$input = $('<input>');
+
 			if($.type(v) == "boolean") {
 				$input.attr({ "type": "checkbox", "id": $.md5(k) });
 				if(v === true) {
 					$input.attr({"checked": "true"});
 				}
 			} else {
-				$input.attr({ "type": "text", "class": "form-control", "value": v });
+				$input.attr({
+					"type": "text",
+					"class": "form-control",
+					"value": v.replace(/\_/g, " "),
+					"placeholder": (($.obj_len(info) > 0 && i[k] !== undefined) ? i[k] : "")
+				});
 			}
-			$input.on("focus", function() {
-				var this_val = $(this).val();
-				$(this).val(this_val.replace(/\_/g, " "));
-			}).on("blur", function() {
-				var this_val = $(this).val();
-				$(this).val($.trim(this_val).replace(/\s/g, "_"));
-			});
+			switch(k) {
+				case "title":
+					$input.css("width", "50%");
+					break;
+				case "address":
+					$input.on("blur", function() {
+						var this_val = $(this).val();
+						$(this).val($.trim(this_val));
+					}).attr("id", "address");
+					break;
+			}
+
 			$input_div.append($input);
 			$form_group.append($label);
 			$form_group.append($input_div);
 			$frm.append($form_group);
+		}
+	});
+	$.ajax({
+		url: "common/include/funcs/_ajax/get_all_pages.php",
+		DataType: "json",
+		crossDomain: true,
+		type: "GET",
+		timeout: 10000,
+		success: function(response) {
+			var all_pages = new Bloodhound({
+				datumTokenizer: Bloodhound.tokenizers.obj.whitespace("title"),
+				queryTokenizer: Bloodhound.tokenizers.whitespace,
+				local: response
+			});
+			all_pages.initialize();
+
+			$("#address").typeahead({
+				hint: true,
+				highlight: true,
+				minLength: 2
+			}, {
+				name: "pages",
+				displayKey: "title",
+				source: all_pages.ttAdapter()
+			}).bind("typeahead:selected, typeahead:cursorchanged", function(obj, selected, name) {
+				$(this).on("blur", function() {
+					$(this).val(selected.link.replace(/\_/g, " ").replace(/\//g, ""));
+				});
+			});
 		}
 	});
 	$.ajax({
@@ -2510,13 +2551,15 @@ $(document).ready(function() {
 					return (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156));
 				};
 
+				if(storage.isSet("pgrdg_cache.local.info")) {
+					var info = storage.get("pgrdg_cache.local.info");
+				}
 				if(root === undefined || root === null || root === "") {
 					root = false;
 				}
 				if(parent === undefined || parent === null || parent === "") {
 					parent = "";
 				}
-
 
 				if($.obj_len(page_data.subpages) > 0) {
 					colour = $.random_colour();
@@ -2525,7 +2568,7 @@ $(document).ready(function() {
 				$col = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">'),
 				$link = $('<a>').attr({
 					"href": "javascript:void(0);",
-					"onclick": "$.edit_page('" + JSON.stringify(page_data) + "');",
+					"onclick": "$.edit_page('" + JSON.stringify(page_data) + "', '" + JSON.stringify(info) + "');",
 					"class": "big_btn",
 					"data-content": "",
 					"style": function() {
