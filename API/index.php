@@ -1,13 +1,5 @@
 <?php
-if(!defined("SYSTEM_ROOT")) {
-	define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-}
-if(!defined("INCLUDE_DIR")) {
-	define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
-if(!defined("CLASSES_DIR")) {
-	define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-}
+require_once($_SERVER["DOCUMENT_ROOT"] . "/common/include/funcs/defines.php");
 
 if(empty($_REQUEST) && empty($_POST)) {
 	header("Content-type: text/plain");

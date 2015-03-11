@@ -7,11 +7,12 @@
 * @author Alessandro Gubitosi <gubi.ale@iod.io>
 * @version 1.0 13/05/2014
 */
+require_once($_SERVER["DOCUMENT_ROOT"] . "/common/include/funcs/defines.php");
 
 class frontend_api {
 	function __construct($input = array()) {
-		require_once($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/classes/Parse_json.php");
-		$this->interface_config = new Parse_json($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/interface/site.js");
+		require_once(CLASSES_DIR . "Parse_json.php");
+		$this->interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 		$this->input = $input;
 		$this->debug = false;
 		$this->external_definitions_url = "https://raw.githubusercontent.com/milko/OntologyWrapper/gh-pages/Library/definitions";
@@ -24,7 +25,7 @@ class frontend_api {
 
 	private function check_rsa() {
 		// Generate RSA keys if don't exits
-		if(!file_exists($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem")) {
+		if(!file_exists(CONF_DIR . ".rsa_keys/rsa_2048_priv.pem")) {
 			$this->gen_key();
 		}
 	}
@@ -33,8 +34,8 @@ class frontend_api {
 	 * Generate RSA keys if don't exits
 	 */
 	private function gen_key() {
-		$priv_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem";
-		$pub_pem = $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_pub.pem";
+		$priv_pem = CONF_DIR . ".rsa_keys/rsa_2048_priv.pem";
+		$pub_pem = CONF_DIR . ".rsa_keys/rsa_2048_pub.pem";
 
 		// header("Content-type: text/plain");
 		$config = array(
@@ -116,9 +117,8 @@ class frontend_api {
 	}
 	private function build_url_for_service($base64_url) {
 		if(base64_decode($base64_url, true)) {
-			$service_conf = parse_ini_file("../common/include/conf/service.ini");
-			$service_url = $service_conf["url"] . "/Service.php";
-			// $service_url = "../gateway.grinfo.private/Service.php";
+			$interface = $this->interface_config->parse_js_config("config");
+			$service_url = $interface["service"]["url"] . "/Service.php";
 			$url = str_replace("{SERVICE_URL}", $service_url, base64_decode(rawurldecode($base64_url)));
 		} else {
 			$url = $base64_url;
@@ -135,7 +135,7 @@ class frontend_api {
 		$url_exploded = parse_url($url);
 		$url_first_part = str_replace($url_exploded["query"], "", $url);
 		parse_str($url_exploded["query"], $parsed_query);
-		$this->get_definitions("api", false, "obj");
+		// $this->get_definitions("api", false, "obj");
 		// print_r($definitions);
 		// exit();
 
@@ -204,6 +204,7 @@ class frontend_api {
 	public function get_definitions($type, $keep_update, $response_type = "string", $condensed = false) {
 		$def_file = $this->get_definition_file($type);
 		$global_constants = $this->getUserDefinedConstants();
+		$d = array();
 		if($keep_update) {
 			$milko_script = $this->browse($this->external_definitions_url . DIRECTORY_SEPARATOR . $def_file);
 			preg_match_all("/\"([^\s+].*)\".*,.*\t([^\s].*)\s\)\;.*$/msU", $milko_script, $matches);
@@ -228,28 +229,30 @@ class frontend_api {
 		}
 		$js = "";
 		$jsj = "";
-		if($response_type == "string" || $response_type == "all") {
-			if($condensed) {
-				$js .= "var " . implode(",", $d) . ";";
-			} else {
-				$js .= "var " . implode(",\n", $d) . ";";
-			}
-		}
-		if($response_type == "json" || $response_type == "array" || $response_type == "all") {
-			if($condensed) {
-				$jsj .= "{" . implode(",", preg_replace("/^(\w+)\=/", '"$1":', $d)) . "}";
-			} else {
-				$jsj .= "{\n	" . implode(",\n	", preg_replace("/^(\w+)\ \=\ /", '"$1": ', $d)) . "\n}";
-			}
-			if($response_type == "all") { $js .= (($condensed) ? "\n" : "\n\n"); }
-			$jsa = ($response_type != "json") ? "var k = " . $jsj . ";" : $jsj;
-			$js .= $jsa;
-		}
-
+		// print_r($d);
+		// exit();
 		// If included by PHP script do not print but return only the object
 		if($response_type == "obj" || $response_type == "object") {
 			return $script_constants;
 		} else {
+			if($response_type == "string" || $response_type == "all") {
+				if($condensed) {
+					$js .= "var " . implode(",", $d) . ";";
+				} else {
+					$js .= "var " . implode(",\n", $d) . ";";
+				}
+			}
+			if($response_type == "json" || $response_type == "array" || $response_type == "all") {
+				if($condensed) {
+					$jsj .= "{" . implode(",", preg_replace("/^(\w+)\=/", '"$1":', $d)) . "}";
+				} else {
+					$jsj .= "{\n	" . implode(",\n	", preg_replace("/^(\w+)\ \=\ /", '"$1": ', $d)) . "\n}";
+				}
+				if($response_type == "all") { $js .= (($condensed) ? "\n" : "\n\n"); }
+				$jsa = ($response_type != "json") ? "var k = " . $jsj . ";" : $jsj;
+				$js .= $jsa;
+			}
+
 			print $js;
 			exit();
 		}
@@ -268,7 +271,7 @@ class frontend_api {
 	}
 
 	public function get_local_json($path){
-		$f = file_get_contents("../common/include/" . rawurldecode($path));
+		$f = file_get_contents(INCLUDE_DIR . rawurldecode($path));
 		print "var roles = " . trim($f) . ";";
 		exit();
 	}

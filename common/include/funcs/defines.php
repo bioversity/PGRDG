@@ -47,13 +47,5 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
          */
         if(!defined("TEMPLATE_DIR")) { define("TEMPLATE_DIR", COMMON_DIR . "tpl/"); }
 
-/**
- * Import Service definitions
- */
-require_once(CLASSES_DIR . "Frontend.php");
-$frontend = new frontend_api();
-$frontend->get_definitions("api", false, "obj");
-$frontend->get_definitions("tags", false, "obj");
-$frontend->get_definitions("types", false, "obj");
 $logged = false;
 ?>

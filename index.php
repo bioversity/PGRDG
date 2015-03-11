@@ -7,6 +7,14 @@
  * Load all definitions
  */
 require_once("common/include/funcs/defines.php");
+/**
+ * Import Service definitions
+ */
+require_once(CLASSES_DIR . "Frontend.php");
+$frontend = new frontend_api();
+$frontend->get_definitions("api", false, "obj");
+$frontend->get_definitions("tags", false, "obj");
+$frontend->get_definitions("types", false, "obj");
 
 require_once(FUNCS_DIR . "nl2.php");
 require_once(FUNCS_DIR . "readmore.php");
