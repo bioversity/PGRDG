@@ -73,8 +73,8 @@ if($page->is_backend) {
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/params.js"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/shortcuts.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/shortcuts<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 	<script type="text/javascript">
 	function load_firebug() {
 		var fileref;
@@ -95,14 +95,14 @@ if($page->is_backend) {
 		}
 	}
 	</script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/main.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 	<?php
 	if(LOGGED) {
 		?>
 		<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 		<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main.js"></script>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 		<?php
 	}
 	if(strtolower($page->current) == "map" || strtolower($page->current) == "search" || strtolower($page->current) == "advanced_search") {
@@ -162,10 +162,14 @@ if($page->is_backend) {
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
 
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/form.js"></script>
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map.js"></script>
-		<!--script type="text/javascript" src="<?php print $domain; ?>/common/js/charts.js"></script-->
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/form<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<!--script type="text/javascript" src="<?php //print $domain; ?>/common/js/charts.js"></script-->
 		<?php
 	}
 	?>
-	<?php //include("common/include/conf/google_analytics.php"); ?>
+	<?php
+	if(!$interface["site"]["developer_mode"]) {
+		include("common/include/conf/google_analytics.php");
+	}
+	?>

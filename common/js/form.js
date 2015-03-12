@@ -4565,7 +4565,7 @@ $.build_big_buttons_menu = function() {
 	};
 
 	$.ajax({
-		url: "common/include/conf/bbb.json",
+		url: "common/include/conf/advanced_search_buttons.json",
 		DataType: "json",
 		crossDomain: true,
 		type: "GET",

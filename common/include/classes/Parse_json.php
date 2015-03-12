@@ -137,16 +137,20 @@ class Parse_json {
 	private function search($array, $key, $value) {
 		$results = array();
 		if (is_array($array)){
+			if (isset($array[$value])) {
+                                $results[] = $array[$value];
+                        }
+
 			if (isset($array[$key]) && $array[$key] == $value) {
                                 $results[] = $array;
                         }
 
-			foreach ($array as $k => $subarray) {
-                                $results = array_merge($results, $this->search($subarray, $key, $value));
-                        }
-                // print_r($results);
+			if(count($results) === 0) {
+				foreach($array as $k => $subarray) {
+	                                $results = array_merge($results, $this->search($subarray, $key, $value));
+	                        }
+			}
 		}
-                // exit();
                 return $results;
 	}
 

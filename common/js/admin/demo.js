@@ -12,7 +12,7 @@ $('#demo-setting')
         //console.log('setting');
         $('.demo')
             .toggleClass('activate');
-    })
+    });
 /*
  * FIXED HEADER
  */
@@ -238,7 +238,7 @@ $("#smart-styles > a")
         $.root_.removeClassPrefix('smart-style')
             .addClass($this.attr("id"));
         $('html').removeClassPrefix('smart-style')
-            .addClass($this.attr("id"));   
+            .addClass($this.attr("id"));
         $logo.attr('src', $this.data("skinlogo"));
         $("#smart-styles > a #skin-checked")
             .remove();

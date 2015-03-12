@@ -1395,7 +1395,7 @@ div[unselectable].fc-view {
 		margin-left: 0;
 	}
 }
-#start h1[unselectable]:hover > span {
+#start h1[unselectable] > span {
 	-webkit-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 	-moz-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 	-o-animation: blinker 0.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;

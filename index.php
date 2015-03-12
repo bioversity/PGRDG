@@ -65,7 +65,6 @@ $i18n = $i18n_config->parse_js_config("i18n");
 $interface = $interface_config->parse_js_config("config");
 $page = $pages_config->parse_page_config("pages");
 
-
 if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 	$lang = $_COOKIE["lang"];
 } else {

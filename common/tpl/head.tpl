@@ -32,15 +32,15 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
         <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
 
-        <link href="<?php print $domain; ?>/common/css/animations.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/main.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-rtl.min.css" rel="stylesheet" type="text/css" media="screen" />
         <!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php //print $domain; ?>/common/css/admin/bioversity.css"> -->
 
-        <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/demo.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/demo<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css">
 
         <!-- #GOOGLE FONT -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -54,14 +54,14 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         }
 } else {
         ?>
-        <link rel="stylesheet" type="text/css" media="all"  href="<?php print $domain; ?>/common/css/bioversity.css" />
+        <link rel="stylesheet" type="text/css" media="all"  href="<?php print $domain; ?>/common/css/bioversity<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" />
         <link rel="stylesheet" type="text/css" media="print"  href="<?php print $domain; ?>/common/css/bioversity.merged.css" />
 
-        <link href="<?php print $domain; ?>/common/css/animations.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/pgrdg-map-tools/pgrdg-map-tools.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/pgrdg-map-tools/pgrdg-map-tools<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
 
-        <link href="<?php print $domain; ?>/common/css/print.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
+        <link href="<?php print $domain; ?>/common/css/print<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
         <?php
 }
 ?>
