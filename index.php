@@ -73,8 +73,6 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 
 $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
 
-// print_r($page);
-// exit();
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>

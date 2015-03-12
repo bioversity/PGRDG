@@ -9,6 +9,7 @@ switch($page->current) {
         case "Invite":
         case "Menu":
         case "Pages":
+        case "Upload":
                 require_once("common/tpl/script.tpl");
                 break;
         default:

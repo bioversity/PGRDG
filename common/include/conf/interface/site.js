@@ -12,7 +12,7 @@ var config = {
         "site": {
                 "version": 1.5,
                 "timestamp": 1414137020,
-                "developer_mode": true,
+                "developer_mode": false,
                 "default_language": "en",
                 "allow_signup": true,
                 "title": "PGRDG ~ Researching agricultural and forest biodiversity",

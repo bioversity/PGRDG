@@ -36,7 +36,9 @@ class Parse_json {
                                 throw new exception("Passed file do not exists");
                         }
                 }
-                // print_r($this->json_conf);
+		// if($config == INTERFACE_CONF_DIR . "pages.json") {
+                // 	print_r($this->json_conf);
+		// }
 	}
 /* -------------------------------------------------------------------------- */
 /* PRIVATE FUNCTIONS
@@ -277,6 +279,7 @@ class Parse_json {
 		} else {
 			$page->current = "Home";
 		}
+		// print_r($this->json_conf);
 		if(is_array($pp)) {
 			foreach($pp[$variable] as $k => $v) {
 				if(count($v["subpages"]) == 1) {

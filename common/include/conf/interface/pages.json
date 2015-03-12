@@ -360,6 +360,58 @@
                                         "subpages": ""
                                 }
                         }
+                },
+                "Your_data": {
+                        "_id": "949de8585e0cc176f0e47317ce985023",
+                        "title": "Personal data management",
+                        "title_class": "",
+                        "address": "Personal_data",
+                        "class": [],
+                        "data_parent_menu": "your_data_menu",
+                        "template": "",
+                        "need_login": true,
+                        "load_at_start": true,
+                        "is_main_page": false,
+                        "is_article_page": false,
+                        "is_backend": true,
+                        "is_system_page": false,
+                        "is_visible": true,
+                        "subpages": {
+                                "History": {
+                                        "_id": "16d2b386b2034b9488996466aaae0b57",
+                                        "title": "History",
+                                        "title_class": "",
+                                        "address": "History",
+                                        "class": [],
+                                        "data_parent_menu": "your_data_menu",
+                                        "template": "",
+                                        "need_login": true,
+                                        "load_at_start": true,
+                                        "is_main_page": false,
+                                        "is_article_page": false,
+                                        "is_backend": true,
+                                        "is_system_page": false,
+                                        "is_visible": true,
+                                        "subpages": ""
+                                },
+                                "Upload": {
+                                        "_id": "91412465ea9169dfd901dd5e7c96dd99",
+                                        "title": "Upload",
+                                        "title_class": "",
+                                        "address": "Upload",
+                                        "class": [],
+                                        "data_parent_menu": "your_data_menu",
+                                        "template": "common/tpl/admin/Upload.tpl",
+                                        "need_login": true,
+                                        "load_at_start": true,
+                                        "is_main_page": false,
+                                        "is_article_page": false,
+                                        "is_backend": true,
+                                        "is_system_page": false,
+                                        "is_visible": true,
+                                        "subpages": ""
+                                }
+                        }
                 }
         }
 }

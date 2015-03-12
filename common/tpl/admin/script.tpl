@@ -22,6 +22,11 @@
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/js/params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 
+
+        <!-- FitText.js -->
+        <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script>
+
+
 <!-- IMPORTANT: APP CONFIG -->
 <script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
 <!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->

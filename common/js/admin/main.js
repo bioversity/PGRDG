@@ -2666,5 +2666,19 @@ $(document).ready(function() {
 				});
 			});
 			break;
+		case "Upload":
+			$("#upload form").dropzone({
+				sendingmultiple: false,
+				acceptedFiles: ".xls,.xlsx,.ods",
+				autoProcessQueue: true,
+				clickable: true,
+				dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload'
+				init: function() {
+					this.on("processing", function(file) {
+						this.options.url = "/Upload?f=" + $.md5($.now()) + "_" + file;
+					});
+				}
+			});
+			break;
 	}
 });

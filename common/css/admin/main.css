@@ -9588,14 +9588,23 @@ tr.fc-last td {
 /* other month */
 td.fc-other-month,
 .dropzone {
-  background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0.25, rgba(0, 0, 0, 0.03)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(0, 0, 0, 0.03)), color-stop(0.75, rgba(0, 0, 0, 0.03)), color-stop(0.75, transparent), to(transparent));
-  background-image: -webkit-linear-gradient(135deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 75%, transparent 75%, transparent);
-  background-image: -moz-linear-gradient(135deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 75%, transparent 75%, transparent);
-  background-image: -ms-linear-gradient(135deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(135deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.03) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 75%, transparent 75%, transparent);
-  background-color: #FAFCFD;
-  background-size: 16px 16px;
+  background-color: #fafcfd;
+  height: 100%;
+  border: #cdcdcd 3px dashed;
+  border-radius: 6px;
+}
+.dropzone .dz-message {
+        text-align: center;
+        height: 220px !important;
+        margin-top: -110px !important;
+        /*margin-left: -100px !important;*/
+}
+.dropzone .dz-message span {
+        color: #ccc;
+        cursor: pointer;
+        font-family: "Roboto";
+        /*font-size: 30px;*/
+        text-align: center;
 }
 .fc-corner-right .fc-event-inner {
   padding-right: 15px;
@@ -16802,4 +16811,13 @@ body.menu-on-top.fixed-header.fixed-navigation.fixed-ribbon #ribbon {
   margin-left: 2px;
   border-radius: 3px;
   border: 1px solid #797979!important;
+}
+
+#upload {
+	height: 100%;
+	left: 230px;
+	padding: 80px 0 85px 0;
+	position: fixed;
+	right: 10px;
+	top: 20px;
 }

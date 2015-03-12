@@ -16,6 +16,7 @@ if($page->is_backend) {
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-image.js"></script>
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery-file-upload/js/jquery.fileupload-validate.js"></script>
 
+
 	<!-- jQuery scrollTo -->
 	<script src="<?php print $domain; ?>/common/js/plugins/jquery.scrollTo/jquery.scrollTo.min.js"></script>
 
@@ -27,6 +28,10 @@ if($page->is_backend) {
 	<!-- Markitup Editor -->
 	<script src="<?php print $domain; ?>/common/js/plugins/markitup/jquery.markitup.js"></script>
 	<script src="<?php print $domain; ?>/common/js/plugins/markitup/sets/markdown_font-awesome/set.js"></script>
+
+
+	<!-- Dropzone -->
+	<script src="<?php print $domain; ?>/common/js/plugins/dropzone-4.0.1/dist/dropzone.js"></script>
 	<?php
 }
 ?>
@@ -95,7 +100,7 @@ if($page->is_backend) {
 		}
 	}
 	</script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/<?php print (($page->is_backend) ? "admin/" : ""); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 	<?php
 	if(LOGGED) {
 		?>

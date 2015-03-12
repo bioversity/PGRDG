@@ -13,7 +13,7 @@
 }
 .fa {
   display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
+  font: normal normal normal 14px/1 "FontAwesome" !important;
   font-size: inherit;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -27,16 +27,16 @@
   vertical-align: -15%;
 }
 .fa-2x {
-  font-size: 2em;
+  font-size: 2em !important;
 }
 .fa-3x {
-  font-size: 3em;
+  font-size: 3em !important;
 }
 .fa-4x {
-  font-size: 4em;
+  font-size: 4em !important;
 }
 .fa-5x {
-  font-size: 5em;
+  font-size: 5em !important;
 }
 .fa-fw {
   width: 1.28571429em;
