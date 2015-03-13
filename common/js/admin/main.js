@@ -260,6 +260,13 @@ $.get_current_user_data = function() {
 $.get_user_id = function(user_data) { return user_data[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
 /**
+* Extract the current (logged) user identifier from the storage
+* @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
+* @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
+*/
+$.get_current_user_id = function() { var user_id = ""; $.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) { user_id = $.get_user_id(mdata); }); return user_id; };
+
+/**
 * Extract the manager (logged) user identifier from the storage
 * @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
 * @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
@@ -2667,15 +2674,40 @@ $(document).ready(function() {
 			});
 			break;
 		case "Upload":
+			$("#upload form").prepend('<input type="hidden" name="user_id" value="' + $.get_current_user_id() + '" />');
+			Dropzone.autoDiscover = false;
 			$("#upload form").dropzone({
+				autoDiscover: false,
 				sendingmultiple: false,
 				acceptedFiles: ".xls,.xlsx,.ods",
 				autoProcessQueue: true,
 				clickable: true,
-				dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload'
+				dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload',
 				init: function() {
 					this.on("processing", function(file) {
-						this.options.url = "/Upload?f=" + $.md5($.now()) + "_" + file;
+						$.clean_name = function(text) {
+							text = text.replace(/\./g, "");
+							return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
+						};
+
+						var extension = file.name.split(".").pop().toLowerCase(),
+						filename = $.trim($.clean_name(file.name.replace(extension, ""))) + "." + extension;
+						this.options.url = "/API/?upload=" + filename;
+					});
+				},
+				success: function(file, file_path){
+					$("#dropzone").fadeOut(2000, function() {
+						$("#dropzone").remove();
+
+						var data = {};
+						data[kAPI_REQUEST_USER] = $.get_current_user_id(),
+						data[kAPI_PARAM_FILE_PATH] = file_path;
+						$.ask_cyphered_to_service({
+							data: data,
+							type: "upload_file"
+						}, function(response) {
+							console.warn(response);
+						});
 					});
 				}
 			});

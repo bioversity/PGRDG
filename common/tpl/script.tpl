@@ -107,6 +107,7 @@ if($page->is_backend) {
 		<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
 		<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 		<?php
 	}

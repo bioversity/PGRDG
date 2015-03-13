@@ -53,6 +53,26 @@ if(empty($_REQUEST) && empty($_POST)) {
 
 				$api->get_local_json($_REQUEST["local"]);
 				break;
+			case "upload":
+				if(!empty($_FILES)) {
+					$user_dir = GNUPG_DIR . $_POST["user_id"];
+					if(!file_exists($user_dir)) {
+						mkdir($user_dir);
+						if(!file_exists($user_dir . "/uploads")) {
+							mkdir($user_dir . "/uploads");
+						}
+					}
+					$temp_file = $_FILES["file"]["tmp_name"];
+					$target_path = $user_dir . "/uploads";
+					$target_file =  $target_path . "/" . $gv;
+					if(!move_uploaded_file($temp_file, $target_file)) {
+						throw new exception("Can move the file " . $target_file);
+					}
+
+					$api->set_content_type("text");
+					print $target_file;
+				}
+				break;
 			case "download":
 				$api->force_download(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["download"]));
 				break;
@@ -70,6 +90,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "logout":
 					case "save_menu":
 					case "save_user_data":
+					case "upload_file":
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
 						break;
 				}

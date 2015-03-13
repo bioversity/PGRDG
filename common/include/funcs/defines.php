@@ -10,6 +10,11 @@ if(!defined("SYSTEM_ROOT")) { define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . 
  */
 if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
         /**
+         * root:common/.gnupg/
+         */
+        if(!defined("GNUPG_DIR")) { define("GNUPG_DIR", COMMON_DIR . ".gnupg/"); }
+
+        /**
          * root:common/include/
          */
         if(!defined("INCLUDE_DIR")) { define("INCLUDE_DIR", COMMON_DIR . "include/"); }

@@ -414,7 +414,7 @@
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
       }
-      if (!(this.element && (this.element.nodeType != null))) {
+      if (!(this.element && (this.element.nodeType !== null))) {
         throw new Error("Invalid dropzone element.");
       }
       if (this.element.dropzone) {
@@ -422,12 +422,12 @@
       }
       Dropzone.instances.push(this);
       this.element.dropzone = this;
-      elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
-      this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
+      elementOptions = (_ref = Dropzone.optionsForElement(this.element)) !== null ? _ref : {};
+      this.options = extend({}, this.defaultOptions, elementOptions, options !== null ? options : {});
       if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
-      if (this.options.url == null) {
+      if (this.options.url === null) {
         this.options.url = this.element.getAttribute("action");
       }
       if (!this.options.url) {
