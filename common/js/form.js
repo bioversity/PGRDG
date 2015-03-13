@@ -4542,7 +4542,7 @@ $.build_big_buttons_menu = function() {
 			var $li = $('<li>'),
 			$icon = $('<span class="fa-fw fa fa-caret-right"></span>'),
 			$sublink = $('<a>').attr({
-				"href": "javascript:void(0);",
+				"href": ((root) ? "javascript:void(0);" : "./Search?q=" + vv),
 				"onclick": "$(this).collapse_submenu();",
 				"class": ((root) ? "text-info" : "btn-link")
 			});
