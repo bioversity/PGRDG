@@ -1,4 +1,6 @@
 /*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Main admin functions
 *
@@ -2343,6 +2345,44 @@ $.edit_page = function(page_data, info) {
 
 
 /*=======================================================================================
+*	UPLOAD FUNCTIONS
+*======================================================================================*/
+
+/**
+ * Inform the Service the upload was done
+ * @param  string			file_path 				The full path of the file
+ */
+$.inform_upload_was_done = function(file_path) {
+	var data = {};
+	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
+	data[kAPI_PARAM_FILE_PATH] = file_path;
+	$.ask_cyphered_to_service({
+		data: data,
+		type: "upload_file"
+	}, function(session_id) {
+		$.get_transaction_status(session_id);
+	});
+};
+
+/**
+ * Ask the Service and parse the upload transaction status
+ * @param  string 			session_id 				The ID of the upload session
+ */
+$.get_transaction_status = function(session_id) {
+	var data = {};
+	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
+	data[kAPI_PARAM_ID] = session_id;
+	$.ask_cyphered_to_service({
+		data: data,
+		type: "upload_session_status"
+	}, function(response) {
+		// Show the iteration status interface
+		console.warn(response);
+	});
+};
+
+
+/*=======================================================================================
 *	COMMON FUNCTIONS
 *======================================================================================*/
 
@@ -2392,7 +2432,6 @@ $.last_activity = function(full) {
 	}
 	return last_activity;
 };
-
 
 /**
  * Generate the breadcrumb content
@@ -2674,8 +2713,20 @@ $(document).ready(function() {
 			});
 			break;
 		case "Upload":
-			$("#upload form").prepend('<input type="hidden" name="user_id" value="' + $.get_current_user_id() + '" />');
-			Dropzone.autoDiscover = false;
+			storage.remove("pgrdg_user_cache.user_data.undefined");
+			$.clean_file_name = function(text) {
+				text = text.replace(/\./g, "");
+				return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
+			};
+
+			// Generate upload form
+			var $div = $('<div>'),
+			$form = $('<form>').attr({"action": "", "class": "dropzone", "id": "dropzone"}),
+			$input_user_id = $('<input>').attr({"type": "hidden", "name": "user_id", "value": $.get_current_user_id()});
+			$form.append($input_user_id);
+			$div.append($form);
+			$("#upload").html($div.html());
+
 			$("#upload form").dropzone({
 				autoDiscover: false,
 				sendingmultiple: false,
@@ -2685,30 +2736,20 @@ $(document).ready(function() {
 				dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload',
 				init: function() {
 					this.on("processing", function(file) {
-						$.clean_name = function(text) {
-							text = text.replace(/\./g, "");
-							return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
-						};
-
 						var extension = file.name.split(".").pop().toLowerCase(),
-						filename = $.trim($.clean_name(file.name.replace(extension, ""))) + "." + extension;
+						filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension;
 						this.options.url = "/API/?upload=" + filename;
 					});
 				},
-				success: function(file, file_path){
-					$("#dropzone").fadeOut(2000, function() {
-						$("#dropzone").remove();
+				success: function(file, status){
+					var extension = file.name.split(".").pop().toLowerCase(),
+					filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
+					file_path = "/var/www/pgrdg/common/.gnupg/" + $.get_current_user_id() + "/uploads/" + filename;
 
-						var data = {};
-						data[kAPI_REQUEST_USER] = $.get_current_user_id(),
-						data[kAPI_PARAM_FILE_PATH] = file_path;
-						$.ask_cyphered_to_service({
-							data: data,
-							type: "upload_file"
-						}, function(response) {
-							console.warn(response);
-						});
-					});
+					$("#upload").html('<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> Loading interface</h1>');
+					$("#dropzone").remove();
+
+					$.inform_upload_was_done(file_path);
 				}
 			});
 			break;

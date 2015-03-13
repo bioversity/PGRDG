@@ -70,7 +70,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					}
 
 					$api->set_content_type("text");
-					print $target_file;
+					print "ok";
 				}
 				break;
 			case "download":
@@ -91,6 +91,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "save_menu":
 					case "save_user_data":
 					case "upload_file":
+					case "upload_session_status":
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
 						break;
 				}

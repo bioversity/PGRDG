@@ -32,6 +32,9 @@ if($page->is_backend) {
 
 	<!-- Dropzone -->
 	<script src="<?php print $domain; ?>/common/js/plugins/dropzone-4.0.1/dist/dropzone.js"></script>
+	<script type="text/javascript">
+	Dropzone.autoDiscover = false;
+	</script>
 	<?php
 }
 ?>
@@ -109,6 +112,10 @@ if($page->is_backend) {
 
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<?php
+	} else {
+		?>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 		<?php
 	}
 	if(strtolower($page->current) == "map" || strtolower($page->current) == "search" || strtolower($page->current) == "advanced_search") {

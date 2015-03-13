@@ -283,6 +283,18 @@ class Service_exchange {
                                         kAPI_PARAM_FILE_PATH => $data[kAPI_PARAM_FILE_PATH]
                                 );
                                 break;
+                        case "upload_session_status":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_SESSION_PROGRESS,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                                        kAPI_PARAM_ID => $data[kAPI_PARAM_ID]
+                                );
+                                break;
                         default:
                                 print "No action were specified";
                                 return false;
@@ -304,28 +316,30 @@ class Service_exchange {
          */
         public function receive_from_service($json) {
                 $service_response = json_decode($json, 1);
-                // exit();
                 if($service_response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
                         if(isset($service_response[kAPI_RESPONSE_RESULTS]) && count($service_response[kAPI_RESPONSE_RESULTS]) > 0) {
                                 $results = $this->decrypt_RSA($service_response[kAPI_RESPONSE_RESULTS]);
-                                if(is_array($results) || is_object($results)) {
-                                        foreach(json_decode(json_encode($results), 1) as $user_id => $v) {
-                                                foreach($v as $k => $vv) {
-                                                        if(!is_array($vv)) {
-                                                                $res[$k] = $vv;
-                                                        } else {
-                                                                if($k !== kTAG_CONN_PASS) {
-                                                                        $res[$k] = $vv;
-                                                                }
-                                                        }
-                                                }
-                                                $service_response[kAPI_RESPONSE_RESULTS] = (object)array($user_id => $res);
-                                        }
-                                        return json_encode($service_response);
-                                } else {
+                //                 if(is_object($results)) {
+                // //                         foreach(json_decode(json_encode($results), 1) as $user_id => $v) {
+                // //                                 foreach($v as $k => $vv) {
+                // //                                         if(!is_array($vv)) {
+                // //                                                 $res[$k] = $vv;
+                // //                                         } else {
+                // //                                                 if($k !== kTAG_CONN_PASS) {
+                // //                                                         $res[$k] = $vv;
+                // //                                                 }
+                // //                                         }
+                // //                                 }
+                // //                                 $service_response[kAPI_RESPONSE_RESULTS] = (object)array($user_id => $res);
+                // //                         }
+                // // print_r(json_encode($results));
+                // // exit();
+                //                         $service_response[kAPI_RESPONSE_RESULTS] = $results;
+                //                         return json_encode($service_response);
+                //                 } else {
                                         $service_response[kAPI_RESPONSE_RESULTS] = $results;
                                         return json_encode($service_response);
-                                }
+                                // }
                         } else {
                                 return json_encode($service_response);
                         }
