@@ -17,6 +17,22 @@ if(empty($_REQUEST) && empty($_POST)) {
 		}
 
 		switch (trim($gk)) {
+			case "definitions":
+				$api->get_definitions(
+					$_REQUEST["definitions"],
+					((isset($_REQUEST["keep_update"]) && $_REQUEST["keep_update"] == "true") ? true : false),
+					((isset($_REQUEST["type"]) && trim($_REQUEST["type"]) !== "") ? $_REQUEST["type"] : "string"),
+					((isset($_REQUEST["condensed"]) && $_REQUEST["condensed"] == "true") ? true : false)
+				);
+				break;
+			case "download":
+				$api->force_download(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["download"]));
+				break;
+			case "local":
+				$api->set_content_type("text");
+
+				$api->get_local_json($_REQUEST["local"]);
+				break;
 			case "proxy":
 				// if($_REQUEST["debug"] == "true") {
 				// 	$api->debug();
@@ -40,19 +56,6 @@ if(empty($_REQUEST) && empty($_POST)) {
 
 				exit();
 				break;
-			case "definitions":
-				$api->get_definitions(
-					$_REQUEST["definitions"],
-					((isset($_REQUEST["keep_update"]) && $_REQUEST["keep_update"] == "true") ? true : false),
-					((isset($_REQUEST["type"]) && trim($_REQUEST["type"]) !== "") ? $_REQUEST["type"] : "string"),
-					((isset($_REQUEST["condensed"]) && $_REQUEST["condensed"] == "true") ? true : false)
-				);
-				break;
-			case "local":
-				$api->set_content_type("text");
-
-				$api->get_local_json($_REQUEST["local"]);
-				break;
 			case "upload":
 				if(!empty($_FILES)) {
 					$user_dir = GNUPG_DIR . $_POST["user_id"];
@@ -73,12 +76,6 @@ if(empty($_REQUEST) && empty($_POST)) {
 					print "ok";
 				}
 				break;
-			case "download":
-				$api->force_download(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["download"]));
-				break;
-			case "view":
-				$api->force_view(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["view"]));
-				break;
 			case "type":
 				switch(trim($gv)) {
 					case "activate_user":
@@ -95,6 +92,9 @@ if(empty($_REQUEST) && empty($_POST)) {
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
 						break;
 				}
+				break;
+			case "view":
+				$api->force_view(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["view"]));
 				break;
 		}
 	}

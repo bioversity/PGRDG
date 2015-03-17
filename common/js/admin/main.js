@@ -2349,6 +2349,18 @@ $.edit_page = function(page_data, info) {
 *======================================================================================*/
 
 /**
+ * Set the progress bar
+ * @param int|string			progress 				The progress status to set
+ */
+$.set_progress_bar = function(progress) {
+	if(progress == "pending") {
+		$("#progress_bar").attr("class", "progress-bar progress-bar-striped progress-bar-warning active").css("width", "100%").attr("aria-valuenow", 100).text("Processing file...");
+	} else {
+		$("#progress_bar").switchClass("progress-bar-warning", "progress-bar-info").css("width", progress + "%").attr("aria-valuenow", progress).text(progress + "%");
+	}
+};
+
+/**
  * Inform the Service the upload was done
  * @param  string			file_path 				The full path of the file
  */
@@ -2361,7 +2373,7 @@ $.inform_upload_was_done = function(file_path, callback) {
 		type: "upload_file"
 	}, function(session_id) {
 		if (typeof callback == "function") {
-			callback.call(this, $.get_transaction_status(session_id, callback));
+			callback.call(this, session_id);
 		}
 	});
 };
@@ -2370,13 +2382,14 @@ $.inform_upload_was_done = function(file_path, callback) {
  * Ask the Service and parse the upload transaction status
  * @param  string 			session_id 				The ID of the upload session
  */
-$.get_transaction_status = function(session_id, callback) {
+$.get_session_status = function(session_id, callback) {
 	var data = {};
 	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
 	data[kAPI_PARAM_ID] = session_id;
 	$.ask_cyphered_to_service({
 		data: data,
-		type: "upload_session_status"
+		type: "upload_session_status",
+		force_renew: true
 	}, function(response) {
 		// Show the iteration status interface
 		if (typeof callback == "function") {
@@ -2725,15 +2738,16 @@ $(document).ready(function() {
 			};
 			$.fn.collapse_details = function() {
 				var $item = $(this);
-				if(!$("#transactions").hasClass("in")) {
-					$item.prev().removeClass("fa-caret-right").addClass("fa-caret-down");
-					$("#transactions").addClass("in");
-				} else {
-					$item.prev().removeClass("fa-caret-down").addClass("fa-caret-right");
-					$("#transactions").removeClass("in");
+				if(!$item.hasClass("disabled")) {
+					if(!$("#transactions").hasClass("in")) {
+						$item.prev().removeClass("fa-caret-right").addClass("fa-caret-down");
+						$("#transactions").addClass("in");
+					} else {
+						$item.prev().removeClass("fa-caret-down").addClass("fa-caret-right");
+						$("#transactions").removeClass("in");
+					}
 				}
-
-			}
+			};
 
 			// Generate upload form
 			var $div = $('<div>'),
@@ -2756,125 +2770,155 @@ $(document).ready(function() {
 						filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension;
 						this.options.url = "/API/?upload=" + filename;
 					});
-					this.on("addedFile", function(file) {
-						console.info("ok");
-						var progress = 0,
-						$h1 = $('<h1>').text("Template upload"),
-						$info_row = $('<div class="row">'),
-						$left_col = $('<div class="col-sm-12 col-md-6">'),
-						$righ_col = $('<div class="col-sm-12 col-md-6">'),
-						$details_row = $('<div id="details_row" class="row">'),
+				},
+				addedfile: function() {
+					var progress = 0,
+					$h1 = $('<h1>').text("Template upload"),
+					$info_row = $('<div class="row">'),
+					$left_col = $('<div class="col-sm-12 col-md-6">'),
+					$righ_col = $('<div class="col-sm-12 col-md-6">'),
+					$details_row = $('<div id="details_row" class="row">'),
 
-						$dl_left = $('<dl id="dl_left" class="dl-horizontal">'),
-						$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
-						$progress_container = $('<div "id="progress_container" class="progress">'),
-						$progress_bar = $('<div style="width: ' + progress + '%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="' + progress + '" role="progressbar" class="progress-bar progress-bar-success active">').text(progress + "%"),
-						$detail_link_col = $('<div class="col-sm-12">'),
-						$detail_col = $('<div id="transactions" class="col-sm-12 panel-collapse collapse in">'),
-						$detail_link = $('<a>').attr({
-							"href": "javascript:void(0);",
-							"onclick": "$(this).collapse_details();"
-						}).html('Details'),
-						$transaction_content = $('<div class="panel-body">'),
-						$detail_list_group = $('<div class="list-group">');
+					$dl_left = $('<dl id="dl_left" class="dl-horizontal">'),
+					$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
+					// Creating progress bar
+					$progress_container = $('<div "id="progress_container" class="progress">'),
+					$progress_bar = $('<div>').attr({
+						"style": "width: 100%;",
+						"aria-valuemax": "100",
+						"aria-valuemin": "0",
+						"aria-valuenow": "100",
+						"role": "progressbar",
+						"class": "progress-bar progress-bar-warning progress-bar-striped active",
+						"id": "progress_bar"
+					}).text("Processing file..."),
+					// Creating detail link
+					$detail_link_col = $('<div class="col-sm-12">'),
+					$detail_col = $('<div id="transactions" class="col-sm-12 panel-collapse collapse in">'),
+					$detail_link = $('<a>').attr({
+						"href": "javascript:void(0);",
+						"onclick": "$(this).collapse_details();",
+						"class": "disabled",
+						"id": "details_btn"
+					}).html('Details'),
+					// Creating transaction container
+					$transaction_content = $('<div class="panel-body">'),
+					$detail_list_group = $('<div class="list-group">');
 
-						$detail_link_col.append('<span class="fa fa-fw fa-caret-down"></span> ').append($detail_link);
-						$left_col.append($dl_left);
-						$righ_col.append($dl_right);
-						$info_row.append($left_col);
-						$info_row.append($righ_col);
-						$info_row.append($left_col);
-						$info_row.append($righ_col);
-						$transaction_content.append($detail_list_group);
-						$detail_col.append($transaction_content);
-						$details_row.append($detail_link_col);
-						$details_row.append($detail_col);
-						$("#upload").append($h1).append($info_row).append($progress_container).append($details_row);
-						$("#upload").html("");
-						$("#dropzone").remove();
-					});
+					$detail_link_col.append('<span class="fa fa-fw fa-caret-down"></span> ').append($detail_link);
+					// Progress bar
+					$progress_container.append($progress_bar);
+					$left_col.append($dl_left);
+					$righ_col.append($dl_right);
+					$info_row.append($left_col);
+					$info_row.append($righ_col);
+					$info_row.append($left_col);
+					$info_row.append($righ_col);
+					$transaction_content.append($detail_list_group);
 
+					$detail_col.append($transaction_content);
+					$details_row.append($detail_link_col);
+					$details_row.append($detail_col);
+
+					$("#upload").html("");
+					$("#upload").append($h1).append($info_row).append($progress_container).append($details_row);
+					$("#dropzone").remove();
+				},
+				uploadprogress: function(file, progress) {
+					$.set_progress_bar(progress);
 				},
 				success: function(file, status){
-					// var extension = file.name.split(".").pop().toLowerCase(),
-					// filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-					// file_path = "/var/www/pgrdg/common/.gnupg/" + $.get_current_user_id() + "/uploads/" + filename,
-					// progress = 0,
+					// console.log(response);
+					var extension = file.name.split(".").pop().toLowerCase(),
+					filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
+					file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+
+					$.set_progress_bar("pending");
 					//
 					// $dd_status = $('<dd title="' + response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_INFO] + '">').text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
 					//
-					// // Info row
+					// Info row
 					// $("#dl_left").append("<dt>" + response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_NAME] + "</dt><dd>" + response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_DISP] + "</dd>");
 					// $("#dl_left").append("<dt>" + response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_NAME] + "</dt>").append($dd_status);
+
+					// Progress row
+					// $("#progress_bar").text(progress + "%");
+					// Details row
 					//
-					// // Progress row
-					// $("#progress_container").append($progress_bar);
-					// // Details row
 					//
-					//
-					// $.inform_upload_was_done(file_path, function(response) {
+					$.inform_upload_was_done(file_path, function(session_id) {
+						setInterval(function() {
+							$.get_session_status(session_id, function(response) {
+								console.info(response);
+								var progress = parseInt(response[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+
+								$.set_progress_bar(progress);
+								$.each(response[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+									console.info(k, v);
+									var current_progress = parseInt(v[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]),
+									current_status = "",
+									current_status_icon = "";
+									switch(v[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE]) {
+										case ":type:status:failed":
+										case ":type:status:error":
+										case ":type:status:fatal":
+										case ":type:status:exception":
+											current_status = "danger";
+											current_status_icon = "fa-times";
+											break;
+										case ":type:status:executing":
+											current_status = null;
+											current_status_icon = "fa-refresh fa-spin text-muted";
+											break;
+										case ":type:status:ok":
+											current_status = "success";
+											current_status_icon = "fa-check";
+											break;
+										case ":type:status:message":
+											current_status = "info";
+											current_status_icon = "fa-info";
+											break;
+										case ":type:status:warning":
+											current_status = "warning";
+											current_status_icon = "fa-exclamation-triangle";
+											break;
+									}
+									var $item = $('<div class="list-group-item' + ((current_status !== null) ? " list-group-item-" + current_status : "") + '">'),
+									$item_row = $('<div class="row">'),
+									$item_col1 = $('<div class="col-sm-1">'),
+									$item_col2 = $('<div class="col-sm-8">'),
+									$item_col3 = $('<div class="col-sm-3">'),
+									$item_title = $('<h4 class="list-group-item-heading">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
+									$item_description = $('<p class="list-group-item-text text-muted">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
+									$item_progress_container = $('<div class="progress">'),
+									$item_progress_bar = $('<div style="width: ' + current_progress + '%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="' + current_progress + '" role="progressbar" class="progress-bar progress-bar-success active">').text(current_progress + "%");
+									if(current_status !== null) {
+										$item_col1.append('<span class="fa ' + current_status_icon + ' fa-3x"></span>');
+									} else {
+
+									}
+									$item_col1.find("span").addClass("");
+									// Contents
+									$item_col2.append($item_title).append($item_description);
+									// Progress bar
+									$item_progress_container.append($item_progress_bar);
+									$item_col3.append($item_progress_container);
+									$item_row.append($item_col1);
+									$item_row.append($item_col2);
+									$item_row.append($item_col3);
+									$item.append($item_row);
+									$detail_list_group.append($item);
+								});
+							});
+						}, 10000);
+
 					// 	if($.type(response) == "object" && $.obj_len(response) > 0) {
 					// 		progress = parseInt(response[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 					// 		$h1.text(response[kTAG_SESSION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 					//
-					// 		$.each(response[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
-					// 			console.info(k, v);
-					// 			var current_progress = parseInt(v[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]),
-					// 			current_status = "",
-					// 			current_status_icon = "";
-					// 			switch(v[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE]) {
-					// 				case ":type:status:failed":
-					// 				case ":type:status:error":
-					// 				case ":type:status:fatal":
-					// 				case ":type:status:exception":
-					// 					current_status = "danger";
-					// 					current_status_icon = "fa-times";
-					// 					break;
-					// 				case ":type:status:executing":
-					// 					current_status = null;
-					// 					current_status_icon = "fa-refresh fa-spin text-muted";
-					// 					break;
-					// 				case ":type:status:ok":
-					// 					current_status = "success";
-					// 					current_status_icon = "fa-check";
-					// 					break;
-					// 				case ":type:status:message":
-					// 					current_status = "info";
-					// 					current_status_icon = "fa-info";
-					// 					break;
-					// 				case ":type:status:warning":
-					// 					current_status = "warning";
-					// 					current_status_icon = "fa-exclamation-triangle";
-					// 					break;
-					// 			}
-					// 			var $item = $('<div class="list-group-item' + ((current_status !== null) ? " list-group-item-" + current_status : "") + '">'),
-					// 			$item_row = $('<div class="row">'),
-					// 			$item_col1 = $('<div class="col-sm-1">'),
-					// 			$item_col2 = $('<div class="col-sm-8">'),
-					// 			$item_col3 = $('<div class="col-sm-3">'),
-					// 			$item_title = $('<h4 class="list-group-item-heading">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
-					// 			$item_description = $('<p class="list-group-item-text text-muted">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
-					// 			$item_progress_container = $('<div class="progress">'),
-					// 			$item_progress_bar = $('<div style="width: ' + current_progress + '%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="' + current_progress + '" role="progressbar" class="progress-bar progress-bar-success active">').text(current_progress + "%");
-					// 			if(current_status !== null) {
-					// 				$item_col1.append('<span class="fa ' + current_status_icon + ' fa-3x"></span>');
-					// 			} else {
 					//
-					// 			}
-					// 			$item_col1.find("span").addClass("");
-					// 			// Contents
-					// 			$item_col2.append($item_title).append($item_description);
-					// 			// Progress bar
-					// 			$item_progress_container.append($item_progress_bar);
-					// 			$item_col3.append($item_progress_container);
-					// 			$item_row.append($item_col1);
-					// 			$item_row.append($item_col2);
-					// 			$item_row.append($item_col3);
-					// 			$item.append($item_row);
-					// 			$detail_list_group.append($item);
-					// 		});
 					// 	}
-					// });
+					});
 					//
 					// $("#upload").html("");
 					// $("#upload").append($h1).append($info_row).append($progress_container).append($details_row);
