@@ -33,7 +33,7 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
 
         <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/main.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/admin/smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
@@ -59,7 +59,7 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
 
         <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print $domain; ?>/common/css/pgrdg-map-tools/pgrdg-map-tools<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print $domain; ?>/common/css/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
 
         <link href="<?php print $domain; ?>/common/css/print<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
         <?php

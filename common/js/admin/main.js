@@ -1426,7 +1426,7 @@ $.save_user_data = function(user_id) {
 					// 	storage.set("pgrdg_user_cache.user_data.current." + user_id, )
 					// }
 					$.get_user(user_id, true, function(user_data) {
-						console.log(user_data);
+						// console.log(user_data);
 						$("#loader").hide();
 						apprise(i18n[lang].messages.data_saved.message, {
 							title: i18n[lang].messages.data_saved.title,
@@ -2146,7 +2146,7 @@ $.save_menu = function() {
 			"icon": "fa " + icon,
 			"text": name
 		};
-		console.log(name, visible);
+		// console.log(name, visible);
 		data[obj_name].attributes = {
 			"href": link,
 			"title": title,
@@ -2322,7 +2322,7 @@ $.edit_page = function(page_data, info) {
 	$fieldset.append($legend);
 	$fieldset.append($frm);
 	$btn_div.append($cancel_btn).append($save_btn);
-	$form_container.append($fieldset)
+	$form_container.append($fieldset);
 	$row.append($form_container);
 	$row.append($btn_div);
 	$("#page_management_edit").html($row);
@@ -2335,7 +2335,7 @@ $.edit_page = function(page_data, info) {
 	});
 
 	$("#text_editor").markItUp(mySettings);
-	console.log($.parseJSON(page_data));
+	// console.log($.parseJSON(page_data));
 
 	// setTimeout(function () {
 	// 	$("#page_management").show();
@@ -2455,7 +2455,7 @@ $.last_activity = function(full) {
  * Generate the breadcrumb content
  */
 $.set_breadcrumb = function() {
-	console.log($.get_page_config());
+	// console.log($.get_page_config());
 	$.fn.set_user_name = function(user_data) {
 		$(this).text($.get_user_full_name(user_data));
 	};

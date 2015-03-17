@@ -580,10 +580,10 @@ a.big_btn:hover .icons_list {
 	top: 50%;
 	width: 50px;
 
-	-webkit-animation: rotate 1.8s linear 0s infinite;
-	-moz-animation: rotate 1.8s linear 0s infinite;
-	-o-animation: rotate 1.8s linear 0s infinite;
-	animation: rotate 1.8s linear 0s infinite;
+	-webkit-animation: rotate 1.8s linear 0s infinite !important;
+	-moz-animation: rotate 1.8s linear 0s infinite !important;
+	-o-animation: rotate 1.8s linear 0s infinite !important;
+	animation: rotate 1.8s linear 0s infinite !important;
 }
 #loader > div + div + div + div {
 	background-color: transparent;
@@ -600,10 +600,10 @@ a.big_btn:hover .icons_list {
 	top: 50%;
 	width: 44px;
 
-	-webkit-animation: rotate 1.2s linear 0s infinite;
-	-moz-animation: rotate 1.2s linear 0s infinite;
-	-o-animation: rotate 1.2s linear 0s infinite;
-	animation: rotate 1.2s linear 0s infinite;
+	-webkit-animation: rotate 1.2s linear 0s infinite !important;
+	-moz-animation: rotate 1.2s linear 0s infinite !important;
+	-o-animation: rotate 1.2s linear 0s infinite !important;
+	animation: rotate 1.2s linear 0s infinite !important;
 }
 
 
