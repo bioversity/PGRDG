@@ -10549,8 +10549,12 @@ input[type="color"]:focus,
   padding-left: 0;
 }
 #content {
-  padding: 10px 14px;
-  position: relative;
+        height: 100%;
+        padding: 14px;
+        overflow-y: auto;
+        overflow-x: hidden;
+  /*padding: 10px 14px;*/
+  /*position: relative;*/
   /*position:relative;
 	 left:0px;*/
 }
@@ -16814,10 +16818,8 @@ body.menu-on-top.fixed-header.fixed-navigation.fixed-ribbon #ribbon {
 }
 
 #upload {
+	display: block;
 	height: 100%;
-	left: 230px;
-	padding: 80px 0 85px 0;
-	position: fixed;
-	right: 10px;
-	top: 20px;
+	position: relative;
+	width: 100%;
 }

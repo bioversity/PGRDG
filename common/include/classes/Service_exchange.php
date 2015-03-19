@@ -165,7 +165,32 @@ class Service_exchange {
          */
         public function send_to_service($data, $action) {
                 switch($action) {
-                        case "login":
+                        case "activate_user":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_USER_INVITE,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => TRUE,
+                                        kAPI_PARAM_LOG_TRACE => TRUE,
+                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_RECORD,
+                                        kAPI_PARAM_ID => $data
+                                );
+                                break;
+                        case "get_managed_users":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GET_MANAGED,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data["manager_id"],
+                                        kAPI_PARAM_ID => $data["user_id"],
+                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
+                                );
+                                break;
+                        case "get_user":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_GET_USER,
                                         kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
@@ -173,7 +198,8 @@ class Service_exchange {
                                 $params = array(
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_PARAM_ID => $data,
+                                        kAPI_REQUEST_USER => $data["manager_id"],
+                                        kAPI_PARAM_ID => $data["user_id"],
                                         kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
                                 );
                                 break;
@@ -219,6 +245,18 @@ class Service_exchange {
                                         )
                                 );
                                 break;
+                        case "login":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GET_USER,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_PARAM_ID => $data,
+                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
+                                );
+                                break;
                         case "save_user_data":
                                 // Perform request
                                 $querystring = array(
@@ -233,44 +271,6 @@ class Service_exchange {
                                         kAPI_PARAM_OBJECT => $data[kAPI_PARAM_OBJECT]
                                 );
                                 break;
-                        case "activate_user":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_USER_INVITE,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => TRUE,
-                                        kAPI_PARAM_LOG_TRACE => TRUE,
-                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_RECORD,
-                                        kAPI_PARAM_ID => $data
-                                );
-                                break;
-                        case "get_user":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GET_USER,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data["manager_id"],
-                                        kAPI_PARAM_ID => $data["user_id"],
-                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
-                                );
-                                break;
-                        case "get_managed_users":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GET_MANAGED,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data["manager_id"],
-                                        kAPI_PARAM_ID => $data["user_id"],
-                                        kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT
-                                );
-                                break;
                         case "upload_file":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_UPLOAD_TEMPLATE,
@@ -280,7 +280,7 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                                        kAPI_PARAM_FILE_PATH => $data[kAPI_PARAM_FILE_PATH]
+                                        kAPI_PARAM_FILE_PATH => "/tmp/CWR_Checklist_Template.test.xlsx"//$data[kAPI_PARAM_FILE_PATH]
                                 );
                                 break;
                         case "upload_session_status":

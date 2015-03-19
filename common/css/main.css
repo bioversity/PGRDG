@@ -1685,7 +1685,14 @@ section #se_p .panel_content-body.moved:before {
 	width: 100%;
 	z-index: 1;
 }
-
+div#main > #contents {
+	display: block;
+	height: 100%;
+	left: 220px;
+	padding-bottom: 140px;
+	position: fixed;
+	right: 0;
+}
 section.container > #contents {
 	background-color: #fff;
 	height: 100%;
@@ -3510,11 +3517,6 @@ div.user_data dl.roles dd {
 	display: none;
 }
 
-#upload {
-	height: 100%;
-	left: 230px;
-	padding: 80px 0;
-	position: fixed;
-	right: 10px;
-	top: 20px;
+#detail_list_group .progress, #detail_list_group .list-group-item-heading {
+	margin: 10px 0;
 }
