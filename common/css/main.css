@@ -3520,3 +3520,6 @@ div.user_data dl.roles dd {
 #detail_list_group .progress, #detail_list_group .list-group-item-heading {
 	margin: 10px 0;
 }
+#detail_list_group .row > .col-sm-1 > span.fa {
+	padding: 6px 0
+}

@@ -2371,7 +2371,8 @@ $.inform_upload_was_done = function(file_path, callback) {
 	$.ask_cyphered_to_service({
 		data: data,
 		type: "upload_file"
-	}, function(session_id) {
+	}, function(response) {
+		var session_id = response["session-id"];
 		if (typeof callback == "function") {
 			callback.call(this, session_id);
 		}
@@ -2495,14 +2496,14 @@ $.build_interface = function(session_id) {
 	current_status_class = "",
 	current_status_icon = "";
 	$.get_session_status(session_id, function(response) {
-		console.info(response);
-		var progress = parseInt(response[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+		$("#details_row").removeClass("hidden");
+		var progress = ((response[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(response[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100);
 
 		$.set_progress_bar(progress);
 		$.each(response[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
 			console.info(k, v);
 
-			var current_progress = parseInt(v[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+			var current_progress = ((v[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(v[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100);
 			switch($.trim(v[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
 				case kTYPE_STATUS_FAILED:
 				case kTYPE_STATUS_ERROR:
@@ -2535,18 +2536,20 @@ $.build_interface = function(session_id) {
 			}
 	// console.warn(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], v[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE], $.type(v[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE]), current_status_class);
 
+			var $item;
 			if($("#" + $.md5(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP])).length === 0) {
-				console.warn(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "no");
-				var $item = $('<div id="' + $.md5(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]) + '">');
+				// console.warn(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "no");
+				$item = $('<div id="' + $.md5(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]) + '">');
 			} else {
-				console.warn(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "yes");
-				var $item = $("#" + $.md5(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]));
+				// console.warn(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "yes");
+				$item = $("#" + $.md5(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]));
 			}
 			$item.attr("class", "list-group-item" + ((current_status_class !== "") ? " " + current_status_class : ""));
 			// Date
-			var ssec = new Date(v[kTAG_TRANSACTION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE]["sec"]);
+			var ssec = new Date(v[kTAG_TRANSACTION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
+			esec;
 			if($.obj_len(v[kTAG_TRANSACTION_END]) > 0) {
-				var esec = new Date(v[kTAG_TRANSACTION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE]["sec"]);
+				esec = new Date(v[kTAG_TRANSACTION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000);
 			}
 			var progressbar_style = (current_progress >= 100) ? "progress-bar-success" : "progress-bar-info progress-bar-striped active";
 			$item_row_container = $('<div>'),
@@ -2556,10 +2559,13 @@ $.build_interface = function(session_id) {
 			$item_col2b = $('<div class="col-sm-3 text-right text-muted">'),
 			$item_col3 = $('<div class="col-sm-3">'),
 			$item_title = $('<h4 class="list-group-item-heading">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
-			$item_time_data = $('<small>').html('<span class="fa fa-clock-o"></span> ' + ssec.toLocaleString() + "<br />");
+			$item_time_data = $('<small title="Start date">').html('<span class="fa fa-clock-o"></span> ' + ssec.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}) + "<br />");
+			// return false;
 
+			console.log("MMMM", v[kTAG_TRANSACTION_START], ssec.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
 			if($.obj_len(v[kTAG_TRANSACTION_END]) > 0) {
-				$item_time_data.html('<span class="fa fa-clock-o"></span> ' + esec.toLocaleString());
+			console.log("NOOO", v[kTAG_TRANSACTION_END], esec.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
+				// $item_time_data.append('<span class="fa fa-clock-o"></span> ' + esec.toLocaleString());
 			}
 			// $item_description = $('<p class="list-group-item-text text-muted">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
 			var $item_progress_container = $('<div class="progress">'),
@@ -2581,11 +2587,16 @@ $.build_interface = function(session_id) {
 			$("#detail_list_group").append($item);
 		});
 
+		console.log("PROGRESS", progress);
 		// Cycle
-		if(progress <= 100) {
+		if(progress < 100) {
 			setTimeout(function() {
 				$.build_interface(session_id);
 			}, 1000);
+		} else {
+			$("#progress_bar").removeClass("progress-bar-striped").removeClass("progress-bar-info").removeClass("active").addClass("progress-bar-success");
+			$("#details_btn").collapse_details();
+			alert("Completed!");
 		}
 	});
 };
@@ -2839,13 +2850,8 @@ $(document).ready(function() {
 			$.fn.collapse_details = function() {
 				var $item = $(this);
 				if(!$item.hasClass("disabled")) {
-					if(!$("#transactions").hasClass("in")) {
-						$item.prev().removeClass("fa-caret-right").addClass("fa-caret-down");
-						$("#transactions").addClass("in");
-					} else {
-						$item.prev().removeClass("fa-caret-down").addClass("fa-caret-right");
-						$("#transactions").removeClass("in");
-					}
+					$item.prev().toggleClass("fa-caret-right fa-caret-down");
+					$("#transactions").collapse("toggle");
 				}
 			};
 
@@ -2877,7 +2883,7 @@ $(document).ready(function() {
 					$info_row = $('<div class="row">'),
 					$left_col = $('<div class="col-sm-12 col-md-6">'),
 					$righ_col = $('<div class="col-sm-12 col-md-6">'),
-					$details_row = $('<div id="details_row" class="row">'),
+					$details_row = $('<div id="details_row" class="row hidden">'),
 
 					$dl_left = $('<dl id="dl_left" class="dl-horizontal">'),
 					$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
@@ -2898,7 +2904,6 @@ $(document).ready(function() {
 					$detail_link = $('<a>').attr({
 						"href": "javascript:void(0);",
 						"onclick": "$(this).collapse_details();",
-						"class": "disabled",
 						"id": "details_btn"
 					}).html('Details'),
 					// Creating transaction container

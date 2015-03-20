@@ -58,6 +58,9 @@ if(empty($_REQUEST) && empty($_POST)) {
 				break;
 			case "upload":
 				if(!empty($_FILES)) {
+					$interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
+					$interface = $interface_config->parse_js_config("config");
+
 					$user_dir = GNUPG_DIR . $_POST["user_id"];
 					if(!file_exists($user_dir)) {
 						mkdir($user_dir);
@@ -70,6 +73,12 @@ if(empty($_REQUEST) && empty($_POST)) {
 					$target_file =  $target_path . "/" . $gv;
 					if(!move_uploaded_file($temp_file, $target_file)) {
 						throw new exception("Can move the file " . $target_file);
+					} else {
+						// $ch = curl_init($interface["service"]["url"]);
+						// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						// curl_setopt($ch, CURLOPT_POST, true);
+						// curl_setopt($ch, CUROPT_POSTFIELDS, array('fileupload' => '@'.$_FILES['theFile']['tmp_name']));
+						// echo curl_exec($ch);
 					}
 
 					$api->set_content_type("text");
