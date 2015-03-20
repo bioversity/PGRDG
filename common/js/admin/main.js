@@ -2565,7 +2565,7 @@ $.build_interface = function(session_id) {
 			console.log("MMMM", v[kTAG_TRANSACTION_START], ssec.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
 			if($.obj_len(v[kTAG_TRANSACTION_END]) > 0) {
 			console.log("NOOO", v[kTAG_TRANSACTION_END], esec.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
-				// $item_time_data.append('<span class="fa fa-clock-o"></span> ' + esec.toLocaleString());
+				$item_time_data.append('<span class="fa fa-clock-o"></span> ' + esec.toLocaleString());
 			}
 			// $item_description = $('<p class="list-group-item-text text-muted">').text(v[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
 			var $item_progress_container = $('<div class="progress">'),
