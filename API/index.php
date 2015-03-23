@@ -57,6 +57,8 @@ if(empty($_REQUEST) && empty($_POST)) {
 				exit();
 				break;
 			case "upload":
+					print_r($_FILES);
+					exit();
 				if(!empty($_FILES)) {
 					$interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 					$interface = $interface_config->parse_js_config("config");

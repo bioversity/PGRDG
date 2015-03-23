@@ -162,6 +162,16 @@ var i18n = {
                                 "title": "Are you sure to cancel all editings?",
                                 "message": "By choosing \"Yes\" you may lose your changes.<br />Do you want to continue?"
                         },
+                        "upload": {
+                                "summary": {
+                                        "processed": "Processed",
+                                        "validated": "Validated",
+                                        "rejected": "Rejected",
+                                        "skipped": "Skipped",
+                                        "records": "Records",
+                                        "total": "Total %"
+                                }
+                        },
                         "user_permissions": "User permissions",
                         "you_can": "You can",
                         "you": "You",

@@ -3517,6 +3517,28 @@ div.user_data dl.roles dd {
 	display: none;
 }
 
+#dl_right, #detail_list_group {
+	font-family: "Roboto";
+}
+#dl_right .total, #detail_list_group .total {
+	font-weight: 600;
+	color: #454545;
+}
+#dl_right hr, #detail_list_group hr {
+	margin: 5px 0;
+}
+#progress_supercontainer.fixed {
+	background-color: #fff;
+	box-shadow: 0 0 9px #333;
+	left: 0;
+	padding: 40px 20px 20px 250px;
+	position: fixed;
+	right: 0;
+	top: 89px;
+	width: 100%;
+	z-index: 3;
+}
+
 #detail_list_group .progress, #detail_list_group .list-group-item-heading {
 	margin: 10px 0;
 }
