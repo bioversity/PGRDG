@@ -74,13 +74,31 @@ if(empty($_REQUEST) && empty($_POST)) {
 					$target_path = $user_dir . "/uploads";
 					$target_file =  $target_path . "/" . $gv;
 					if(!move_uploaded_file($temp_file, $target_file)) {
-						throw new exception("Can move the file " . $target_file);
+						throw new exception("Can't move the file to " . $target_path);
 					} else {
-						// $ch = curl_init($interface["service"]["url"]);
+						/**
+						 * Remote upload
+						 *
+						 * Working but not implemented for security reasons
+						 */
+						// $url = $interface["service"]["url"] . "uploads/index.php";
+						// // Create a CURLFile object
+						// $cfile = curl_file_create('cats.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','test_name');
+						// $args['file'] = new CurlFile($_FILES['file']['tmp_name'],'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $_FILES['file']['name']);
+						// $args["user_id"] = $_POST["user_id"];
+						//
+						// // Assign POST data
+						// $data = array('test_file' => $_FILES["file"]["tmp_name"]);
+						// $ch = curl_init($url);
 						// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						// curl_setopt($ch, CURLOPT_POST, true);
-						// curl_setopt($ch, CUROPT_POSTFIELDS, array('fileupload' => '@'.$_FILES['theFile']['tmp_name']));
-						// echo curl_exec($ch);
+						// curl_setopt($ch, CURLOPT_POST, 1);
+						// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						// curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
+						//
+						// $result = curl_exec($ch);
+						// curl_close($ch);
+						//
+						// print_r($result);
 					}
 
 					$api->set_content_type("text");
@@ -100,6 +118,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "save_user_data":
 					case "upload_file":
 					case "upload_session_status":
+					case "upload_user_status":
 						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
 						break;
 				}

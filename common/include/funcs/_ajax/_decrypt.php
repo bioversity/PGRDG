@@ -145,9 +145,9 @@ if(isset($_GET["getPublicKey"])) {
 					$_SESSION["user"] = $ud;
 
 					if(isset($output["remember"])) {
-						setcookie("l", md5($fingerprint), time()+10800, "/");
-					} else {
 						setcookie("l", md5($fingerprint), time()+28800, "/");
+					} else {
+						setcookie("l", md5($fingerprint), time()+10800, "/");
 					}
 
 					print json_encode($user_data);
@@ -208,6 +208,16 @@ if(isset($_GET["getPublicKey"])) {
 			// print_r($output);
 			$se = new Service_exchange();
 			$action = "upload_session_status";
+			print $se->send_to_service($output, $action);
+			break;
+		case "upload_user_status":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			// header("Content-type: text/plain");
+			// print_r($output);
+			// exit();
+			// print_r($output);
+			$se = new Service_exchange();
+			$action = "upload_user_status";
 			print $se->send_to_service($output, $action);
 			break;
 		case "activate_user":

@@ -3527,16 +3527,38 @@ div.user_data dl.roles dd {
 #dl_right hr, #detail_list_group hr {
 	margin: 5px 0;
 }
+#progress_supercontainer h2 {
+	display: none;
+	font-size: 24px;
+	color: #666;
+	margin-bottom: 15px;
+	margin-bottom: 0px none;
+}
+#progress_supercontainer.fixed h2 {
+	display: block;
+}
 #progress_supercontainer.fixed {
-	background-color: #fff;
-	box-shadow: 0 0 9px #333;
-	left: 0;
-	padding: 40px 20px 20px 250px;
+	/*background-color: #fff;*/
+	background: url("../media/img/admin/admin_bg.png") repeat scroll 0 0 #fff;
+	left: -13px;
+	padding: 1.5em 10px 5px 245px;
 	position: fixed;
 	right: 0;
 	top: 89px;
 	width: 100%;
 	z-index: 3;
+}
+#progress_supercontainer.fixed::after {
+	background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));
+	background-image: -moz-linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));
+	background-image: -webkit-linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));
+	background-image: -o-linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));
+	content: "";
+	height: 6px;
+	left: 0;
+	position: absolute;
+	top: 108px;
+	width: 100%;
 }
 
 #detail_list_group .progress, #detail_list_group .list-group-item-heading {

@@ -2348,6 +2348,84 @@ $.edit_page = function(page_data, info) {
 *	UPLOAD FUNCTIONS
 *======================================================================================*/
 
+
+
+$.upload_user_status = function(callback) {
+	var data = {};
+	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
+	$.ask_cyphered_to_service({
+		data: data,
+		type: "upload_user_status",
+		force_renew: true
+	}, function(response) {
+		// var session_id = response["session-id"];
+		if (typeof callback == "function") {
+			callback.call(this, response);
+		}
+	});
+};
+
+/**
+ * Prepare the interface to display all scrollbars
+ */
+$.fn.added_file = function() {
+	var $item = $(this),
+	progress = 0,
+	$h1 = $('<h1>').text("Template upload"),
+	$info_row = $('<div class="row">'),
+	$left_col = $('<div class="col-xs-6 col-sm-7 col-md-6 col-lg-10">'),
+	$righ_col = $('<div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-lg-2 text-right">'),
+	$details_row = $('<div id="details_row" class="row hidden">'),
+
+	$dl_left = $('<dl id="dl_left" class="dl-horizontal">'),
+	$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
+	// Creating progress bar
+	$progress_supercontainer = $('<div id="progress_supercontainer">'),
+	$progrtess_container_title = $('<h2>').text("Template upload"),
+	$progress_container = $('<div id="progress_container" class="progress">'),
+	$progress_bar = $('<div>').attr({
+		"style": "width: 100%;",
+		"aria-valuemax": "100",
+		"aria-valuemin": "0",
+		"aria-valuenow": "100",
+		"role": "progressbar",
+		"class": "progress-bar progress-bar-warning progress-bar-striped active",
+		"id": "progress_bar"
+	}).text("Processing file..."),
+	// Creating detail link
+	$detail_link_col = $('<div class="col-sm-12">'),
+	$detail_col = $('<div id="transactions" class="col-sm-12 panel-collapse collapse in">'),
+	$detail_link = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$(this).collapse_details();",
+		"id": "details_btn"
+	}).html('Details'),
+	// Creating transaction container
+	$transaction_content = $('<div class="panel-body">'),
+	$detail_list_group = $('<div id="detail_list_group" class="list-group">');
+
+	$detail_link_col.append('<span class="fa fa-fw fa-caret-down"></span> ').append($detail_link);
+	// Progress bar
+	$progress_container.append($progress_bar);
+	$progress_supercontainer.append($progrtess_container_title);
+	$progress_supercontainer.append($progress_container);
+	$left_col.append($dl_left);
+	$righ_col.append($dl_right);
+	$info_row.append($left_col);
+	$info_row.append($righ_col);
+	$info_row.append($left_col);
+	$info_row.append($righ_col);
+	$transaction_content.append($detail_list_group);
+
+	$detail_col.append($transaction_content);
+	$details_row.append($detail_link_col);
+	$details_row.append($detail_col);
+
+	$item.html("");
+	$item.append($h1).append($info_row).append($progress_supercontainer).append($details_row);
+	$("#dropzone").remove();
+};
+
 /**
  * Set the progress bar
  * @param int|string			progress 				The progress status to set
@@ -2413,62 +2491,64 @@ $.build_interface = function(session_id) {
 		/**
 		 * General summary
 		 */
-			/**
-			 * Left column
-			 */
-			// Start date
-			var sud = new Date(response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
-			$dt_start = $("<dt>").text(response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_NAME]),
-			$dd_start = $('<dd>').text(sud.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
-			// End date
-			if($.obj_len(response[kTAG_SESSION_END]) > 0) {
-				var eud = new Date(response[kTAG_SESSION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
-				$dt_end = $("<dt>").text(response[kTAG_SESSION_END][kAPI_PARAM_RESPONSE_FRMT_NAME]),
-				$dd_end = $('<dd>').text(eud.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
-			}
-			// Status
-			var $dt_status = $("<dt>").text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_NAME]),
-			$dd_status = $('<dd>').text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]);
+		/**
+		 * Left column
+		 */
+		// Start date
+		var sud = new Date(response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
+		$dt_start = $("<dt>").text(response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_NAME]),
+		$dd_start = $('<dd>').text(sud.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
+		// End date
+		var $dt_end = $("<dt>"),
+		$dd_end = $('<dd>');
+		if($.obj_len(response[kTAG_SESSION_END]) > 0) {
+			var eud = new Date(response[kTAG_SESSION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000);
+			$dt_end.text(response[kTAG_SESSION_END][kAPI_PARAM_RESPONSE_FRMT_NAME]);
+			$dd_end.text(eud.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}));
+		}
+		// Status
+		var $dt_status = $("<dt>").text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_NAME]),
+		$dd_status = $('<dd>').text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]);
 
-			$("#dl_left").html($dt_start).append($dd_start);
-			if($.obj_len(response[kTAG_SESSION_END]) > 0) {
-				$("#dl_left").append($dt_end).append($dd_end);
-			}
-			$("#dl_left").append('<br />').append($dt_status).append($dd_status);
+		$("#dl_left").html($dt_start).append($dd_start);
+		if($.obj_len(response[kTAG_SESSION_END]) > 0) {
+			$("#dl_left").append($dt_end).append($dd_end);
+		}
+		$("#dl_left").append('<br />').append($dt_status).append($dd_status);
 
-			/**
-			 * Right column
-			 */
-			// Processed
-			if($.obj_len(response[kTAG_COUNTER_PROCESSED]) > 0) {
-				var $dt_processed = $('<dt class="text-muted">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
-				$dd_processed = $('<dd class="text-muted">').text(response[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
-				$("#dl_right").html($dt_processed).append($dd_processed);
-			}
-			// Validated
-			if($.obj_len(response[kTAG_COUNTER_VALIDATED]) > 0) {
-				$dt_validated = $('<dt class="text-success">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
-				$dd_validated = $('<dd class="text-success">').text(response[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
-				$("#dl_right").append($dt_validated).append($dd_validated);
-			}
-			// Rejected
-			if($.obj_len(response[kTAG_COUNTER_REJECTED]) > 0) {
-				$dt_rejected = $('<dt class="text-danger">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
-				$dd_rejected = $('<dd class="text-danger">').text(response[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
-				$("#dl_right").append($dt_rejected).append($dd_rejected);
-			}
-			// Skipped
-			if($.obj_len(response[kTAG_COUNTER_SKIPPED]) > 0) {
-				$dt_skipped = $('<dt class="text-warning">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
-				$dd_skipped = $('<dd class="text-warning">').text(response[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
-				$("#dl_right").append($dt_skipped).append($dd_skipped);
-			}
-			// Records
-			if($.obj_len(response[kTAG_COUNTER_RECORDS]) > 0) {
-				$dt_records = $('<dt class="total">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_RECORDS][kAPI_PARAM_RESPONSE_FRMT_NAME])),
-				$dd_records = $('<dd class="total">').text(response[kTAG_COUNTER_RECORDS][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
-				$("#dl_right").append('<hr />').append($dt_records).append($dd_records);
-			}
+		/**
+		 * Right column
+		 */
+		// Processed
+		if($.obj_len(response[kTAG_COUNTER_PROCESSED]) > 0) {
+			var $dt_processed = $('<dt class="text-muted">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
+			$dd_processed = $('<dd class="text-muted">').text(response[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+			$("#dl_right").html($dt_processed).append($dd_processed);
+		}
+		// Validated
+		if($.obj_len(response[kTAG_COUNTER_VALIDATED]) > 0) {
+			$dt_validated = $('<dt class="text-success">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
+			$dd_validated = $('<dd class="text-success">').text(response[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+			$("#dl_right").append($dt_validated).append($dd_validated);
+		}
+		// Rejected
+		if($.obj_len(response[kTAG_COUNTER_REJECTED]) > 0) {
+			$dt_rejected = $('<dt class="text-danger">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
+			$dd_rejected = $('<dd class="text-danger">').text(response[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+			$("#dl_right").append($dt_rejected).append($dd_rejected);
+		}
+		// Skipped
+		if($.obj_len(response[kTAG_COUNTER_SKIPPED]) > 0) {
+			$dt_skipped = $('<dt class="text-warning">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_NAME])),
+			$dd_skipped = $('<dd class="text-warning">').text(response[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+			$("#dl_right").append($dt_skipped).append($dd_skipped);
+		}
+		// Records
+		if($.obj_len(response[kTAG_COUNTER_RECORDS]) > 0) {
+			$dt_records = $('<dt class="total">').text(i18n[lang].messages.upload.summary.total.replace("%", response[kTAG_COUNTER_RECORDS][kAPI_PARAM_RESPONSE_FRMT_NAME])),
+			$dd_records = $('<dd class="total">').text(response[kTAG_COUNTER_RECORDS][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+			$("#dl_right").append('<hr />').append($dt_records).append($dd_records);
+		}
 
 
 		// Progress bar
@@ -2543,7 +2623,7 @@ $.build_interface = function(session_id) {
 			rejected_text = "",
 			skipped = 0,
 			skipped_text = "",
-			records = 0.
+			records = 0,
 			records_text = "";
 			if($.obj_len(v[kTAG_TRANSACTION_END]) > 0) {
 				esec = new Date(v[kTAG_TRANSACTION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000);
@@ -2627,25 +2707,8 @@ $.build_interface = function(session_id) {
 
 			// Behaviours
 			if($("#transactions").hasClass("in")) {
-				$("#content").scrollTo("100%", 300);
+				// $("#content").scrollTo("100%", 300);
 			}
-
-			var $obj = $("#progress_supercontainer");
-			var top = $obj.offset().top - parseFloat($obj.css("marginTop").replace(/auto/, 0));
-			console.error(top);
-			$(window).scroll(function(event) {
-				// what the y position of the scroll is
-				var y = $(this).scrollTop();
-
-				// whether that's below the form
-				if (y >= top) {
-					// if so, ad the fixed class
-					$obj.addClass("fixed");
-				} else {
-					// otherwise remove it
-					$obj.removeClass("fixed");
-				}
-			});
 		});
 
 		// Cycle
@@ -2657,6 +2720,22 @@ $.build_interface = function(session_id) {
 			$("#progress_bar").removeClass("progress-bar-striped").removeClass("progress-bar-info").removeClass("active").addClass("progress-bar-success");
 			$("#details_btn").collapse_details();
 			alert("Completed!");
+		}
+	});
+
+	// Block the progress bar position on scroll
+	var $obj = $("#progress_supercontainer");
+	var top = $obj.offset().top - parseFloat($obj.css("marginTop").replace(/auto/, 0)) - 70;
+	$("#content").scroll(function(event) {
+		// The y position of the scroll
+		var y = $(this).scrollTop();
+
+		if (y >= top) {
+			// if so, ad the fixed class
+			$obj.addClass("fixed");
+		} else {
+			// otherwise remove it
+			$obj.removeClass("fixed");
 		}
 	});
 };
@@ -2878,8 +2957,9 @@ $(document).ready(function() {
 					return (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 156)) + "," + (Math.floor(Math.random() * 156));
 				};
 
+				var info;
 				if(storage.isSet("pgrdg_cache.local.info")) {
-					var info = storage.get("pgrdg_cache.local.info");
+					info = storage.get("pgrdg_cache.local.info");
 				}
 				if(root === undefined || root === null || root === "") {
 					root = false;
@@ -2994,134 +3074,66 @@ $(document).ready(function() {
 			});
 			break;
 		case "Upload":
-			storage.remove("pgrdg_user_cache.user_data.undefined");
-			$.clean_file_name = function(text) {
-				text = text.replace(/\./g, "");
-				return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
-			};
-			$.fn.collapse_details = function() {
-				var $item = $(this);
-				if(!$item.hasClass("disabled")) {
-					$item.prev().toggleClass("fa-caret-right fa-caret-down");
-					$("#transactions").collapse("toggle");
-				}
-			};
+			$.upload_user_status(function(status) {
+				console.log("OK", status);
+				if(status[kAPI_SESSION_RUNNING]) {
+					$("#upload").added_file();
 
-			// Generate upload form
-			var $div = $('<div>'),
-			$form = $('<form>').attr({"action": "", "class": "dropzone", "id": "dropzone"}),
-			$input_user_id = $('<input>').attr({"type": "hidden", "name": "user_id", "value": $.get_current_user_id()});
-			$form.append($input_user_id);
-			$div.append($form);
-			$("#upload").html($div.html());
+					$.build_interface(status[kAPI_SESSION_ID]);
+				} else {
+					storage.remove("pgrdg_user_cache.user_data.undefined");
+					$.clean_file_name = function(text) {
+						text = text.replace(/\./g, "");
+						return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
+					};
+					$.fn.collapse_details = function() {
+						var $item = $(this);
+						if(!$item.hasClass("disabled")) {
+							$item.prev().toggleClass("fa-caret-right fa-caret-down");
+							$("#transactions").collapse("toggle");
+						}
+					};
 
-			$("#upload form").dropzone({
-				autoDiscover: false,
-				sendingmultiple: false,
-				acceptedFiles: ".xls,.xlsx,.ods",
-				autoProcessQueue: true,
-				clickable: true,
-				dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload',
-				init: function() {
-					this.on("processing", function(file) {
-						var extension = file.name.split(".").pop().toLowerCase(),
-						filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension;
-						this.options.url = "/API/?upload=" + filename;
+					// Generate upload form
+					var $div = $('<div>'),
+					$form = $('<form>').attr({"action": "", "class": "dropzone", "id": "dropzone"}),
+					$input_user_id = $('<input>').attr({"type": "hidden", "name": "user_id", "value": $.get_current_user_id()});
+					$form.append($input_user_id);
+					$div.append($form);
+					$("#upload").html($div.html());
+
+					$("#upload form").dropzone({
+						autoDiscover: false,
+						sendingmultiple: false,
+						acceptedFiles: ".xls,.xlsx,.ods",
+						autoProcessQueue: true,
+						clickable: true,
+						dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload',
+						init: function() {
+							this.on("processing", function(file) {
+								var extension = file.name.split(".").pop().toLowerCase(),
+								filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension;
+								this.options.url = "/API/?upload=" + filename;
+							});
+						},
+						addedfile: function() {
+							$("#upload").added_file();
+						},
+						uploadprogress: function(file, progress) {
+							$.set_progress_bar(progress);
+						},
+						success: function(file, status){
+							// console.log(response);
+							var extension = file.name.split(".").pop().toLowerCase(),
+							filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
+							file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+
+							$.set_progress_bar("pending");
+							$.inform_upload_was_done(file_path, function(session_id) {
+								$.build_interface(session_id);
+							});
+						}
 					});
-				},
-				addedfile: function() {
-					var progress = 0,
-					$h1 = $('<h1>').text("Template upload"),
-					$info_row = $('<div class="row">'),
-					$left_col = $('<div class="col-xs-6 col-sm-7 col-md-6 col-lg-10">'),
-					$righ_col = $('<div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-lg-2 text-right">'),
-					$details_row = $('<div id="details_row" class="row hidden">'),
-
-					$dl_left = $('<dl id="dl_left" class="dl-horizontal">'),
-					$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
-					// Creating progress bar
-					$progress_supercontainer = $('<div id="progress_supercontainer">'),
-					$progress_container = $('<div id="progress_container" class="progress">'),
-					$progress_bar = $('<div>').attr({
-						"style": "width: 100%;",
-						"aria-valuemax": "100",
-						"aria-valuemin": "0",
-						"aria-valuenow": "100",
-						"role": "progressbar",
-						"class": "progress-bar progress-bar-warning progress-bar-striped active",
-						"id": "progress_bar"
-					}).text("Processing file..."),
-					// Creating detail link
-					$detail_link_col = $('<div class="col-sm-12">'),
-					$detail_col = $('<div id="transactions" class="col-sm-12 panel-collapse collapse in">'),
-					$detail_link = $('<a>').attr({
-						"href": "javascript:void(0);",
-						"onclick": "$(this).collapse_details();",
-						"id": "details_btn"
-					}).html('Details'),
-					// Creating transaction container
-					$transaction_content = $('<div class="panel-body">'),
-					$detail_list_group = $('<div id="detail_list_group" class="list-group">');
-
-					$detail_link_col.append('<span class="fa fa-fw fa-caret-down"></span> ').append($detail_link);
-					// Progress bar
-					$progress_container.append($progress_bar);
-					$progress_supercontainer.append($progress_container);
-					$left_col.append($dl_left);
-					$righ_col.append($dl_right);
-					$info_row.append($left_col);
-					$info_row.append($righ_col);
-					$info_row.append($left_col);
-					$info_row.append($righ_col);
-					$transaction_content.append($detail_list_group);
-
-					$detail_col.append($transaction_content);
-					$details_row.append($detail_link_col);
-					$details_row.append($detail_col);
-
-					$("#upload").html("");
-					$("#upload").append($h1).append($info_row).append($progress_supercontainer).append($details_row);
-					$("#dropzone").remove();
-				},
-				uploadprogress: function(file, progress) {
-					$.set_progress_bar(progress);
-				},
-				success: function(file, status){
-					// console.log(response);
-					var extension = file.name.split(".").pop().toLowerCase(),
-					filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-					file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
-
-					$.set_progress_bar("pending");
-					//
-					// $dd_status = $('<dd title="' + response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_INFO] + '">').text(response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
-					//
-					// Info row
-					// $("#dl_left").append("<dt>" + response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_NAME] + "</dt><dd>" + response[kTAG_SESSION_START][kAPI_PARAM_RESPONSE_FRMT_DISP] + "</dd>");
-					// $("#dl_left").append("<dt>" + response[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_NAME] + "</dt>").append($dd_status);
-
-					// Progress row
-					// $("#progress_bar").text(progress + "%");
-					// Details row
-					//
-					//
-					$.inform_upload_was_done(file_path, function(session_id) {
-						$.build_interface(session_id);
-
-					// 	if($.type(response) == "object" && $.obj_len(response) > 0) {
-					// 		progress = parseInt(response[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]);
-					// 		$h1.text(response[kTAG_SESSION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]);
-					//
-					//
-					// 	}
-					});
-					//
-					// $("#upload").html("");
-					// $("#upload").append($h1).append($info_row).append($progress_container).append($details_row);
-					// $transaction_content.append($detail_list_group);
-					// $detail_col.append($transaction_content);
-					// $details_row.append($detail_link_col);
-					// $details_row.append($detail_col);
 				}
 			});
 			break;

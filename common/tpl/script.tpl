@@ -103,7 +103,6 @@ if($page->is_backend) {
 		}
 	}
 	</script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/<?php print (($page->is_backend) ? "admin/" : ""); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 	<?php
 	if(LOGGED) {
 		?>
