@@ -1,4 +1,4 @@
-<div id="contents">
+<div id="contents" class="<?php print strtolower($page->current); ?>">
 	<?php
 	if(strtolower($page->current) == "search" || strtolower($page->current) == "map") {
 		require_once("common/tpl/pages/Search.tpl");

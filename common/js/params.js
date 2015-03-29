@@ -162,11 +162,25 @@ $.is_obj = function(item) { return ($.type(item) == "object" ? true : false); };
 */
 $.is_array = function(item) { return $.isArray(item); };
 
-
+/**
+ * Return current date and time in "yyyy/mm/dd hh:ii:ss" format
+ * @return {string}       Current date and time
+ */
 $.now = function() {
         var d = new Date();
         return d.getFullYear() + "/" + (((d.getMonth() + 1) <= 9) ? "0" : "") + (d.getMonth() + 1) + "/" + ((d.getDate() <= 9) ? "0" : "") + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 }
+
+/**
+ * Convert an epoch date to locale formatted date
+ * @param       int             date            Epoch date
+ * @return      string                          Converted date
+ */
+$.epoch2locale = function(date) {
+        return date.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"})
+};
+
+
 /**
  * An utility function to find all URLs - FTP, HTTP(S) and Email - in a text string
  * and return them in an html link.

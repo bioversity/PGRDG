@@ -59,6 +59,7 @@ var i18n = {
                         "invited_users": "Invited users",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
+                        "last_upload": "Last upload",
                         "loading_form": "<i>Loading form...</i>",
                         "loading_profile": "<i>Loading profile...</i>",
                         "login": {

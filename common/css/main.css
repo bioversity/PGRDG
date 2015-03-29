@@ -1693,6 +1693,11 @@ div#main > #contents {
 	position: fixed;
 	right: 0;
 }
+@media (max-width: 979px) {
+	div#main > #contents {
+		left: 0;
+	}
+}
 section.container > #contents {
 	background-color: #fff;
 	height: 100%;
@@ -3059,33 +3064,33 @@ a.list-group-item.related {
 	display: none;
 }
 
-#managers {
+.top_content_label {
 	background-color: #3d3d3d;
 	box-shadow: 0 10px 10px #333 inset;
 	min-height: 100px;
 	padding: 10px;
 	width: 100%;
 }
-#managers h1 {
+.top_content_label h1 {
 	color: #ccc;
 	font-weight: 100;
 }
-#managers .manager h2 {
+.top_content_label .manager h2 {
 	border: 0 none;
 	color: #aaa;
 	margin: 0 0 5px 0;
 	min-height: 50px;
 }
-#managers .manager a {
+.top_content_label .manager a {
 	color: #aaa;
 }
-#managers .manager a:hover,
-#managers .manager a:active,
-#managers .manager a:focus {
+.top_content_label .manager a:hover,
+.top_content_label .manager a:active,
+.top_content_label .manager a:focus {
 	color: #ddd;
 	text-decoration: none;
 }
-#managers .manager a:before {
+.top_content_label .manager a:before {
 	color: #4d4d4d;
 	content: "‹";
 	font-family: "Roboto";
@@ -3094,23 +3099,23 @@ a.list-group-item.related {
 	height: 51px;
 	left: 10px;
 	position: absolute;
-	top: 75px;
+	top: 36px;
 	width: 25px;
 }
-#managers .manager a:hover:before {
+.top_content_label .manager a:hover:before {
 	color: #5d5d5d;
 }
 
-#managers a > small {
+.top_content_label a > small {
 	font-family: "Roboto";
 	font-size: 16px;
 	font-weight: 100;
 	margin: 0;
 }
-#managers .manager a:hover > small {
+.top_content_label .manager a:hover > small {
 	color: #aaa;
 }
-#managers .manager img {
+.top_content_label .manager img {
 	border: 1px dotted #222;
 	box-shadow: 0 0 3px #111;
 	height: 50px;
@@ -3119,7 +3124,7 @@ a.list-group-item.related {
 	margin-right: 15px;
 	float: left;
 }
-#managers .manager + .manager {
+.top_content_label .manager + .manager {
 	border-top: 1px solid #454545;
 	margin-top: 15px;
 	padding: 15px 10px 5px 12px;
@@ -3172,7 +3177,7 @@ div.user_data dl.roles dd {
 }
 @media only screen and (max-width:850px) {
 	#content {
-		padding: 5px 10px !important;
+		/*padding: 5px 10px !important;*/
 	}
 	#picture_container {
 		background-color: #2d2d2d;

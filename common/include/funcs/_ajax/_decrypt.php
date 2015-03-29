@@ -200,6 +200,16 @@ if(isset($_GET["getPublicKey"])) {
 			$action = "upload_file";
 			print $se->send_to_service($output, $action);
 			break;
+		case "upload_group_transaction":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			// header("Content-type: text/plain");
+			// print_r($output);
+			// exit();
+			// print_r($output);
+			$se = new Service_exchange();
+			$action = "upload_group_transaction";
+			print $se->send_to_service($output, $action);
+			break;
 		case "upload_session_status":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			// header("Content-type: text/plain");

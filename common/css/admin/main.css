@@ -10558,6 +10558,16 @@ input[type="color"]:focus,
   /*position:relative;
 	 left:0px;*/
 }
+#contents.upload .top_content_label + #content {
+        bottom: 140px;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        padding: 14px;
+        position: absolute;
+        top: 100px;
+        width: 100%;
+}
 body.container {
   position: absolute;
   left: 0;
@@ -15868,8 +15878,8 @@ label:hover input[type="checkbox"][disabled].checkbox:checked + span:before {
   /* padding adjustment */
   #content,
   #ribbon {
-    padding-left: 5px;
-    padding-right: 5px;
+    /*padding-left: 5px;
+    padding-right: 5px;*/
   }
   #header {
     padding-right: 5px;
@@ -16028,8 +16038,8 @@ label:hover input[type="checkbox"][disabled].checkbox:checked + span:before {
   /* padding adjustment */
   #content,
   #ribbon {
-    padding-left: 5px;
-    padding-right: 5px;
+    /*padding-left: 5px;
+    padding-right: 5px;*/
   }
   #header {
     padding-right: 5px;
@@ -16216,8 +16226,8 @@ label:hover input[type="checkbox"][disabled].checkbox:checked + span:before {
   /* padding adjustment */
   #content,
   #ribbon {
-    padding-left: 5px;
-    padding-right: 5px;
+    /*padding-left: 5px;
+    padding-right: 5px;*/
   }
   #header {
     padding-right: 5px;

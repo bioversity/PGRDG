@@ -280,7 +280,21 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                                        kAPI_PARAM_FILE_PATH => "/tmp/test_checklist.small.xlsx"//$data[kAPI_PARAM_FILE_PATH]
+                                        kAPI_PARAM_FILE_PATH => "/tmp/test_checklist.large.xlsx"//$data[kAPI_PARAM_FILE_PATH]
+                                );
+                                break;
+                        case "upload_group_transaction":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                        		kAPI_PARAM_GROUP_TRANS => array( kTAG_TRANSACTION_STATUS => NULL ),
+                        		kAPI_PAGING_SKIP => 0,
+                        		kAPI_PAGING_LIMIT => 100
                                 );
                                 break;
                         case "upload_session_status":
@@ -312,10 +326,12 @@ class Service_exchange {
                 }
                 $encoded = $this->encrypt_RSA($params);
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
-                // header("Content-type: text/plain");
-                // print_r($params);
-                // print_r($url);
-                // exit();
+                // if($action == "upload_file") {
+                //         header("Content-type: text/plain");
+                //         print_r($params);
+                //         print_r($url);
+                //         exit();
+                // }
                 return $this->receive_from_service($this->frontend->browse($url));
         }
 
