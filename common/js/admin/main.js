@@ -2439,7 +2439,7 @@ $.fn.added_file = function() {
 
 	$item.html("");
 	$item.append($h1).append($info_row).append($progress_supercontainer).append($details_row);
-	$("#top_content_label").remove();
+	$(".top_content_label").remove();
 	$("#contents").removeClass("upload");
 	$("#dropzone").remove();
 };
