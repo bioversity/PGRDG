@@ -3129,6 +3129,14 @@ a.list-group-item.related {
 	margin-top: 15px;
 	padding: 15px 10px 5px 12px;
 }
+#contents.upload > .top_content_label + #content > #upload #progress_supercontainer {
+	left: 0;
+	padding-top: 13px;
+	/*padding-left: 232px;*/
+}
+#contents.upload > .top_content_label + #content > #upload #progress_supercontainer:after {
+	top: 99px;
+}
 
 #personal_data {
 	margin-top: 5px;

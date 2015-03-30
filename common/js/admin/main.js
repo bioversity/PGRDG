@@ -2439,6 +2439,8 @@ $.fn.added_file = function() {
 
 	$item.html("");
 	$item.append($h1).append($info_row).append($progress_supercontainer).append($details_row);
+	$("#top_content_label").remove();
+	$("#contents").removeClass("upload");
 	$("#dropzone").remove();
 };
 
@@ -2553,7 +2555,7 @@ $.build_interface = function(session_id) {
 			case kTYPE_STATUS_FATAL:
 			case kTYPE_STATUS_EXCEPTION:
 				session_status_class = "progress-bar-danger";
-				status_icon = "fa-caret fa-1_5x";
+				status_icon = "fa-times fa-1_5x";
 				status_string_class = "text-danger";
 				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
 				status = "danger";
@@ -2751,8 +2753,8 @@ $.build_interface = function(session_id) {
 			$item_row_container = $('<div>'),
 			$item_row = $('<div class="row">'),
 			$item_col1 = $('<div class="col-sm-1">'),
-			$item_col2 = $('<div class="col-sm-5">'),
-			$item_col2a = $('<div class="col-sm-1 text-right">'),
+			$item_col2 = $('<div class="col-sm-4">'),
+			$item_col2a = $('<div class="col-sm-2 text-right">'),
 			$item_col2b = $('<div class="col-sm-2 text-right text-muted">'),
 			$item_col3 = $('<div class="col-sm-3">'),
 			$item_title = $('<h4 class="list-group-item-heading">').text(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
@@ -2825,37 +2827,132 @@ $.build_interface = function(session_id) {
 	});
 
 	// Block the progress bar position on scroll
-	var $obj = $("#progress_supercontainer");
-	var top = $obj.offset().top - parseFloat($obj.css("marginTop").replace(/auto/, 0)) - 70;
-	$("#content").scroll(function(event) {
-		// The y position of the scroll
-		var y = $(this).scrollTop();
+	if($("#progress_supercontainer").length > 0) {
+		var $obj = $("#progress_supercontainer");
+		var top = $obj.offset().top - parseFloat($obj.css("marginTop").replace(/auto/, 0)) - 70;
+		$("#content").scroll(function(event) {
+			// The y position of the scroll
+			var y = $(this).scrollTop();
 
-		if (y >= top) {
-			// if so, ad the fixed class
-			$obj.addClass("fixed");
-		} else {
-			// otherwise remove it
-			$obj.removeClass("fixed");
-		}
-	});
+			if (y >= top) {
+				// if so, ad the fixed class
+				$obj.addClass("fixed");
+			} else {
+				// otherwise remove it
+				$obj.removeClass("fixed");
+			}
+		});
+	}
 };
 
 $.fn.add_previous_upload_session = function(session_id) {
 	var $item = $(this),
-	$managers_box = $('<div class="top_content_label">'),
-	$managers_box_title = $('<h1>').text(i18n[lang].messages.last_upload);
+	$last_session_box = $('<div class="top_content_label">'),
+	$last_session_box_title = $('<h1>').text(i18n[lang].messages.last_upload),
+	$last_session_data_container = $('<div class="row">'),
+	$last_session_data_col1 = $('<div class="col-xs-4">'),
+	$last_session_data_col2 = $('<div class="col-xs-4">'),
+	$last_session_data_col3 = $('<div class="col-xs-4">'),
+	$last_session_data_text = $('<h4>'),
+	$last_session_data_progress_container = $('<div class="progress">'),
+	$last_session_data_progress = $('<div>').attr({
+		"class": "progress-bar progress-bar-striped progress-bar-warning active",
+		"role": "progressbar",
+		"aria-valuenow": "100",
+		"aria-valuemin": "0",
+		"aria-valuemax": "100",
+		"style": "width: 100%;"
+	});
+	$last_session_data = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$(\"#upload\").added_file(); $.build_interface('" + session_id + "');"
+	});
 
-	// $.get_session_status(session_id, function(response) {
-	// 	console.warn(response);
-	// })
-	$.get_errors(function(errors) {
-		console.log(errors);
+	$.get_session_status(session_id, function(response) {
+		var status = "",
+		status_icon = "",
+		status_string = "",
+		status_string_class = "",
+		current_status_class = "",
+		session = response.session,
+		file_path = session[kTAG_FILE][0].filename[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+
+		switch($.trim(session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
+			case kTYPE_STATUS_FAILED:
+			case kTYPE_STATUS_ERROR:
+			case kTYPE_STATUS_FATAL:
+			case kTYPE_STATUS_EXCEPTION:
+				session_status_class = "progress-bar-danger";
+				status_icon = "fa-times fa-1_5x";
+				status_string_class = "text-danger";
+				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				status = "danger";
+				break;
+			case kTYPE_STATUS_EXECUTING:
+				session_status_class = "progress-bar-info";
+				status_icon = "fa-refresh fa-spin";
+				status_string_class = "text-muted";
+				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP] + "...";
+				status = "";
+				break;
+			case kTYPE_STATUS_OK:
+				session_status_class = "progress-bar-success";
+				status_icon = "fa-check";
+				status_string_class = "text-success";
+				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				status = "success";
+				break;
+			case kTYPE_STATUS_MESSAGE:
+				current_status_class = "list-group-item-info";
+				status_icon = "fa-info fa-1_5x";
+				status_string_class = "text-info";
+				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				status = "info";
+				break;
+			case kTYPE_STATUS_WARNING:
+				session_status_class = "progress-bar-warning";
+				status_icon = "fa-warning";
+				status_string_class = "text-warning";
+				status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+				status = "warning";
+				break;
+		}
+
+		// $last_session_data_text.switchClass("text-muted", status_string_class)
+		// $last_session_data_text.addClass(status_string_class);
+		$last_session_data_text.html('<span class="fa fa-file-excel-o fa-fw fa-1_5x"></span> ' + file_path.split("/").pop());
+		$last_session_data_progress.attr({
+			"aria-valuenow": session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_VALUE],
+			"style": "width: " + session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_VALUE] + "%;"
+		}).html(session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_VALUE] + "%");
+
+		$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 93%;");
+		$last_session_data_col3.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
+		$last_session_data_progress.switchClass("progress-bar-warning", session_status_class).removeClass("active").removeClass("progress-bar-striped");
+
+		$last_session_data.append($last_session_data_text);
+		$last_session_data_col1.html("").append($last_session_data);
+		console.warn(session);
+		// $.get_errors(function(errors) {
+		// 	console.log(errors);
+		// });
+		// $last_session_data_col1.html($last_session_data_text);
 	});
 
 	// Prepend all to upload interface
-	$managers_box.append($managers_box_title);
-	$item.prepend($managers_box);
+		// Title
+		$last_session_box.append($last_session_box_title);
+		$last_session_data_text.addClass("text-muted").html('<h5 class="text-muted"><span class="fa fa-refresh fa-spin"></span> Loading session status...');
+		$last_session_data_col1.append($last_session_data_text);
+		$last_session_data_container.append($last_session_data_col1);
+		// Statistics
+		$last_session_data_container.append($last_session_data_col2);
+		// Progress bar
+		$last_session_data_progress_container.append($last_session_data_progress);
+		$last_session_data_col3.append($last_session_data_progress_container);
+		$last_session_data_container.append($last_session_data_col3);
+	$last_session_box.append($last_session_data_container);
+	$item.prepend($last_session_box);
 };
 
 /*=======================================================================================

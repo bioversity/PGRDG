@@ -346,6 +346,8 @@ class Service_exchange {
                 if($service_response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
                         if(isset($service_response[kAPI_RESPONSE_RESULTS]) && count($service_response[kAPI_RESPONSE_RESULTS]) > 0) {
                                 $results = $this->decrypt_RSA($service_response[kAPI_RESPONSE_RESULTS]);
+                // print_r($results);
+                // exit();
                 //                 if(is_object($results)) {
                 // //                         foreach(json_decode(json_encode($results), 1) as $user_id => $v) {
                 // //                                 foreach($v as $k => $vv) {
