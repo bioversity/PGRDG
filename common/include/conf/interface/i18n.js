@@ -190,6 +190,8 @@ var i18n = {
                                 "choose": "Choose",
                                 "close": "Close",
                                 "contained_in": "Contained in...",
+                                "delete": "Delete",
+                                "download": "Download",
                                 "edit": "Edit",
                                 "edit_profile": "Edit profile",
                                 "empty_link": "Empty link",
@@ -209,6 +211,7 @@ var i18n = {
                                 "remove": "Remove",
                                 "remove_selection": "Remove selection",
                                 "reset_all": "Reset all",
+                                "publish": "Publish",
                                 "save": "Save",
                                 "search_in_shape": "Search in shape...",
                                 "search_tips": "Search tips",
@@ -218,9 +221,11 @@ var i18n = {
                                 "sort_by": "Sort by {X}",
                                 "sort_desc": "Sort descending",
                                 "sort": "Sort",
+                                "update": "Update",
                                 "undo": "Undo",
                                 "view_data": "View data",
                                 "view_map": "View map",
+                                "view_status": "View status",
                                 "view_statistics": "View statistics"
                         },
                         "forms": {

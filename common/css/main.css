@@ -3580,3 +3580,11 @@ div.user_data dl.roles dd {
 #detail_list_group .row > .col-sm-1 > span.fa {
 	padding: 6px 0
 }
+#transactions .panel-body {
+	padding-left: 23px;
+	padding-right: 0;
+}
+.top_content_label .col-xs-4:last-child > * {
+	margin-bottom: 0;
+	margin-top: 15px;
+}
