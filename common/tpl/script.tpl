@@ -112,6 +112,20 @@ if($page->is_backend) {
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<?php
+		switch($page->address) {
+			case "Menu":
+				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/edit_menu<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
+				break;
+			case "Invite":
+				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/invite<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
+				break;
+			case "Pages":
+				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/edit_pages<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
+				break;
+			case "Upload":
+				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/upload<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
+				break;
+		}
 	} else {
 		?>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>

@@ -3071,6 +3071,23 @@ a.list-group-item.related {
 	padding: 10px;
 	width: 100%;
 }
+#contents.upload .top_content_label {
+	padding-bottom: 0;
+}
+#contents.upload .top_content_label .row {
+	margin-top: 20px;
+}
+#contents.upload #last_session_menu .btn-group {
+	margin-left: 5em;
+}
+#contents.upload #last_session_menu a.btn {
+	background-color: transparent;
+	border: 0 none;
+	color: #fff;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 .top_content_label h1 {
 	color: #ccc;
 	font-weight: 100;
@@ -3584,7 +3601,19 @@ div.user_data dl.roles dd {
 	padding-left: 23px;
 	padding-right: 0;
 }
+#last_session_menu a:not(.btn) {
+	color: #fff;
+	font-family: "Roboto";
+	font-weight: 100;
+	margin-left: 10px;
+	margin-top: 0;
+	font-size: 16px;
+	text-decoration: none !important;
+}
+#last_session_menu a:not(.btn):hover {
+	text-decoration: underline !important;
+}
 .top_content_label .col-xs-4:last-child > * {
 	margin-bottom: 0;
-	margin-top: 15px;
+	margin-top: 5px;
 }
