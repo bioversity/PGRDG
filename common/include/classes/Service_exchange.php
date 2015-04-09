@@ -292,7 +292,26 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array( kTAG_TRANSACTION_STATUS => NULL ),
+                        		kAPI_PARAM_GROUP_TRANS => array(
+                                                kTAG_TRANSACTION_STATUS => NULL
+                                        ),
+                        		kAPI_PAGING_SKIP => 0,
+                        		kAPI_PAGING_LIMIT => 100
+                                );
+                                break;
+                        case "upload_group_transaction_message":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                        		kAPI_PARAM_GROUP_TRANS => array(
+                                                kTAG_TRANSACTION_STATUS => $data[kAPI_RESPONSE_STATUS],
+                                                kTAG_TRANSACTION_MESSAGE => NULL
+                                        ),
                         		kAPI_PAGING_SKIP => 0,
                         		kAPI_PAGING_LIMIT => 100
                                 );
@@ -329,7 +348,7 @@ class Service_exchange {
                 // if($action == "upload_file") {
                 //         header("Content-type: text/plain");
                 //         print_r($params);
-                //         print_r($url);
+                //         print_r($this->receive_from_service($this->frontend->browse($url)));
                 //         exit();
                 // }
                 return $this->receive_from_service($this->frontend->browse($url));

@@ -60,8 +60,10 @@ var i18n = {
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
                         "last_upload": "Last upload",
+                        "loading_details": "Loading details",
                         "loading_form": "<i>Loading form...</i>",
                         "loading_profile": "<i>Loading profile...</i>",
+                        "loading_session_status": "Loading session status...",
                         "login": {
                                 "already_logged": {
                                         "title": "Already logged",
@@ -191,6 +193,7 @@ var i18n = {
                                 "close": "Close",
                                 "contained_in": "Contained in...",
                                 "delete": "Delete",
+                                "details": "Details",
                                 "download": "Download",
                                 "edit": "Edit",
                                 "edit_profile": "Edit profile",
@@ -225,7 +228,8 @@ var i18n = {
                                 "undo": "Undo",
                                 "view_data": "View data",
                                 "view_map": "View map",
-                                "view_status": "View status",
+                                "view_status": "View progress status",
+                                "view_errors_summary": "View errors summary",
                                 "view_statistics": "View statistics"
                         },
                         "forms": {

@@ -3615,5 +3615,23 @@ div.user_data dl.roles dd {
 }
 .top_content_label .col-xs-4:last-child > * {
 	margin-bottom: 0;
+}
+#contents.upload .top_content_label .col-xs-4:last-child > * {
 	margin-top: 5px;
+}
+
+.top_content_label .progress-bar a {
+	color: #fff !important;
+	font-size: 13px;
+	font-weight: 100;
+}
+.top_content_label .progress-bar a:hover {
+	text-decoration: underline !important;
+}
+.top_content_label .progress-bar a > span.fa {
+	margin: 0;
+}
+
+#errors_summary span:last-child {
+	margin-top: 8px;
 }
