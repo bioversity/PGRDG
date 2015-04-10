@@ -361,6 +361,30 @@ a.big_btn {
 	text-align: center;
 	width: 100%;
 }
+#errors_summary .big_btn {
+	color: #333;
+}
+#errors_summary .big_btn:hover,
+#errors_summary .big_btn:not(.collapsed) {
+	border-bottom: #ccc 1px solid;
+}
+#errors_summary .big_btn:hover:after,
+#errors_summary .big_btn:not(.collapsed):after {
+	color: #ccc;
+	content: "\f0d7";
+	float: right;
+	font-family: fontawesome;
+	font-size: 20px;
+	margin-top: -15px;
+}
+#errors_summary .big_btn:focus,
+#errors_summary .big_btn:active {
+	text-decoration: none;
+}
+#errors_summary ul.fa-ul {
+	margin-top: 10px;
+}
+
 a.big_btn .big_btn_title .title {
 	color: #fff;
 	font-family: "Roboto";
@@ -3634,4 +3658,8 @@ div.user_data dl.roles dd {
 
 #errors_summary span:last-child {
 	margin-top: 8px;
+}
+#errors_summary .well h2 {
+	border: 0px none;
+	margin-bottom: 10px;
 }

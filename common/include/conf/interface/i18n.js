@@ -103,6 +103,7 @@ var i18n = {
                                 "title": "Displayed {N} of {TOT} markers",
                                 "message": "The map cannot currently display more than {X} points.<br />This means that it contains only the first {X} points: this limitation will be resolved shortly, in the meanwhile, please reduce your selection."
                         },
+                        "messages": "Messages",
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
                         "no_entries_found": "No entries found",
@@ -178,7 +179,8 @@ var i18n = {
                         "user_permissions": "User permissions",
                         "you_can": "You can",
                         "you": "You",
-                        "waiting": "Waiting..."
+                        "waiting": "Waiting...",
+                        "worksheets": "Worksheets"
                 },
                 "interface": {
                         "btns": {

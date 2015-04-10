@@ -334,6 +334,58 @@ $.get_errors_message = function(options, callback) {
 };
 
 /**
+ * Check transaction status and display result error
+ * @param  object   	           	options  				An object with request options
+ */
+$.get_errors_worksheets = function(options, callback) {
+	var opt = $.extend({
+		session_id: null,
+		user_id: $.get_current_user_id()
+	}, options);
+
+	var data = {};
+	data[kAPI_REQUEST_USER] = opt.user_id,
+	data[kAPI_PARAM_ID] = opt.session_id;
+
+	$.ask_cyphered_to_service({
+		data: data,
+		type: "upload_group_transaction_worksheets",
+		force_renew: true
+	}, function(response) {
+		if (typeof callback == "function") {
+			callback.call(this, response);
+		}
+	});
+};
+
+/**
+ * Check transaction status and display result error
+ * @param  object   	           	options  				An object with request options
+ */
+$.get_errors_by_worksheet = function(options, callback) {
+	var opt = $.extend({
+		session_id: null,
+		user_id: $.get_current_user_id(),
+		worksheet: null
+	}, options);
+console.info(opt);
+	var data = {};
+	data[kAPI_REQUEST_USER] = opt.user_id,
+	data[kAPI_PARAM_ID] = opt.session_id,
+	data[kAPI_PARAM_NODE] = opt.worksheet;
+	console.warn(data);
+	$.ask_cyphered_to_service({
+		data: data,
+		type: "upload_group_transaction_by_worksheet",
+		force_renew: true
+	}, function(response) {
+		if (typeof callback == "function") {
+			callback.call(this, response);
+		}
+	});
+};
+
+/**
  * Toggle transactions progress visibility
  */
 $.fn.collapse_details = function() {
@@ -738,7 +790,8 @@ $.fn.add_previous_upload_session = function(session_id) {
 			status_string_class = "",
 			status_icon = "";
 
-			$(".top_content_label > h1").text(response[kAPI_PARAM_RESPONSE_FRMT_NAME]);
+			$(".top_content_label > h1").append(" " + response[kAPI_PARAM_RESPONSE_FRMT_NAME].toLowerCase());
+			$(".top_content_label > .row > .col-xs-4:last").html("");
 			$("#last_session_menu").html('<span class="text-muted">' + response[kAPI_PARAM_RESPONSE_FRMT_INFO] + '</span>');
 
 			$.each(response[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
@@ -792,41 +845,102 @@ $.fn.add_previous_upload_session = function(session_id) {
 				$collapse.append($collapsed);
 				$h4.append($left_span).append($right_span);
 				$div.append($h4).append($clearfix).append($collapse);
-
 			});
 			$("#contents").removeClass("upload");
 			$("#upload").html("").append($div);
 			$(".btn-details").on("click", function() {
-				var $target = $("#" + $(this).attr("data-target")),
+				var $this_btn = $(this),
+				$target = $("#" + $(this).attr("data-target")),
 				status = $(this).attr("data-status"),
-				string_class = $(this).attr("data-class")
-				$well = $target.find(".well");
+				string_class = $(this).attr("data-class"),
+				$well = $target.find(".well"),
+				$row = $('<div class="row">'),
+				$col1 = $('<div id="message_col" class="col-xs-12 col-sm-6 col-lg-4">'),
+				$col2 = $('<div id="worksheets_col" class="col-xs-12 col-sm-6 col-lg-4">');
+				$row.append($col1).append($col2);
+				$well.append($row);
 
 				$(".btn-details").find("span.fa").switchClass("fa-caret-right", "fa-caret-down");
-				if($.trim($well.html()) == "") {
-					$well.html('<span class="text-muted"><span class="fa fa-refresh fa-spin fa-fw"></span> ' + i18n[lang].messages.loading_details + '</span>');
+				if($.trim($("#message_col").html()) === "") {
+					$("#message_col").html('<span class="text-muted"><span class="fa fa-refresh fa-spin fa-fw"></span> ' + i18n[lang].messages.loading_details + '</span>');
 				}
 
-				$(".collapse").collapse("toggle").on("show.bs.collapse", function () {
-					if($.trim($well.html()) == "") {
+				$target.collapse("toggle").on("show.bs.collapse", function () {
+					if($.trim($well.html()) === "") {
 						$(".btn-details").find("span.fa").switchClass("fa-caret-right", "fa-caret-down");
-						$well.html('<span class="text-muted"><span class="fa fa-refresh fa-spin fa-fw"></span> ' + i18n[lang].messages.loading_details + '</span>');
+						$("#message_col").html('<span class="text-muted"><span class="fa fa-refresh fa-spin fa-fw"></span> ' + i18n[lang].messages.loading_details + '</span>');
 					}
 				}).on("shown.bs.collapse", function () {
-					$.get_errors_message({
-						"session_id": session_id,
-						"status_type": status
-					}, function(res) {
-						var $ul = $('<ul>');
-						$.each(res[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
-							var $li = $('<li class="' + string_class + '">').html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
-							$ul.append($li);
-						});
-						$well.html("<h4>Messages <sup></sup></h4>").append($ul);
-						console.info(res);
+					var $a_message = $('<a>').attr({
+						"class": "big_btn collapsed",
+						"href": "javascript:void(0);",
+						"data-target": "#upload_error_messages"
+					}).on("click", function() {
+						$("#upload_error_messages").collapse("toggle");
 					});
-				}).on("hide.bs.collapse", function () {
-					$(".btn-details").find("span.fa").switchClass("fa-caret-down", "fa-caret-right");
+					var $a_worksheets = $('<a>').attr({
+						"class": "big_btn collapsed",
+						"href": "javascript:void(0);",
+						"data-target": "#upload_error_worksheets"
+					}).on("click", function() {
+						$("#upload_error_worksheets").collapse("toggle");
+					});
+
+					if($("#message_col > a.big_btn").length === 0) {
+						$.get_errors_message({
+							"session_id": session_id,
+							"status_type": status
+						}, function(res) {
+							var $h2 = $('<h2>').html('<span class="fa fa-comment-o fa-fw fa-2x"></span> ' + i18n[lang].messages.messages + ' <sup><small class="text-warning">' + $.obj_len(res[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</small></sup>'),
+							$ul = $('<ul class="collapse fa-ul" id="upload_error_messages" aria-expanded="false" style="height: 0px;">');
+
+							$.each(res[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+								var $li = $('<li class="' + string_class + '">').html('<span class="fa fa-li fa-times"></span>' + v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
+								$ul.append($li);
+							});
+							$a_message.append($h2);
+							$("#message_col").html("").append($a_message).append($ul);
+
+							console.log(res);
+						});
+
+						$.get_errors_worksheets({
+							"session_id": session_id,
+							"status_type": status
+						}, function(res) {
+							var $h2 = $('<h2>').html('<span class="fa fa-files-o fa-fw fa-2x"></span> ' + i18n[lang].messages.worksheets + ' <sup class="' + string_class + '"><small class="text-warning">' + $.obj_len(res[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</small></sup>'),
+							$ul = $('<ul class="collapse fa-ul" id="upload_error_worksheets" aria-expanded="false" style="height: 0px;">');
+
+							$.each(res[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+								// Add a list:
+								// * <a>Properties</a>
+								// * <a>Column</a>
+								var $a_nest = $('<a>').attr({
+									"href": "javascript:void(0);",
+									"class": string_class
+								}).on("click", function() {
+									$.get_errors_by_worksheet({
+										"session_id": session_id,
+										"status_type": status,
+										"worksheet": v[kAPI_PARAM_RESPONSE_FRMT_DISP]
+									}, function(ress) {
+										console.log(ress);
+										// var $uul = $('<ul class="fa-ul">');
+										//
+										// $.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
+										// }
+									});
+								});
+								$a_nest.html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
+								var $li = $('<li>').html('<span class="fa fa-li fa-caret-right"></span>').append($a_nest);
+								$ul.append($li);
+							});
+							$a_worksheets.append($h2);
+							$("#worksheets_col").append($a_worksheets).append($ul);
+						});
+					}
+				}).on("hidden.bs.collapse", function () {
+					$this_btn.find("span.fa").switchClass("fa-caret-down", "fa-caret-right");
 				});
 			});
 		});
