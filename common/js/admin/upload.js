@@ -368,12 +368,11 @@ $.get_errors_by_worksheet = function(options, callback) {
 		user_id: $.get_current_user_id(),
 		worksheet: null
 	}, options);
-console.info(opt);
+
 	var data = {};
 	data[kAPI_REQUEST_USER] = opt.user_id,
 	data[kAPI_PARAM_ID] = opt.session_id,
 	data[kAPI_PARAM_NODE] = opt.worksheet;
-	console.warn(data);
 	$.ask_cyphered_to_service({
 		data: data,
 		type: "upload_group_transaction_by_worksheet",
@@ -877,6 +876,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 						"data-target": "#upload_error_messages"
 					}).on("click", function() {
 						$("#upload_error_messages").collapse("toggle");
+						$(this).toggleClass("collapsed");
 					});
 					var $a_worksheets = $('<a>').attr({
 						"class": "big_btn collapsed",
@@ -884,6 +884,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 						"data-target": "#upload_error_worksheets"
 					}).on("click", function() {
 						$("#upload_error_worksheets").collapse("toggle");
+						$(this).toggleClass("collapsed");
 					});
 
 					if($("#message_col > a.big_btn").length === 0) {
@@ -900,8 +901,6 @@ $.fn.add_previous_upload_session = function(session_id) {
 							});
 							$a_message.append($h2);
 							$("#message_col").html("").append($a_message).append($ul);
-
-							console.log(res);
 						});
 
 						$.get_errors_worksheets({
@@ -917,22 +916,33 @@ $.fn.add_previous_upload_session = function(session_id) {
 								// * <a>Column</a>
 								var $a_nest = $('<a>').attr({
 									"href": "javascript:void(0);",
-									"class": string_class
+									"class": "text-default",
+									"data-target": "#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])
 								}).on("click", function() {
-									$.get_errors_by_worksheet({
-										"session_id": session_id,
-										"status_type": status,
-										"worksheet": v[kAPI_PARAM_RESPONSE_FRMT_DISP]
-									}, function(ress) {
-										console.log(ress);
-										// var $uul = $('<ul class="fa-ul">');
-										//
-										// $.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
-										// }
-									});
+									$("#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])).collapse("toggle");
+									$li.find("span.fa-li:first").toggleClass("fa-caret-right fa-caret-down");
+									if($("#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])).find("li").length == 0) {
+										$("#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])).addClass("text-muted").html('<span class="fa fa-fw fa-refresh fa-spin"></span> ' + i18n[lang].messages.loading_session_status);
+
+										$.get_errors_by_worksheet({
+											"session_id": session_id,
+											"status_type": status,
+											"worksheet": v[kAPI_PARAM_RESPONSE_FRMT_DISP]
+										}, function(ress) {
+											$("#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])).html("");
+											$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
+												if($("#" + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP])).length == 0) {
+													var $lii = $('<li id="' + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '" class="' + string_class + '">').html('<span class="fa fa-li fa-times"></span>' + vv[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + vv[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
+													$("#" + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP])).append($lii);
+												}
+											});
+											$li.append($uul);
+										});
+									}
 								});
-								$a_nest.html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
-								var $li = $('<li>').html('<span class="fa fa-li fa-caret-right"></span>').append($a_nest);
+								$a_nest.html(v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup class="' + string_class + '"><b>' + v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
+								var $uul = $('<ul id="' + $.md5(v[kAPI_PARAM_RESPONSE_FRMT_DISP]) +'" class="collapse fa-ul" aria-expanded="false">'),
+								$li = $('<li>').html('<span class="fa fa-li fa-caret-right"></span>').append($a_nest).append($uul);
 								$ul.append($li);
 							});
 							$a_worksheets.append($h2);
