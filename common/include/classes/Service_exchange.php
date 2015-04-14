@@ -316,6 +316,24 @@ class Service_exchange {
                         		kAPI_PAGING_LIMIT => 100
                                 );
                                 break;
+                        case "upload_group_columns_by_worksheet":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                        		kAPI_PARAM_GROUP_TRANS => array(
+                                                kTAG_TRANSACTION_STATUS => kTYPE_STATUS_ERROR,
+                                                kTAG_TRANSACTION_COLLECTION => $data[kAPI_PARAM_NODE],
+                                                kTAG_TRANSACTION_FIELD => null
+                                        ),
+                        		kAPI_PAGING_SKIP => 0,
+                        		kAPI_PAGING_LIMIT => 100
+                                );
+                                break;
                         case "upload_group_transaction_by_worksheet":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,

@@ -112,7 +112,7 @@ var i18n = {
                         "no_menu_name": "No menu name",
                         "no_title": "No title for this entry",
                         "offsets": "{X} offsets",
-                        "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a> <sup class=\"fa fa-external-link\"></sup>",
+                        "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
                         "removed_item": "Removed {X}",
                         "row_data": {
                                 "page": "Page",

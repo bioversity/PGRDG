@@ -202,6 +202,7 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "upload_group_transaction":
 		case "upload_group_transaction_message":
+		case "upload_group_columns_by_worksheet":
 		case "upload_group_transaction_by_worksheet":
 		case "upload_group_transaction_worksheets":
 			require_once(CLASSES_DIR . "Service_exchange.php");

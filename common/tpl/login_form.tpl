@@ -10,8 +10,8 @@
                                 <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 <input id="login-password" type="password" class="form-control" name="password" placeholder="password" value="" />
                         </div>
-                        <div id="honeypot" class="input-group" style="display: none; visibility: hidden;">
-                                <input type="text" class="form-control" name="honeypot" value="" />
+                        <div id="hp" class="input-group" style="display: none; visibility: hidden;">
+                                <input type="text" class="form-control" name="hp" value="" />
                                 <p class="help-block"><?php print $i18n[$lang]["messages"]["login"]["honeypot_message"]; ?></p>
                         </div>
                         <div class="input-group">

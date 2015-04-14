@@ -46,7 +46,16 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 		$_SESSION["user"][kTAG_ENTITY_ICON] = array(kAPI_PARAM_RESPONSE_FRMT_DISP => $rand_img);
 		$user[kTAG_ENTITY_ICON] = array(kAPI_PARAM_RESPONSE_FRMT_DISP => $rand_img);
 	}
-	$logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+	if(!isset($user[kTAG_ENTITY_PGP_FINGERPRINT])) {
+		$user = array();
+		$logged = false;
+		
+		session_destroy();
+		setcookie("l", "", time()-3600);
+		unset($_COOKIE["l"]);
+	} else {
+		$logged = (md5($user[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP]) == $_COOKIE["l"]) ? true : false;
+	}
 }
 if(!defined("LOGGED")) {
 	define("LOGGED", $logged);

@@ -104,7 +104,7 @@ a:hover {
 	text-decoration: none !important;
 }
 a[target="_blank"]:after {
-	color: #666;
+	opacity: 0.6;
 	content: " \f08e";
 	font-family: "FontAwesome";
 	font-size: smaller;
@@ -112,7 +112,7 @@ a[target="_blank"]:after {
 	vertical-align: super;
 }
 a[href^="https:"]:after {
-	color: #666;
+	opacity: 0.6;
 	content: " \f13e";
 	font-family: "FontAwesome";
 	font-size: smaller;
@@ -120,7 +120,7 @@ a[href^="https:"]:after {
 	vertical-align: super;
 }
 a[href^="mailto:"]:after {
-	color: #666;
+	opacity: 0.6;
 	content: " \f003";
 	font-family: "FontAwesome";
 	font-size: smaller;
@@ -376,6 +376,9 @@ a.big_btn {
 	font-family: fontawesome;
 	font-size: 20px;
 	margin-top: -15px;
+}
+#errors_summary .big_btn:not(.collapsed):hover:after {
+	content: "\f0d8";
 }
 #errors_summary .big_btn:focus,
 #errors_summary .big_btn:active {

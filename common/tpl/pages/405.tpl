@@ -11,4 +11,6 @@ http_response_code(405);
         include("common/tpl/login_form.tpl");
         ?>
 </div>
-<div class="signature"><span class="fa fa-camera"></span> <?php print str_replace(array("{NAME}", "{URL}"), array("Christopher Hogue Thompson", "http://commons.wikimedia.org/wiki/Main_Page"), $i18n[$lang]["messages"]["photo_author_caption"]); ?></div>
+<div class="signature">
+        <span class="fa fa-camera"></span> <?php print str_replace(array("{NAME}", "{URL}"), array("Christopher Hogue Thompson", "http://commons.wikimedia.org/wiki/Main_Page"), $i18n[$lang]["messages"]["photo_author_caption"]); ?>
+</div>

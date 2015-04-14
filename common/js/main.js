@@ -867,10 +867,10 @@
 	 * Log users
 	 */
 	$.login = function() {
-		$("#loader").addClass("decrypt").show();
-		$("#loginform .input-group").removeClass("has-error");
+		$("#login_form .input-group").removeClass("has-error");
 
 		if($("#login-username").val().length >= 4 && $("#login-password").val().length >= 6) {
+			$("#loader").addClass("decrypt").show();
 			$("#loader").show();
 			$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", true);
 			var data = {
@@ -890,8 +890,8 @@
 					type: "login"
 				},
 				success: function(response) {
+					console.warn(response);
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
-						// console.warn(response);
 						$.each(response[kAPI_RESPONSE_RESULTS], function(id, ud) {
 							if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 								storage.remove("pgrdg_user_cache.user_data.current");
@@ -921,8 +921,12 @@
 			});
 		} else {
 			$(".panel-body input, .panel-body label, .panel-body a").attr("disabled", false);
-			$("#loginform .input-group").addClass("has-error");
-			$("#login-username").focus();
+			$("#login_form .input-group").addClass("has-error");
+			$.each($('#login_form input[type="text"], #login_form input[type="password"]'), function(k, v) {
+				if($(this).attr("name") !== "hp" && $(this).val().length === 0) {
+					$(this).focus();
+				}
+			});
 		}
 	};
 

@@ -119,6 +119,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "upload_file":
 					case "upload_group_transaction":
 					case "upload_group_transaction_message":
+					case "upload_group_columns_by_worksheet":
 					case "upload_group_transaction_by_worksheet":
 					case "upload_group_transaction_worksheets":
 					case "upload_session_status":
