@@ -201,6 +201,7 @@ if(isset($_GET["getPublicKey"])) {
 			print $se->send_to_service($output, $action);
 			break;
 		case "upload_group_transaction":
+		case "upload_group_transaction_test":
 		case "upload_group_transaction_message":
 		case "upload_group_columns_by_worksheet":
 		case "upload_group_transaction_by_worksheet":

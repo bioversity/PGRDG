@@ -7,11 +7,7 @@
 */
 
 
-$.get_current_session_id = function() {
-	if($.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id")) {
-		return storage.get("pgrdg_user_cache.user_data.current.last_upload_session_id");
-	}
-};
+$.get_current_session_id = function() { if($.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id")) { return storage.get("pgrdg_user_cache.user_data.current.last_upload_session_id"); } };
 
 /**
  * Get the total of records
@@ -25,28 +21,28 @@ $.get_records = function(session) { return session[kTAG_COUNTER_RECORDS][kAPI_PA
  * @param  object 			session 				The session object
  * @return int         								The number of total processed items
  */
-$.get_processed = function(session) { return session[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_VALUE]; };
+$.get_processed = function(session) { return ((session[kTAG_COUNTER_PROCESSED] !== undefined) ? session[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_VALUE] : 0); };
 
 /**
  * Get the total of validated items
  * @param  object 			session 				The session object
  * @return int         								The number of total validated items
  */
-$.get_validated = function(session) { return session[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_VALUE]; };
+$.get_validated = function(session) { return ((session[kTAG_COUNTER_VALIDATED] !== undefined) ? session[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_VALUE] : 0); };
 
 /**
  * Get the total of skipped items
  * @param  object 			session 				The session object
  * @return int         								The number of total skipped items
  */
-$.get_skipped = function(session) { return session[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_VALUE]; };
+$.get_skipped = function(session) { return ((session[kTAG_COUNTER_SKIPPED] !== undefined) ? session[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_VALUE] : 0); };
 
 /**
  * Get the total of rejected items
  * @param  object 			session 				The session object
  * @return int         								The number of total rejected items
  */
-$.get_rejected = function(session) { return session[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_VALUE]; };
+$.get_rejected = function(session) { return ((session[kTAG_COUNTER_REJECTED] !== undefined) ? session[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_VALUE] : 0); };
 
 /**
  * Get the records object name
@@ -60,28 +56,28 @@ $.get_records_name = function(session) { return session[kTAG_COUNTER_RECORDS][kA
  * @param  object 			session 				The session object
  * @return int         								The number of total processed items
  */
-$.get_processed_name = function(session) { return session[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_NAME]; };
+$.get_processed_name = function(session) { return ((session[kTAG_COUNTER_PROCESSED] !== undefined) ? session[kTAG_COUNTER_PROCESSED][kAPI_PARAM_RESPONSE_FRMT_NAME] : ""); };
 
 /**
  * Get the object name of the total validated items
  * @param  object 			session 				The session object
  * @return int         								The number of total validated items
  */
-$.get_validated_name = function(session) { return session[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_NAME]; };
+$.get_validated_name = function(session) { return ((session[kTAG_COUNTER_VALIDATED] !== undefined) ? session[kTAG_COUNTER_VALIDATED][kAPI_PARAM_RESPONSE_FRMT_NAME] : ""); };
 
 /**
  * Get the object name of the total skipped items
  * @param  object 			session 				The session object
  * @return int         								The number of total skipped items
  */
-$.get_skipped_name = function(session) { return session[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_NAME]; };
+$.get_skipped_name = function(session) { return ((session[kTAG_COUNTER_SKIPPED] !== undefined) ? session[kTAG_COUNTER_SKIPPED][kAPI_PARAM_RESPONSE_FRMT_NAME] : ""); };
 
 /**
  * Get the object name of the total rejected items
  * @param  object 			session 				The session object
  * @return int         								The number of total rejected items
  */
-$.get_rejected_name = function(session) { return session[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_NAME]; };
+$.get_rejected_name = function(session) { return ((session[kTAG_COUNTER_REJECTED] !== undefined) ? session[kTAG_COUNTER_REJECTED][kAPI_PARAM_RESPONSE_FRMT_NAME] : ""); };
 
 /**
  * Get the current progress value
@@ -259,13 +255,12 @@ $.inform_upload_was_done = function(file_path, callback) {
 	data[kAPI_PARAM_FILE_PATH] = file_path;
 	$.ask_cyphered_to_service({
 		data: data,
-		type: "upload_file"
+		type: "upload_file",
+		force_renew: true
 	}, function(response) {
 		console.warn(response);
 		var session_id = response[kAPI_SESSION_ID];
-			if(!$.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id") || $.get_current_session_id() !== response["session_id"]) {
-				storage.set("pgrdg_user_cache.user_data.current.last_upload_session_id", response[kAPI_SESSION_ID]);
-			}
+			storage.set("pgrdg_user_cache.user_data.current.last_upload_session_id", response[kAPI_SESSION_ID]);
 
 		if (typeof callback == "function") {
 			callback.call(this, session_id);
@@ -281,7 +276,6 @@ $.get_session_status = function(session_id, callback) {
 	var data = {};
 	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
 	data[kAPI_PARAM_ID] = session_id;
-	console.log("mmmh", data);
 	$.ask_cyphered_to_service({
 		data: data,
 		type: "upload_session_status",
@@ -296,18 +290,25 @@ $.get_session_status = function(session_id, callback) {
 };
 
 /**
- * Check transaction status and display result error
- * @param  object   	           	options  				An object with request options
+ * Check transaction status and display result
+ * @param  object   	           	options  				An object with query options
  */
-$.get_errors = function(options, callback) {
+$.group_transaction = function(options, callback) {
 	var opt = $.extend({
 		session_id: $.get_current_session_id(),
-		user_id: $.get_current_user_id()
+		user_id: $.get_current_user_id(),
+		params: []
 	}, options);
 
 	var data = {};
-	data[kAPI_REQUEST_USER] = opt.user_id,
+	data[kAPI_REQUEST_USER] = opt.user_id;
 	data[kAPI_PARAM_ID] = opt.session_id;
+	if(opt.session_id !== undefined) {
+		data[kAPI_PARAM_ID] = opt.session_id;
+	}
+	if($.obj_len(opt.params) > 0) {
+		data[kAPI_PARAM_GROUP_TRANS] = opt.params;
+	}
 	$.ask_cyphered_to_service({
 		data: data,
 		type: "upload_group_transaction",
@@ -319,115 +320,12 @@ $.get_errors = function(options, callback) {
 	});
 };
 
-/**
- * Check transaction status and display result error message
- * @param  object   	           	options  				An object with request options
- */
-$.get_errors_message = function(options, callback) {
-	var opt = $.extend({
-		session_id: $.get_current_session_id(),
-		user_id: $.get_current_user_id(),
-		status_type: null
-	}, options);
-
-	var data = {};
-	data[kAPI_REQUEST_USER] = opt.user_id,
-	data[kAPI_PARAM_ID] = opt.session_id,
-	data[kAPI_RESPONSE_STATUS] = opt.status_type;
-	$.ask_cyphered_to_service({
-		data: data,
-		type: "upload_group_transaction_message",
-		force_renew: true
-	}, function(response) {
-		if (typeof callback == "function") {
-			callback.call(this, response);
-		}
-	});
-};
-
-/**
- * Check transaction status and display result error
- * @param  object   	           	options  				An object with request options
- */
-$.get_errors_worksheets = function(options, callback) {
-	var opt = $.extend({
-		session_id: $.get_current_session_id(),
-		user_id: $.get_current_user_id()
-	}, options);
-
-	var data = {};
-	data[kAPI_REQUEST_USER] = opt.user_id,
-	data[kAPI_PARAM_ID] = opt.session_id;
-
-	$.ask_cyphered_to_service({
-		data: data,
-		type: "upload_group_transaction_worksheets",
-		force_renew: true
-	}, function(response) {
-		if (typeof callback == "function") {
-			callback.call(this, response);
-		}
-	});
-};
-
-/**
- * Check transaction status and display result error
- * @param  object   	           	options  				An object with request options
- */
-$.get_errors_by_worksheet = function(options, callback) {
-	var opt = $.extend({
-		session_id: $.get_current_session_id(),
-		user_id: $.get_current_user_id(),
-		worksheet: null
-	}, options);
-
-	var data = {};
-	data[kAPI_REQUEST_USER] = opt.user_id,
-	data[kAPI_PARAM_ID] = opt.session_id,
-	data[kAPI_PARAM_NODE] = opt.worksheet;
-	$.ask_cyphered_to_service({
-		data: data,
-		type: "upload_group_transaction_by_worksheet",
-		force_renew: true
-	}, function(response) {
-		console.log(response);
-		if (typeof callback == "function") {
-			callback.call(this, response);
-		}
-	});
-};
-/**
- * Check transaction status and display result error
- * @param  object   	           	options  				An object with request options
- */
-$.get_columns_by_worksheet = function(options, callback) {
-	var opt = $.extend({
-		session_id: $.get_current_session_id(),
-		user_id: $.get_current_user_id(),
-		worksheet: null
-	}, options);
-
-	var data = {};
-	data[kAPI_REQUEST_USER] = opt.user_id,
-	data[kAPI_PARAM_ID] = opt.session_id,
-	data[kAPI_PARAM_NODE] = opt.worksheet;
-	$.ask_cyphered_to_service({
-		data: data,
-		type: "upload_group_columns_by_worksheet",
-		force_renew: true
-	}, function(response) {
-		console.log(response);
-		if (typeof callback == "function") {
-			callback.call(this, response);
-		}
-	});
-};
-
 $.fn.nest_collapsible = function(options) {
 	var opt = $.extend({
 		v: {},
 		current_status: "",
 		string_class: "text-default",
+		session_id: $.get_current_session_id(),
 		func: "get_errors_by_worksheet"
 	}, options);
 
@@ -442,15 +340,36 @@ $.fn.nest_collapsible = function(options) {
 		$li.find("span.fa-li:first").toggleClass("fa-caret-right fa-caret-down");
 		if($("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).find("li").length == 0) {
 			$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).addClass("text-muted").html('<span class="fa fa-fw fa-refresh fa-spin"></span> ' + i18n[lang].messages.loading_session_status);
-// VIEW HERE
-$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).insertBefore('<h5 class="text-muted" title="' + opt.v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '">' + opt.v[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</h5>');
+			// VIEW HERE
+			$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).insertBefore('<h5 class="text-muted" title="' + opt.v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '">' + opt.v[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</h5>');
+				var params = {};
+				params[kTAG_TRANSACTION_STATUS] = opt.current_status;
+				params[kTAG_TRANSACTION_COLLECTION] = null;
+				$.group_transaction({
+					status_type: opt.current_status,
+					session_id: opt.session_id,
+					params: params
+				}, function(ress) {
+					$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).html("");
 
-			$.get_errors_by_worksheet({
-				"status_type": opt.current_status,
-				"worksheet": opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP]
+					$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
+						if($("#" + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP])).length == 0) {
+							var $lii = $('<li id="' + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '" class="' + opt.string_class + '">').html('<span class="fa fa-li fa-times"></span>' + vv[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + vv[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
+							$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).append($lii);
+						}
+					});
+					$li.append($uul);
+				});
+
+			var wparams = {};
+			wparams[kTAG_TRANSACTION_STATUS] = opt.current_status;
+			wparams[kTAG_TRANSACTION_COLLECTION] = opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP];
+			wparams[kTAG_TRANSACTION_FIELD] = null;
+			$.group_transaction({
+				status_type: opt.current_status,
+				session_id: opt.session_id,
+				params: wparams
 			}, function(ress) {
-				$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).html("");
-
 				$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
 					if($("#" + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP])).length == 0) {
 						var $lii = $('<li id="' + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '" class="' + opt.string_class + '">').html('<span class="fa fa-li fa-times"></span>' + vv[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + vv[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
@@ -459,18 +378,6 @@ $("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).insertBefore('<h5 class="te
 				});
 				$li.append($uul);
 			});
-	$.get_columns_by_worksheet({
-		"status_type": opt.current_status,
-		"worksheet": opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP]
-	}, function(ress) {
-		$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
-			if($("#" + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP])).length == 0) {
-				var $lii = $('<li id="' + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '" class="' + opt.string_class + '">').html('<span class="fa fa-li fa-times"></span>' + vv[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + vv[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
-				$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).append($lii);
-			}
-		});
-		$li.append($uul);
-	});
 		}
 	});
 	$a_nest.html(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup class="' + opt.string_class + '"><b>' + opt.v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
@@ -491,7 +398,7 @@ $.fn.collapse_details = function() {
 };
 
 /**
- * Build the progress bars
+ * Build main upload progress bars
  * @param  string 			session_id 				The id of the current session
  */
 $.build_interface = function(session_id) {
@@ -502,6 +409,7 @@ $.build_interface = function(session_id) {
 	current_status = "",
 	current_status_class = "",
 	current_status_icon = "";
+
 	$.get_session_status(session_id, function(response) {
 		var session = response[kAPI_SESSION];
 		switch($.trim(session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
@@ -873,8 +781,11 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"href": "javascript:void(0);",
 		"title": i18n[lang].interface.btns.view_errors_summary
 	}).on("click", function() {
-		$.get_errors({
-			"session_id": session_id
+		var params = {};
+		params[kTAG_TRANSACTION_STATUS] = null;
+		$.group_transaction({
+			session_id: session_id,
+			params: params
 		}, function(response) {
 			var $div = $('<div id="errors_summary">'),
 			status = "",
@@ -980,9 +891,12 @@ $.fn.add_previous_upload_session = function(session_id) {
 					});
 
 					if($("#message_col > a.big_btn").length === 0) {
-						$.get_errors_message({
-							"session_id": session_id,
-							"status_type": status
+						var params = {};
+						params[kTAG_TRANSACTION_STATUS] = status;
+						params[kTAG_TRANSACTION_MESSAGE] = null;
+						$.group_transaction({
+							session_id: session_id,
+							params: params
 						}, function(res) {
 							var $h2 = $('<h2>').html('<span class="fa fa-comment-o fa-fw fa-2x"></span> ' + i18n[lang].messages.messages + ' <sup><small class="text-warning">' + $.obj_len(res[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</small></sup>'),
 							$ul = $('<ul class="collapse fa-ul" id="upload_error_messages" aria-expanded="false" style="height: 0px;">');
@@ -995,9 +909,12 @@ $.fn.add_previous_upload_session = function(session_id) {
 							$("#message_col").html("").append($a_message).append($ul);
 						});
 
-						$.get_errors_worksheets({
-							"session_id": session_id,
-							"status_type": status
+						var ewparams = {};
+						ewparams[kTAG_TRANSACTION_STATUS] = status;
+						ewparams[kTAG_TRANSACTION_COLLECTION] = null;
+						$.group_transaction({
+							session_id: session_id,
+							params: ewparams
 						}, function(res) {
 							var $h2 = $('<h2>').html('<span class="fa fa-files-o fa-fw fa-2x"></span> ' + i18n[lang].messages.worksheets + ' <sup class="' + string_class + '"><small class="text-warning">' + $.obj_len(res[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</small></sup>'),
 							$ul = $('<ul class="collapse fa-ul" id="upload_error_worksheets" aria-expanded="false" style="height: 0px;">');
@@ -1010,6 +927,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 									v: v,
 									current_status: status,
 									string_class: string_class,
+									session_id: session_id,
 									func: "get_errors_by_worksheet"
 								});
 							});
@@ -1042,7 +960,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		status_string_class = "",
 		current_status_class = "",
 		session = response.session,
-		file_path = session[kTAG_FILE][0].filename[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+		file_path = (session[kTAG_FILE] !== undefined) ? session[kTAG_FILE][0].filename[kAPI_PARAM_RESPONSE_FRMT_VALUE] : "No file uploaded";
 
 		switch($.trim(session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
 			case kTYPE_STATUS_FAILED:
@@ -1134,9 +1052,6 @@ $.fn.add_previous_upload_session = function(session_id) {
 		$last_session_data_col1.html("").append($last_session_data).append($last_session_data_btn_group).append($update_form);
 		// $("#last_session_menu form").update_btn(session_id);
 		console.warn("OK", session, $.has_skipped(session));
-		// $.get_errors(function(errors) {
-		// 	console.log(errors);
-		// });
 		// $last_session_data_col1.html($last_session_data_text);
 	});
 

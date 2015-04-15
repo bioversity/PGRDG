@@ -284,6 +284,13 @@ class Service_exchange {
                                 );
                                 break;
                         case "upload_group_transaction":
+                                // Fix uncompatible javascript null value
+                                foreach($data[kAPI_PARAM_GROUP_TRANS] as $k => $v) {
+                                        if($v == "null" || $v == "") {
+                                                $data[kAPI_PARAM_GROUP_TRANS][$k] = null;
+                                        }
+                                }
+
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
                                         kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
@@ -292,82 +299,11 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array(
-                                                kTAG_TRANSACTION_STATUS => null
-                                        ),
+                                        kAPI_PARAM_GROUP_TRANS => $data[kAPI_PARAM_GROUP_TRANS],
                         		kAPI_PAGING_SKIP => 0,
                         		kAPI_PAGING_LIMIT => 100
                                 );
                                 break;
-                        case "upload_group_transaction_message":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array(
-                                                kTAG_TRANSACTION_STATUS => $data[kAPI_RESPONSE_STATUS],
-                                                kTAG_TRANSACTION_MESSAGE => null
-                                        ),
-                        		kAPI_PAGING_SKIP => 0,
-                        		kAPI_PAGING_LIMIT => 100
-                                );
-                                break;
-                        case "upload_group_columns_by_worksheet":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array(
-                                                kTAG_TRANSACTION_STATUS => kTYPE_STATUS_ERROR,
-                                                kTAG_TRANSACTION_COLLECTION => $data[kAPI_PARAM_NODE],
-                                                kTAG_TRANSACTION_FIELD => null
-                                        ),
-                        		kAPI_PAGING_SKIP => 0,
-                        		kAPI_PAGING_LIMIT => 100
-                                );
-                                break;
-                        case "upload_group_transaction_by_worksheet":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array(
-                                                kTAG_TRANSACTION_STATUS => kTYPE_STATUS_ERROR,
-                                                kTAG_TRANSACTION_COLLECTION => $data[kAPI_PARAM_NODE],
-                                                kTAG_TRANSACTION_ALIAS => null
-                                        ),
-                        		kAPI_PAGING_SKIP => 0,
-                        		kAPI_PAGING_LIMIT => 100
-                                );
-                                break;
-                        case "upload_group_transaction_worksheets":
-                                $querystring = array(
-                                        kAPI_REQUEST_OPERATION => kAPI_OP_GROUP_TRANSACTIONS,
-                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
-                                );
-                                $params = array(
-                                        kAPI_PARAM_LOG_REQUEST => true,
-                                        kAPI_PARAM_LOG_TRACE => true,
-                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                        		kAPI_PARAM_GROUP_TRANS => array(
-                                                kTAG_TRANSACTION_STATUS => kTYPE_STATUS_ERROR,
-                                                kTAG_TRANSACTION_COLLECTION => null
-                                        ),
-                        		kAPI_PAGING_SKIP => 0,
-                        		kAPI_PAGING_LIMIT => 100
-                                );
                                 break;
                         case "upload_session_status":
                                 $querystring = array(
@@ -400,9 +336,9 @@ class Service_exchange {
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
                 // if($action == "upload_file") {
                 //         header("Content-type: text/plain");
-                //         print_r($params);
-                //         print_r($this->receive_from_service($this->frontend->browse($url)));
-                //         exit();
+                        // print_r($url);
+                        // print_r($encoded);
+                        // exit();
                 // }
                 return $this->receive_from_service($this->frontend->browse($url));
         }
