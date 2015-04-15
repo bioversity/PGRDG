@@ -3673,3 +3673,6 @@ div.user_data dl.roles dd {
 	border: 0px none;
 	margin-bottom: 10px;
 }
+#errors_summary .well h5 {
+ 	margin: 0;
+}
