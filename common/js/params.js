@@ -166,19 +166,14 @@ $.is_array = function(item) { return $.isArray(item); };
  * Return current date and time in "yyyy/mm/dd hh:ii:ss" format
  * @return {string}       Current date and time
  */
-$.now = function() {
-        var d = new Date();
-        return d.getFullYear() + "/" + (((d.getMonth() + 1) <= 9) ? "0" : "") + (d.getMonth() + 1) + "/" + ((d.getDate() <= 9) ? "0" : "") + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-}
+$.now = function() { var d = new Date(); return d.getFullYear() + "/" + (((d.getMonth() + 1) <= 9) ? "0" : "") + (d.getMonth() + 1) + "/" + ((d.getDate() <= 9) ? "0" : "") + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds(); };
 
 /**
  * Convert an epoch date to locale formatted date
  * @param       int             date            Epoch date
  * @return      string                          Converted date
  */
-$.epoch2locale = function(date) {
-        return date.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"})
-};
+$.epoch2locale = function(date) { return date.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}); };
 
 
 /**
@@ -278,6 +273,54 @@ $.detect_type = function(value) {
         }
 };
 
+/**
+ * Highlight text for more readability
+ */
+$.highlight = function(string) {
+        $.searched_words = function(text) {
+                if(current_path == "Search") {
+                        var subj = [],
+                        text_search = $("#search_form").val(),
+                        re = new RegExp(text_search, "gi");
+
+                        var quotes = text_search.match(/("[^"]+"|[^"\s]+)/gi);
+                        $.each(quotes, function(k, v) {
+                                if(v !== undefined) {
+                                        if(v.charAt(0) == "-") {
+                                                quotes.splice(k, 1);
+                                        }
+                                        if(v.charAt(0) == '"') {
+                                                quotes[k] = v.replace(/^[^"]*"|".*/gi, "");
+                                        }
+                                }
+                        });
+                        $.each(quotes, function(k, v) {
+                                var ree = new RegExp(v, "gi");
+                                if(text.search(ree) > -1) {
+                                        text = text.replace(ree, function(matched) {
+                                                return '<strong class="text-danger">' + matched + '</strong>';
+                                        });
+                                }
+                                if(text.toLowerCase() == v.toLowerCase()) {
+                                        text = text.replace(text, '<strong class="text-danger">' + text + '</strong>');
+                                }
+                        });
+
+                        return text;
+                } else {
+                        return text;
+                }
+        };
+        // Is a number or a digit
+        if($.isNumeric(string)) {
+                return '<span style="color: #099;">' + string + '</span>';
+        // Is a date
+        } else if (Date.parse(string)) {
+                return '<span style="color: #7c4a4a;">' + string + '</span> <sup class="text-muted"><span class="fa fa-clock-o"></span></sup>';
+        } else {
+                return $.searched_words($.linkify(string));
+        }
+};
 
 /**
  * Detect the date type and returns in readable format

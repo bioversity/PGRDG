@@ -106,6 +106,7 @@ var i18n = {
                         "messages": "Messages",
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
+                        "no_data": "No data to display",
                         "no_entries_found": "No entries found",
                         "no_invited_users_yet": "No users invited, yet",
                         "no_results": "No results",

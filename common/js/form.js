@@ -3629,55 +3629,6 @@
 		};
 
 		/**
-		 * Highlight text for more readability
-		 */
-		$.highlight = function(string) {
-			$.searched_words = function(text) {
-				if(current_path == "Search") {
-					var subj = [],
-					text_search = $("#search_form").val(),
-					re = new RegExp(text_search, "gi");
-
-					var quotes = text_search.match(/("[^"]+"|[^"\s]+)/gi);
-					$.each(quotes, function(k, v) {
-						if(v !== undefined) {
-							if(v.charAt(0) == "-") {
-								quotes.splice(k, 1);
-							}
-							if(v.charAt(0) == '"') {
-								quotes[k] = v.replace(/^[^"]*"|".*/gi, "");
-							}
-						}
-					});
-					$.each(quotes, function(k, v) {
-						var ree = new RegExp(v, "gi");
-						if(text.search(ree) > -1) {
-							text = text.replace(ree, function(matched) {
-								return '<strong class="text-danger">' + matched + '</strong>';
-							});
-						}
-						if(text.toLowerCase() == v.toLowerCase()) {
-							text = text.replace(text, '<strong class="text-danger">' + text + '</strong>');
-						}
-					});
-
-					return text;
-				} else {
-					return text;
-				}
-			};
-			// Is a number or a digit
-			if($.isNumeric(string)) {
-				return '<span style="color: #099;">' + string + '</span>';
-			// Is a date
-			} else if (Date.parse(string)) {
-				return '<span style="color: #7c4a4a;">' + string + '</span> <sup class="text-muted"><span class="fa fa-clock-o"></span></sup>';
-			} else {
-				return $.searched_words($.linkify(string));
-			}
-		};
-
-		/**
 		* Show row data contents
 		* @param  {string} id     Storage id
 		* @param  {string} domain Domain

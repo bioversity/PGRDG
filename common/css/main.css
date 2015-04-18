@@ -1720,6 +1720,9 @@ div#main > #contents {
 	position: fixed;
 	right: 0;
 }
+div#main > #contents.full {
+	left: 45px;
+}
 @media (max-width: 979px) {
 	div#main > #contents {
 		left: 0;
@@ -3675,4 +3678,15 @@ div.user_data dl.roles dd {
 }
 #errors_summary .well h5 {
  	margin: 0;
+}
+#errors_summary li h4 {
+	color: #999;
+	font-family: "Roboto";
+	font-size: 1.2em;
+	font-weight: 100;
+	margin-bottom: 0;
+	margin-left: 10px;
+}
+#errors_summary ul.last_level {
+	margin-left: 20px;
 }

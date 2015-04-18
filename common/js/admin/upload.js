@@ -324,52 +324,39 @@ $.group_transaction = function(options, callback) {
  * Append next error details list
  * @param  object   	           	options  				An object with query options
  */
-$.fn.nest_collapsible = function(options) {
+$.fn.nest_collapsible = function(options, callback) {
 	var opt = $.extend({
+		id: $.makeid(),
+		k: 0,
 		v: {},
-		current_status: "",
 		string_class: "text-default",
 		session_id: $.get_current_session_id(),
-		func: "get_errors_by_worksheet"
+		params: {}
 	}, options);
-
+	console.log(options);
 	var $item = $(this),
+	container_id = opt.id,
 	$li = $item.closest("li"),
 	$a_nest = $('<a>').attr({
 		"href": "javascript:void(0);",
 		"class": "text-default",
-		"data-target": "#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])
+		"data-target": "#" + opt.id,
+		"title": opt.v[kAPI_PARAM_RESPONSE_FRMT_INFO]
 	}).on("click", function() {
-		$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).collapse("toggle");
-		$li.find("span.fa-li:first").toggleClass("fa-caret-right fa-caret-down");
-		if($("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).find("li").length == 0) {
-			$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).addClass("text-muted").html('<span class="fa fa-fw fa-refresh fa-spin"></span> ' + i18n[lang].messages.loading_session_status);
-			// VIEW HERE
-			$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).insertBefore('<h5 class="text-muted" title="' + opt.v[kAPI_PARAM_RESPONSE_FRMT_INFO] + '">' + opt.v[kAPI_PARAM_RESPONSE_FRMT_NAME] + '</h5>');
-			// Show errors by worksheet
-			var params = {};
-			params[kTAG_TRANSACTION_STATUS] = opt.current_status;
-			params[kTAG_TRANSACTION_COLLECTION] = opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP];
-			params[kTAG_TRANSACTION_ALIAS] = null;
-			$.group_transaction({
-				status_type: opt.current_status,
-				session_id: opt.session_id,
-				params: params
-			}, function(ress) {
-				$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).html("");
-
-				$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
-					if($("#" + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP])).length == 0) {
-						var $lii = $('<li id="' + $.md5(vv[kAPI_PARAM_RESPONSE_FRMT_DISP]) + '" class="' + opt.string_class + '">').html('<span class="fa fa-li fa-times"></span>' + vv[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup><b>' + vv[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
-						$("#" + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP])).append($lii);
-					}
-				});
-				$li.append($uul);
-			});
+		if($("#" + opt.id).html().length === 0) {
+			$("#" + opt.id).addClass("text-muted").html('<span class="fa fa-fw fa-refresh fa-spin"></span> ' + i18n[lang].messages.loading_session_status);
 		}
-	});
-	$a_nest.html(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP] + ' <sup class="' + opt.string_class + '"><b>' + opt.v[kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>');
-	var $uul = $('<ul id="' + $.md5(opt.v[kAPI_PARAM_RESPONSE_FRMT_DISP]) +'" class="collapse fa-ul" aria-expanded="false">'),
+		$("#" + opt.id).prev("h4").toggleClass("hidden");
+		$("#" + opt.id).collapse("toggle");
+		$li.find("span.fa-li:first").toggleClass("fa-caret-right fa-caret-down");
+		if($("#" + opt.id).find("li").length == 0) {
+			if(typeof callback == "function") {
+				callback.call(this, opt);
+			}
+		}
+	}).html($.highlight(opt.v[kAPI_PARAM_RESPONSE_FRMT_DOCU][opt.k][kAPI_PARAM_RESPONSE_FRMT_DISP]) + ' <sup class="' + opt.string_class + '"><b>' + opt.v[kAPI_PARAM_RESPONSE_FRMT_DOCU][opt.k][kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>').tooltip({placement: "right"});
+
+	var $uul = $('<ul id="' + opt.id +'" class="collapse fa-ul empty" aria-expanded="false">'),
 	$li = $('<li>').html('<span class="fa fa-li fa-caret-right"></span>').append($a_nest).append($uul);
 	$item.append($li);
 };
@@ -855,23 +842,159 @@ $.fn.add_previous_upload_session = function(session_id) {
 					});
 
 					if($("#worksheets_col > h5.root-title").length === 0) {
-						// Show the list of affected worksheets
-						var ewparams = {};
-						ewparams[kTAG_TRANSACTION_STATUS] = status;
-						ewparams[kTAG_TRANSACTION_COLLECTION] = null;
+						/**
+						 * Show the list of affected worksheets
+						 */
+						var wpr = {};
+						wpr[kTAG_TRANSACTION_STATUS] = status;
+						wpr[kTAG_TRANSACTION_COLLECTION] = null;
 						$.group_transaction({
 							session_id: session_id,
-							params: ewparams
+							params: wpr
 						}, function(res) {
 							var $ul = $('<ul class="collapse fa-ul" id="upload_error_worksheets" aria-expanded="false" style="height: 0px;">');
-
 							$.each(res[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, v) {
+								/**
+								 * Show the list of affected aliases
+								 */
+								var cid = $.makeid(),
+								apr = {};
+								apr[kTAG_TRANSACTION_STATUS] = status;
+								apr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
+								apr[kTAG_TRANSACTION_ALIAS] = null;
 								$ul.nest_collapsible({
-									v: v,
-									current_status: status,
+									id: cid,
+									k: k,
+									v: res,
 									string_class: string_class,
 									session_id: session_id,
-									func: "get_errors_by_worksheet"
+									params: apr
+								}, function(opt) {
+									$.group_transaction({
+										session_id: opt.session_id,
+										params: opt.params
+									}, function(ress) {
+										if($.obj_len(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU]) == 0) {
+											$("#" + cid).removeClass("empty").html('<i class="text-muted">' + i18n[lang].messages.no_data + '</i>');
+										} else {
+											$('<h4 id="' + cid + '_title">').text(ress[kAPI_PARAM_RESPONSE_FRMT_NAME]).insertBefore($("#" + cid));
+											$("#" + cid).html("");
+											if(!$("#" + cid).hasClass("empty")) {
+												$("#" + cid).collapse("toggle");
+											} else {
+												$("#" + cid).removeClass("empty");
+												$.each(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kk, vv) {
+													/**
+													 * Show the list of affected assesment level
+													 */
+													var ccid = $.makeid(),
+													alpr = {};
+													alpr[kTAG_TRANSACTION_STATUS] = status;
+													alpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
+													alpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+													alpr[kTAG_TRANSACTION_VALUE] = null;
+													$("#" + cid).nest_collapsible({
+														id: ccid,
+														k: kk,
+														v: ress,
+														string_class: string_class,
+														session_id: session_id,
+														params: alpr
+													}, function(optt) {
+														$.group_transaction({
+															session_id: opt.session_id,
+															params: optt.params
+														}, function(resss) {
+															if($.obj_len(resss[kAPI_PARAM_RESPONSE_FRMT_DOCU]) == 0) {
+																$("#" + ccid).removeClass("empty").html('<i class="text-muted">' + i18n[lang].messages.no_data + '</i>');
+															} else {
+																$('<h4 id="' + ccid + '_title">').text(resss[kAPI_PARAM_RESPONSE_FRMT_NAME]).insertBefore($("#" + ccid));
+																$("#" + ccid).html("");
+																if(!$("#" + ccid).hasClass("empty")) {
+																	$("#" + ccid).collapse("toggle");
+																} else {
+																	$("#" + ccid).removeClass("empty");
+																	$.each(resss[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kkk, vvv) {
+																		/**
+																		 * Show the list of affected assesment level value
+																		 */
+																		var cccid = $.makeid(),
+																		alvpr = {};
+																		alvpr[kTAG_TRANSACTION_STATUS] = status;
+																		alvpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																		alvpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																		alvpr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																		alvpr[kTAG_TRANSACTION_MESSAGE] = null;
+																		$("#" + ccid).nest_collapsible({
+																			id: cccid,
+																			k: kkk,
+																			v: resss,
+																			string_class: string_class,
+																			session_id: session_id,
+																			params: alvpr
+																		}, function(opttt) {
+																			$.group_transaction({
+																				session_id: opt.session_id,
+																				params: opttt.params
+																			}, function(ressss) {
+																				if($.obj_len(ressss[kAPI_PARAM_RESPONSE_FRMT_DOCU]) == 0) {
+																					$("#" + cccid).removeClass("empty").html('<i class="text-muted">' + i18n[lang].messages.no_data + '</i>');
+																				} else {
+																					$('<h4 id="' + cccid + '_title">').text(ressss[kAPI_PARAM_RESPONSE_FRMT_NAME]).insertBefore($("#" + cccid));
+																					$("#" + cccid).html("");
+																					if(!$("#" + cccid).hasClass("empty")) {
+																						$("#" + cccid).collapse("toggle");
+																					} else {
+																						$("#" + cccid).removeClass("empty");
+																						$.each(ressss[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kkkk, vvvv) {
+																							/**
+																							 * Show the list of affected assesment level error message
+																							 */
+																							var ccccid = $.makeid(),
+																							alempr = {};
+																							alempr[kTAG_TRANSACTION_STATUS] = status;
+																							alempr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																							alempr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																							alempr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																							alempr[kTAG_TRANSACTION_MESSAGE] = vvvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
+																							alempr[kTAG_TRANSACTION_RECORD] = null;
+																							$("#" + cccid).nest_collapsible({
+																								id: ccccid,
+																								k: kkkk,
+																								v: ressss,
+																								string_class: "text-danger",
+																								session_id: session_id,
+																								params: alempr
+																							}, function(optttt) {
+																								// "(N/A)" non ha il docu!
+																								$.group_transaction({
+																									session_id: opt.session_id,
+																									params: optttt.params
+																								}, function(ressss) {
+																									$('<h4 id="' + ccccid + '_title">').text(ressss[kAPI_PARAM_RESPONSE_FRMT_NAME]).insertBefore($("#" + ccccid));
+																									$("#" + ccccid).addClass("last_level").html("");
+
+																									$.each(ressss[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kkkkk, vvvvv) {
+																										var $lim = $('<li>');
+																										$lim.html(vvvvv[kAPI_PARAM_RESPONSE_FRMT_DISP]);
+																										$("#" + ccccid).append($lim);
+																									});
+																								});
+																							});
+																						});
+																					}
+																				}
+																			});
+																		});
+																	});
+																}
+															}
+														});
+													});
+												});
+											}
+										}
+									});
 								});
 							});
 							$root_title.html('<span class="fa fa-files-o fa-fw fa-2x"></span> ' + i18n[lang].messages.worksheets + ' <sup class="' + string_class + '"><small class="text-warning">' + $.obj_len(res[kAPI_PARAM_RESPONSE_FRMT_DOCU]) + '</small></sup>');

@@ -246,11 +246,12 @@ var calc_navbar_height = function() {
 			   // MINIFY MENU
 			    minifyMenu: function($this){
 			    	if (!$.root_.hasClass("menu-on-top")){
-						$.root_.toggleClass("minified");
-						$.root_.removeClass("hidden-menu");
-						$('html').removeClass("hidden-menu-mobile-lock");
-						$this.effect("highlight", {}, 500);
-					}
+					$("#contents").toggleClass("full");
+					$.root_.toggleClass("minified");
+					$.root_.removeClass("hidden-menu");
+					$('html').removeClass("hidden-menu-mobile-lock");
+					$this.effect("highlight", {}, 500);
+				}
 			    },
 
 			    // TOGGLE MENU
