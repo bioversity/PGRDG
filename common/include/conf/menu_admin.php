@@ -56,7 +56,7 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
 
         $m->menu->admin->Manage_user->childs->Invite_user = new stdClass();
         $m->menu->admin->Manage_user->childs->Invite_user->content = array(
-                "icon" => "fa fa-fw ionicons ion-person-add",
+                "icon" => "ionicons ion-person-add",
                 "text" => "Invite new"
         );
         $m->menu->admin->Manage_user->childs->Invite_user->attributes = array(
@@ -86,7 +86,7 @@ $m->menu->admin->Your_data->childs->History->content = array(
 $m->menu->admin->Your_data->childs->History->attributes = array(
         "href" => "./History",
         "title" => "History",
-        "class" => "btn btn-link"
+        "class" => "btn btn-link disabled"
 );
 if(in_array(kTYPE_ROLE_UPLOAD, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $m->menu->admin->Your_data->childs->Upload = new stdClass();
@@ -142,7 +142,7 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
         $m->menu->admin->Manage_contents->childs->Blog->attributes = array(
                 "href" => "./Blog",
                 "title" => "Blog",
-                "class" => "btn btn-link"
+                "class" => "btn btn-link disabled"
         );
 }
 // Append Signout button to end

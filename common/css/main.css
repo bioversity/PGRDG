@@ -3129,6 +3129,27 @@ a.list-group-item.related {
 	color: #ccc;
 	font-weight: 100;
 }
+.top_content_label h1 a.back_btn {
+	color: #fff !important;
+}
+.top_content_label h1 a.back_btn:hover,
+.top_content_label h1 a.back_btn:focus,
+.top_content_label h1 a.back_btn:active,
+.top_content_label h1 a.back_btn:visited {
+	text-decoration: none;
+}
+.top_content_label h1 a.back_btn:before {
+	content: "\f104";
+	font-family: "FontAwesome";
+	color: #666;
+	padding-right: 10px;
+}
+.top_content_label h1 a.back_btn:hover {
+	color: #999 !important;
+}
+.top_content_label h1 a.back_btn:hover:before {
+	color: #fff !important;
+}
 .top_content_label .manager h2 {
 	border: 0 none;
 	color: #aaa;
@@ -3329,13 +3350,16 @@ div.user_data dl.roles dd {
 	box-shadow: 0 0 50px #000 inset;
 	color: rgba(255,255,255,0.3);
 	min-height: 80px;
-	max-height: 180px;
+	max-height: 185px;
 	margin: 5% -15px;
-	padding: 10px 0;
+	padding: 10px 0 23px 0;
 	text-align: center;
 }
 #personal_data + h2 + #managed_scroller {
+	display: -moz-box;
 	margin-top: 10px;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 #managed_scroller.has_data {
 	background: #2d2d2d url("../media/img/loader_2d2d2d.gif") center center no-repeat;
@@ -3348,10 +3372,10 @@ div.user_data dl.roles dd {
 }
 
 #managed_scroller ul.managed_picture {
-	height: 100%;
+	height: 150px;
 	margin: 0;
 	padding: 0;
-	width: 100%;
+	width: auto;
 	overflow: hidden;
 }
 #managed_scroller ul.managed_picture li {
@@ -3649,6 +3673,9 @@ div.user_data dl.roles dd {
 }
 #last_session_menu a:not(.btn):hover {
 	text-decoration: underline !important;
+}
+#last_session_menu a.disabled {
+	cursor: not-allowed;
 }
 .top_content_label .col-xs-4:last-child > * {
 	margin-bottom: 0;

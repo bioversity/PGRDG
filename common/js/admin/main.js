@@ -290,7 +290,15 @@ $.get_current_user_id = function() {
 * @param  bool 			return_data 		If true return the manager (logged) user data instead of its identifier
 * @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
 */
-$.get_manager_id = function() { var manager_id = ""; $.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) { manager_id = $.get_user_id(mdata); }); return manager_id;	};
+$.get_manager_id = function() {
+	// var manager_id = storage.get("pgrdg_user_cache.user_data.current.id");
+	// return $.get_user_id(storage.get("pgrdg_user_cache.user_data.current." + manager_id));
+	var manager_id = "";
+	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
+		manager_id = $.get_user_id(mdata);
+	});
+	return manager_id;
+};
 
 /**
 * Extract the user full name from a given user data object
@@ -736,7 +744,7 @@ $.fn.load_active_users = function(user_data){
 			var $hash = $.url().fsegment(),
 			$managed_picture = $('<ul class="managed_picture list-inline">'),
 			$li = $('<li>');
-
+			console.log(managed_data);
 			$.each(managed_data, function(uid, ud) {
 				var $h1 = $('<h1>'),
 				$a = $('<a>').attr({
@@ -753,7 +761,9 @@ $.fn.load_active_users = function(user_data){
 				$li.attr("maged-user-id", $.get_user_id(ud)).append($h1);
 				$managed_picture.append($li);
 			});
-			$managed_scroller.append($managed_picture);
+			if($managed_scroller.find("ul.managed_picture").length === 0) {
+				$managed_scroller.append($managed_picture);
+			}
 			if($hash[0] !== "Edit") {
 				$managed_scroller.fadeIn(300);
 			}
@@ -1804,70 +1814,7 @@ $(document).ready(function() {
 			});
 			break;
 		case "Upload":
-			$.upload_user_status(function(status) {
-				console.log("OK", status);
-				if(status[kAPI_SESSION_RUNNING]) {
-					$("#upload").added_file();
-
-					$.build_interface(status[kAPI_SESSION_ID]);
-				} else {
-					var session_id = "";
-					// Add previous upload session
-					if(status[kAPI_SESSION_ID] !== undefined && status[kAPI_SESSION_ID] !== null && status[kAPI_SESSION_ID] !== "") {
-						session_id = status[kAPI_SESSION_ID];
-						$("#contents").add_previous_upload_session(status[kAPI_SESSION_ID]);
-					}
-
-					/**
-					 * Generate upload interface
-					 */
-					storage.remove("pgrdg_user_cache.user_data.undefined");
-					$.clean_file_name = function(text) {
-						text = text.replace(/\./g, "");
-						return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
-					};
-
-					// Generate upload form
-					var $div = $('<div>'),
-					$form = $('<form>').attr({"action": "", "class": "dropzone", "id": "dropzone"}),
-					$input_user_id = $('<input>').attr({"type": "hidden", "name": "user_id", "value": $.get_current_user_id()});
-					$form.append($input_user_id);
-					$div.append($form);
-					$("#upload").html($div.html());
-
-					$("#upload form").dropzone({
-						autoDiscover: false,
-						sendingmultiple: false,
-						acceptedFiles: ".xls,.xlsx,.ods",
-						autoProcessQueue: true,
-						clickable: true,
-						dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />Drop file here to upload',
-						init: function() {
-							this.on("processing", function(file) {
-								var extension = file.name.split(".").pop().toLowerCase(),
-								filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension;
-								this.options.url = "/API/?upload=" + filename;
-							});
-						},
-						addedfile: function() {
-							$("#upload").added_file();
-						},
-						uploadprogress: function(file, progress) {
-							$.set_progress_bar(progress);
-						},
-						success: function(file, status){
-							var extension = file.name.split(".").pop().toLowerCase(),
-							filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-							file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
-
-							$.set_progress_bar("pending");
-							$.inform_upload_was_done(file_path, function(session_id) {
-								$.build_interface(session_id);
-							});
-						}
-					});
-				}
-			});
+			$.init_upload();
 			break;
 	}
 });
