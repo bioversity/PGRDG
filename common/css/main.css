@@ -3135,10 +3135,15 @@ a.list-group-item.related {
 .top_content_label h1 a.back_btn:hover,
 .top_content_label h1 a.back_btn:focus,
 .top_content_label h1 a.back_btn:active,
-.top_content_label h1 a.back_btn:visited {
+.top_content_label h1 a.back_btn:visited,
+#upload h1 a.back_btn:hover,
+#upload h1 a.back_btn:focus,
+#upload h1 a.back_btn:active,
+#upload h1 a.back_btn:visited {
 	text-decoration: none;
 }
-.top_content_label h1 a.back_btn:before {
+.top_content_label h1 a.back_btn:before,
+#upload h1 a.back_btn:before {
 	content: "\f104";
 	font-family: "FontAwesome";
 	color: #666;
@@ -3147,8 +3152,14 @@ a.list-group-item.related {
 .top_content_label h1 a.back_btn:hover {
 	color: #999 !important;
 }
+#upload h1 a.back_btn:hover {
+	color: #454545 !important;
+}
 .top_content_label h1 a.back_btn:hover:before {
 	color: #fff !important;
+}
+#upload h1 a.back_btn:hover:before {
+	color: #999 !important;
 }
 .top_content_label .manager h2 {
 	border: 0 none;

@@ -26,7 +26,13 @@ if(empty($_REQUEST) && empty($_POST)) {
 				);
 				break;
 			case "download":
-				$api->force_download(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["download"]));
+				$api->force_download(MEDIA_DIR . base64_decode($_REQUEST["download"]));
+				break;
+			case "download_template":
+				// Uncomment for production version
+				// $api->force_download(base64_decode($_REQUEST["download_template"]));
+				// break;
+				$api->force_download(GNUPG_DIR . base64_decode($_REQUEST["download_template"]));
 				break;
 			case "local":
 				$api->set_content_type("text");
@@ -76,6 +82,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					if(!move_uploaded_file($temp_file, $target_file)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
+						chmod($target_file, 0777);
 						/**
 						 * Remote upload
 						 *

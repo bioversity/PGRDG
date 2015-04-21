@@ -7,6 +7,20 @@
 */
 
 
+/**
+ * Clean the file name for upload purposes
+ * @param  string 			text 					The file name
+ * @return string      								The cleaned file name
+ */
+$.clean_file_name = function(text) {
+	text = text.replace(/\./g, "");
+	return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
+};
+
+/**
+ * Get the current session id
+ * @return string         							The current session id
+ */
 $.get_current_session_id = function() { if($.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id")) { return storage.get("pgrdg_user_cache.user_data.current.last_upload_session_id"); } };
 
 /**
@@ -106,6 +120,26 @@ $.has_skipped = function(session) { return ($.get_skipped(session) > 0) ? true :
  * @return bool
  */
 $.has_rejected = function(session) { return ($.get_rejected(session) > 0) ? true : false; };
+
+/**
+ * Force the download of the file
+ * @param  object 			file_data 				The object with files data
+ */
+$.download_last_uploaded_file = function(file_data) {
+	// Check if was passed the file object or the session id
+	if($.type(file_data) !== "object") {
+		// Is the session id
+
+	}
+	var filename = file_data.filename[kAPI_PARAM_RESPONSE_FRMT_VALUE].split("/").pop(),
+	extension = filename.split(".").pop().toLowerCase(),
+	filename = $.trim($.clean_file_name(filename.replace(extension, ""))) + "." + extension;
+	var file_path = $.get_current_user_id() + "/uploads/" + filename;
+	file_content_type = file_data.contentType[kAPI_PARAM_RESPONSE_FRMT_VALUE],
+	file_length = file_data.length[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+
+	window.location = "API/?download_template=" + $.utf8_to_b64(file_path);
+};
 
 /**
  * Activate dropzone js and allow button to open file browser dialog
@@ -209,7 +243,13 @@ $.set_progress_bar = function(progress, progress_class) {
 $.fn.added_file = function() {
 	var $item = $(this),
 	progress = 0,
-	$h1 = $('<h1>').text("Template upload"),
+	$h1 = $('<h1>'),
+	$a_back = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.init_upload();",
+		"class": "back_btn text-default",
+		"title": i18n[lang].interface.btns.back_to_main_upload
+	}).tooltip({placement: "bottom"}).text(i18n[lang].messages.template_upload);
 	$info_row = $('<div class="row">'),
 	$left_col = $('<div class="col-xs-6 col-sm-7 col-md-6 col-lg-10">'),
 	$righ_col = $('<div class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-lg-2 text-right">'),
@@ -219,7 +259,7 @@ $.fn.added_file = function() {
 	$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
 	// Creating progress bar
 	$progress_supercontainer = $('<div id="progress_supercontainer">'),
-	$progrtess_container_title = $('<h2>').text("Template upload"),
+	$progrtess_container_title = $('<h2>').text(i18n[lang].messages.template_upload),
 	$progress_container = $('<div id="progress_container" class="progress">'),
 	$progress_bar = $('<div>').attr({
 		"style": "width: 100%;",
@@ -260,6 +300,7 @@ $.fn.added_file = function() {
 	$details_row.append($detail_col);
 
 	$item.html("");
+	$h1.append($a_back);
 	$item.append($h1).append($info_row).append($progress_supercontainer).append($details_row);
 	$(".top_content_label").remove();
 	$("#contents").removeClass("upload");
@@ -495,7 +536,7 @@ $.build_interface = function(session_id) {
 		$.each(session[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, transaction) {
 			var current_progress = ((transaction[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(transaction[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100),
 			progress_bar_class = "",
-			icon_size = "fa-2x";
+			icon_size = "fa-1_5x";
 			switch($.trim(transaction[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
 				case kTYPE_STATUS_FAILED:
 				case kTYPE_STATUS_ERROR:
@@ -656,11 +697,13 @@ $.build_interface = function(session_id) {
 			if(status == "success") {
 				$("#details_btn").collapse_details();
 				// Append buttons to end of page
-				var $btn_group = $('<div class="btn-group pull-right">'),
+				var $clearfix = $('<div class="clearfix" id="finished_upload">'),
+				$btn_group = $('<div class="btn-group pull-right">'),
 				$btn_download = $('<a>').attr({
 					"class": "btn btn-default-white",
-					"href": "javascript:void(0)",
-					"onclick": ""
+					"href": "javascript:void(0)"
+				}).on("click", function() {
+					$.download_last_uploaded_file(response[kAPI_SESSION][kTAG_FILE][0]);
 				}).html(i18n[lang].interface.btns.download + ' <span class="fa fa-download"></span>'),
 				$btn_update = $('<a>').attr({
 					"class": "btn btn-orange",
@@ -681,9 +724,10 @@ $.build_interface = function(session_id) {
 				} else {
 				}
 				$btn_group.append($btn_publish);
-				// $("#upload form").update_btn(session_id);
+				$clearfix.append($btn_group).append($update_form);
+				$("#upload").append($clearfix).append("<br /><br />");
 
-				$("#upload").append($btn_group).append($update_form);
+				$("#finished_upload form").update_btn(session_id);
 			} else {
 				var $panel_footer = $('<div class="col-sm-12">'),
 				$clearfix = $('<div class="clearfix">'),
@@ -721,7 +765,6 @@ $.build_interface = function(session_id) {
 		});
 	}
 };
-
 
 /**
  * Load and display the list of all last upload errors
@@ -1062,19 +1105,18 @@ $.fn.add_previous_upload_session = function(session_id) {
 	/**
 	 * #top_content_label update btn
 	 */
-	// $link_update = $('<a>').attr({
-	// 	"href": "javascript:void(0);",
-	// 	"class": "disabled",
-	// 	"id": "update_btn"
-	// }).text(i18n[lang].interface.btns.update),
+	$link_update = $('<a>').attr({
+		"href": "javascript:void(0);",
+                "title": i18n[lang].interface.btns.update,
+		"id": "update_btn"
+	}).html('<span class="fa fa-upload fa-fw"></span>').tooltip({placement: "top"}),
 	/**
 	 * #top_content_label download btn
 	 */
 	$link_download = $('<a>').attr({
 		"href": "javascript:void(0);",
-		"class": "disabled",
                 "title": i18n[lang].interface.btns.download
-	}).html('<span class="fa fa-download fa-fw"></span>'),
+	}).html('<span class="fa fa-download fa-fw"></span>').tooltip({placement: "top"}),
 	/**
 	 * #top_content_label delete btn
 	 */
@@ -1082,7 +1124,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"href": "javascript:void(0);",
 		"class": "disabled",
                 "title": i18n[lang].interface.btns.delete
-	}).html('<span class="fa fa-trash-o fa-fw"></span>');
+	}).html('<span class="fa fa-trash-o fa-fw"></span>').tooltip({placement: "top"});
 
 	/**
 	 * Get the last session status and populate the scrollbar on the right
@@ -1093,8 +1135,11 @@ $.fn.add_previous_upload_session = function(session_id) {
 		status_string = "",
 		status_string_class = "",
 		current_status_class = "",
-		session = response.session,
+		session = response[kAPI_SESSION],
 		file_path = (session[kTAG_FILE] !== undefined) ? session[kTAG_FILE][0].filename[kAPI_PARAM_RESPONSE_FRMT_VALUE] : i18n[lang].messages.no_file_uploaded;
+		$link_download.on("click", function() {
+			$.download_last_uploaded_file(session[kTAG_FILE][0]);
+		});
 
 		switch($.trim(session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
 			case kTYPE_STATUS_FAILED:
@@ -1162,7 +1207,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		$last_session_data_col3.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
 			$last_session_data_progress.removeClass("active").removeClass("progress-bar-striped");
 			$last_session_data_progress.removeClass("progress-bar-warning").addClass(session_status_class);
-			if(!$.get_progress(session) === 0) {
+			if(session[kTAG_FILE] !== undefined) {
 				$errors_btn.append($.get_processed(session) + " " + $.get_processed_name(session) + '<span class="fa fa-angle-right fa-fw"></span> ')
 					   .append($.get_validated(session) + " " + $.get_validated_name(session) + ' - ')
 					   .append('<b>' + $.get_skipped(session) + " " + $.get_skipped_name(session) + '</b> - ')
@@ -1183,12 +1228,12 @@ $.fn.add_previous_upload_session = function(session_id) {
 		// 	    .append($dropdown_li_update)
 		// 	    .append($dropdown_li_delete);
                 $last_session_data_btn_group.append($link_download)
-                                        //     .append($link_update)
+                                            .append($link_update)
                                             .append($link_delete);
 
 		// $last_session_data_btn_group.append($dropdown_ul);
 		$last_session_data_col1.html("").append($last_session_data).append($last_session_data_btn_group).append($update_form);
-		// $("#last_session_menu form").update_btn(session_id);
+		$("#last_session_menu form").update_btn(session_id);
 		// console.warn("OK", session, $.has_skipped(session));
 		// $last_session_data_col1.html($last_session_data_text);
 	});
@@ -1230,10 +1275,6 @@ $.init_upload = function() {
 			* Generate upload interface
 			*/
 			storage.remove("pgrdg_user_cache.user_data.undefined");
-			$.clean_file_name = function(text) {
-				text = text.replace(/\./g, "");
-				return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
-			};
 
 			// Generate upload form
 			var $div = $('<div>'),

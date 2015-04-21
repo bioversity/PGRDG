@@ -164,6 +164,7 @@ var i18n = {
                                         "geo_area_near": "Selected geographic area near {X}"
                                 }
                         },
+                        "template_upload": "Template upload",
                         "text_has_produced_zero_results": "Entered text has produced 0 results",
                         "this_user_will_be_able_to": "This user will be able to:",
                         "undo_user_profile": {
