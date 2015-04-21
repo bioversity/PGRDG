@@ -1143,13 +1143,11 @@ $.fn.add_previous_upload_session = function(session_id) {
 	$btn_checklist = $('<a>').attr({
 		"href": "javascript:void(0);",
 		"onclick": "$.force_download('xls/CWR_Checklist_Template.xlsx')",
-		"class": "btn",
 		"id": "cwr_checklist_btn",
 	}).html('<span class="fa fa-file-excel-o text-success"></span><span class="text-default">CWR Checklist</span>'),
 	$btn_inventory = $('<a>').attr({
 		"href": "javascript:void(0);",
 		"onclick": "$.force_download('xls/CWR_Inventory_Template.xlsx')",
-		"class": "btn",
 		"id": "cwr_inventory_btn"
 	}).html('<span class="fa fa-file-excel-o text-success"></span><span class="text-default">CWR Inventory</span>');
 	$li_checklist.append($btn_checklist);

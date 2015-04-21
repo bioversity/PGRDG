@@ -3676,13 +3676,13 @@ div.user_data dl.roles dd {
 #last_session_menu a:not(.btn) {
 	font-family: "Roboto";
 	font-weight: 100;
-	margin-left: 10px;
+	margin-left: 0;
 	margin-top: 0;
 	font-size: 16px;
 	text-decoration: none !important;
 }
 #last_session_menu a:not(.btn):hover {
-	text-decoration: underline !important;
+	text-decoration: none !important;
 }
 #last_session_menu a.disabled {
 	cursor: not-allowed;
