@@ -12,10 +12,7 @@
  * @param  string 			text 					The file name
  * @return string      								The cleaned file name
  */
-$.clean_file_name = function(text) {
-	text = text.replace(/\./g, "");
-	return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_");
-};
+$.clean_file_name = function(text) { text = text.replace(/\./g, ""); return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_"); };
 
 /**
  * Get the current session id
@@ -121,6 +118,10 @@ $.has_skipped = function(session) { return ($.get_skipped(session) > 0) ? true :
  */
 $.has_rejected = function(session) { return ($.get_rejected(session) > 0) ? true : false; };
 
+
+$.force_download = function(file) {
+	window.location = "API/?download=" + $.utf8_to_b64(file);
+}
 /**
  * Force the download of the file
  * @param  object 			file_data 				The object with files data
@@ -1070,9 +1071,8 @@ $.fn.add_previous_upload_session = function(session_id) {
 	$last_session_box = $('<div class="top_content_label">'),
 	$last_session_box_title = $('<h1>').text(i18n[lang].messages.last_upload),
 	$last_session_data_container = $('<div class="row">'),
-	$last_session_data_col1 = $('<div class="col-xs-4" id="last_session_menu">'),
+	$last_session_data_col1 = $('<div class="col-xs-8" id="last_session_menu">'),
 	$last_session_data_col2 = $('<div class="col-xs-4">'),
-	$last_session_data_col3 = $('<div class="col-xs-4">'),
 	$last_session_data_progress_container = $('<div class="progress">'),
 	$last_session_data_text = $('<span>'),
 	$last_session_data_progress = $('<div>').attr({
@@ -1083,7 +1083,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"aria-valuemax": "100",
 		"style": "width: 100%;"
 	}),
-	$last_session_data_btn_group = $('<div class="btn-group pull-right">'),
+	$last_session_data_btn_group = $('<div class="btn-group">'),
 	$last_session_data = $('<a>').attr({
 		"href": "javascript:void(0);",
 		"onclick": "$(\"#upload\").added_file(); $.build_interface('" + session_id + "');",
@@ -1107,24 +1107,55 @@ $.fn.add_previous_upload_session = function(session_id) {
 	 */
 	$link_update = $('<a>').attr({
 		"href": "javascript:void(0);",
+		"class": "btn btn-transparent btn-orange",
                 "title": i18n[lang].interface.btns.update,
 		"id": "update_btn"
-	}).html('<span class="fa fa-upload fa-fw"></span>').tooltip({placement: "top"}),
-	/**
-	 * #top_content_label download btn
-	 */
-	$link_download = $('<a>').attr({
-		"href": "javascript:void(0);",
-                "title": i18n[lang].interface.btns.download
-	}).html('<span class="fa fa-download fa-fw"></span>').tooltip({placement: "top"}),
+	}).html(i18n[lang].interface.btns.update + ' <span class="fa fa-upload fa-fw"></span>'),
 	/**
 	 * #top_content_label delete btn
 	 */
 	$link_delete = $('<a>').attr({
 		"href": "javascript:void(0);",
-		"class": "disabled",
+		"class": "btn btn-transparent btn-default-white disabled",
                 "title": i18n[lang].interface.btns.delete
-	}).html('<span class="fa fa-trash-o fa-fw"></span>').tooltip({placement: "top"});
+	}).html(i18n[lang].interface.btns.delete + ' <span class="fa fa-trash-o fa-fw"></span>');
+
+	/**
+	 * #top_content_label download btn
+	 */
+	$link_download = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"class": "btn btn-transparent btn-default-white",
+                "title": i18n[lang].interface.btns.download
+	}).html('<span class="fa fa-download fa-fw"></span> ' + i18n[lang].interface.btns.download),
+	/**
+	 * #top_content_label download templates btn
+	 */
+	$link_download_template = $('<a>').attr({
+		"href": "javascript:void(0)",
+		"class": "btn btn-transparent btn-default dropdown-toggle",
+		"data-toggle": "dropdown",
+                "title": i18n[lang].interface.btns.download_template
+	}).html('<span class="fa fa-download"></span> ' + i18n[lang].interface.btns.download_template + ' <span class="fa fa-caret-down"></span>'),
+	$link_download_dropdown = $('<ul class="dropdown-menu pull-right">'),
+	$li_checklist = $('<li>'),
+	$li_inventory = $('<li>'),
+	$btn_checklist = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.force_download('xls/CWR_Checklist_Template.xlsx')",
+		"class": "btn",
+		"id": "cwr_checklist_btn",
+	}).html('<span class="fa fa-file-excel-o text-success"></span><span class="text-default">CWR Checklist</span>'),
+	$btn_inventory = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.force_download('xls/CWR_Inventory_Template.xlsx')",
+		"class": "btn",
+		"id": "cwr_inventory_btn"
+	}).html('<span class="fa fa-file-excel-o text-success"></span><span class="text-default">CWR Inventory</span>');
+	$li_checklist.append($btn_checklist);
+	$li_inventory.append($btn_inventory);
+	$link_download_dropdown.append($li_checklist).append($li_inventory);
+
 
 	/**
 	 * Get the last session status and populate the scrollbar on the right
@@ -1196,7 +1227,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 			status = "danger";
 		}
 
-		$last_session_data.html('<span class="fa fa-file-excel-o fa-fw text-success"></span>' + file_path.split("/").pop());
+		$last_session_data.html('<span class="fa fa-file-excel-o fa-1_5x fa-fw text-success"></span>' + file_path.split("/").pop());
 		$last_session_data.tooltip();
 		$last_session_data_progress.attr({
 			"aria-valuenow": $.get_progress(session),
@@ -1204,7 +1235,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		}).html($.get_progress(session) + "%");
 
 		$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 93%;");
-		$last_session_data_col3.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
+		$last_session_data_col2.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
 			$last_session_data_progress.removeClass("active").removeClass("progress-bar-striped");
 			$last_session_data_progress.removeClass("progress-bar-warning").addClass(session_status_class);
 			if(session[kTAG_FILE] !== undefined) {
@@ -1218,24 +1249,14 @@ $.fn.add_previous_upload_session = function(session_id) {
 			$errors_btn.tooltip();
 			$last_session_data_progress.html($errors_btn);
 
-		// $dropdown_li_view.append($link_view);
-		// $dropdown_li_download.append($link_download);
-		// $dropdown_li_update.append($link_update);
-		// $dropdown_li_delete.append($link_delete);
-		// $dropdown_ul.append($dropdown_li_view)
-		// 	    .append($dropdown_li_download)
-		// 	    .append($dropdown_li_divider)
-		// 	    .append($dropdown_li_update)
-		// 	    .append($dropdown_li_delete);
-                $last_session_data_btn_group.append($link_download)
-                                            .append($link_update)
-                                            .append($link_delete);
+                $last_session_data_btn_group.append($link_update)
+                                            .append($link_delete)
+					    .append($link_download)
+					    .append($link_download_template)
+					    .append($link_download_dropdown);
 
-		// $last_session_data_btn_group.append($dropdown_ul);
 		$last_session_data_col1.html("").append($last_session_data).append($last_session_data_btn_group).append($update_form);
 		$("#last_session_menu form").update_btn(session_id);
-		// console.warn("OK", session, $.has_skipped(session));
-		// $last_session_data_col1.html($last_session_data_text);
 	});
 
 	// Populate the upload interface
@@ -1244,12 +1265,10 @@ $.fn.add_previous_upload_session = function(session_id) {
 	$last_session_data_text.addClass("text-muted").html('<span class="fa fa-fw fa-refresh fa-spin"></span> ' + i18n[lang].messages.loading_session_status);
 	$last_session_data_col1.append($last_session_data_text);
 	$last_session_data_container.append($last_session_data_col1);
-	// Statistics
-	$last_session_data_container.append($last_session_data_col2);
 	// Progress bar
 	$last_session_data_progress_container.append($last_session_data_progress);
-	$last_session_data_col3.append($last_session_data_progress_container);
-	$last_session_data_container.append($last_session_data_col3);
+	$last_session_data_col2.append($last_session_data_progress_container);
+	$last_session_data_container.append($last_session_data_col2);
 	$last_session_box.append($last_session_data_container);
 	$item.prepend($last_session_box);
 };

@@ -203,6 +203,7 @@ var i18n = {
                                 "delete": "Delete",
                                 "details": "Details",
                                 "download": "Download",
+                                "download_template": "Download empty template",
                                 "edit": "Edit",
                                 "edit_profile": "Edit profile",
                                 "empty_link": "Empty link",

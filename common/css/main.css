@@ -3119,10 +3119,10 @@ a.list-group-item.related {
 }
 #contents.upload #last_session_menu a.btn {
 	background-color: transparent;
-	border: 0 none;
+	/*border: 0 none;
 	color: #fff;
 	padding-left: 5px;
-	padding-right: 5px;
+	padding-right: 5px;*/
 }
 
 .top_content_label h1 {
@@ -3674,7 +3674,6 @@ div.user_data dl.roles dd {
 	padding-right: 0;
 }
 #last_session_menu a:not(.btn) {
-	color: #fff;
 	font-family: "Roboto";
 	font-weight: 100;
 	margin-left: 10px;

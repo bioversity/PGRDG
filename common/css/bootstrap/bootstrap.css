@@ -2093,6 +2093,12 @@ fieldset[unclickable] .btn {
 	/* PERSONALIZATIONS
 	*/
 
+        /*BTN TRANSPARENT*/
+        .btn-transparent {
+                background-color: transparent;
+                border: 0px none;
+        }
+
         .btn-text {
                 padding: 0 !important;
         }
@@ -2102,6 +2108,9 @@ fieldset[unclickable] .btn {
 	  background-color: #c1d82f;
 	  border-color: #aec12e;
 	}
+        .btn-transparent.btn-default {
+	  color: #c1d82f;
+	}
 	.btn-default:hover,
 	.btn-default:focus,
 	.btn-default:active,
@@ -2110,6 +2119,13 @@ fieldset[unclickable] .btn {
 	  color: #333;
 	  background-color: #aec12e;
 	  border-color: #9baa2a;
+	}
+        .btn-transparent.btn-default:hover,
+        .btn-transparent.btn-default:focus,
+        .btn-transparent.btn-default:active,
+        .btn-transparent.btn-default.active,
+	.open .dropdown-toggle.btn-transparent.btn-default {
+	  color: #aec12e;
 	}
 	.btn-default:active,
 	.btn-default.active,
@@ -2133,6 +2149,24 @@ fieldset[unclickable] .btn {
 	fieldset[disabled] .btn-default.active {
 	  background-color: #c1d82f;
 	  border-color: #aec12e;
+          cursor: not-allowed;
+	}
+        .btn-transparent.btn-default.disabled,
+        .btn-transparent.btn-default[disabled],
+	fieldset[disabled] .btn-transparent.btn-default,
+        .btn-transparent.btn-default.disabled:hover,
+        .btn-transparent.btn-default[disabled]:hover,
+	fieldset[disabled] .btn-transparent.btn-default:hover,
+        .btn-transparent.btn-default.disabled:focus,
+        .btn-transparent.btn-default[disabled]:focus,
+	fieldset[disabled] .btn-transparent.btn-default:focus,
+        .btn-transparent.btn-default.disabled:active,
+        .btn-transparent.btn-default[disabled]:active,
+	fieldset[disabled] .btn-transparent.btn-default:active,
+        .btn-transparent.btn-default.disabled.active,
+        .btn-transparent.btn-default[disabled].active,
+	fieldset[disabled] .btn-transparent.btn-default.active {
+	  color: #c1d82f;
 	}
 	.btn-default .badge {
 	  color: #666;
@@ -2149,6 +2183,9 @@ fieldset[unclickable] .btn {
 	  background-color: #fff;
 	  border-color: #ccc;
 	}
+        .btn-transparent.btn-default-white {
+	  color: #fff;
+	}
 	.btn-default-white:hover,
 	.btn-default-white:focus,
 	.btn-default-white:active,
@@ -2157,6 +2194,13 @@ fieldset[unclickable] .btn {
 	  color: #333;
 	  background-color: #ebebeb;
 	  border-color: #adadad;
+	}
+        .btn-transparent.btn-default-white:hover,
+        .btn-transparent.btn-default-white:focus,
+        .btn-transparent.btn-default-white:active,
+        .btn-transparent.btn-default-white.active,
+	.open .btn-transparent.dropdown-toggle.btn-default-white {
+	  color: #ebebeb;
 	}
 	.btn-default-white:active,
 	.btn-default-white.active,
@@ -2180,6 +2224,28 @@ fieldset[unclickable] .btn {
 	fieldset[disabled] .btn-default-white.active {
 	  background-color: #fff;
 	  border-color: #ccc;
+          cursor: not-allowed;
+	}
+        .btn-transparent.btn-default-white.disabled,
+        .btn-transparent.btn-default-white[disabled],
+	fieldset[disabled] .btn-transparent.btn-default-white,
+        .btn-transparent.btn-default-white.disabled:hover,
+        .btn-transparent.btn-default-white[disabled]:hover,
+	fieldset[disabled] .btn-transparent.btn-default-white:hover,
+        .btn-transparent.btn-default-white.disabled:focus,
+        .btn-transparent.btn-default-white[disabled]:focus,
+	fieldset[disabled] .btn-transparent.btn-default-white:focus,
+        .btn-transparent.btn-default-white.disabled:active,
+        .btn-transparent.btn-default-white[disabled]:active,
+	fieldset[disabled] .btn-transparent.btn-default-white:active,
+        .btn-transparent.btn-default-white.disabled.active,
+        .btn-transparent.btn-default-white[disabled].active,
+	fieldset[disabled] .btn-transparent.btn-default-white.active {
+	  opacity: 0.5;
+          -moz-opacity: 0.5;
+          -webkit-opacity: 0.5;
+          -o-opacity: 0.5;
+          -ms-opacity: 0.5;
 	}
 	.btn-default-white .badge {
 	  color: #fff;
@@ -2192,6 +2258,9 @@ fieldset[unclickable] .btn {
 	  background-color: #f0f0f0;
 	  border-color: #ccc;
 	}
+        .btn-transparent.btn-default-grey {
+	  color: #f0f0f0;
+	}
 	.btn-default-grey:hover,
 	.btn-default-grey:focus,
 	.btn-default-grey:active,
@@ -2200,6 +2269,13 @@ fieldset[unclickable] .btn {
 	  color: #333;
 	  background-color: #ebebeb;
 	  border-color: #adadad;
+	}
+        .btn-transparent.btn-default-grey:hover,
+        .btn-transparent.btn-default-grey:focus,
+        .btn-transparent.btn-default-grey:active,
+        .btn-transparent.btn-default-grey.active,
+	.open .dropdown-toggle.btn-transparent.btn-default-grey {
+	  color: #ebebeb;
 	}
 	.btn-default-grey:active,
 	.btn-default-grey.active,
@@ -2223,6 +2299,24 @@ fieldset[unclickable] .btn {
 	fieldset[disabled] .btn-default-grey.active {
 	  background-color: #f0f0f0;
 	  border-color: #ccc;
+          cursor: not-allowed;
+	}
+        .btn-transparent.btn-default-grey.disabled,
+        .btn-transparent.btn-default-grey[disabled],
+	fieldset[disabled] .btn-transparent.btn-default-grey,
+        .btn-transparent.btn-default-grey.disabled:hover,
+        .btn-transparent.btn-default-grey[disabled]:hover,
+	fieldset[disabled] .btn-transparent.btn-default-grey:hover,
+        .btn-transparent.btn-default-grey.disabled:focus,
+        .btn-transparent.btn-default-grey[disabled]:focus,
+	fieldset[disabled] .btn-default-grey:focus,
+        .btn-transparent.btn-default-grey.disabled:active,
+        .btn-transparent.btn-default-grey[disabled]:active,
+	fieldset[disabled] .btn-transparent.btn-default-grey:active,
+        .btn-transparent.btn-default-grey.disabled.active,
+        .btn-transparent.btn-default-grey[disabled].active,
+	fieldset[disabled] .btn-transparent.btn-default-grey.active {
+	  color: #f0f0f0;
 	}
 	.btn-default-grey .badge {
 	  color: #fff;
@@ -2235,6 +2329,9 @@ fieldset[unclickable] .btn {
 	  background-color: #f29500;
 	  border-color: #eeaa30;
 	}
+        .btn-transparent.btn-orange {
+                color: #f29500;
+        }
 	.btn-orange:hover,
 	.btn-orange:focus,
 	.btn-orange:active,
@@ -2243,6 +2340,14 @@ fieldset[unclickable] .btn {
 	  color: #fff;
 	  background-color: #eeaa30;
 	  border-color: #f29500;
+	}
+        .btn-transparent.btn-orange:hover,
+        .btn-transparent.btn-orange:focus,
+        .btn-transparent.btn-orange:active,
+        .btn-transparent.btn-orange.active,
+	.open .dropdown-toggle.btn-transparent.btn-orange {
+	  color: #eeaa30;
+	  background-color: 0px none;
 	}
 	.btn-orange:active,
 	.btn-orange.active,
@@ -2266,6 +2371,24 @@ fieldset[unclickable] .btn {
 	fieldset[disabled] .btn-orange.active {
 	  background-color: #f29500;
 	  border-color: #eeaa30;
+          cursor: not-allowed;
+	}
+        .btn-transparent.btn-orange.disabled,
+        .btn-transparent.btn-orange[disabled],
+	fieldset[disabled] .btn-transparent.btn-orange,
+        .btn-transparent.btn-orange.disabled:hover,
+        .btn-transparent.btn-orange[disabled]:hover,
+	fieldset[disabled] .btn-transparent.btn-orange:hover,
+        .btn-transparent.btn-orange.disabled:focus,
+        .btn-transparent.btn-orange[disabled]:focus,
+	fieldset[disabled] .btn-transparent.btn-orange:focus,
+        .btn-transparent.btn-orange.disabled:active,
+        .btn-transparent.btn-orange[disabled]:active,
+	fieldset[disabled] .btn-transparent.btn-orange:active,
+        .btn-transparent.btn-orange.disabled.active,
+        .btn-transparent.btn-orange[disabled].active,
+	fieldset[disabled] .btn-transparent.btn-orange.active {
+	  color: #f29500;
 	}
 	.btn-orange .badge {
 	  color: #fff;
