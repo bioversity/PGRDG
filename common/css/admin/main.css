@@ -11526,12 +11526,12 @@ nav ul ul > li:hover b {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-.form fieldset {
+/*.form fieldset {
   display: block;
   border: none;
   background: rgba(255, 255, 255, 0.9);
   position: relative;
-}
+}*/
 fieldset {
   position: relative;
 }

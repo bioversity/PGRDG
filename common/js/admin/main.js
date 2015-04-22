@@ -247,13 +247,7 @@ $.fn.check_input = function(callback) {
  * Extract current user data from storage
  * @param  object		user_data		The user data object
  */
-$.get_current_user_data = function() {
-	var user_data = {};
-	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(uid, ud) {
-		user_data = ud;
-	});
-	return user_data;
-};
+$.get_current_user_data = function() { return storage.get("pgrdg_user_cache.user_data.current." + $.get_current_user_id()); };
 
 /**
  * Extract the user identifier from a given user data object
@@ -282,7 +276,6 @@ $.get_current_user_id = function() {
 		});
 	}
 	return user_id;
-	console.info(user_id);
 };
 
 /**
@@ -291,13 +284,7 @@ $.get_current_user_id = function() {
 * @return void 			        		(string) The manager (logged) user identifier | (object) The manager (logged) user data
 */
 $.get_manager_id = function() {
-	// var manager_id = storage.get("pgrdg_user_cache.user_data.current.id");
-	// return $.get_user_id(storage.get("pgrdg_user_cache.user_data.current." + manager_id));
-	var manager_id = "";
-	$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-		manager_id = $.get_user_id(mdata);
-	});
-	return manager_id;
+	return $.get_current_user_id();
 };
 
 /**
@@ -679,7 +666,7 @@ $.fn.generate_profile = function(user_data) {
 };
 
 /**
-* Call the user profile generation depending if data of a given user id is store or not in the storage
+* Call the user profile generation depending if data of a given user_id is stored or not in the local storage
 * @param  string		user_id 		The user ID string
 */
 $.fn.load_user_data = function(user_id) {
@@ -704,7 +691,7 @@ $.fn.load_active_users = function(user_data){
 	$.empty_scroller = function(user_data) {
 		var $p = $('<p>'),
 		$invite_user_btn = $('<a>').attr({
-			"href": "javascript:void(0);"
+			"href": "./Invite#" + $.get_current_user_id()
 		}).text(i18n[lang].interface.btns.invite_an_user);
 
 		/**
@@ -878,7 +865,6 @@ $.fn.load_invited_users = function(user_data) {
  * Display dialog and come back to user profile
  */
 $.cancel_user_editing = function() {
-	// console.log($(".well.form input").serialize())
 	apprise(i18n[lang].messages.undo_user_profile.message, {
 		title: i18n[lang].messages.undo_user_profile.title,
 		icon: "fa-warning",
@@ -888,6 +874,177 @@ $.cancel_user_editing = function() {
 		if(r) {
 			var $hash = $.url().fsegment();
 			document.location = "./Profile#" + $hash[1];
+		}
+	});
+};
+
+/**
+* Generate the roles manager box
+* @param  string 		user_id 		The user id to append the request
+* @param  string 		user_roles 		The full user roles object (user_data[kTAG_ROLES])
+*/
+$.fn.roles_manager_box = function(user_id, user_roles) {
+	if(user_id === undefined || user_id === null) {
+		if(user_roles === undefined) {
+			var user_data = $.get_current_user_data();
+			user_id = $.get_user_id(user_data);
+			user_roles = $.get_user_roles(user_data);
+		} else {
+			user_id = "";
+		}
+	}
+	var $item = $(this),
+	$fieldset_r = $('<fieldset>'),
+	$legend_r = $('<legend>').text("Roles"),
+	$ul = $('<ul>').addClass("list-group roles"),
+	roles = [
+		{
+			"text": "Active",
+			"icon": "fa-lock",
+			"description": "The ability to login.",
+			"id": "role-login",
+			"value": kTYPE_ROLE_LOGIN,
+			"data-type": kTYPE_ROLE_LOGIN,
+			"checked": ($.inArray(kTYPE_ROLE_LOGIN, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": true,
+			"data-content": "If this field is set to off, the user will be unable to login"
+		},{
+			"text": "Invite users",
+			"icon": "fa-user-plus",
+			"description": "The ability to compile a user profile and send an invitation.",
+			"id": "role-invite",
+			"value": kTYPE_ROLE_INVITE,
+			"data-type": kTYPE_ROLE_INVITE,
+			"checked": ($.inArray(kTYPE_ROLE_INVITE, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Upload data",
+			"icon": "fa-upload",
+			"description": "The ability to upload data templates.",
+			"id": "role-upload",
+			"value": kTYPE_ROLE_UPLOAD,
+			"data-type": kTYPE_ROLE_UPLOAD,
+			"checked": ($.inArray(kTYPE_ROLE_UPLOAD, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Edit pages",
+			"icon": "fa-file-text-o",
+			"description": "The ability to login.",
+			"id": "role-edit",
+			"value": kTYPE_ROLE_EDIT,
+			"data-type": kTYPE_ROLE_EDIT,
+			"checked": ($.inArray(kTYPE_ROLE_EDIT, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		},{
+			"text": "Manage users",
+			"icon": "fa-group",
+			"description": "The ability to login.",
+			"id": "manage-users",
+			"value": kTYPE_ROLE_USERS,
+			"checked": ($.inArray(kTYPE_ROLE_USERS, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
+			"danger": false
+		}
+	];
+
+	$.each(roles, function(kk, vv) {
+		var $li = $('<li class="list-group-item">'),
+		$dd = $('<div class="pull-right">'),
+		$checkbox = $('<input>').attr({
+			"type": "checkbox",
+			"data-type": vv.value,
+			"id": vv.id,
+			"value": vv.value
+		}),
+		$label = $('<label>').attr("for", vv.id).addClass("text-left"),
+		$label_h3 = $('<h3>'),
+		$label_text = $('<p>').addClass("list-group-item-text").text(vv.description),
+		$label_icon = $('<span>').addClass("fa fa-fw text-muted " + vv.icon);
+
+		$label_h3.append($label_icon).append(vv.text).addClass("list-group-item-heading");
+		$label.append($label_h3);
+		$label.append($label_text);
+
+		if(vv.checked !== undefined && vv.checked !== "" && vv.checked == "checked") {
+			$li.addClass("list-group-item-success");
+			$checkbox.attr("checked", vv.checked);
+		} else {
+			$checkbox.attr("checked", false);
+		}
+		if(vv.danger) {
+			$checkbox.attr({
+				"data-off-color": "danger",
+				"data-content": vv.title
+			});
+			$label_h3.append(' <sup><small class="fa fa-exclamation-triangle text-warning" style="font-size: 12px;"></small></sup>');
+			$li.popover({
+				placement: "top",
+				trigger: "hover",
+				title: '<span class="text-warning"><span class="fa fa-exclamation-triangle"></span> Warning</span>',
+				html: true,
+				content: vv["data-content"],
+				viewport: "#invite_user"
+			});
+		}
+		$li.append($label);
+		$dd.append($checkbox);
+		$li.append($dd);
+		if(vv.value == kTYPE_ROLE_LOGIN) {
+			if(user_id !== $.get_manager_id()) {
+				$ul.append($li);
+			}
+		} else {
+			$ul.append($li);
+		}
+	});
+
+	$fieldset_r.append($legend_r);
+	$fieldset_r.append($ul);
+	$item.append($fieldset_r);
+};
+
+/**
+* Activate the bootstrapSwitch feature on roles manager form
+*/
+$.activate_roles_manager_box = function() {
+	$("[type='checkbox']").bootstrapSwitch({
+		size: "small",
+		labelText: "⋮",
+		onText: "Yes",
+		offText: "No"
+	}).on('switchChange.bootstrapSwitch', function(event, state) {
+		if(event.target.id == "role-login") {
+			var $items = $("#role-invite, #role-upload, #role-edit, #manage-users"),
+			$items_li = $items.closest("li.list-group-item");
+
+			if(!state) {
+				$(this).closest("li.list-group-item").addClass("list-group-item-danger");
+				$items_li.addClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-success")) {
+						$(this).switchClass("list-group-item-success", "list-group-item-not-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", true);
+				$items.bootstrapSwitch("toggleDisabled", true);
+			} else {
+				$(this).closest("li.list-group-item").removeClass("list-group-item-danger");
+				$items_li.removeClass("disabled");
+				$.each($items_li, function(kl, vl) {
+					if($(this).hasClass("list-group-item-not-success")) {
+						$(this).switchClass("list-group-item-not-success", "list-group-item-success");
+					}
+				});
+				$items.bootstrapSwitch("toggleIndeterminate", false);
+				$items.bootstrapSwitch("toggleDisabled", false);
+			}
+		} else {
+			if(state) {
+				$(this).attr("checked", true);
+				$(this).closest("li.list-group-item").addClass("list-group-item-success");
+			} else {
+				$(this).attr("checked", false);
+				$(this).closest("li.list-group-item").removeClass("list-group-item-success");
+			}
 		}
 	});
 };
@@ -1372,9 +1529,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 
 		$.activate_roles_manager_box();
 		$("#loader").hide();
-		// $("a.add_typed").on("click", function() {
-		//
-		// });
 	});
 };
 
@@ -1532,6 +1686,9 @@ $.last_activity = function(full) {
 	return last_activity;
 };
 
+/**
+ * Cyclate $.last_activity ad update its status on the page
+ */
 $.update_last_activity = function() {
 	jQuery.timeago.settings.refreshMillis = 0;
 	$("span.timeago").attr("data-original-title", $.last_activity(true))
@@ -1541,7 +1698,6 @@ $.update_last_activity = function() {
 				html: true
 			 });
 	setTimeout(function(){
-		$("span.timeago").html("");
 		$.update_last_activity();
 	}, 2000);
 }
@@ -1565,7 +1721,6 @@ $.set_breadcrumb = function() {
 	$("#ribbon > ol.breadcrum").remove();
 	$li_home_link.text(current_path);
 	$li_home.html($li_home_link);
-
 	$ol.html($li_home);
 	$.each($hash, function(k, v) {
 		if(v.length == 40) {
@@ -1630,7 +1785,6 @@ $(document).ready(function() {
 				});
 			});
 
-
 			$("#loader").addClass("decrypt").show();
 			$.load_profile();
 			$(window).on("hashchange", function(e) {
@@ -1646,35 +1800,7 @@ $(document).ready(function() {
 			}, function() {
 				// console.log("unhover");
 				$("#upload_btn div").css("visibility", "hidden");
-			});//.on("click", function() {
-			// 	$("#upload_btn_input").trigger("click");
-			// 	console.log("triggered");
-			// }).fileupload({
-			// 	url: url,
-			// 	dataType: "json",
-			// 	autoUpload: true,
-			// 	acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-			// 	maxFileSize: 3000000, // 3 MB
-			// 	// Enable image resizing, except for Android and Opera,
-			// 	// which actually support image resizing, but fail to
-			// 	// send Blob objects via XHR requests:
-			// 	disableImageResize: /Android(?!.*Chrome)|Opera/
-			// 	.test(window.navigator.userAgent),
-			// 	previewMaxWidth: 180,
-			// 	previewMaxHeight: 180,
-			// 	previewCrop: true,
-			// 	add: function (e, data) {
-			// 		data.context = $('<button/>').text('Upload')
-			// 		.appendTo(document.body)
-			// 		.click(function () {
-			// 			data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-			// 			data.submit();
-			// 		});
-			// 	},
-			// 	done: function (e, data) {
-			// 		data.context.text('Upload finished.');
-			// 	}
-			// });
+			});
 			break;
 		case "Invite":
 			$("#loader").show();
