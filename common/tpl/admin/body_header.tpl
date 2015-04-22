@@ -8,7 +8,7 @@
 
                 <!-- Note: The activity badge color changes when clicked and resets the number to 0
                 Suggestion: You may want to set a flag when this happens to tick off all checked messages / notifications -->
-                <span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> 21 </b> </span>
+                <!-- <span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> 21 </b> </span> -->
 
                 <!-- AJAX-DROPDOWN : control this dropdown height, look and feel from the LESS variable file -->
                 <div class="ajax-dropdown">
@@ -51,13 +51,13 @@
         </div>
 
         <!-- #PROJECTS: projects dropdown -->
-        <div class="project-context hidden-xs">
+        <!-- <div class="project-context hidden-xs"> -->
 
-                <span class="label">Projects:</span>
-                <span class="project-selector dropdown-toggle" data-toggle="dropdown">Recent projects <i class="fa fa-angle-down"></i></span>
+                <!-- <span class="label">Projects:</span> -->
+                <!-- <span class="project-selector dropdown-toggle" data-toggle="dropdown">Recent projects <i class="fa fa-angle-down"></i></span> -->
 
                 <!-- Suggestion: populate this list with fetch and push technique -->
-                <ul class="dropdown-menu">
+                <!-- <ul class="dropdown-menu">
                         <li>
                                 <a href="javascript:void(0);">Online e-merchant management system - attaching integration with the iOS</a>
                         </li>
@@ -71,10 +71,10 @@
                         <li>
                                 <a href="javascript:void(0);"><i class="fa fa-power-off"></i> Clear</a>
                         </li>
-                </ul>
+                </ul> -->
                 <!-- end dropdown-menu-->
 
-        </div>
+        <!-- </div> -->
         <!-- end projects dropdown -->
 
         <!-- #TOGGLE LAYOUT BUTTONS -->

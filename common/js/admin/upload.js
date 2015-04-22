@@ -118,10 +118,22 @@ $.has_skipped = function(session) { return ($.get_skipped(session) > 0) ? true :
  */
 $.has_rejected = function(session) { return ($.get_rejected(session) > 0) ? true : false; };
 
-
-$.force_download = function(file) {
-	window.location = "API/?download=" + $.utf8_to_b64(file);
+/**
+ * Remove all path data and return the file name
+ * @param  string 			path 					A path with file
+ * @return string      								The file name
+ */
+$.get_filename = function(path) {
+	var filename = path.split("/").pop(),
+	extension = filename.split(".").pop().toLowerCase();
+	return $.trim($.clean_file_name(filename.replace(extension, ""))) + "." + extension;
 }
+/**
+ * Force the download prompt
+ * @param  string 			file             			The location path of the file to force download
+ */
+$.force_download = function(file) { window.location = "API/?download=" + $.utf8_to_b64(file); $.log_activity("Downloaded file " + $.get_filename(file)); };
+
 /**
  * Force the download of the file
  * @param  object 			file_data 				The object with files data
@@ -130,8 +142,8 @@ $.download_last_uploaded_file = function(file_data) {
 	// Check if was passed the file object or the session id
 	if($.type(file_data) !== "object") {
 		// Is the session id
-
 	}
+
 	var filename = file_data.filename[kAPI_PARAM_RESPONSE_FRMT_VALUE].split("/").pop(),
 	extension = filename.split(".").pop().toLowerCase(),
 	filename = $.trim($.clean_file_name(filename.replace(extension, ""))) + "." + extension;
@@ -139,6 +151,7 @@ $.download_last_uploaded_file = function(file_data) {
 	file_content_type = file_data.contentType[kAPI_PARAM_RESPONSE_FRMT_VALUE],
 	file_length = file_data.length[kAPI_PARAM_RESPONSE_FRMT_VALUE];
 
+	$.log_activity("Downloaded file " + filename);
 	window.location = "API/?download_template=" + $.utf8_to_b64(file_path);
 };
 
@@ -162,6 +175,7 @@ $.fn.update_btn = function(session_id) {
 			});
 		},
 		addedfile: function() {
+			$.log_activity("Started update of session: " + session_id);
 			$("#upload").added_file();
 		},
 		uploadprogress: function(file, progress) {
@@ -800,6 +814,8 @@ $.view_last_upload_errors = function(session_id) {
 		session_id: session_id,
 		params: params
 	}, function(response) {
+		$.log_activity("Displaying last upload with session id: " + session_id);
+
 		// Build the errors summary interface
 		var $div = $('<div id="errors_summary">'),
 		status = "",
@@ -1271,12 +1287,18 @@ $.fn.add_previous_upload_session = function(session_id) {
 	$item.prepend($last_session_box);
 };
 
+/**
+ * Init the main upload interface
+ */
 $.init_upload = function() {
+	$.log_activity("Displaying main upload interface");
+
 	$.upload_user_status(function(status) {
 		if($("#contents .top_content_label").length > 0) {
 			$("#contents .top_content_label").remove();
 		}
 		if(status[kAPI_SESSION_RUNNING]) {
+			$.log_activity("Displaying upload status with session id: " + status[kAPI_SESSION_ID]);
 			$("#upload").added_file();
 
 			$.build_interface(status[kAPI_SESSION_ID]);
@@ -1316,6 +1338,7 @@ $.init_upload = function() {
 					});
 				},
 				addedfile: function() {
+					$.log_activity("Started upload with session id: " + status[kAPI_SESSION_ID]);
 					$("#upload").added_file();
 				},
 				uploadprogress: function(file, progress) {
@@ -1334,4 +1357,4 @@ $.init_upload = function() {
 			});
 		}
 	});
-}
+};

@@ -8,7 +8,7 @@
                 <div class="col-xs-6 col-sm-6 text-right hidden-xs">
                         <div class="txt-color-white inline-block">
                                 <span class="txt-color-blueLight hidden-mobile">
-                                        <span class="fa fa-clock-o"></span> Last activity:&nbsp;<i><span class="timeago" title=""></span></i>
+                                        <span class="fa fa-clock-o"></span> Last activity:&nbsp;<i><span class="timeago" title=""><span class="fa fa-refresh fa-spin"></span></span></i>
                                 </span>
                         </div>
                         <!-- end div-->

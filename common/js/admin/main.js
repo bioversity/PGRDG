@@ -1496,7 +1496,7 @@ $.log_activity = function(action){
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
 		st = storage.get("pgrdg_user_cache.user_activity");
 	}
-	log[action] = $.now();
+	log[$.now()] = action;
 	st.push(log);
 
 	storage.set("pgrdg_user_cache.user_activity", st);
@@ -1515,9 +1515,9 @@ $.last_activity = function(full) {
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
 		last_activity = storage.get("pgrdg_user_cache.user_activity");
 		var l = last_activity[last_activity.length-1];
-		$.each(l, function(label, time) {
+		$.each(l, function(time, label) {
 			if(full) {
-				last_activity = $.ucfirst(label) + ": " + time;
+				last_activity = $.ucfirst(label) + "<br />on " + time;
 			} else {
 				last_activity = time;
 			}
@@ -1531,6 +1531,20 @@ $.last_activity = function(full) {
 	}
 	return last_activity;
 };
+
+$.update_last_activity = function() {
+	jQuery.timeago.settings.refreshMillis = 0;
+	$("span.timeago").attr("data-original-title", $.last_activity(true))
+			 .text($.timeago($.last_activity()))
+			 .tooltip({
+				placement: "top",
+				html: true
+			 });
+	setTimeout(function(){
+		$("span.timeago").html("");
+		$.update_last_activity();
+	}, 2000);
+}
 
 /**
  * Generate the breadcrumb content
@@ -1579,6 +1593,7 @@ $(document).ready(function() {
 	$(window).on("hashchange", function(e) {
 		$.set_breadcrumb();
 	}).trigger("hashchange");
+	$.update_last_activity();
 
 	// $("img[data-url]").each(function() {
 	// 	$.ajax({
@@ -1621,8 +1636,6 @@ $(document).ready(function() {
 			$(window).on("hashchange", function(e) {
 				$.load_profile();
 			}).trigger("hashchange");
-
-			$("span.timeago").attr("title", $.last_activity()).text($.last_activity(true)).timeago();
 
 			$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
 			$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
