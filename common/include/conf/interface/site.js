@@ -1,6 +1,6 @@
 var config = {
         "service": {
-                "url": "http://mauricio.grinfo.private/",
+                "url": "http://gateway.grinfo.private/",
                 "script": "Service.php",
                 "proxy": "API/?type=service&proxy=",
                 "definitions_dir": "/Service/Library/definitions",
@@ -15,6 +15,7 @@ var config = {
                 "developer_mode": false,
                 "default_language": "en",
                 "allow_signup": true,
+                "allow_signin": true,
                 "title": "PGRDG ~ Researching agricultural and forest biodiversity",
                 "html_title": "<acronym title=\"Plant Genetic Resource Diversity Gateway\">PGRDG</acronym> ~ Researching agricultural and forest biodiversity",
                 "project_name": "Plant Genetic Resource Diversity Gateway"

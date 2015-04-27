@@ -63,8 +63,6 @@ if(empty($_REQUEST) && empty($_POST)) {
 				exit();
 				break;
 			case "upload":
-					// print_r($_FILES);
-					// exit();
 				if(!empty($_FILES)) {
 					$interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 					$interface = $interface_config->parse_js_config("config");
@@ -83,29 +81,24 @@ if(empty($_REQUEST) && empty($_POST)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
 						chmod($target_file, 0777);
-						/**
-						 * Remote upload
-						 *
-						 * Working but not implemented for security reasons
-						 */
-						// $url = $interface["service"]["url"] . "uploads/index.php";
-						// // Create a CURLFile object
-						// $cfile = curl_file_create('cats.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','test_name');
-						// $args['file'] = new CurlFile($_FILES['file']['tmp_name'],'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $_FILES['file']['name']);
-						// $args["user_id"] = $_POST["user_id"];
-						//
-						// // Assign POST data
-						// $data = array('test_file' => $_FILES["file"]["tmp_name"]);
-						// $ch = curl_init($url);
-						// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						// curl_setopt($ch, CURLOPT_POST, 1);
-						// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						// curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
-						//
-						// $result = curl_exec($ch);
-						// curl_close($ch);
-						//
-						// print_r($result);
+					}
+
+					$api->set_content_type("text");
+					print "ok";
+				}
+				break;
+			case "upload_image":
+				if(!empty($_FILES)) {
+					$interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
+					$interface = $interface_config->parse_js_config("config");
+
+					$temp_file = $_FILES["file"]["tmp_name"];
+					$target_path = ADMIN_IMAGES;
+					$target_file =  $target_path . "/" . $gv;
+					if(!move_uploaded_file($temp_file, $target_file)) {
+						throw new exception("Can't move the file to " . $target_path);
+					} else {
+						chmod($target_file, 0777);
 					}
 
 					$api->set_content_type("text");

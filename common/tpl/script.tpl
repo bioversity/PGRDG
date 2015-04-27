@@ -103,11 +103,12 @@ if($page->is_backend) {
 		}
 	}
 	</script>
+	<!-- BootstrapSwitch -->
+	<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+	<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 	<?php
 	if(LOGGED) {
 		?>
-		<link href="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
-		<script src="<?php print $domain; ?>/common/js/plugins/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
@@ -188,8 +189,8 @@ if($page->is_backend) {
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
 				<script src="<?php print $domain; ?>/common/js/plugins/leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
 
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/form<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
-		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/form<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
+		<script type="text/javascript" src="<?php print $domain; ?>/common/js/map<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<!--script type="text/javascript" src="<?php //print $domain; ?>/common/js/charts.js"></script-->
 		<?php
 	}

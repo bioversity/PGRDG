@@ -123,6 +123,7 @@
 				var $ul = $('<ul>').addClass("list-group");
 				var dictionary = response[kAPI_RESULTS_DICTIONARY],
 				xref = dictionary[kAPI_DICTIONARY_TAGS],
+				xids = dictionary[kAPI_DICTIONARY_IDS],
 				_tags = response[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_TAG],
 				refs = ref.split(",");
 
@@ -157,30 +158,25 @@
 					$checkbox = $('<span>').addClass("fa fa-fw fa-check-square-o"),
 					l = "",
 					d = "";
-					// console.warn(v, _tags);
 					if (v.indexOf(".") == -1) {
-						l = _tags[xref[v]][kTAG_LABEL];
-						d = (_tags[xref[v]][kTAG_DESCRIPTION] !== undefined) ? _tags[xref[v]][kTAG_DESCRIPTION] : "";
+	// DA VEDERE LA CHIAVE "k" CHE È SBAGLIATA
+						l = _tags[xids[k]][kTAG_LABEL];
+						d = (_tags[xids[k]][kTAG_DESCRIPTION] !== undefined) ? _tags[xref[v]][kTAG_DESCRIPTION] : "";
 						$a_item.append($checkbox).append(" " + l);
 						$li.append($a_item);
 					} else {
-						var tags = v.split("."),
-						label = "";
-						// console.log(tags);
+						var t = v.split("."),
+						tags = t.slice(0, 1),
+						label = "",
+						$uul = $('<ul class="fa-ul">');
 						if(tags.length > 0) {
 							$a_item.append($checkbox);
 							$.each(tags, function(kk, vv) {
-								var $uul = $('<ul class="fa-ul">'),
-								$lii = $('<li>');
+								var $lii = $('<li>').addClass("sub");
 								l = _tags[xref[vv]][kTAG_LABEL];
 								d = (_tags[xref[vv]][kTAG_DESCRIPTION] !== undefined) ? _tags[xref[vv]][kTAG_DESCRIPTION] : "";
-								if(kk > 0) {
-									$lii.append('<i class="fa-li fa fa-angle-right"></i>' + l);
-									$uul.append($lii);
-									$a_item.append($uul);
-								} else {
-									$a_item.append(l);
-								}
+								$li.addClass("sub");
+								$a_item.append(l);
 							});
 						}
 						$li.append($a_item);
@@ -206,6 +202,7 @@
 		form = "",
 		forms = {},
 		html_form = "",
+		// Create an object with cleaned data
 		get_form_data = function(counter, data) {
 			var form_data = {};
 			$.each(data, function(ik, iv) {
@@ -1160,7 +1157,7 @@
 										if(offsets.length > 0) {
 											rt[kAPI_PARAM_OFFSETS] = offsets;
 										}
-										switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+										switch(af_obj[kTAG_TYPE]) {
 											case kTYPE_BOOLEAN:
 												rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
 												break;
@@ -1727,7 +1724,7 @@
 											if(offsets.length > 0) {
 												rt[kAPI_PARAM_OFFSETS] = offsets;
 											}
-											switch(af_obj[kAPI_PARAM_RESPONSE_FRMT_TYPE]) {
+											switch(af_obj[kTAG_TYPE]) {
 												case kTYPE_BOOLEAN:
 													rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
 													break;

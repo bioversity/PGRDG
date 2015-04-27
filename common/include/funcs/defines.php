@@ -47,6 +47,14 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
                  * root:common/media/img/
                  */
                 if(!defined("IMAGES_DIR")) { define("IMAGES_DIR", MEDIA_DIR . "img/"); }
+                        /**
+                         * root:common/media/img/
+                         */
+                        if(!defined("ADMIN_IMAGES_DIR")) { define("ADMIN_IMAGES_DIR", IMAGES_DIR . "admin/"); }
+                                /**
+                                 * root:common/media/img/
+                                 */
+                                if(!defined("ADMIN_IMAGES")) { define("ADMIN_IMAGES", ADMIN_IMAGES_DIR . "user_images/"); }
         /**
          * root:common/tpl/
          */

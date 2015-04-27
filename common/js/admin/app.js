@@ -702,7 +702,7 @@ var calc_navbar_height = function() {
 			$this.find("li").each(function() {
 				if ($(this).find("ul").size() !== 0) {
 					//add the multilevel sign next to the link
-					$(this).find("a:first").append("<b class='collapse-sign'>" + opts.closedSign + "</b>");
+					// $(this).find("a:first").append("<b class='collapse-sign'>" + opts.closedSign + "</b>");
 
 					//avoid jumping to the top of the page when the href is an #
 					if ($(this).find("a:first").attr('href') == "#") {

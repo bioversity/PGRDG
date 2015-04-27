@@ -18,6 +18,8 @@
 	$.ask_to_service = function(options, callback) {
 		var opt = $.extend({
 			storage_group: "pgrdg_cache.local",
+			force_renew: false,
+			loader_repeat: 1,
 			loaderType: "external",
 			loaderText: "",
 			kAPI_REQUEST_OPERATION: "",
@@ -30,7 +32,159 @@
 				}
 			}
 		}, options);
-		var param, param_nob64, verbose_param, object_param = {};
+
+		$.execute_query = function(opt) {
+			if(typeof(opt.loaderType) == "string") {
+				if(!$("#marker_content").is(":visible")) {
+					if(!$("#apprise.service_coffee").is(":visible")) {
+						// if($("#apprise.ask_service").length === 0) {
+						// 	apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
+						// } else {
+						// 	if($("#apprise.ask_service").css("display") == "none") {
+						// 		$("#apprise.ask_service").modal("show");
+						// 	}
+						// }
+					}
+				}
+			} else {
+				var $element = opt.loaderType,
+				element_data = $element.html();
+				$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span>' + ((opt.loaderText !== "") ? opt.loaderText : ""));
+			}
+			if(config.site.developer_mode) {
+				console.log("Fetching:\n", param);
+				console.log("(", param_nob64, ")");
+			}
+			$.cryptAjax({
+				url: (!config.site.developer_mode) ? "API/" : param_nob64,
+				dataType: "json",
+				// dataFilter: function(data, type) {
+				// 	if(type !== "json") {
+				// 		return JSON.parse(data);
+				// 	}
+				// },
+				crossDomain: true,
+				type: (!config.site.developer_mode) ? "POST" : "GET",
+				timeout: 60000,
+				data: {
+					jCryption: $.jCryption.encrypt(param, password),
+					type: "ask_service"
+				},
+				success: function(response) {
+					response.id = $.md5(param);
+					response.extra_data = opt.extra;
+					response.query = {
+						effective: param,
+						nob64: param_nob64,
+						verbose: verbose_param,
+						obj: object_param
+					};
+
+					if($.type(response) == "object") {
+						if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+							if(options.colour !== undefined && options.colour !== null && options.colour === true) {
+								var rgba = {r:255, g:0, b:0, a:1},
+								g = 0,
+								b = 0,
+								h = $.obj_len(response[kAPI_RESPONSE_RESULTS]);
+								i = 0;
+								$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
+									g = Math.round(i/($.obj_len(response[kAPI_RESPONSE_RESULTS]) - 1) * 255);
+									b = Math.round(h/($.obj_len(response[kAPI_RESPONSE_RESULTS])) * 100);
+									h--;
+									i++;
+									rgba.g = g;
+									rgba.b = b;
+									v.colour = $.set_colour({colour: rgba});
+									if(!$.storage_exists("pgrdg_cache.search")) {
+										storage.set("pgrdg_cache.search", {});
+									}
+									storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
+								});
+							}
+							if(opt.storage_group !== "") {
+								storage.set(opt.storage_group + "." + $.md5(param), {
+									"date": {"utc": new Date(), "timestamp": $.now()},
+									"query": {
+										"effective": param,
+										"nob64": param_nob64,
+										"verbose": verbose_param,
+										"obj": object_param
+									},
+									"response": response
+								});
+								if(config.site.developer_mode) {
+									console.group("Storage \"" + opt.storage_group + "\" saved...");
+									console.warn("id: ", $.md5(param));
+									console.warn(param_nob64);
+									console.groupEnd();
+								}
+							}
+							if(typeof(opt.loaderType) == "string") {
+								// $("#apprise.ask_service").modal("hide");
+								callback(response);
+							} else {
+								$element.html(element_data);
+								callback(response);
+							}
+							$("#loader").hide();
+						} else {
+							$("#loader").hide();
+							if(config.site.developer_mode) {
+								console.warn("!!!", param_nob64, response);
+								alert("There's an error in the response:<br />See the console for more informations");
+								console.group("The Service has returned an error");
+									console.warn(param);
+									console.warn(param_nob64);
+									console.warn(verbose_param);
+									console.warn(object_param);
+									console.dir(response);
+									console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
+								console.groupEnd();
+							}
+						}
+					} else {
+						console.warn("!!!", param_nob64, response);
+						alert("There's an error in the response:<br />See the console for more informations");
+						console.group("The Service has returned an error");
+							console.warn(param);
+							console.warn(param_nob64);
+							console.warn(verbose_param);
+							console.warn(object_param);
+							console.dir(response);
+						console.groupEnd();
+					}
+				},
+				error: function(x, t, response) {
+					$("#loader").hide();
+					$.display_error_msg("There was an error in your request, please try again later");
+					if(t === "timeout") {
+						if(config.site.developer_mode) {
+							console.log("got timeout");
+						}
+					} else {
+						if(config.site.developer_mode) {
+							console.warn("!!!", response);
+							console.group("The Service has returned an error");
+								console.warn(param);
+								console.warn(param_nob64);
+								console.warn(verbose_param);
+								console.warn(object_param);
+								console.warn(response);
+							console.groupEnd();
+						}
+						$("#loader").hide();
+						// $("#apprise.ask_service").modal("destroy");
+						$.service_coffee();
+						setTimeout(function() {
+							$.ask_to_service(options, callback);
+						}, 3000);
+					}
+				}
+			});
+		};
+
+		var loader_count = 0, param, param_nob64, verbose_param, object_param = {};
 		if(typeof(options) == "string") {
 			param = kAPI_REQUEST_OPERATION + "=" + $.utf8_to_b64(options) + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
 			param_nob64 = config.service.url + "Service.php?" + kAPI_REQUEST_OPERATION + "=" + options + "&" + kAPI_REQUEST_LANGUAGE + "=" + lang + "&" + kAPI_REQUEST_PARAMETERS + "={}";
@@ -49,7 +203,7 @@
 			object_param[kAPI_REQUEST_PARAMETERS] = opt.parameters[kAPI_REQUEST_PARAMETERS];
 		}
 
-		if($.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "") {
+		if($.storage_exists(opt.storage_group + "." + $.md5(param)) && opt.storage_group !== "" && !opt.force_renew) {
 			var response = storage.get(opt.storage_group + "." + $.md5(param) + ".response");
 			if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 				response.id = $.md5(param);
@@ -88,156 +242,14 @@
 			} else {
 				$("#loader").removeClass("system");
 			}
-			$("#loader").fadeIn(100, function() {
-				if(typeof(opt.loaderType) == "string") {
-					if(!$("#marker_content").is(":visible")) {
-						if(!$("#apprise.service_coffee").is(":visible")) {
-							// if($("#apprise.ask_service").length === 0) {
-							// 	apprise("", {class: "ask_service", title: "Extracting data...", titleClass: "text-info", icon: "fa-circle-o-notch fa-spin", progress: true, allowExit: false});
-							// } else {
-							// 	if($("#apprise.ask_service").css("display") == "none") {
-							// 		$("#apprise.ask_service").modal("show");
-							// 	}
-							// }
-						}
-					}
-				} else {
-					var $element = opt.loaderType,
-					element_data = $element.html();
-					$element.html('<span class="fa fa-fw fa-refresh fa-spin"></span>' + ((opt.loaderText !== "") ? opt.loaderText : ""));
-				}
-				if(config.site.developer_mode) {
-					console.log("Fetching:\n", param);
-					console.log("(", param_nob64, ")");
-				}
-				$.cryptAjax({
-					url: (!config.site.developer_mode) ? "API/" : param_nob64,
-					dataType: "json",
-					// dataFilter: function(data, type) {
-					// 	if(type !== "json") {
-					// 		return JSON.parse(data);
-					// 	}
-					// },
-					crossDomain: true,
-					type: (!config.site.developer_mode) ? "POST" : "GET",
-					timeout: 60000,
-					data: {
-						jCryption: $.jCryption.encrypt(param, password),
-						type: "ask_service"
-					},
-					success: function(response) {
-						response.id = $.md5(param);
-						response.extra_data = opt.extra;
-						response.query = {
-							effective: param,
-							nob64: param_nob64,
-							verbose: verbose_param,
-							obj: object_param
-						};
-
-						if($.type(response) == "object") {
-							if(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-								if(options.colour !== undefined && options.colour !== null && options.colour === true) {
-									var rgba = {r:255, g:0, b:0, a:1},
-									g = 0,
-									b = 0,
-									h = $.obj_len(response[kAPI_RESPONSE_RESULTS]);
-									i = 0;
-									$.each(response[kAPI_RESPONSE_RESULTS], function(k, v){
-										g = Math.round(i/($.obj_len(response[kAPI_RESPONSE_RESULTS]) - 1) * 255);
-										b = Math.round(h/($.obj_len(response[kAPI_RESPONSE_RESULTS])) * 100);
-										h--;
-										i++;
-										rgba.g = g;
-										rgba.b = b;
-										v.colour = $.set_colour({colour: rgba});
-										if(!$.storage_exists("pgrdg_cache.search")) {
-											storage.set("pgrdg_cache.search", {});
-										}
-										storage.set("pgrdg_cache.search.domain_colours." + k, $.set_colour({colour: rgba}));
-									});
-								}
-								if(opt.storage_group !== "") {
-									storage.set(opt.storage_group + "." + $.md5(param), {
-										"date": {"utc": new Date(), "timestamp": $.now()},
-										"query": {
-											"effective": param,
-											"nob64": param_nob64,
-											"verbose": verbose_param,
-											"obj": object_param
-										},
-										"response": response
-									});
-									if(config.site.developer_mode) {
-										console.group("Storage \"" + opt.storage_group + "\" saved...");
-										console.warn("id: ", $.md5(param));
-										console.warn(param_nob64);
-										console.groupEnd();
-									}
-								}
-								if(typeof(opt.loaderType) == "string") {
-									// $("#apprise.ask_service").modal("hide");
-									callback(response);
-								} else {
-									$element.html(element_data);
-									callback(response);
-								}
-								$("#loader").hide();
-							} else {
-								$("#loader").hide();
-								if(config.site.developer_mode) {
-									console.warn("!!!", param_nob64, response);
-									alert("There's an error in the response:<br />See the console for more informations");
-									console.group("The Service has returned an error");
-										console.warn(param);
-										console.warn(param_nob64);
-										console.warn(verbose_param);
-										console.warn(object_param);
-										console.dir(response);
-										console.error(response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE]);
-									console.groupEnd();
-								}
-							}
-						} else {
-							console.warn("!!!", param_nob64, response);
-							alert("There's an error in the response:<br />See the console for more informations");
-							console.group("The Service has returned an error");
-								console.warn(param);
-								console.warn(param_nob64);
-								console.warn(verbose_param);
-								console.warn(object_param);
-								console.dir(response);
-							console.groupEnd();
-						}
-					},
-					error: function(x, t, response) {
-						$("#loader").hide();
-						$.display_error_msg("There was an error in your request, please try again later");
-						if(t === "timeout") {
-							if(config.site.developer_mode) {
-								console.log("got timeout");
-							}
-					        } else {
-							if(config.site.developer_mode) {
-								console.warn("!!!", response);
-								console.group("The Service has returned an error");
-									console.warn(param);
-									console.warn(param_nob64);
-									console.warn(verbose_param);
-									console.warn(object_param);
-									console.warn(response);
-								console.groupEnd();
-							}
-							$("#loader").hide();
-							// $("#apprise.ask_service").modal("destroy");
-							$.service_coffee();
-							setTimeout(function() {
-								$.ask_to_service(options, callback);
-							}, 3000);
-						}
-					}
+			if(loader_count >= opt.loader_repeat) {
+				$.execute_query(opt);
+			} else {
+				$("#loader").fadeIn(100, function() {
+					$.execute_query(opt);
+					loader_count++;
 				});
-			});
+			}
 		}
 	};
 
@@ -1312,6 +1324,7 @@
 
 		var objp = {};
 		objp.storage_group = "pgrdg_cache.ask";
+		objp.force_renew = true;
 		objp.loaderType = $("#statistics_loader");
 		objp.loaderText = "Acquiring data...";
 		objp[kAPI_REQUEST_OPERATION] = kAPI_OP_LIST_DOMAINS;
@@ -1331,6 +1344,11 @@
 					stats.push(statistics[kAPI_PARAM_RESPONSE_FRMT_NAME] + ': <b>' + $.number(statistics[kAPI_PARAM_RESPONSE_COUNT]) + '</b>');
 				});
 				$("#statistics_loader").html(stats.join("<br />"));
+
+				setTimeout(function() {
+					console.log("ok");
+					$.get_statistics();
+				}, 1000);
 			}
 		});
 	};

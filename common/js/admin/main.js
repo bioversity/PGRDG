@@ -1240,21 +1240,17 @@ $.fn.load_user_data_in_form = function(user_id) {
 		$form_col = $('<div class="col-xs-12 col-sm-8 col-lg-6 well form" id="user_data_container">'),
 		$fieldset_pd = $('<fieldset>'),
 		$legend_pd = $('<legend>').text("Personal data"),
-		$picture_shade = $('<div>'),
-		$picture_shade_content = $('<span class="fa fa-pencil"></span>'),
 		$picture_upload_btn = $('<a id="upload_btn" href="javascript:void(0);">'),
-		$picture_upload_btn_input = $('<input style="display: none;" type="file" multiple="" class="upload_btn_input" href="javascript:void(0);">'),
+		$picture_upload_btn_form = $('<form action="" class="dropzone hidden" id="dropzone"></form>'),
 		$picture_img = $('<img>').attr({
 			"src": $.get_user_img_src(user_data),
 			"alt": "me"
 		}),
 		$picture_div = $('<div id="picture">'),
 		$static_data = $('<small class="help-block">');
-		$picture_shade.append($picture_shade_content);
-		$picture_upload_btn.append($picture_shade);
 		$picture_upload_btn.append($picture_img);
 		$picture_div.append($picture_upload_btn);
-		$picture_div.append($picture_upload_btn_input);
+		$picture_div.append($picture_upload_btn_form);
 		$picture_col.append($picture_div);
 		$fieldset_pd.append($legend_pd);
 		$item.html("");
@@ -1529,6 +1525,42 @@ $.fn.load_user_data_in_form = function(user_id) {
 
 		$.activate_roles_manager_box();
 		$("#loader").hide();
+		$("#picture_container form").dropzone({
+			autoDiscover: false,
+			sendingmultiple: false,
+			acceptedFiles: ".jpg,.jpeg,.png,.gif",
+			autoProcessQueue: true,
+			clickable: "#upload_btn",
+			dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />' + i18n[lang].messages.drop_file_here,
+			init: function() {
+				this.on("processing", function(file) {
+					var extension = file.name.split(".").pop().toLowerCase(),
+					filename = $.get_current_user_id() + "." + extension;
+					this.options.url = "/API/?upload_image=" + filename;
+				});
+				this.on("sending", function(file, xhr, formData) {
+					formData.append("user_id", $.get_current_user_id()); // Append all the additional input data of your form here!
+				});
+			},
+			addedfile: function() {
+				$.log_activity("Started upload of personal picture");
+				// $("#upload").added_file();
+			},
+			uploadprogress: function(file, progress) {
+				console.log(progress);
+				// $.set_progress_bar(progress);
+			},
+			success: function(file, status){
+				// var extension = file.name.split(".").pop().toLowerCase(),
+				// filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
+				// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+				//
+				// $.set_progress_bar("pending");
+				// $.inform_upload_was_done(file_path, function(session_id) {
+				// 	$.build_interface(session_id);
+				// });
+			}
+		});
 	});
 };
 
@@ -1793,14 +1825,6 @@ $(document).ready(function() {
 
 			$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
 			$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
-
-			$("#upload_btn").hover(function() {
-				// console.log("hover");
-				$("#upload_btn div").css("visibility", "visible");
-			}, function() {
-				// console.log("unhover");
-				$("#upload_btn div").css("visibility", "hidden");
-			});
 			break;
 		case "Invite":
 			$("#loader").show();

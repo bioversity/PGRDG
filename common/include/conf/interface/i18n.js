@@ -33,7 +33,8 @@ var i18n = {
                                 "theres_an_error": {
                                         "title": "Oops... something gone wrong",
                                         "message": "There's an error in your request.<br />Please try again later or contact the administrator."
-                                }
+                                },
+                                "you_cannot_login": "Login function is temporary disabled.<br />Please, try again later"
                         },
                         "forms": {
                                 "return_btn_disabled": "Return button disabled",

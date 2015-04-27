@@ -49,7 +49,7 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 	if(!isset($user[kTAG_ENTITY_PGP_FINGERPRINT])) {
 		$user = array();
 		$logged = false;
-		
+
 		session_destroy();
 		setcookie("l", "", time()-3600);
 		unset($_COOKIE["l"]);
@@ -88,12 +88,18 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 	<head>
 		<?php include(TEMPLATE_DIR . "head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . implode($page->class, " ") . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"]) ? "e405" : implode($page->class, " ")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		if(strtolower($page->current) == "signin") {
-			include(TEMPLATE_DIR . "pages/Signin.tpl");
-			include(TEMPLATE_DIR . "script.tpl");
-			include(TEMPLATE_DIR . "loader.tpl");
+			if($interface["site"]["allow_signin"]) {
+				include(TEMPLATE_DIR . "pages/Signin.tpl");
+				include(TEMPLATE_DIR . "script.tpl");
+				include(TEMPLATE_DIR . "loader.tpl");
+			} else {
+				include(TEMPLATE_DIR . "pages/405_nologin.tpl");
+				include(TEMPLATE_DIR . "loader.tpl");
+				include(TEMPLATE_DIR . "script.tpl");
+			}
 		} else if(strtolower($page->current) == "signout") {
 			include(TEMPLATE_DIR . "script.tpl");
 			include(TEMPLATE_DIR . "pages/Signout.tpl");

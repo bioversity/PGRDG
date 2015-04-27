@@ -2724,6 +2724,12 @@ label.checkbox {
 #accordion .panel-heading a.pull-left + h3 {
 	font-size: 16px;
 }
+#accordion .panel-heading a.pull-left + h3 sup + div ul.list-group {
+	margin: 0;
+}
+#accordion .panel-heading a.pull-left + h3 sup + div ul.list-group li.sub {
+	padding-left: 30px;
+}
 
 #accordion .list-group-item,
 .popover .list-group-item {
@@ -3316,16 +3322,6 @@ div.user_data dl.roles dd {
 #picture > a:hover {
 	text-decoration: none;
 }
-#upload_btn > div {
-	background-color: rgba(0, 0, 0, 0.5);
-	position: relative;
-	display: table;
-	width: 100%;
-	height: 100%;
-	color: rgba(255, 255, 255, 0.5);
-	visibility: hidden;
-	z-index: 1;
-}
 #upload_btn > div > span {
 	display: table-cell;
 	vertical-align: middle;
@@ -3342,6 +3338,20 @@ div.user_data dl.roles dd {
 	width: 184px;
 	height: 184px;
 }
+#picture > #upload_btn:hover:before {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.5);
+	content: "\f040";
+	display: block;
+	font-family: "FontAwesome";
+	font-size: 123px;
+	height: 100%;
+	position: relative;
+	text-align: center;
+	width: 100%;
+	z-index: 1;
+}
+
 #upload_btn > img {
 	position: absolute;
 	top: 0;

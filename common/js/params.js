@@ -352,6 +352,13 @@ $.right_date = function(date) {
 }
 
 /**
+ * Clean the file name for upload purposes
+ * @param  string 			text 					The file name
+ * @return string      								The cleaned file name
+ */
+$.clean_file_name = function(text) { text = text.replace(/\./g, ""); return text.replace(/\//g, "-").replace(/\:/g, "~").replace(/\s/g, "_"); };
+
+/**
  * Parse query string paramaters into an object.
  * taken from https://gist.github.com/kares/956897
  *
