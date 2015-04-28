@@ -103,7 +103,7 @@ body.activation {
 a:hover {
 	text-decoration: none !important;
 }
-a[target="_blank"]:after {
+a[target="_blank"]:not(.nofx):after {
 	opacity: 0.6;
 	content: " \f08e";
 	font-family: "FontAwesome";
@@ -111,7 +111,7 @@ a[target="_blank"]:after {
 	text-decoration: none !important;
 	vertical-align: super;
 }
-a[href^="https:"]:after {
+a[href^="https:"]:not(.nofx):after {
 	opacity: 0.6;
 	content: " \f13e";
 	font-family: "FontAwesome";
@@ -119,7 +119,7 @@ a[href^="https:"]:after {
 	text-decoration: none !important;
 	vertical-align: super;
 }
-a[href^="mailto:"]:after {
+a[href^="mailto:"]:not(.nofx):after {
 	opacity: 0.6;
 	content: " \f003";
 	font-family: "FontAwesome";
@@ -3311,6 +3311,25 @@ div.user_data dl.roles dd {
 	height: 190px;
 	padding: 2px;
 	width: 190px;
+}
+#picture.error {
+	box-shadow: 0 0 16px #ff0000 !important;
+}
+#picture.loading::before {
+	background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-size: 30px 30px;
+	content: "";
+	height: 182px;
+	left: 19px;
+	position: absolute;
+	top: 4px;
+	width: 182px;
+	z-index: 1;
+
+	-webkit-animation: moveStripes 3s linear infinite;
+	-moz-animation: moveStripes 3s linear infinite;
+	-o-animation: moveStripes 3s linear infinite;
+	animation: moveStripes 3s linear infinite;
 }
 #picture > a, #picture > span {
 	border: transparent 1px solid;

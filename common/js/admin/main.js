@@ -17,11 +17,20 @@
  * Display a password requiring dialog before save data
  * @param  function		callback	 	A function to execute if password is correct
  */
-$.require_password = function(callback) {
-	var s = storage.get("pgrdg_user_cache.user_data.current");
-	$.each(s, function(id, ud) {
-		var username = ud[kTAG_CONN_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP];
-		apprise(i18n[lang].messages.insert_password.message, {
+$.require_password = function(options, callback) {
+	if($.type(options) == "function") {
+		callback = options;
+	}
+	var opt = $.extend({
+		current_attempt: 1,
+		status: ""
+	}, options);
+
+	var username = $.get_user_username($.get_current_user_data()),
+	max_attempts = 3;
+
+	if($.cookie("iv") === undefined || $.cookie("iv") === null) {
+		apprise(i18n[lang].messages.insert_password.message + opt.status, {
 			title: i18n[lang].messages.insert_password.title,
 			icon: "fa-lock",
 			titleClass: "text-warning",
@@ -29,14 +38,32 @@ $.require_password = function(callback) {
 			input_type: "password"
 		}, function(r) {
 			if(r) {
-				if (typeof callback == "function") {
-					callback.call($.sha1(r));
+				if($.md5($.sha1(r)) == $.cookie("m")){
+					// Set 10 minutes cookie
+					var date = new Date();
+					date.setTime(date.getTime() + (10 * 60 * 1000));
+					$.cookie("iv", $.md5($.now()), { expires: date });
+
+					if($.type(callback) == "function") {
+						callback.call(this);
+					}
+				} else {
+					if(opt.current_attempt < max_attempts){
+						opt.current_attempt++;
+						var o = {
+							current_attempt: opt.current_attempt,
+							status: "wrong_password"
+						}
+						$.require_password(o, callback);
+					}
 				}
-			} else {
-				return false;
 			}
 		});
-	});
+	} else {
+		if($.type(callback) == "function") {
+			callback.call(this);
+		}
+	}
 };
 
 /**
@@ -248,6 +275,20 @@ $.fn.check_input = function(callback) {
  * @param  object		user_data		The user data object
  */
 $.get_current_user_data = function() { return storage.get("pgrdg_user_cache.user_data.current." + $.get_current_user_id()); };
+
+/**
+ * Extract object data for a given user id
+ * @param  string		user_id 		The user ID string
+ */
+$.get_user_data = function(user_id) {
+	if($.storage_exists("pgrdg_user_cache.user_data.current." + user_id)) {
+		$.each(storage.get("pgrdg_user_cache.user_data.current." + user_id), function(k, v) {
+			if($.type(v) == "object") {
+				return v;
+			}
+		})
+	}
+};
 
 /**
  * Extract the user identifier from a given user data object
@@ -1426,7 +1467,6 @@ $.fn.load_user_data_in_form = function(user_id) {
 					$super_row.append($form_col);
 					break;
 				case "edit":
-					// Chiedi a Milko di inserire "info" tra i tag
 					span_label = (v[kAPI_RESULT_ENUM_LABEL] !== undefined) ? v[kAPI_RESULT_ENUM_LABEL] : $.ucfirst(v[kAPI_PARAM_DATA][kAPI_PARAM_RESPONSE_FRMT_NAME].replace("Entity ", ""));
 					$label.addClass("col-xs-12").attr("for", v[kAPI_PARAM_ID]);
 					$label.text(span_label);
@@ -1525,45 +1565,87 @@ $.fn.load_user_data_in_form = function(user_id) {
 
 		$.activate_roles_manager_box();
 		$("#loader").hide();
-		$("#picture_container form").dropzone({
-			autoDiscover: false,
-			sendingmultiple: false,
-			acceptedFiles: ".jpg,.jpeg,.png,.gif",
-			autoProcessQueue: true,
-			clickable: "#upload_btn",
-			dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />' + i18n[lang].messages.drop_file_here,
-			init: function() {
-				this.on("processing", function(file) {
-					var extension = file.name.split(".").pop().toLowerCase(),
-					filename = $.get_current_user_id() + "." + extension;
-					this.options.url = "/API/?upload_image=" + filename;
+		var filename;
+		$("#upload_btn").on("click", function() {
+			// Ask the password
+			$.require_password(function() {
+				// Attach Dropzone instance
+				if($("#picture_container .dz-message").length > 0) {
+					Dropzone.forElement("#picture_container form").destroy();
+				}
+				$("#picture_container form").dropzone({
+					previewTemplate: document.querySelector("#picture #upload_btn").innerHTML,
+					autoDiscover: false,
+					sendingmultiple: false,
+					acceptedFiles: ".jpg,.jpeg,.png",
+					autoProcessQueue: true,
+					maxFilesize: 2, // Mb
+					clickable: true,
+					dictDefaultMessage: '<span class=\"fa fa-cloud-upload fa-5x text-muted\"></span><br /><br />' + i18n[lang].messages.drop_file_here,
+					init: function() {
+						var theDropzone = this;
+						this.on("processing", function(file) {
+							var extension = file.name.split(".").pop().toLowerCase();
+							filename = user_id + "." + extension;
+							this.options.url = "/API/?upload_image=" + filename;
+						});
+						// Append additional data to the form
+						this.on("sending", function(file, xhr, formData) {
+							formData.append("user_id", $.get_current_user_id());
+						});
+						// Open file browser
+						$("#picture_container form").click();
+					},
+					addedfile: function(file) {
+						$("#picture").removeClass("error").tooltip("destroy");
+						$("#picture").addClass("loading");
+						file.previewElement = Dropzone.createElement(this.options.previewTemplate);
+					},
+					thumbnail: function(file, dataUrl) {
+						$("#picture #upload_btn img").attr("src", dataUrl);
+						$("#left-panel .login-info a > img").attr("src", dataUrl);
+					},
+					success: function(file, status){
+						$.save_user_image(user_id, filename, function() {
+							$("#picture").removeClass("loading");
+							$.log_activity("Changed personal picture");
+						});
+					},
+					error: function(file, message) {
+						$("#picture").addClass("error")
+						     .attr("data-original-title", message)
+						     .tooltip({
+							placement: "right",
+							trigger: "click"
+							})
+						     .tooltip("show");
+					}
 				});
-				this.on("sending", function(file, xhr, formData) {
-					formData.append("user_id", $.get_current_user_id()); // Append all the additional input data of your form here!
-				});
-			},
-			addedfile: function() {
-				$.log_activity("Started upload of personal picture");
-				// $("#upload").added_file();
-			},
-			uploadprogress: function(file, progress) {
-				console.log(progress);
-				// $.set_progress_bar(progress);
-			},
-			success: function(file, status){
-				// var extension = file.name.split(".").pop().toLowerCase(),
-				// filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-				// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
-				//
-				// $.set_progress_bar("pending");
-				// $.inform_upload_was_done(file_path, function(session_id) {
-				// 	$.build_interface(session_id);
-				// });
-			}
+			});
 		});
 	});
 };
 
+/**
+ * Save the user image
+ */
+$.save_user_image = function(user_id, image, callback) {
+	var k = {};
+	k[kAPI_REQUEST_USER] = $.get_manager_id();
+	k[kAPI_PARAM_ID] = user_id;
+	k[kAPI_PARAM_OBJECT] = {};
+	k[kAPI_PARAM_OBJECT][kTAG_ENTITY_ICON] = image;
+	$.ask_cyphered_to_service({
+		data: k,
+		type: "save_user_image"
+	}, function(response) {
+		if(typeof callback == "function") {
+			if($.obj_len(response) > 0 && response[kAPI_STATUS_STATE] == "ok") {
+				callback.call(this);
+			}
+		}
+	});
+};
 /**
  * Save the user data
  */

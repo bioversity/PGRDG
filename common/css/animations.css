@@ -325,3 +325,23 @@
         50%   { color: rgba(255, 255, 255, 0.75); }
         100%   { color: rgba(255, 255, 255, 0.6); }
 }
+
+/**
+ * Animate stripes
+ */
+@-webkit-keyframes moveStripes {
+    0%   {background-position: 0 0; }
+    100% {background-position: 50px 50px; }
+}
+@-moz-keyframes moveStripes {
+    0%   {background-position: 0 0; }
+    100% {background-position: 50px 50px; }
+}
+@-o-keyframes moveStripes {
+    0%   {background-position: 0 0; }
+    100% {background-position: 50px 50px; }
+}
+@keyframes moveStripes {
+    0%   {background-position: 0 0; }
+    100% {background-position: 50px 50px; }
+}

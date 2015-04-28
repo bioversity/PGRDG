@@ -271,6 +271,20 @@ class Service_exchange {
                                         kAPI_PARAM_OBJECT => $data[kAPI_PARAM_OBJECT]
                                 );
                                 break;
+                        case "save_user_image":
+                                // Perform request
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_MOD_USER,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
+                                        kAPI_PARAM_ID => $data[kAPI_PARAM_ID],
+                                        kAPI_PARAM_OBJECT => $data[kAPI_PARAM_OBJECT]
+                                );
+                                break;
                         case "upload_file":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_UPLOAD_TEMPLATE,
@@ -336,11 +350,11 @@ class Service_exchange {
                 }
                 $encoded = $this->encrypt_RSA($params);
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
-                // if($action == "upload_file") {
+                // if($action == "get_user") {
                 //         header("Content-type: text/plain");
-                        // print_r($url);
-                        // print_r($encoded);
-                        // exit();
+                //         print_r($url);
+                //         print_r($encoded);
+                //         exit();
                 // }
                 return $this->receive_from_service($this->frontend->browse($url));
         }

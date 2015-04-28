@@ -88,17 +88,25 @@ if(empty($_REQUEST) && empty($_POST)) {
 				}
 				break;
 			case "upload_image":
+				require_once(LIB_DIR . "SimpleImage.php");
+
 				if(!empty($_FILES)) {
 					$interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 					$interface = $interface_config->parse_js_config("config");
 
 					$temp_file = $_FILES["file"]["tmp_name"];
 					$target_path = ADMIN_IMAGES;
-					$target_file =  $target_path . "/" . $gv;
+					$target_file = $target_path . $gv;
 					if(!move_uploaded_file($temp_file, $target_file)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
+						// Permissions
 						chmod($target_file, 0777);
+						// Resize the uploaded image
+						$image = new SimpleImage();
+						$image->load($target_file);
+						$image->resizeToHeight(180);
+						$image->save($target_file);
 					}
 
 					$api->set_content_type("text");
@@ -116,6 +124,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "logout":
 					case "save_menu":
 					case "save_user_data":
+					case "save_user_image":
 					case "upload_file":
 					case "upload_group_transaction":
 					case "upload_group_transaction_test":

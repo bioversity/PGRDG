@@ -131,7 +131,7 @@ if(isset($_GET["getPublicKey"])) {
 			$se = new Service_exchange();
 			// print_r($output);
 			// exit();
-			$login = $se->send_to_service(array($output["username"], $output["password"]), "login");
+			$login = $se->send_to_service(array($output["username"], $output["password"]), $type);
 			$user_data = json_decode($login, 1);
 			// setcookie("l", md5("7C4D3533C21C608B39E8EAB256B4AFB771FA534A"), time()+10800, "/");
 			// $_SESSION["user"] = $ud;
@@ -146,8 +146,10 @@ if(isset($_GET["getPublicKey"])) {
 
 					if(isset($output["remember"])) {
 						setcookie("l", md5($fingerprint), time()+28800, "/");
+						setcookie("m", md5($output["password"]), time()+28800, "/");
 					} else {
 						setcookie("l", md5($fingerprint), time()+10800, "/");
+						setcookie("m", md5($output["password"]), time()+10800, "/");
 					}
 
 					print json_encode($user_data);
@@ -160,17 +162,20 @@ if(isset($_GET["getPublicKey"])) {
 			$_SESSION["user"] = array();
 			session_destroy();
 			setcookie("l", "", time()-3600);
+			setcookie("m", "", time()-3600);
 			unset($_COOKIE["l"]);
+			unset($_COOKIE["m"]);
 			print "ok";
 			break;
 		case "save_user_data":
+		case "save_user_image":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			// header("Content-type: text/plain");
 			// print_r($output);
 			// exit();
 			// print_r($output);
 			$se = new Service_exchange();
-			$action = "save_user_data";
+			$action = $type;
 			print $se->send_to_service($output, $action);
 			break;
 		case "save_menu":

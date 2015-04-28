@@ -688,7 +688,7 @@
 							}
 						}
 					});
-					if(jQuery.type(callback) == "function") {
+					if($.type(callback) == "function") {
 						callback.call(this, oprts);
 					}
 				});
