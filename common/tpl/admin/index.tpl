@@ -6,6 +6,7 @@ require_once("common/tpl/admin/footer.tpl");
 require_once("common/tpl/admin/shortcut.tpl");
 switch($page->current) {
         case "Profile":
+        case "History":
         case "Invite":
         case "Menu":
         case "Pages":

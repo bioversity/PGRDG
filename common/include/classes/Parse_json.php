@@ -69,14 +69,36 @@ class Parse_json {
          * @return string                                                       The builded html menu
          */
         private function build_menu($menu, $menu_position, $num = null, $strip_btn_class = true) {
+		$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+		$page = $pages_config->parse_page_config("pages");
 		if($num === null || $num === 0) {
 			$the_array = $menu[$menu_position];
 		} else {
 			$the_array = $menu[$menu_position][$num];
 		}
+		$is_current = false;
+		// print_r($the_array);
+		// exit();
+		if($page->current == str_replace(array("./", "/"), "", $the_array["attributes"]["href"])) {
+			$is_current = true;
+		} else {
+			$is_current = false;
+		}
 		$menu_list = '';
 		if(!isset($the_array["show_on_page"]) || $the_array["show_on_page"] == $_GET["p"]) {
-			$menu_list .= '	<li' . (isset($the_array["childs"]) ? ($menu_position == "admin" ? (isset($the_array["content"]["class"]) ? ' class="' . $the_array["content"]["class"] . '"' : "") : ' class="btn-group"') : '') . '><a ';
+			$menu_list .= '	<li';
+				if($is_current) {
+					$menu_list .= ' class="' . $menu_position . ' active" ';
+				}
+				if(isset($the_array["childs"])) {
+					if($menu_position == "admin") {
+						if(isset($the_array["content"]["class"])) {
+							$menu_list .= ' class="' . (($is_current) ? "open " : "") . $the_array["content"]["class"] . '"';
+						}
+					}
+				}
+
+				$menu_list .= '><a ';
 				$menu_list_icon = '<span class="' . $the_array["content"]["icon"] . ($menu_position == "admin" ? " fa-lg fa-fw": "") . '"></span>';
 				$menu_list_text = ($menu_position == "admin" ? '<span class="menu-item-parent">' . $the_array["content"]["text"] . '</span>' : $the_array["content"]["text"]);
 				$menu_list_text .= (isset($the_array["childs"]) ? ($menu_position == "admin" ? '' : ' <span class="caret"></span>') : '');

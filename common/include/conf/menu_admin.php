@@ -86,7 +86,7 @@ $m->menu->admin->Your_data->childs->History->content = array(
 $m->menu->admin->Your_data->childs->History->attributes = array(
         "href" => "./History",
         "title" => "History",
-        "class" => "btn btn-link disabled"
+        "class" => "btn btn-link"
 );
 if(in_array(kTYPE_ROLE_UPLOAD, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $m->menu->admin->Your_data->childs->Upload = new stdClass();
@@ -142,7 +142,7 @@ if(in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]))
         $m->menu->admin->Manage_contents->childs->Blog->attributes = array(
                 "href" => "./Blog",
                 "title" => "Blog",
-                "class" => "btn btn-link disabled"
+                "class" => "btn btn-link disabled hidden"
         );
 }
 // Append Signout button to end

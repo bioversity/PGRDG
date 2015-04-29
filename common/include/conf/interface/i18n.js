@@ -64,6 +64,7 @@ var i18n = {
                         "last_upload": "Last upload",
                         "loading_details": "Loading details",
                         "loading_form": "<i>Loading form...</i>",
+                        "loading_history": "<i>Loading your history...</i>",
                         "loading_profile": "<i>Loading profile...</i>",
                         "loading_session_status": "Loading session status...",
                         "login": {
@@ -111,6 +112,7 @@ var i18n = {
                         "no_data": "No data to display",
                         "no_entries_found": "No entries found",
                         "no_file_uploaded": "No file uploaded",
+                        "no_history_yet": "<i>No registered activity, yet</i>",
                         "no_invited_users_yet": "No users invited, yet",
                         "no_results": "No results",
                         "no_menu_name": "No menu name",

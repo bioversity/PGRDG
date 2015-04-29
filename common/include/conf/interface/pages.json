@@ -207,7 +207,7 @@
                         "is_article_page": true,
                         "is_backend": false,
                         "is_system_page": false,
-                        "is_visible": true,
+                        "is_visible": false,
                         "subpages": ""
                 },
                 "Signin": {
@@ -356,7 +356,7 @@
                                         "is_article_page": true,
                                         "is_backend": true,
                                         "is_system_page": false,
-                                        "is_visible": true,
+                                        "is_visible": false,
                                         "subpages": ""
                                 }
                         }
@@ -384,7 +384,7 @@
                                         "address": "History",
                                         "class": [],
                                         "data_parent_menu": "your_data_menu",
-                                        "template": "",
+                                        "template": "common/tpl/admin/History.tpl",
                                         "need_login": true,
                                         "load_at_start": true,
                                         "is_main_page": false,

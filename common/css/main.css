@@ -127,6 +127,12 @@ a[href^="mailto:"]:not(.nofx):after {
 	text-decoration: none !important;
 	vertical-align: super;
 }
+#left-panel .nav li a[data-toggle="dropdown"]:after {
+	content: "\f107";
+	font-family: "FontAwesome";
+	padding-left: 10px;
+}
+
 
 tt {
 	background-color: #efefef;
@@ -3763,4 +3769,17 @@ div.user_data dl.roles dd {
 
 .timeago:hover {
 	cursor: help;
+}
+.timeline .timeline_item::before {
+  background-color: #dedede;
+  border-radius: 6px;
+  content: "";
+  height: 17%;
+  left: 27px;
+  margin-top: 38px;
+  position: absolute;
+  width: 4px;
+}
+.timeline .timeline_item .well {
+	margin-left: -5em;
 }

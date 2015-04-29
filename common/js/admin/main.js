@@ -1608,7 +1608,10 @@ $.fn.load_user_data_in_form = function(user_id) {
 					success: function(file, status){
 						$.save_user_image(user_id, filename, function() {
 							$("#picture").removeClass("loading");
-							$.log_activity("Changed personal picture");
+							$.log_activity({
+								action: "Changed personal picture",
+								icon: "fa-picture-o"
+							});
 						});
 					},
 					error: function(file, message) {
@@ -1646,6 +1649,7 @@ $.save_user_image = function(user_id, image, callback) {
 		}
 	});
 };
+
 /**
  * Save the user data
  */
@@ -1715,7 +1719,10 @@ $.save_user_data = function(user_id) {
 			}, function(response) {
 				if($.obj_len(response) > 0 && response[kAPI_STATUS_STATE] == "ok") {
 					// Log
-					$.log_activity("Updated user data");
+					$.log_activity({
+						action: "Updated user data",
+						icon: "fa-tasks"
+					});
 
 					// if(user_id == $.get_manager_id()) {
 					// 	storage.set("pgrdg_user_cache.user_data.current." + user_id, )
@@ -1750,26 +1757,40 @@ $.save_user_data = function(user_id) {
 
 
 /*=======================================================================================
-*	COMMON FUNCTIONS
+*	HISTORY FUNCTIONS
 *======================================================================================*/
 
-/**
- * Log the user activity to the storage
- * @param string 		action 			A description of the user's action
- */
-$.log_activity = function(action){
-	var st = [],
-	log = {};
+$.load_history_page = function() {
+	var $timeline = $('<div class="timeline">'),
+	$timeline_body = $('<div class="row">'),
+	$h2_history = $('<h2>').html('<span class="fa fa-clock-o"></span> History'),
+	$h1_no_activity = $('<h1 unselectable="on">').html('<span class="fa fa-times"></span> ' + i18n[lang].messages.no_history_yet);
 
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
-		st = storage.get("pgrdg_user_cache.user_activity");
-	}
-	log[$.now()] = action;
-	st.push(log);
+		$timeline.append($h2_history);
 
-	storage.set("pgrdg_user_cache.user_activity", st);
-	$("span.timeago").timeago();
+		$.each(storage.get("pgrdg_user_cache.user_activity"), function(k, v) {
+			var $timeline_item = $('<div class="row timeline_item">'),
+			$timeline_icon = $('<div class="col-sm-1">'),
+			$timeline_body = $('<div class="col-sm-5 well">');
+			$.each(v, function(type, data) {
+				// console.log(type, data);
+				$timeline_icon.html('<span class="fa ' + v.icon + ' fa-2x text-info"></span>');
+				$timeline_body.html('<h2>' + v.action + '</h2><small class="help-block"><span class="fa fa-clock-o"></span>' + v.date + '</small><p class="lead">' + v.body + '</p>');
+			});
+			$timeline_item.append($timeline_icon).append($timeline_body);
+			$timeline.append($timeline_item);
+		});
+	} else {
+		$timeline.append($h1_no_activity);
+	}
+
+	$("#personal_data").html("").append($timeline);
 };
+
+/*=======================================================================================
+*	COMMON FUNCTIONS
+*======================================================================================*/
 
 /**
  * Load the last activity saved in log storage
@@ -1907,6 +1928,9 @@ $(document).ready(function() {
 
 			$.add_storage_space_in_panel("Non-logged memory", "pgrdg_cache");
 			$.add_storage_space_in_panel("User memory", "pgrdg_user_cache");
+			break;
+		case "History":
+			$.load_history_page();
 			break;
 		case "Invite":
 			$("#loader").show();

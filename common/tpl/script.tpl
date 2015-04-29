@@ -35,9 +35,6 @@ if($page->is_backend) {
 	<script type="text/javascript">
 	Dropzone.autoDiscover = false;
 	</script>
-	<!-- JCrop -->
-	<script src="<?php print $domain; ?>/common/js/plugins/Jcrop/js/jquery.Jcrop.min.js"></script>
-<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/Jcrop/css/jquery.Jcrop.css" type="text/css" />
 	<?php
 }
 ?>

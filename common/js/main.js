@@ -1,3 +1,6 @@
+/*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Main functions
 *
@@ -9,6 +12,40 @@
 /*=======================================================================================
 *	MAIN FUNCTIONS
 *======================================================================================*/
+
+	/**
+	* Log the user activity to the storage
+	* @param string 		action 			A description of the user's action
+	*/
+	$.log_activity = function(action){
+		var opt = $.extend({
+			action: "",
+			date: $.now(),
+			icon: "",
+			body: ""
+		}, action);
+		if($.type(action) == "string") {
+			opt.action = action;
+		}
+		var st = [],
+		log = {};
+
+		if($.storage_exists("pgrdg_user_cache.user_activity")) {
+			st = storage.get("pgrdg_user_cache.user_activity");
+		}
+		log["action"] = opt.action;
+		log["date"] = opt.date;
+		if(opt.icon !== undefined) {
+			log["icon"] = opt.icon;
+		}
+		if(opt.body !== undefined) {
+			log["body"] = opt.body;
+		}
+		st.push(log);
+
+		storage.set("pgrdg_user_cache.user_activity", st);
+		$("span.timeago").timeago();
+	};
 
 	/**
 	* Creates and send the request to Service
@@ -902,7 +939,6 @@
 					type: "login"
 				},
 				success: function(response) {
-					console.warn(response);
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $.obj_len(response[kAPI_RESPONSE_RESULTS]) > 0) {
 						$.each(response[kAPI_RESPONSE_RESULTS], function(id, ud) {
 							if($.storage_exists("pgrdg_user_cache.user_data.current")) {
@@ -911,7 +947,10 @@
 							storage.set("pgrdg_user_cache.user_data.all." + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP], ud);
 							storage.set("pgrdg_user_cache.user_data.current." + ud[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP], ud);
 						});
-						storage.set("pgrdg_user_cache.user_activity", [{"login": $.now()}]);
+						$.log_activity({
+							action: "Logged in",
+							icon: "fa-sign-in"
+						});
 						if(current_path == "Signin") {
 							window.location.href = "./";
 						} else {
@@ -959,8 +998,14 @@
 			},
 			success: function(response) {
 				if(response == "ok") {
-					storage.remove("pgrdg_user_cache")
+					$.log_activity({
+						action: "Logged out",
+						icon: "fa-sign-in"
+					});
+					storage.remove("pgrdg_user_cache.user_data")
 					$.removeCookie("l");
+					$.removeCookie("lv");
+					$.removeCookie("m");
 					window.location.href = document.referrer;
 				}
 			}
