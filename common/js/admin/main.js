@@ -1776,7 +1776,7 @@ $.load_history_page = function() {
 			$.each(v, function(type, data) {
 				// console.log(type, data);
 				$timeline_icon.html('<span class="fa ' + v.icon + ' fa-2x text-info"></span>');
-				$timeline_body.html('<h2>' + v.action + '</h2><small class="help-block"><span class="fa fa-clock-o"></span>' + v.date + '</small><p class="lead">' + v.body + '</p>');
+				$timeline_body.html('<h2>' + v.action + '</h2><small class="help-block"><span class="fa fa-clock-o"></span> ' + v.date + '</small><p class="lead">' + v.body + '</p>');
 			});
 			$timeline_item.append($timeline_icon).append($timeline_body);
 			$timeline.append($timeline_item);
