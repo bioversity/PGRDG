@@ -1760,6 +1760,23 @@ $.save_user_data = function(user_id) {
 *	HISTORY FUNCTIONS
 *======================================================================================*/
 
+$.fn.remove_history_item = function() {
+	var $item = $(this),
+	$timeline_item = $item.closest(".timeline_item"),
+	item_no = $timeline_item.attr("data-number");
+	$.require_password(function() {
+		$timeline_item.slideUp(600, function() {
+			$.unlog_activity(item_no);
+			if(!$.storage_exists("pgrdg_user_cache.user_activity")) {
+				$.load_history_page();
+			}
+		});
+	});
+};
+
+/**
+ * Generate the page History
+ */
 $.load_history_page = function() {
 	var $timeline = $('<div class="timeline">'),
 	$timeline_body = $('<div class="row">'),
@@ -1768,24 +1785,39 @@ $.load_history_page = function() {
 
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
 		$timeline.append($h2_history);
+		var st = storage.get("pgrdg_user_cache.user_activity"),
+		c = st.length;
+		st.reverse();
+		$.each(st, function(k, v) {
+			c--;
+			var $timeline_items = $('<div class="row">'),
+			$timeline_item = $('<div class="row timeline_item col-sm-9 col-lg-6" data-number="' + c + '">'),
+			$clearfix = $('<div class="clearfix">'),
+			$timeline_icon = $('<div class="col-xs-2 col-sm-1">'),
+			$timeline_body = $('<div class="col-xs-10 col-sm-11">');
+				$timeline_icon.html('<span class="fa ' + ((v.icon.length > 0) ? v.icon : "fa-dot-circle-o") + ' fa-2x text-info"></span>');
+				var $well = $('<div class="well">'),
+				$remove_btn = $('<button type="button" class="close" onclick="$(this).remove_history_item()" data-original-title="' + i18n[lang].interface.btns.remove + '">').html('<span aria-hidden="true">&times;</span>').tooltip(),
+				$timeline_title = $('<h2>').text(v.action).append($remove_btn),
+				$timeline_time_value = $('<span data-original-title="' + v.date + '">').html('<span class="fa fa-clock-o"></span> ' + $.timeago(v.date)).tooltip(),
+				$timeline_time = $('<small class="help-block">').append($timeline_time_value),
+				$timeline_p = $('<p class="lead">').html(v.body);
 
-		$.each(storage.get("pgrdg_user_cache.user_activity"), function(k, v) {
-			var $timeline_item = $('<div class="row timeline_item">'),
-			$timeline_icon = $('<div class="col-sm-1">'),
-			$timeline_body = $('<div class="col-sm-5 well">');
-			$.each(v, function(type, data) {
-				// console.log(type, data);
-				$timeline_icon.html('<span class="fa ' + v.icon + ' fa-2x text-info"></span>');
-				$timeline_body.html('<h2>' + v.action + '</h2><small class="help-block"><span class="fa fa-clock-o"></span> ' + v.date + '</small><p class="lead">' + v.body + '</p>');
-			});
+				$well.append($timeline_title);
+				$well.append($timeline_time);
+				$well.append($timeline_p);
+				$timeline_body.append($well);
+			// });
 			$timeline_item.append($timeline_icon).append($timeline_body);
-			$timeline.append($timeline_item);
+			$timeline_items.append($timeline_item);
+			$timeline.append($timeline_items);
+			$timeline.append($clearfix);
 		});
+		$("#personal_data").html("").append($timeline);
 	} else {
-		$timeline.append($h1_no_activity);
+		$("#personal_data").html("").append($h1_no_activity);
 	}
 
-	$("#personal_data").html("").append($timeline);
 };
 
 /*=======================================================================================
@@ -1804,16 +1836,18 @@ $.last_activity = function(full) {
 	if($.storage_exists("pgrdg_user_cache.user_activity")) {
 		last_activity = storage.get("pgrdg_user_cache.user_activity");
 		var l = last_activity[last_activity.length-1];
-		$.each(l, function(time, label) {
-			if(full) {
-				last_activity = $.ucfirst(label) + "<br />on " + time;
-			} else {
-				last_activity = time;
-			}
+		$.each(l[(l.length - 1)], function(k, a) {
+			$.each(a, function(time, label) {
+				if(full) {
+					last_activity = $.ucfirst(label) + "<br />on " + time;
+				} else {
+					last_activity = time;
+				}
+			});
 		});
 	} else {
 		if(full) {
-			last_activity = "Loaded page (no registered previous data): " + $.now();
+			last_activity = i18n[lang].messages.no_history_yet + " - " + $.now();
 		} else {
 			last_activity = $.now();
 		}

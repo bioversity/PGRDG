@@ -48,6 +48,26 @@
 	};
 
 	/**
+	 * Remove a specific key from log
+	 * @param int			key			The log key number to remove
+	 */
+	$.unlog_activity = function(key) {
+		Array.prototype.remove = function(el) {
+			return this.splice(this.indexOf(el), 1);
+		}
+		// console.log(storage.get("pgrdg_user_cache.user_activity." + key));
+		if($.storage_exists("pgrdg_user_cache.user_activity." + key)) {
+			st = storage.get("pgrdg_user_cache.user_activity");
+			st.remove(key);
+			if(st.length > 0) {
+				storage.set("pgrdg_user_cache.user_activity", st);
+			} else {
+				$.remove_storage("pgrdg_user_cache.user_activity");
+			}
+		}
+	}
+
+	/**
 	* Creates and send the request to Service
 	* @param  {void}  options  String or object of the request to Service
 	* @param  {Function} callback
@@ -1000,7 +1020,7 @@
 				if(response == "ok") {
 					$.log_activity({
 						action: "Logged out",
-						icon: "fa-sign-in"
+						icon: "fa-sign-out"
 					});
 					storage.remove("pgrdg_user_cache.user_data")
 					$.removeCookie("l");

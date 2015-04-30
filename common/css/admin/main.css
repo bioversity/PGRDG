@@ -10928,6 +10928,7 @@ aside {
   background: #474544;
   padding: 0 13px;
   position: relative;
+  z-index: 1;
 }
 #ribbon .breadcrumb {
   display: inline-block;

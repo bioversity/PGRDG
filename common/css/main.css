@@ -3770,16 +3770,48 @@ div.user_data dl.roles dd {
 .timeago:hover {
 	cursor: help;
 }
-.timeline .timeline_item::before {
-  background-color: #dedede;
-  border-radius: 6px;
-  content: "";
-  height: 17%;
-  left: 27px;
-  margin-top: 38px;
-  position: absolute;
-  width: 4px;
+.timeline::before {
+	background-color: #dedede;
+	border-radius: 6px;
+	content: "";
+	display: block;
+	height: 1000%;
+	margin-left: 10px;
+	margin-top: 0;
+	position: absolute;
+	width: 4px;
+	z-index: 0;
 }
-.timeline .timeline_item .well {
-	margin-left: -5em;
+.timeline_item .well::before {
+	color: #fbfbfb;
+	content: "\f0d9";
+	display: block;
+	font-family: FontAwesome;
+	font-size: 30px;
+	height: 27px;
+	left: -10px;
+	line-height: normal;
+	position: absolute;
+	text-shadow: -1px 0 1px #ccc;
+	width: 27px;
+}
+.timeline_item > div:first-child {
+	padding-top: 22px;
+}
+.timeline > h2 {
+	margin-bottom: 3em;
+}
+.timeline > h2 > span,
+.timeline_item > div:first-child > span {
+	background: url("../media/img/admin/admin_bg.png") repeat scroll 0 0 #eee;
+	border-radius: 30px;
+	margin-left: -10px;
+	margin-top: -10px;
+	padding: 10px;
+}
+.timeline .timeline_item .well h2 {
+	margin: 0;
+}
+.timeline .timeline_item .well h2 + small {
+	color: #999;
 }
