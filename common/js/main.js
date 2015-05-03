@@ -54,7 +54,7 @@
 	$.unlog_activity = function(key) {
 		Array.prototype.remove = function(el) {
 			return this.splice(this.indexOf(el), 1);
-		}
+		};
 		// console.log(storage.get("pgrdg_user_cache.user_activity." + key));
 		if($.storage_exists("pgrdg_user_cache.user_activity." + key)) {
 			st = storage.get("pgrdg_user_cache.user_activity");
@@ -65,7 +65,7 @@
 				$.remove_storage("pgrdg_user_cache.user_activity");
 			}
 		}
-	}
+	};
 
 	/**
 	* Creates and send the request to Service
@@ -342,7 +342,7 @@
 							if(!$.storage_exists(st)) {
 								storage.set(st, response[kAPI_RESPONSE_RESULTS]);
 							}
-							if(response[kAPI_RESPONSE_RESULTS] == undefined) {
+							if(response[kAPI_RESPONSE_RESULTS] === undefined) {
 								response[kAPI_RESPONSE_RESULTS] = response[kAPI_RESPONSE_STATUS];
 							}
 							// console.info(response[kAPI_RESPONSE_RESULTS])
@@ -466,6 +466,7 @@
 					break;
 				case "is_closed":
 					// return ($("#left_panel").css("left") !== "0px") ? true : false;
+					break;
 				default:
 					// $.left_panel("close");
 					break;
@@ -989,7 +990,7 @@
 
 						$("#login-username").closest("div.input-group").addClass("has-error");
 						$("#login-password").closest("div.input-group").addClass("has-error");
-						if($(".signin > h4.text-danger").length == 0) {
+						if($(".signin > h4.text-danger").length === 0) {
 							$('<h4 class="text-danger"><span class="fa fa-exclamation"></span> ' + i18n[lang].messages.login.wrong_data + '</h4>').insertAfter("div.signin > h1");
 						}
 					}
@@ -1027,7 +1028,7 @@
 						action: "Logged out",
 						icon: "fa-sign-out"
 					});
-					storage.remove("pgrdg_user_cache.user_data")
+					storage.remove("pgrdg_user_cache.user_data");
 					$.removeCookie("l");
 					$.removeCookie("lv");
 					$.removeCookie("m");
@@ -1063,7 +1064,7 @@
 				// $("#ujob").val(user_data.job.authority);
 				// $("#utask").val(user_data.job.task.description);
 				// $("#username").val(user_data.local.username);
-				// if(user_data.local.pgp_key === undefined || user_data.local.pgp_key.length == 0) {
+				// if(user_data.local.pgp_key === undefined || user_data.local.pgp_key.length === 0) {
 				// 	$("#upgp").closest(".form-group").addClass("has-error");
 				// 	$("#nopgp").fadeIn(300);
 				// 	$("input[type=submit]").removeClass("btn-default").addClass("btn-danger disabled");
@@ -1355,7 +1356,7 @@
 			} else {
 				switch(options) {
 					// Black & white scale
-					case "white":		rgba = {r: 255, g: 255, b: 255};	break;							return "rgba(255, 255, 255, " + alpha + ")";		break;
+					case "white":		rgba = {r: 255, g: 255, b: 255};	break;
 					case "light-grey": 	rgba = {r:204, g:204, b:204};		break;
 					case "dark-grey": 	rgba = {r:102, g:102, b:102};		break;
 					case "black":		rgba = {r:0, g:0, b:0};			break;
@@ -1446,12 +1447,12 @@
 						if(!$.storage_exists("pgrdg_cache.local.definitions." + definition)) {
 							storage.set(definition, response);
 						}
-						return response
+						return response;
 					}
 				}
 			});
 		} else {
-			return (storage.get("pgrdg_cache.local.definitions." + definition))
+			return (storage.get("pgrdg_cache.local.definitions." + definition));
 		}
 	};
 

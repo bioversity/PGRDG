@@ -1,5 +1,5 @@
 <?php
-function get_menu($menu, $i18nl) {
+function get_menu($menu, $i18nl, $is_submenu = false) {
         foreach($menu as $k => $v) {
                 if($k !== "User") {
                         $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' : $v["attributes"]["title"]);
@@ -11,15 +11,22 @@ function get_menu($menu, $i18nl) {
                                         <div class="row">
                                                 <div class="col-sm-1">
                                                         <div class="btn-group">
-                                                                <button class="btn btn-default-white btn_move_up">
+                                                                <button class="btn btn-sm btn-default-white btn_move_up disabled" title="<?php print $i18nl["messages"]["move_this_menu_up"]; ?>">
                                                                         <span class="fa fa-angle-up"></span>
                                                                 </button>
-                                                                <button class="btn btn-default-white btn_move_down">
+                                                                <button class="btn btn-sm btn-default-white btn_move_down disabled" title="<?php print $i18nl["messages"]["move_this_menu_down"]; ?>">
                                                                         <span class="fa fa-angle-down"></span>
+                                                                </button>
+                                                                <!-- Indent & outdent buttons -->
+                                                                <button class="btn btn-sm btn-default-white btn_outdent hidden" title="<?php print $i18nl["messages"]["move_this_menu_out"]; ?>">
+                                                                        <span class="fa fa-outdent"></span>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-default-white btn_indent hidden" title="<?php print $i18nl["messages"]["move_this_menu_into_the_next"]; ?>">
+                                                                        <span class="fa fa-indent"></span>
                                                                 </button>
                                                         </div>
                                                 </div>
-                                                <div class="menu_data col-sm-10">
+                                                <div class="menu_data col-sm-11">
                                                         <h4 class="list-group-item-heading">
                                                                 <span class="<?php print $v["content"]["icon"]; ?> menu_icon"></span> <span class="menu_name"><?php print $v["content"]["text"]; ?></span><span class="fa fa-fw">&rsaquo;</span>
                                                                 <tt>
@@ -27,25 +34,15 @@ function get_menu($menu, $i18nl) {
                                                                 </tt>
                                                                 <!-- Button groups -->
                                                                 <div class="btn-group pull-right">
-                                                                        <button class="btn btn-default-white edit_menu_btn" onclick="$(this).edit_menu();" title="<?php print $i18nl["interface"]["btns"]["edit"]; ?>">
+                                                                        <button class="btn btn-sm btn-default-white edit_menu_btn" onclick="$(this).edit_menu();" title="<?php print $i18nl["interface"]["btns"]["edit"]; ?>">
                                                                                 <span class="fa fa-fw fa-edit"></span>
                                                                         </button>
-                                                                        <button class="btn btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
+                                                                        <button class="btn btn-sm btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
                                                                                 <span class="fa fa-fw fa-eye-slash"></span>
                                                                         </button>
                                                                 </div>
                                                         </h4>
                                                         <p class="list-group-item-text list-group-item-body clearfix menu_title"><?php print $title; ?></p>
-                                                </div>
-                                                <div class="col-sm-1">
-                                                        <div class="btn-group pull-right">
-                                                                <button class="btn btn-default-white btn_move_up">
-                                                                        <span class="fa fa-angle-up"></span>
-                                                                </button>
-                                                                <button class="btn btn-default-white btn_move_down">
-                                                                        <span class="fa fa-angle-down"></span>
-                                                                </button>
-                                                        </div>
                                                 </div>
                                         </div>
                                 </div>
@@ -56,7 +53,7 @@ function get_menu($menu, $i18nl) {
                                         <div class="list-group">
                                                 <ul class="subpanel-body list-group">
                                                         <?php
-                                                        get_menu($v["childs"], $i18nl);
+                                                        get_menu($v["childs"], $i18nl, true);
                                                         ?>
                                                 </ul>
                                         </div>
@@ -72,10 +69,7 @@ function get_menu($menu, $i18nl) {
 ?>
 
 <div id="menu_management">
-        <?php
-        include(INCLUDE_DIR . "conf/menu.php");
-        $config = $menu;
-        ?>
+        <div id="alert" class="alert" style="display: none;" role="alert"></div>
         <h1>
                 <?php print $page->title; ?>
                 <div class="btn-group pull-right">
@@ -98,7 +92,7 @@ function get_menu($menu, $i18nl) {
                         <div class="panel-body panel-collapse collapse in" id="menu_management_stage" style="">
                                 <ul class="list-group">
                                         <?php
-                                        get_menu($menu["menu"]["top"][0], $i18n[$lang]);
+                                        get_menu($global_menu->json_conf["menu"]["top"], $i18n[$lang]);
                                         ?>
                                 </ul>
                         </div>
