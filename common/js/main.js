@@ -33,13 +33,13 @@
 		if($.storage_exists("pgrdg_user_cache.user_activity")) {
 			st = storage.get("pgrdg_user_cache.user_activity");
 		}
-		log["action"] = opt.action;
-		log["date"] = opt.date;
+		log.action = opt.action;
+		log.date = opt.date;
 		if(opt.icon !== undefined) {
-			log["icon"] = opt.icon;
+			log.icon = opt.icon;
 		}
 		if(opt.body !== undefined) {
-			log["body"] = opt.body;
+			log.body = opt.body;
 		}
 		st.push(log);
 
@@ -315,6 +315,7 @@
 			storage_group: "pgrdg_user_cache.user_data",
 			data: {},
 			type: "",
+			dataType: "json",
 			force_renew: false
 		}, options);
 		// console.warn(opt.data);
@@ -327,7 +328,7 @@
 		} else {
 			$.cryptAjax({
 				url: "API/",
-				dataType: "json",
+				dataType: opt.dataType,
 				crossDomain: true,
 				type: "POST",
 				timeout: 100000,
@@ -336,15 +337,19 @@
 					type: opt.type
 				},
 				success: function(response) {
-					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-						if(!$.storage_exists(st)) {
-							storage.set(st, response[kAPI_RESPONSE_RESULTS]);
+					if(opt.dataType == "json") {
+						if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
+							if(!$.storage_exists(st)) {
+								storage.set(st, response[kAPI_RESPONSE_RESULTS]);
+							}
+							if(response[kAPI_RESPONSE_RESULTS] == undefined) {
+								response[kAPI_RESPONSE_RESULTS] = response[kAPI_RESPONSE_STATUS];
+							}
+							// console.info(response[kAPI_RESPONSE_RESULTS])
+							callback(response[kAPI_RESPONSE_RESULTS]);
 						}
-						if(response[kAPI_RESPONSE_RESULTS] == undefined) {
-							response[kAPI_RESPONSE_RESULTS] = response[kAPI_RESPONSE_STATUS];
-						}
-						// console.info(response[kAPI_RESPONSE_RESULTS])
-						callback(response[kAPI_RESPONSE_RESULTS]);
+					} else {
+						callback(response);
 					}
 				}
 			});

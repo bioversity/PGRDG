@@ -4,15 +4,13 @@ RewriteBase /
 # Webfont access
 # ----------------------------------------------------------------------
 # Allow access from all domains for webfonts.
-# Alternatively you could only whitelist your
-# subdomains like "subdomain.example.com".
 <IfModule mod_headers.c>
-	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
+	<FilesMatch "\.(md|ttf|ttc|otf|eot|woff|font.css|css|js)$">
 		Header set Access-Control-Allow-Origin "*"
 	</FilesMatch>
 </IfModule>
-# Deflate files to fasten the loading
 <IfModule mod_deflate.c>
+	# Deflate files to fasten the loading
 	SetOutputFilter DEFLATE
 	AddOutputFilterByType DEFLATE application/x-httpd-php text/html text/xml text/plain text/css text/javascript application/javascript application/x-javascript image/jpeg image/jpg image/png image/gif font/ttf font/eot font/otf
 </IfModule>
@@ -28,16 +26,11 @@ RewriteBase /
 	# Explicitly exclude binary files from compression just in case
 	SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|pdf|swf|ico|zip|ttf|eot|svg)$ no-gzip
 </IfModule>
-<FilesMatch "\.(js)$">
-	<IfModule mod_headers.c>
-		Header set Access-Control-Allow-Origin "*"
-	</IfModule>
-</FilesMatch>
 
 # ----------- REMOVE UNWANTED ELEMENTS FROM URI -----------
 #
 	# Replace spaces " " and plus "+" symbols with underscore "_"
-	RewriteCond %{REQUEST_URI} !^/(share_data|share_data/.*?)($|/)
+	RewriteCond %{REQUEST_URI} !^/(common/md|common/md/.*?)($|/)
 	RewriteRule (.*)\ (.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	RewriteRule (.*)\+(.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	# Replace double quotes �"� with single quotes �'�
@@ -59,11 +52,15 @@ RewriteBase /
 	RewriteCond $0 !^(API|API/.*?)($|/)
 	RewriteRule ^([^/\.]+)/([^/]+)/([^/\.]+)/?$ /index.php?p=$1&s=$2&ss=$3 [QSA]
 
+	# Error pages
+	RewriteRule ^error-doc-([0-9]{3})$ /index.php?error=$1 [L]
+
 # ----------- ERROR PAGES -----------
 #
-	ErrorDocument 401 index.php?error=401
-	ErrorDocument 404 index.php?error=404
-	ErrorDocument 405 index.php?error=405
+	ErrorDocument 401 /error-doc-401
+	ErrorDocument 401 /error-doc-403
+	ErrorDocument 404 /error-doc-404
+	ErrorDocument 405 /error-doc-405
 
 # ----------- SECURITY -----------
 #
@@ -91,12 +88,11 @@ RewriteBase /
 	RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
 
 	# Send all blocked requests to 403 error page
-	RewriteRule ^(.*)$ index.php [F,L]
+	RewriteRule ^(.*)$ error-doc-403 [F,L]
 
 # ----------- PHP -----------
 #
 	# PHP error handling for development servers
-
 	php_flag display_startup_errors off
 	php_flag display_errors on
 	php_flag html_errors off

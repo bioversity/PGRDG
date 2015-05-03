@@ -59,6 +59,10 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
          * root:common/tpl/
          */
         if(!defined("TEMPLATE_DIR")) { define("TEMPLATE_DIR", COMMON_DIR . "tpl/"); }
+        /**
+         * root:common/tpl/
+         */
+        if(!defined("ADMIN_TEMPLATE_DIR")) { define("ADMIN_TEMPLATE_DIR", COMMON_DIR . "tpl/admin/"); }
 
 $logged = false;
 ?>

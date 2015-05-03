@@ -3556,6 +3556,9 @@ div.user_data dl.roles dd {
 	border-color: #cc00ee;
 	box-shadow: 0 0 2em #aaa inset;
 }
+#menu_management .list-group-item > .title_row + .list-group {
+	padding-right: 1px;
+}
 .list-group-item p.menu_title {
 	font-style: italic !important;
 }

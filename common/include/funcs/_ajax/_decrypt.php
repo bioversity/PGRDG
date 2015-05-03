@@ -90,6 +90,11 @@ if(isset($_GET["getPublicKey"])) {
 	$type = (isset($_GET["type"]) && trim($_GET["type"]) !== "") ? $_GET["type"] : $_POST["type"];
 
 	switch($type) {
+		case "activate_user":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			print $se->send_to_service(trim(base64_decode($output["fingerprint"])), "activate_user");
+			break;
 		case "ask_service":
 			require_once("ask_service.php");
 			break;
@@ -169,6 +174,15 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "save_user_data":
 		case "save_user_image":
+		case "upload_file":
+		case "upload_group_transaction":
+		case "upload_group_transaction_test":
+		case "upload_group_transaction_message":
+		case "upload_group_columns_by_worksheet":
+		case "upload_group_transaction_by_worksheet":
+		case "upload_group_transaction_worksheets":
+		case "upload_session_status":
+		case "upload_user_status":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			// header("Content-type: text/plain");
 			// print_r($output);
@@ -184,66 +198,11 @@ if(isset($_GET["getPublicKey"])) {
 			// require_once(CLASSES_DIR . "Service_exchange.php");
 			header("Content-type: text/plain");
 
-			$fp = fopen(INCLUDE_DIR . "conf/__menu.json", "w");
+			$fp = fopen(CONF_DIR . "__menu.json", "w");
 			fwrite($fp, stripslashes(json_encode($output)));
 			fclose($fp);
 
 			print "ok";
-			exit();
-			// print_r($output);
-			// $se = new Service_exchange();
-			// $action = "save_user_data";
-			// print $se->send_to_service($output, $action);
-			break;
-		case "upload_file":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			// header("Content-type: text/plain");
-			// print_r($output);
-			// exit();
-			// print_r($output);
-			$se = new Service_exchange();
-			$action = "upload_file";
-			print $se->send_to_service($output, $action);
-			break;
-		case "upload_group_transaction":
-		case "upload_group_transaction_test":
-		case "upload_group_transaction_message":
-		case "upload_group_columns_by_worksheet":
-		case "upload_group_transaction_by_worksheet":
-		case "upload_group_transaction_worksheets":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			// header("Content-type: text/plain");
-			// print_r($output);
-			// exit();
-			// print_r($output);
-			$se = new Service_exchange();
-			$action = $type;
-			print $se->send_to_service($output, $action);
-			break;
-		case "upload_session_status":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			// header("Content-type: text/plain");
-			// print_r($output);
-			// exit();
-			// print_r($output);
-			$se = new Service_exchange();
-			$action = "upload_session_status";
-			print $se->send_to_service($output, $action);
-			break;
-		case "upload_user_status":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			// header("Content-type: text/plain");
-			// print_r($output);
-			// exit();
-			// print_r($output);
-			$se = new Service_exchange();
-			$action = "upload_user_status";
-			print $se->send_to_service($output, $action);
-			break;
-		case "activate_user":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			$se = new Service_exchange();
-			print $se->send_to_service(trim(base64_decode($output["fingerprint"])), "activate_user");
 			break;
 	}
 }

@@ -26,7 +26,7 @@ $m->menu->admin->home->content = array(
 $m->menu->admin->home->attributes = array(
         "href" => "./",
         "title" => "Go to Main Page",
-        "class" => "btn btn-link"
+        "class" => "btn btn-link hidden"
 );
 if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) || in_array(kTYPE_ROLE_USERS, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $m->menu->admin->Manage_user = new stdClass();

@@ -1,3 +1,5 @@
+/*jshint scripturl:true*/
+
 /**
 * Menu editing functions
 *
@@ -7,8 +9,58 @@
 */
 
 /**
- * Add a new menu
+ * Enable/disable move buttons depending on its position
  */
+$.enable_disable_move_btn = function() {
+	$.each($(".list-group").find("li"), function(k, v) {
+		if($(this).prev("li").length === 0) {
+			$(this).find(".btn_move_up").addClass("disabled");
+		} else {
+			$(this).find(".btn_move_up").removeClass("disabled");
+		}
+		if($(this).next("li").length === 0) {
+			$(this).find(".btn_move_down").addClass("disabled");
+		} else {
+			$(this).find(".btn_move_down").removeClass("disabled");
+		}
+	});
+};
+
+/**
+ * Move a row up
+ */
+$.fn.move_row_up = function() {
+	$(this).click(function() {
+		var $btn_up = $(this),
+		$btn_down = $btn_up.closest(".btn-group").find(".btn_move_down"),
+		$row = $btn_up.closest(".menu_row"),
+		$previous = $row.prev("li");
+		if($previous.length !== 0){
+			$row.insertBefore($previous);
+			$.enable_disable_move_btn();
+		}
+	});
+};
+
+/**
+ * Move a row down
+ */
+$.fn.move_row_down = function() {
+	$(this).click(function() {
+		var $btn_down = $(this),
+		$btn_up = $btn_down.closest(".btn-group").find(".btn_move_down"),
+		$row = $btn_down.closest(".menu_row"),
+		$next = $row.next("li");
+		if($next.length !== 0){
+			$row.insertAfter($next);
+			$.enable_disable_move_btn();
+		}
+	});
+};
+
+/**
+* Add a new menu
+*/
 $.add_menu = function() {
 	var allow_other = true,
 	$item = {};
@@ -67,8 +119,8 @@ $.add_menu = function() {
 };
 
 /**
- * Toggle menu item visibility
- */
+* Toggle menu item visibility
+*/
 $.fn.hide_menu = function() {
 	var $item = $(this),
 	$line = $item.closest(".list-group-item").first();
@@ -80,9 +132,9 @@ $.fn.hide_menu = function() {
 };
 
 /**
- * Edit a menu item
- * @param  string   		menu_name 		The menu title that appears on modal form
- */
+* Edit a menu item
+* @param  string   		menu_name 		The menu title that appears on modal form
+*/
 $.fn.edit_menu = function(menu_name, callback) {
 	/**
 	 * Get all available icons
@@ -325,6 +377,8 @@ $.fn.edit_menu = function(menu_name, callback) {
 	});
 };
 
+
+
 $.save_menu = function() {
 	/**
 	 * Parse the row dom and extract relevant data
@@ -354,10 +408,12 @@ $.save_menu = function() {
 
 		if($.obj_len($item.find(".list-group")) > 0) {
 			// var childs = {};
-			data[obj_name].childs = [];
+			data[obj_name].childs = {};
 			$.each($item.find(".list-group > .subpanel-body > .list-group-item"), function(kk, vv) {
 				// childs = $(vv).get_row_data();
-				data[obj_name].childs.push($(vv).get_row_data());
+				$.each($(vv).get_row_data(), function(i, d) {
+					data[obj_name].childs[i] = d;
+				});
 				// $.extend(data[obj_name].childs, childs);
 			});
 		}
@@ -368,11 +424,14 @@ $.save_menu = function() {
 
 	var root = {};
 	root.menu = {};
-	root.menu.top = [];
+	root.menu.top = {};
 	$.each($("#menu_management_stage > .list-group > .list-group-item"), function(k, v) {
-		root.menu.top.push($(v).get_row_data());
+		$.each($(v).get_row_data(), function(i, d) {
+			root.menu.top[i] = d;
+		});
 	});
 
+	// console.log(root);
 	// Now save data to file
 	// var k = {};
 	// k[kAPI_REQUEST_USER] = (user_id === null || user_id === undefined || user_id === "") ? $.get_manager_id() : user_id;
@@ -382,10 +441,11 @@ $.save_menu = function() {
 	// k[kTAG_ENTITY_TITLE] = $.trim($("#new_user_work_title").val());
 	// k[kTAG_ENTITY_EMAIL] = $.trim($("#new_user_mail_address").val());
 	// k[kTAG_ROLES] = [];
-	// $.require_password(function() {
+	$.require_password(function() {
 		$.ask_cyphered_to_service({
 			storage_group: "pgrdg_user_cache.local.menu",
 			data: root,
+			dataType: "text",
 			type: "save_menu"
 		}, function(response) {
 			if(response == "ok") {
@@ -401,5 +461,14 @@ $.save_menu = function() {
 			// }
 			$("#loader").hide();
 		});
-	// });
+	});
 };
+
+
+/*======================================================================================*/
+
+$(document).ready(function() {
+	$.enable_disable_move_btn();
+	$(".btn_move_up").move_row_up();
+	$(".btn_move_down").move_row_down();
+});

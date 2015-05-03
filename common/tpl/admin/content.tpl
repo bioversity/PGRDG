@@ -2,7 +2,7 @@
 <div id="main" role="main" class="admin">
         <!-- RIBBON -->
         <div id="ribbon">
-                <div class="ribbon-button-alignment pull-right btn-toolbar">
+                <!-- <div class="ribbon-button-alignment pull-right btn-toolbar">
                         <div class="btn-group">
                                 <a href="javascript:void(0);" id="refresh" class="btn btn-xs btn-ribbon dropdown-toggle txt-color-white" data-toggle="dropdown">
                                         <i class="fa fa-history"></i>&nbsp;&nbsp;<span class="caret"></span>
@@ -12,7 +12,7 @@
                                         <i class="fa fa-trash-o"></i>
                                 </a>
                         </div>
-                </div>
+                </div> -->
 
                 <!-- breadcrumb -->
                 <!-- <ol class="breadcrumb"> -->

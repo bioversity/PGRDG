@@ -6,28 +6,48 @@ function get_menu($menu, $i18nl) {
                         $link = ($v["attributes"]["href"] !== "./") ? str_replace(array("./", "_"), array("", " "), $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
                         $full_link = (strpos($v["attributes"]["href"], "javascript:") !== false) ? $link : '<a target="_blank" href="' . $link .'">' . $link . '</a>';
                         ?>
-                        <li class="list-group-item" id="<?php print md5($k); ?>">
+                        <li class="list-group-item menu_row" id="<?php print md5($k); ?>">
                                 <div class="title_row">
-                                        <div class="move-handle"></div>
-                                        <div class="menu_data">
-                                                <h4 class="list-group-item-heading">
-                                                        <span class="<?php print $v["content"]["icon"]; ?> menu_icon"></span> <span class="menu_name"><?php print $v["content"]["text"]; ?></span><span class="fa fa-fw">&rsaquo;</span>
-                                                        <tt>
-                                                                <small class="<?php print (strpos($v["attributes"]["href"], "javascript:") !== false) ? "fa fa-code" : ""; ?>"></small> <span class="menu_link"><?php print $full_link; ?></span>
-                                                        </tt>
-                                                        <!-- Button groups -->
-                                                        <div class="btn-group pull-right">
-                                                                <button class="btn btn-default-white edit_menu_btn" onclick="$(this).edit_menu();" title="<?php print $i18nl["interface"]["btns"]["edit"]; ?>">
-                                                                        <span class="fa fa-fw fa-edit"></span>
+                                        <div class="row">
+                                                <div class="col-sm-1">
+                                                        <div class="btn-group">
+                                                                <button class="btn btn-default-white btn_move_up">
+                                                                        <span class="fa fa-angle-up"></span>
                                                                 </button>
-                                                                <button class="btn btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
-                                                                        <span class="fa fa-fw fa-eye-slash"></span>
+                                                                <button class="btn btn-default-white btn_move_down">
+                                                                        <span class="fa fa-angle-down"></span>
                                                                 </button>
                                                         </div>
-                                                </h4>
-                                                <p class="list-group-item-text list-group-item-body clearfix menu_title"><?php print $title; ?></p>
+                                                </div>
+                                                <div class="menu_data col-sm-10">
+                                                        <h4 class="list-group-item-heading">
+                                                                <span class="<?php print $v["content"]["icon"]; ?> menu_icon"></span> <span class="menu_name"><?php print $v["content"]["text"]; ?></span><span class="fa fa-fw">&rsaquo;</span>
+                                                                <tt>
+                                                                        <small class="<?php print (strpos($v["attributes"]["href"], "javascript:") !== false) ? "fa fa-code" : ""; ?>"></small> <span class="menu_link"><?php print $full_link; ?></span>
+                                                                </tt>
+                                                                <!-- Button groups -->
+                                                                <div class="btn-group pull-right">
+                                                                        <button class="btn btn-default-white edit_menu_btn" onclick="$(this).edit_menu();" title="<?php print $i18nl["interface"]["btns"]["edit"]; ?>">
+                                                                                <span class="fa fa-fw fa-edit"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
+                                                                                <span class="fa fa-fw fa-eye-slash"></span>
+                                                                        </button>
+                                                                </div>
+                                                        </h4>
+                                                        <p class="list-group-item-text list-group-item-body clearfix menu_title"><?php print $title; ?></p>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                        <div class="btn-group pull-right">
+                                                                <button class="btn btn-default-white btn_move_up">
+                                                                        <span class="fa fa-angle-up"></span>
+                                                                </button>
+                                                                <button class="btn btn-default-white btn_move_down">
+                                                                        <span class="fa fa-angle-down"></span>
+                                                                </button>
+                                                        </div>
+                                                </div>
                                         </div>
-                                        <div class="move-handle"></div>
                                 </div>
                                 <!-- Submenus -->
                                 <?php
