@@ -263,6 +263,9 @@ class frontend_api {
 			case "json":
 				header("Content-type: application/json");
 				break;
+			case "html":
+				header("Content-type: text/html");
+				break;
 			case "text":
 			default:
 				header("Content-type: text/plain");

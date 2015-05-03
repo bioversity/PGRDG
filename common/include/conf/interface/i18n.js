@@ -11,6 +11,8 @@ var i18n = {
                         },
                         "add_another_group_field": "Add another group field",
                         "contacts": "Contacts",
+                        "content_not_exists": "The content of the page \"{X}\" seems does not exist.",
+                        "content_managed_by_script": "The content of the page \"{X}\" is managed by a script. Anyhow you can add unmanaged contents in the form below.",
                         "created_users": "Created users",
                         "data_saved": {
                                 "title": "Saved",

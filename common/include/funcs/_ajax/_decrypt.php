@@ -172,6 +172,18 @@ if(isset($_GET["getPublicKey"])) {
 			unset($_COOKIE["m"]);
 			print "ok";
 			break;
+		case "save_menu":
+			// print_r($output);
+			// exit();
+			// require_once(CLASSES_DIR . "Service_exchange.php");
+			header("Content-type: text/plain");
+
+			$fp = fopen(CONF_DIR . "__menu.json", "w");
+			fwrite($fp, stripslashes(json_encode($output)));
+			fclose($fp);
+
+			print "ok";
+			break;
 		case "save_user_data":
 		case "save_user_image":
 		case "upload_file":
@@ -191,18 +203,6 @@ if(isset($_GET["getPublicKey"])) {
 			$se = new Service_exchange();
 			$action = $type;
 			print $se->send_to_service($output, $action);
-			break;
-		case "save_menu":
-			// print_r($output);
-			// exit();
-			// require_once(CLASSES_DIR . "Service_exchange.php");
-			header("Content-type: text/plain");
-
-			$fp = fopen(CONF_DIR . "__menu.json", "w");
-			fwrite($fp, stripslashes(json_encode($output)));
-			fclose($fp);
-
-			print "ok";
 			break;
 	}
 }

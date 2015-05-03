@@ -121,7 +121,7 @@ if($page->is_backend) {
 				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/invite<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 			case "Pages":
-				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/edit_pages<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
+				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/pages<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 			case "Upload":
 				?><script type="text/javascript" src="<?php print $domain; ?>/common/js/admin/upload<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php

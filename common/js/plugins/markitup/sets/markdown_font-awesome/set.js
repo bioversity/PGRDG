@@ -11,7 +11,7 @@
 // Feel free to add more tags
 // -------------------------------------------------------------------
 mySettings = {
-	previewParserPath:	'',
+	previewParserPath: "./API/?preview",
 	onShiftEnter:		{keepDefault:false, openWith:'\n\n'},
 	markupSet: [
 		{name:'Bold', content: '<span class="fa fa-bold"></span>', key:'B', openWith:'**', closeWith:'**'},

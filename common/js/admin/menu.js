@@ -454,7 +454,7 @@ $.save_menu = function() {
 		$item = $(this),
 		$menu_data = $item.find(".menu_data:first"),
 		name = $.trim($menu_data.find(".menu_name").text()),
-		obj_name = name.replace(/\s/g, "_"),
+		obj_name = name.replace(/\_/g, " "),
 		visible = ((!$menu_data.find(".menu_icon").hasClass("not-visible")) ? true : false),
 		title = $.trim($menu_data.find(".menu_title").text().replace(i18n[lang].messages.no_title, "").replace("not-visible", "")),
 		icon = $.trim($menu_data.find("span.menu_icon").attr("class").replace("fa ", "").replace("menu_icon", "").replace("not-visible", "")),
@@ -492,10 +492,17 @@ $.save_menu = function() {
 	root.menu.top = {};
 	$.each($("#menu_management_stage > .list-group > .list-group-item"), function(k, v) {
 		$.each($(v).get_row_data(), function(i, d) {
-			root.menu.top[i] = d;
+			root.menu.top[i.replace(/\_/g, " ")] = d;
 		});
 	});
+	// Add not yet developed backend functionalities
+	root.menu.top["Sign in"] = {"content": {"icon": "fa fa-sign-in", "text": "Sign in"}, "attributes": {"href": "./Signin", "class": "btn btn-link"}};
+	root.menu.map_toolbox = [{"Show_hide_menu": {"content": {"icon": "ion-navicon","text": ""},"attributes": {"onclick": "$.sh_menu()","href": "javascript:void(0);","class": "btn","id": "show_hide_menu_btn","title": "Show or hide main menu (ALT+M)"},"divider": "divider nav_divider"},"Show_hide_breadcrumb": {"content": {"icon": "fa fa-history","text": ""},"attributes": {"onclick": "$.sh_breadcrumb()","href": "javascript:void(0);","class": "btn","id": "show_hide_breadcrumb_btn","title": "Show or hide breadcrumb (ALT+B)"}}},{"Find_location": {"content": {"icon": "ion-search","text": ""},"attributes": {"onclick": "$.sub_toolbox('find_location');","href": "javascript:void(0);","class": "btn","id": "find_location_btn","title": "Find a location (ALT+F)"}},"Change_map": {"content": {"icon": "ion-map","text": ""},"attributes": {"onclick": "$.sub_toolbox('change_map');","href": "javascript:void(0);","class": "btn","id": "change_map_btn","title": "Change map type (ALT+T)"}},"Selection": {"content": {"icon": "icon-vector-selection","text": ""},"attributes": {"onclick": "$.sub_toolbox('tools');","href": "javascript:void(0);","class": "btn","id": "selection_btn","title": "Show/hide selection tools"},"divider": "divider"},"Lock_view": {"content": {"icon": "fa fa-lock","text": ""},"attributes": {"onclick": "$.toggle_lock_view();","href": "javascript:void(0);","class": "btn","id": "lock_view_btn","title": "Lock/unlock this view (ALT+L)"}}},{"Help": {"content": {"icon": "ion-help","text": ""},"attributes": {"href": "javascript:void(0);","class": "btn","id": "help_btn","title": "Help (F1)","onclick": "$.show_help();"}}}];
+	root.menu.tools = [{"Draw_polygon": {"content": {"icon": "icon-vector-polygon","text": ""},"attributes": {"onclick": "$.draw_polygon();","href": "javascript:void(0);","class": "btn","id": "draw_polygon_btn","title": "Select custom area"}},"Draw_rectangle": {"content": {"icon": "icon-vector-rectangle","text": ""},"attributes": {"onclick": "$.draw_rectangle();","href": "javascript:void(0);","class": "btn","id": "draw_rectangle_btn","title": "Select squared area"}},"Draw_circle": {"content": {"icon": "icon-vector-circle","text": ""},"attributes": {"onclick": "$.draw_circle();","href": "javascript:void(0);","class": "btn","id": "draw_circle_btn","title": "Select circular area"}}}];
+	root.menu.map_contextmenu = [{"Get_point": {"content": {"icon": "fa fa-crosshairs","text": "Get informations of this point"},"attributes": {"href": "javascript:void(0);","class": "btn","title": "Help","onclick": "$.get_click_info();"},"divider": "divider"}}];
+	root.menu.map_knob_contextmenu = [{"Point_info": {"content": {"icon": "fa fa-info-circle","text": ""},"attributes": {"href": "javascript:void(0);","class": "","title": "Get informations of this point","onclick": "$.get_click_info();"}}}];
 
+	console.log(root);
 	// console.log(root);
 	// Now save data to file
 	// var k = {};

@@ -5,7 +5,7 @@ RewriteBase /
 # ----------------------------------------------------------------------
 # Allow access from all domains for webfonts.
 <IfModule mod_headers.c>
-	<FilesMatch "\.(md|ttf|ttc|otf|eot|woff|font.css|css|js)$">
+	<FilesMatch "\.(md|tpl|ttf|ttc|otf|eot|woff|font.css|css|js)$">
 		Header set Access-Control-Allow-Origin "*"
 	</FilesMatch>
 </IfModule>
@@ -31,6 +31,7 @@ RewriteBase /
 #
 	# Replace spaces " " and plus "+" symbols with underscore "_"
 	RewriteCond %{REQUEST_URI} !^/(common/md|common/md/.*?)($|/)
+	RewriteCond %{REQUEST_URI} !^/(common/tpl|common/tpl/.*?)($|/)
 	RewriteRule (.*)\ (.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	RewriteRule (.*)\+(.*) http://%{SERVER_NAME}/$1_$2 [R=303,L]
 	# Replace double quotes �"� with single quotes �'�

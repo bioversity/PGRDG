@@ -39,6 +39,38 @@ if(empty($_REQUEST) && empty($_POST)) {
 
 				$api->get_local_json($_REQUEST["local"]);
 				break;
+			case "preview":
+				$api->set_content_type("html");
+				$domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
+				require_once(LIB_DIR . "php-markdown-extra-extended/markdown.php");
+				require_once(FUNCS_DIR . "optimize_markdown.php");
+				?>
+				<html>
+					<head>
+						<meta charset="utf-8" />
+						<base href="./">
+						<meta http-equiv="X-UA-Compatible" content="IE=edge">
+						<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+						<link href="<?php print $domain; ?>/common/css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+						<link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/Entypo/entypo.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/ionicons-1.4.1/css/ionicons.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/PICOL-font/css/picol.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain; ?>/common/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+						<!-- #GOOGLE FONT -->
+					        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+					</head>
+					<body>
+						<?php
+						print optimize(Markdown(trim($_POST["data"])));
+						?>
+					</body>
+				</html>
+				<?php
+				exit();
+				break;
 			case "proxy":
 				// if($_REQUEST["debug"] == "true") {
 				// 	$api->debug();
