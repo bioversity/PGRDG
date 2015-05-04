@@ -127,6 +127,14 @@ var i18n = {
                         "no_title": "No title for this entry",
                         "no_progress_for_this_session": "<i>This session has stopped at progress 0</i>",
                         "offsets": "{X} offsets",
+                        "page_saved": {
+                                "title": "Page saved",
+                                "message": "The page was saved succesfully"
+                        },
+                        "page_not_saved": {
+                                "title": "Page not saved",
+                                "message": "There was an error whan saving the page, please contact the administrator or try again later"
+                        },
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
                         "removed_item": "Removed {X}",
                         "row_data": {

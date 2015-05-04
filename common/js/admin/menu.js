@@ -1,4 +1,5 @@
 /*jshint scripturl:true*/
+/*jshint -W030 */
 
 /**
 * Menu editing functions
@@ -520,6 +521,10 @@ $.save_menu = function() {
 			type: "save_menu"
 		}, function(response) {
 			if(response == "ok") {
+				$.log_activity({
+					action: "Changed menu",
+					icon: "fa-list-alt"
+				});
 				$("#alert").removeClass("alert-danger")
 					   .addClass("alert-success")
 					   .html('<span class="fa fa-check fa-1_5x pull-left"></span> ' + i18n[lang].messages.menu_saved)

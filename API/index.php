@@ -155,7 +155,6 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "login":
 					case "logout":
 					case "save_menu":
-					case "save_page_content":
 					case "save_page_data":
 					case "save_user_data":
 					case "save_user_image":

@@ -1,3 +1,6 @@
+/*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Page editing functions
 *
@@ -6,6 +9,12 @@
 * @link         https://github.com/bioversity/PGRDG/
 */
 
+/**
+ * Add a new page
+ */
+$.add_page = function() {
+
+};
 
 /**
  * Edit a selected page
@@ -29,7 +38,11 @@ $.edit_page = function(page_data, info) {
 	$editor = $('<textarea id="text_editor" class="form-control">');
 	$btn_div = $('<div class="col-xs-offset-1 col-sm-offset-1 col-xs-12 col-sm-8 col-lg-10">'),
 	$cancel_btn = $('<a href="javascript:void(0);" onclick="$.cancel_page_editing();" class="btn btn-default-white pull-left">').html('<span class="fa fa-angle-left"></span> ' + i18n[lang].interface.btns.cancel),
-	$save_btn = $('<a href="javascript:void(0);" onclick="$.save_page_data();" class="btn btn-default pull-right">').html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
+	$save_btn = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.save_page_data();",
+		"class": "btn btn-default pull-right"
+	}).html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>');
 
 	$.each(p_data, function(k, v) {
 		if($.is_array(v)) {
@@ -219,9 +232,11 @@ $.save_page_data = function() {
 		        return $.merge(withoutCheckboxes, checkboxValues);
 		}
 	});
-	var serialized = $("#page_management_form_container form").serializeArray();
-	var s = {},
-	pages = {};
+	var serialized = $("#page_management_form_container form").serializeArray(),
+	s = {},
+	pages = {},
+	all = {};
+
 	$.each(serialized, function(k, v) {
 		s[v.name] = v.value;
 	});
@@ -232,35 +247,40 @@ $.save_page_data = function() {
 	console.info("Page Markdown content");
 	console.log($("#text_editor").val());
 
+	all.data = pages;
+	all.content = {
+		"title": s.obj_name,
+		"content": $("#text_editor").val()
+	};
+
 	$.require_password(function() {
+		$("#loader").show();
 		$.ask_cyphered_to_service({
 			storage_group: "pgrdg_user_cache.local.page_data",
-			data: pages,
+			data: all,
 			dataType: "text",
 			type: "save_page_data"
 		}, function(response) {
-			if(response == "ok") {
-				// $("#alert").removeClass("alert-danger")
-				// 	   .addClass("alert-success")
-				// 	   .html('<span class="fa fa-check fa-1_5x pull-left"></span> ' + i18n[lang].messages.menu_saved)
-				// 	   .fadeIn(600, function() {
-				// 	$("#alert").delay(3000).fadeOut(600);
-				// });
-			} else {
-				// $("#alert").removeClass("alert-success")
-				// 	   .addClass("alert-danger")
-				// 	   .html('<span class="fa fa-3x fa-times pull-left"></span> ' + i18n[lang].messages.menu_not_saved)
-				// 	   .fadeIn(600);
-			}
-			// if(typeof callback == "function") {
-			// 	$.each(response, function(id, ud) {
-			// 		// Log
-			// 		$.log_activity("Invited an user with id: " + $.get_user_id(ud));
-			// 	// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
-			// 	// 	callback.call(this, ud);
-			// 	});
-			// }
 			$("#loader").hide();
+			if(response == "ok") {
+				$.log_activity({
+					action: "Changed page \"" + s.obj_name + "\"",
+					icon: "fa-file-text-o"
+				});
+				apprise(i18n[lang].messages.page_saved.message, {
+					title: i18n[lang].messages.page_saved.title,
+					icon: "fa-check",
+					titleClass: "text-success"
+				}, function(r) {
+					location.reload();
+				});
+			} else {
+				apprise(i18n[lang].messages.page_not_saved.message, {
+					title: i18n[lang].messages.page_saved.title,
+					icon: "fa-times",
+					titleClass: "text-danger"
+				});
+			}
 		});
 	});
 };

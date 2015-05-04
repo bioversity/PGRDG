@@ -187,19 +187,24 @@ if(isset($_GET["getPublicKey"])) {
 		case "save_page_data":
 			require_once(CLASSES_DIR . "Parse_json.php");
 			$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
-			foreach($output as $k => $v) {
+			foreach($output["data"] as $k => $v) {
 				$pages_config->json_conf["pages"][$k] = $v;
 			}
-			// print_r(str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)));
 
 			header("Content-type: text/plain");
 
 			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
-			fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)));
+			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)))) {
+				$fc = fopen(SYSTEM_ROOT . "common/md/" . $output["content"]["title"] . ".md", "w");
+				if(fwrite($fc, $output["content"]["content"])) {
+					chmod(SYSTEM_ROOT . "common/md/" . $output["content"]["title"] . ".md", 0777);
+					print "ok";
+				}
+				fclose($fc);
+			}
 			fclose($fp);
-
-			print "ok";
 			exit();
+			break;
 			break;
 		case "save_user_data":
 		case "save_user_image":
