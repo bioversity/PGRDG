@@ -842,6 +842,11 @@ footer ul li + li:before {
 #nav {
 	border-bottom: #c1d82f 1px solid;
 }
+#nav.admin {
+	border: 0px none;
+	border-radius: 0;
+	margin: 0;
+}
 #nav.map,
 header.main #nav {
 	height: 75px;
@@ -894,6 +899,9 @@ header.map #nav {
 	padding: 0;
 	height: 75px;
 }
+#nav.admin .container-fluid {
+	height: 48px;
+}
 .map #nav .container-fluid {
 	height: 39px;
 }
@@ -927,7 +935,7 @@ header.map #nav {
 }
 #nav .navbar-collapse.collapse ul,
 #nav .navbar-collapse.collapsing ul {
-	background-color: #fff;
+	/*background-color: #fff;*/
 }
 .map #nav .navbar-collapse.collapse ul,
 .map #nav .navbar-collapse.collapsing ul {
@@ -977,6 +985,10 @@ header.map #nav {
 		border-right: 0px none;
 		border-bottom: #e0e0e0 1px solid;
 	}
+}
+#nav.admin .navbar-right {
+	font-size: 1.2em;
+	width: auto;
 }
 
 #logo {

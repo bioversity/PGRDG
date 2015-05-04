@@ -77,9 +77,29 @@
         <!-- </div> -->
         <!-- end projects dropdown -->
 
+
+	<nav role="navigation" id="nav" class="navbar right admin">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					Menu <span class="fa fa-bars"></span>
+				</button>
+			</div>
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<?php
+				if (LOGGED) {
+					print str_replace("{USER_NAME}", $user[kTAG_ENTITY_FNAME][kAPI_PARAM_RESPONSE_FRMT_DISP], $global_menu->menu("top", "lvl1 nav navbar-nav navbar-right"));
+				} else {
+					print $global_menu->menu("top", "lvl1 nav navbar-nav navbar-right");
+				}
+				?>
+			</div>
+		</div>
+	</nav>
         <!-- #TOGGLE LAYOUT BUTTONS -->
         <!-- pulled right: nav area -->
-        <div class="pull-right">
+        <!-- <div class="pull-right"> -->
                 <!-- collapse menu button -->
                 <!-- <div id="hide-menu" class="btn-header pull-right"> -->
                         <!-- <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span> -->
@@ -88,7 +108,7 @@
 
                 <!-- #MOBILE -->
                 <!-- Top menu profile link : this shows only when top menu is active -->
-                <ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5">
+                <!-- <ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5">
                         <li class="">
                                 <a href="#" class="dropdown-toggle no-margin userdropdown" data-toggle="dropdown">
                                         <img src="<?php print $domain; ?>/common/media/img/admin/avatars/sunny.png" alt="John Doe" class="online" />
@@ -115,29 +135,29 @@
                                         </li>
                                 </ul>
                         </li>
-                </ul>
+                </ul> -->
 
                 <!-- logout button -->
-                <div id="logout" class="btn-header transparent pull-right">
+                <!-- <div id="logout" class="btn-header transparent pull-right">
                         <span> <a href="/Signout" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a> </span>
-                </div>
+                </div> -->
                 <!-- end logout button -->
 
                 <!-- search mobile button (this is hidden till mobile view port) -->
-                <div id="search-mobile" class="btn-header transparent pull-right">
+                <!-- <div id="search-mobile" class="btn-header transparent pull-right">
                         <span> <a href="javascript:void(0)" title="Search"><i class="fa fa-search"></i></a> </span>
-                </div>
+                </div> -->
                 <!-- end search mobile button -->
 
                 <!-- #SEARCH -->
                 <!-- input: search field -->
-                <form action="/Search" method="get" class="header-search pull-right">
+                <!-- <form action="/Search" method="get" class="header-search pull-right">
                         <input id="search-fld" type="text" name="q" placeholder="Find reports and more">
                         <button type="submit">
                                 <i class="fa fa-search"></i>
                         </button>
                         <a href="javascript:void(0);" id="cancel-search-js" title="Cancel Search"><i class="fa fa-times"></i></a>
-                </form>
+                </form> -->
                 <!-- end input: search field -->
 
                 <!-- fullscreen button -->
@@ -169,7 +189,7 @@
                 <!-- end voice command -->
 
                 <!-- multiple lang dropdown : find all flags in the flags page -->
-                <ul class="header-dropdown-list hidden-xs">
+                <!-- <ul class="header-dropdown-list hidden-xs">
                         <li>
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-gb" alt="England"> <span> EN</span> <i class="fa fa-angle-down"></i> </a>
                                 <ul class="dropdown-menu pull-right">
@@ -206,9 +226,9 @@
 
                                 </ul>
                         </li>
-                </ul>
+                </ul> -->
                 <!-- end multiple lang -->
-        </div>
+        <!-- </div> -->
         <!-- end pulled right: nav area -->
 </header>
 <!-- END HEADER -->
