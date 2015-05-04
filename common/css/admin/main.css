@@ -11042,11 +11042,11 @@ nav ul li a:active {
 }
 /* All levels */
 nav ul {
-  width: 100%;
+  /*width: 100%;*/
   padding: 40px 28px 25px 0;
   padding: 0;
   margin: 0;
-  font-size: 13px;
+  /*font-size: 13px;*/
   line-height: 0.5em;
   list-style: none;
   position: relative;

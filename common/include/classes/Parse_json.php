@@ -189,6 +189,32 @@ class Parse_json {
          * @return string                                                       The generated menu
          */
 	public function menu($menu_position, $ul_class = array()) {
+		// Add Signin or Signout button
+		if($menu_position == "top") {
+			if(LOGGED) {
+				$this->json_conf["menu"]["top"]["Sign out"] = array(
+					"content" => array(
+						"icon" => "fa fa-sign-out",
+						"text" => "Sign out"
+					),
+					"attributes" => array(
+						"href" => "./Signout",
+						"class" => "btn btn-link"
+					)
+				);
+			} else {
+				$this->json_conf["menu"]["top"]["Sign in"] = array(
+					"content" => array(
+						"icon" => "fa fa-sign-in",
+						"text" => "Sign in"
+					),
+					"attributes" => array(
+						"href" => "./Signin",
+						"class" => "btn btn-link"
+					)
+				);
+			}
+		}
 		$menu_list = "";
 		$menu_list .= '<ul';
 		if(!is_array($ul_class)) {

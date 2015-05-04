@@ -9,7 +9,7 @@ function get_menu($menu, $i18nl, $is_submenu = false) {
                         <li class="list-group-item menu_row" id="<?php print md5($k); ?>">
                                 <div class="title_row">
                                         <div class="row">
-                                                <div class="col-sm-1">
+                                                <div class="col-xs-3 col-sm-2">
                                                         <div class="btn-group">
                                                                 <button class="btn btn-sm btn-default-white btn_move_up disabled" title="<?php print $i18nl["messages"]["move_this_menu_up"]; ?>">
                                                                         <span class="fa fa-angle-up"></span>
@@ -26,7 +26,7 @@ function get_menu($menu, $i18nl, $is_submenu = false) {
                                                                 </button>
                                                         </div>
                                                 </div>
-                                                <div class="menu_data col-sm-11">
+                                                <div class="menu_data col-xs-9 col-sm-10">
                                                         <h4 class="list-group-item-heading">
                                                                 <span class="<?php print $v["content"]["icon"]; ?> menu_icon"></span> <span class="menu_name"><?php print $v["content"]["text"]; ?></span><span class="fa fa-fw">&rsaquo;</span>
                                                                 <tt>

@@ -880,6 +880,14 @@ header.map #nav {
 	text-align: left;
 	width: 100%;
 }
+#nav.admin li > a {
+	font-size: 1.1em;
+	background-color: transparent !important;
+	color: #333 !important;
+}
+#nav.admin li.open > a {
+	border-color: transparent;
+}
 .map #nav li > a {
 	color: #ddd;
 	line-height: 26px;
@@ -987,7 +995,7 @@ header.map #nav {
 	}
 }
 #nav.admin .navbar-right {
-	font-size: 1.2em;
+	/*font-size: 1.2em;*/
 	width: auto;
 }
 
