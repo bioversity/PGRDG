@@ -502,7 +502,6 @@ $.save_menu = function() {
 	root.menu.map_contextmenu = [{"Get_point": {"content": {"icon": "fa fa-crosshairs","text": "Get informations of this point"},"attributes": {"href": "javascript:void(0);","class": "btn","title": "Help","onclick": "$.get_click_info();"},"divider": "divider"}}];
 	root.menu.map_knob_contextmenu = [{"Point_info": {"content": {"icon": "fa fa-info-circle","text": ""},"attributes": {"href": "javascript:void(0);","class": "","title": "Get informations of this point","onclick": "$.get_click_info();"}}}];
 
-	console.log(root);
 	// console.log(root);
 	// Now save data to file
 	// var k = {};

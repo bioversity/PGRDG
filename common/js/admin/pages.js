@@ -231,4 +231,36 @@ $.save_page_data = function() {
 	console.log(pages);
 	console.info("Page Markdown content");
 	console.log($("#text_editor").val());
+
+	$.require_password(function() {
+		$.ask_cyphered_to_service({
+			storage_group: "pgrdg_user_cache.local.page_data",
+			data: pages,
+			dataType: "text",
+			type: "save_page_data"
+		}, function(response) {
+			if(response == "ok") {
+				// $("#alert").removeClass("alert-danger")
+				// 	   .addClass("alert-success")
+				// 	   .html('<span class="fa fa-check fa-1_5x pull-left"></span> ' + i18n[lang].messages.menu_saved)
+				// 	   .fadeIn(600, function() {
+				// 	$("#alert").delay(3000).fadeOut(600);
+				// });
+			} else {
+				// $("#alert").removeClass("alert-success")
+				// 	   .addClass("alert-danger")
+				// 	   .html('<span class="fa fa-3x fa-times pull-left"></span> ' + i18n[lang].messages.menu_not_saved)
+				// 	   .fadeIn(600);
+			}
+			// if(typeof callback == "function") {
+			// 	$.each(response, function(id, ud) {
+			// 		// Log
+			// 		$.log_activity("Invited an user with id: " + $.get_user_id(ud));
+			// 	// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
+			// 	// 	callback.call(this, ud);
+			// 	});
+			// }
+			$("#loader").hide();
+		});
+	});
 };

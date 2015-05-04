@@ -98,6 +98,13 @@ if(isset($_GET["getPublicKey"])) {
 		case "ask_service":
 			require_once("ask_service.php");
 			break;
+		case "get_managed_users":
+			require_once(CLASSES_DIR . "Service_exchange.php");
+			$se = new Service_exchange();
+			$managed_users = $se->send_to_service($output, "get_managed_users");
+			$mu = json_decode($managed_users, 1);
+			print $managed_users;
+			break;
 		case "get_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
@@ -110,13 +117,6 @@ if(isset($_GET["getPublicKey"])) {
 			// print_r($user_data);
 			// exit();
 			print json_encode($ud);
-			break;
-		case "get_managed_users":
-			require_once(CLASSES_DIR . "Service_exchange.php");
-			$se = new Service_exchange();
-			$managed_users = $se->send_to_service($output, "get_managed_users");
-			$mu = json_decode($managed_users, 1);
-			print $managed_users;
 			break;
 		case "invite_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");
@@ -183,6 +183,23 @@ if(isset($_GET["getPublicKey"])) {
 			fclose($fp);
 
 			print "ok";
+			break;
+		case "save_page_data":
+			require_once(CLASSES_DIR . "Parse_json.php");
+			$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+			foreach($output as $k => $v) {
+				$pages_config->json_conf["pages"][$k] = $v;
+			}
+			// print_r(str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)));
+
+			header("Content-type: text/plain");
+
+			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
+			fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)));
+			fclose($fp);
+
+			print "ok";
+			exit();
 			break;
 		case "save_user_data":
 		case "save_user_image":
