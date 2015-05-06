@@ -488,6 +488,9 @@ $.site_conf = function(callback) {
         });
 };
 
+/**
+ * Load all pages config
+ */
 $.get_all_pages_config = function(callback) {
         if(storage.isSet("pgrdg_cache.local.pages")) {
                 if(typeof callback == "function") {
@@ -506,9 +509,9 @@ $.get_all_pages_config = function(callback) {
                 });
         }
 };
+
 /**
  * Load page config
- * @return {[type]} [description]
  */
 $.get_page_config = function(callback) {
         $.iterate_pages_config = function(response, callback) {

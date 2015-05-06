@@ -184,6 +184,19 @@ if(isset($_GET["getPublicKey"])) {
 
 			print "ok";
 			break;
+		case "remove_page":
+			header("Content-type: text/plain");
+
+			chmod(CONF_DIR . "interface/pages.json", 0777);
+			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
+			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($output["data"])))) {
+				if(unlink(SYSTEM_ROOT . "common/md/" . $output["title"] . ".md")) {
+					print "ok";
+				}
+			}
+			fclose($fp);
+			exit();
+			break;
 		case "save_page_data":
 			require_once(CLASSES_DIR . "Parse_json.php");
 			$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
@@ -193,6 +206,7 @@ if(isset($_GET["getPublicKey"])) {
 
 			header("Content-type: text/plain");
 
+			chmod(CONF_DIR . "interface/pages.json", 0777);
 			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
 			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)))) {
 				$fc = fopen(SYSTEM_ROOT . "common/md/" . $output["content"]["title"] . ".md", "w");
@@ -204,7 +218,6 @@ if(isset($_GET["getPublicKey"])) {
 			}
 			fclose($fp);
 			exit();
-			break;
 			break;
 		case "save_user_data":
 		case "save_user_image":

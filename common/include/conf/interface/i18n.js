@@ -133,7 +133,15 @@ var i18n = {
                         },
                         "page_not_saved": {
                                 "title": "Page not saved",
-                                "message": "There was an error whan saving the page, please contact the administrator or try again later"
+                                "message": "There was an error when saving the page, please contact the administrator or try again later"
+                        },
+                        "page_deleted": {
+                                "title": "Page removed",
+                                "message": "The page was removed succesfully"
+                        },
+                        "page_not_deleted": {
+                                "title": "Page not removed",
+                                "message": "There was an error when removing the page, please contact the administrator or try again later"
                         },
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
                         "removed_item": "Removed {X}",
@@ -211,6 +219,7 @@ var i18n = {
                                 "activate": "Activate",
                                 "add": "Add",
                                 "add_menu": "Add menu",
+                                "add_page": "Add page",
                                 "advanced_search": "Advanced search",
                                 "back_to_your_profile": "Back to your profile",
                                 "back_to_main_upload": "Back to main upload interface",
@@ -242,6 +251,7 @@ var i18n = {
                                 "print_results": "Print results",
                                 "remove_all": "Remove all",
                                 "remove": "Remove",
+                                "remove_page": "Remove this page",
                                 "remove_selection": "Remove selection",
                                 "reset_all": "Reset all",
                                 "publish": "Publish",

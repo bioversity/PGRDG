@@ -159,7 +159,7 @@ h1 > [class^="fa-"], h1 > [class*=" fa-"] {
 .admin #content h1 {
 	font-family: "Roboto", sans-serif;
 	font-weight: 400;
-	margin: 12px 0 0 0;
+	margin: 12px 0 2em 0;
 	color: #666;
 	font-size: 24px;
 }
@@ -1376,6 +1376,9 @@ div[unselectable].fc-view {
 }
 .icon_box h1[unselectable] {
 	text-align: center;
+}
+#content > .admin_content {
+ 	padding-bottom: 3em;
 }
 #loader_bg {
 	bottom: 0;

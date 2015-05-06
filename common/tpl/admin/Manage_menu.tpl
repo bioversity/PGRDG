@@ -77,9 +77,6 @@ function get_menu($menu, $i18nl, $is_submenu = false) {
                         <button class="btn btn-orange save_btn" onclick="$.save_menu();"><?php print $i18n[$lang]["interface"]["btns"]["save"]; ?>&nbsp;&nbsp;&nbsp;<span class="fa fa-chevron-right"></span></button>
                 </div>
         </h1>
-
-        <br />
-        <br />
         <div id="menu_management_accordion" class="panel-group">
                 <div class="panel panel-default">
                         <div class="panel-heading">
