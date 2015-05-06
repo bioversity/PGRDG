@@ -294,7 +294,7 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                                        kAPI_PARAM_FILE_PATH => "/tmp/test_checklist.small.xlsx"
+                                        kAPI_PARAM_FILE_PATH => "/tmp/CWR_Checklist_Template.test.large.xlsx"
                                         // Uncomment for production version
                                         // kAPI_PARAM_FILE_PATH => $data[kAPI_PARAM_FILE_PATH]
                                 );

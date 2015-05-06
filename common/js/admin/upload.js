@@ -1,3 +1,6 @@
+/*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Upload functions
 *
@@ -88,7 +91,7 @@ $.get_rejected_name = function(session) { return ((session[kTAG_COUNTER_REJECTED
  * @param  object 			session 				The session object
  * @return int  		        					The number of the current progress
  */
-$.get_progress = function(session) { return session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_VALUE]; };
+$.get_progress = function(session) { return ((session[kTAG_COUNTER_PROGRESS] !== undefined) ? session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_VALUE] : ""); };
 
 /**
  * Check if current session has validated items
@@ -198,8 +201,10 @@ $.upload_user_status = function(callback) {
 		type: "upload_user_status",
 		force_renew: true
 	}, function(response) {
-		if(!$.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id") || $.get_current_session_id() !== response[kAPI_SESSION_ID]) {
-			storage.set("pgrdg_user_cache.user_data.current.last_upload_session_id", response["session-id"]);
+		if(response !== null) {
+			if(!$.storage_exists("pgrdg_user_cache.user_data.current.last_upload_session_id") || $.get_current_session_id() !== response[kAPI_SESSION_ID]) {
+				storage.set("pgrdg_user_cache.user_data.current.last_upload_session_id", response["session-id"]);
+			}
 		}
 
 		if (typeof callback == "function") {
@@ -475,6 +480,13 @@ $.build_interface = function(session_id) {
 				status = "warning";
 				break;
 		}
+		if(session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE] == kTYPE_STATUS_EXECUTING && !response[kAPI_SESSION_RUNNING]) {
+			session_status_class = "progress-bar-danger";
+			status_icon = "fa-times fa-1_5x";
+			status_string_class = "text-danger";
+			status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
+			status = "danger";
+		}
 		$("#details_row").removeClass("hidden");
 		/**
 		 * General summary
@@ -541,159 +553,164 @@ $.build_interface = function(session_id) {
 		// Progress bar
 		var progress = ((session[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(session[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100);
 		$.set_progress_bar(progress, session_status_class);
-		$.each(session[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, transaction) {
-			var current_progress = ((transaction[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(transaction[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100),
-			progress_bar_class = "",
-			icon_size = "fa-1_5x";
-			switch($.trim(transaction[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
-				case kTYPE_STATUS_FAILED:
-				case kTYPE_STATUS_ERROR:
-				case kTYPE_STATUS_FATAL:
-				case kTYPE_STATUS_EXCEPTION:
-					current_status_class = "list-group-item-danger";
-					current_status = "danger";
-					current_status_icon = "fa-times";
-					break;
-				case kTYPE_STATUS_EXECUTING:
-					current_status_class = "";
-					// current_status = "";
-					current_status_icon = "fa-refresh fa-spin text-muted";
-					break;
-				case kTYPE_STATUS_OK:
-					current_status_class = "list-group-item-success";
-					current_status = "success";
-					current_status_icon = "fa-check";
-					break;
-				case kTYPE_STATUS_MESSAGE:
-					current_status_class = "list-group-item-info";
-					current_status = "info";
-					current_status_icon = "fa-info";
-					break;
-				case kTYPE_STATUS_WARNING:
-					current_status_class = "list-group-item-warning";
-					current_status = "warning";
-					current_status_icon = "fa-exclamation-triangle";
-					break;
-			}
-
-			var $item;
-			if($.obj_len(transaction[kTAG_COUNTER_SKIPPED]) > 0) {
-				current_status_class = "list-group-item-warning";
-				progress_bar_class = "progress-bar-warning";
-				current_status_icon = "fa-exclamation-triangle";
+		if(session[kAPI_PARAM_RESPONSE_FRMT_DOCU].length > 0) {
+			$.each(session[kAPI_PARAM_RESPONSE_FRMT_DOCU], function(k, transaction) {
+				var current_progress = ((transaction[kTAG_COUNTER_PROGRESS] !== undefined) ? parseInt(transaction[kTAG_COUNTER_PROGRESS][kAPI_PARAM_RESPONSE_FRMT_DISP]) : 100),
+				progress_bar_class = "",
 				icon_size = "fa-1_5x";
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_REJECTED]) > 0) {
-				current_status_class = "list-group-item-danger";
-				progress_bar_class = "progress-bar-danger";
-				current_status_icon = "fa-times";
-			}
-			if($("#" + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP])).length === 0) {
-				// console.warn(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "no");
-				$item = $('<div id="' + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]) + '">');
-			} else {
-				// console.warn(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "yes");
-				$item = $("#" + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]));
-			}
-			$item.attr("class", "list-group-item" + ((current_status_class !== "") ? " " + current_status_class : ""));
-			// Date
-			var ssec = new Date(transaction[kTAG_TRANSACTION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
-			esec,
-			processed = 0,
-			processed_text = "",
-			validated = 0,
-			validated_text = "",
-			rejected = 0,
-			rejected_text = "",
-			skipped = 0,
-			skipped_text = "",
-			records = 0,
-			records_text = "";
-			if($.obj_len(transaction[kTAG_TRANSACTION_END]) > 0) {
-				esec = new Date(transaction[kTAG_TRANSACTION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_PROCESSED])) {
-				processed = $.get_processed(transaction);
-				processed_text = $.get_processed_name(transaction);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_VALIDATED])) {
-				validated = $.get_validated(transaction);
-				validated_text = $.get_validated_name(transaction);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_REJECTED])) {
-				rejected = $.get_rejected(transaction);
-				rejected_text = $.get_rejected_name(transaction);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_SKIPPED])) {
-				skipped = $.get_skipped(transaction);
-				skipped_text = $.get_skipped_name(transaction);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_RECORDS])) {
-				records = $.get_records(transaction);
-				records_text = $.get_records_name(transaction);
-			}
-			var progressbar_style = (current_progress >= 100) ? ((progress_bar_class !== "") ? progress_bar_class : "progress-bar-success") : ((status == "danger") ? "progress-bar-danger" : "progress-bar-info progress-bar-striped active");
-			$item_row_container = $('<div>'),
-			$item_row = $('<div class="row">'),
-			$item_col1 = $('<div class="col-sm-1">'),
-			$item_col2 = $('<div class="col-sm-4">'),
-			$item_col2a = $('<div class="col-sm-2 text-right">'),
-			$item_col2b = $('<div class="col-sm-2 text-right text-muted">'),
-			$item_col3 = $('<div class="col-sm-3">'),
-			$item_title = $('<h4 class="list-group-item-heading">').text(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
-			$item_processed = $('<p class="text-muted" title="' + i18n[lang].messages.upload.summary.processed + '">').html('<span class="fa fa-cogs"></span> ' + processed + " " + processed_text),
-			$item_validated = $('<p class="text-success" title="' + i18n[lang].messages.upload.summary.validated + '">').html('<span class="fa fa-fw fa-check-circle-o"></span> ' + validated + " " + validated_text),
-			$item_rejected = $('<p class="text-danger" title="' + i18n[lang].messages.upload.summary.rejected + '">').html('<span class="fa fa-fw fa-times-circle"></span> ' + rejected + " " + rejected_text),
-			$item_skipped = $('<p class="text-warning" title="' + i18n[lang].messages.upload.summary.skipped + '">').html('<span class="fa fa-fw fa-exclamation-circle"></span> ' + skipped + " " + skipped_text),
-			$item_records = $('<p class="total" title="' + i18n[lang].messages.upload.summary.records + '">').html('<span class="fa fa-fw fa-list-alt"></span> ' + records + " " + records_text),
-			$item_status = $('<small>'),
-			$item_time_data = $('<small>').html('<span title="Start date"><span class="fa fa-clock-o"></span> ' + $.epoch2locale(ssec) + "</span><br />");
-			// return false;
+				switch($.trim(transaction[kTAG_TRANSACTION_STATUS][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
+					case kTYPE_STATUS_FAILED:
+					case kTYPE_STATUS_ERROR:
+					case kTYPE_STATUS_FATAL:
+					case kTYPE_STATUS_EXCEPTION:
+						current_status_class = "list-group-item-danger";
+						current_status = "danger";
+						current_status_icon = "fa-times";
+						break;
+					case kTYPE_STATUS_EXECUTING:
+						current_status_class = "";
+						// current_status = "";
+						current_status_icon = "fa-refresh fa-spin text-muted";
+						break;
+					case kTYPE_STATUS_OK:
+						current_status_class = "list-group-item-success";
+						current_status = "success";
+						current_status_icon = "fa-check";
+						break;
+					case kTYPE_STATUS_MESSAGE:
+						current_status_class = "list-group-item-info";
+						current_status = "info";
+						current_status_icon = "fa-info";
+						break;
+					case kTYPE_STATUS_WARNING:
+						current_status_class = "list-group-item-warning";
+						current_status = "warning";
+						current_status_icon = "fa-exclamation-triangle";
+						break;
+				}
 
-			if($.obj_len(transaction[kTAG_TRANSACTION_END]) > 0) {
-				$item_time_data.append('<span title="End date"><span class="fa fa-clock-o"></span> ' + esec.toLocaleString() + '</span>');
-			}
-			// $item_description = $('<p class="list-group-item-text text-muted">').text(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
-			var $item_progress_container = $('<div class="progress">'),
-			$item_progress_bar = $('<div style="width: ' + current_progress + '%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="' + current_progress + '" role="progressbar" class="progress-bar ' + progressbar_style + '">').text(current_progress + "%");
-			$item_col1.append('<span class="fa ' + current_status_icon + ' ' + icon_size + '"></span>');
-			$item_col1.find("span").addClass("");
-			// Contents
-			$item_col2.append($item_title);//.append($item_description);
-			if($.obj_len(transaction[kTAG_COUNTER_PROCESSED])) {
-				$item_status.append($item_processed);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_VALIDATED])) {
-				$item_status.append($item_validated);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_REJECTED])) {
-				$item_status.append($item_rejected);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_SKIPPED])) {
-				$item_status.append($item_skipped);
-			}
-			if($.obj_len(transaction[kTAG_COUNTER_RECORDS])) {
-				$item_status.append('<hr />').append($item_records);
-			}
-			$item_col2a.append($item_status);
-			$item_col2b.append($item_time_data);
-			// Progress bar
-			$item_progress_container.append($item_progress_bar);
-			$item_col3.append($item_progress_container);
-			$item_row.append($item_col1);
-			$item_row.append($item_col2);
-			$item_row.append($item_col2a);
-			$item_row.append($item_col2b);
-			$item_row.append($item_col3);
-			$item_row_container.append($item_row);
-			$item.html($item_row_container.html());
-			$("#detail_list_group").append($item);
+				var $item;
+				if($.obj_len(transaction[kTAG_COUNTER_SKIPPED]) > 0) {
+					current_status_class = "list-group-item-warning";
+					progress_bar_class = "progress-bar-warning";
+					current_status_icon = "fa-exclamation-triangle";
+					icon_size = "fa-1_5x";
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_REJECTED]) > 0) {
+					current_status_class = "list-group-item-danger";
+					progress_bar_class = "progress-bar-danger";
+					current_status_icon = "fa-times";
+				}
+				if($("#" + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP])).length === 0) {
+					// console.warn(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "no");
+					$item = $('<div id="' + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]) + '">');
+				} else {
+					// console.warn(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP], "yes");
+					$item = $("#" + $.md5(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]));
+				}
+				$item.attr("class", "list-group-item" + ((current_status_class !== "") ? " " + current_status_class : ""));
+				// Date
+				var ssec = new Date(transaction[kTAG_TRANSACTION_START][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000),
+				esec,
+				processed = 0,
+				processed_text = "",
+				validated = 0,
+				validated_text = "",
+				rejected = 0,
+				rejected_text = "",
+				skipped = 0,
+				skipped_text = "",
+				records = 0,
+				records_text = "";
+				if($.obj_len(transaction[kTAG_TRANSACTION_END]) > 0) {
+					esec = new Date(transaction[kTAG_TRANSACTION_END][kAPI_PARAM_RESPONSE_FRMT_VALUE].sec*1000);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_PROCESSED])) {
+					processed = $.get_processed(transaction);
+					processed_text = $.get_processed_name(transaction);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_VALIDATED])) {
+					validated = $.get_validated(transaction);
+					validated_text = $.get_validated_name(transaction);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_REJECTED])) {
+					rejected = $.get_rejected(transaction);
+					rejected_text = $.get_rejected_name(transaction);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_SKIPPED])) {
+					skipped = $.get_skipped(transaction);
+					skipped_text = $.get_skipped_name(transaction);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_RECORDS])) {
+					records = $.get_records(transaction);
+					records_text = $.get_records_name(transaction);
+				}
+				var progressbar_style = (current_progress >= 100) ? ((progress_bar_class !== "") ? progress_bar_class : "progress-bar-success") : ((status == "danger") ? "progress-bar-danger" : "progress-bar-info progress-bar-striped active");
+				$item_row_container = $('<div>'),
+				$item_row = $('<div class="row">'),
+				$item_col1 = $('<div class="col-sm-1">'),
+				$item_col2 = $('<div class="col-sm-4">'),
+				$item_col2a = $('<div class="col-sm-2 text-right">'),
+				$item_col2b = $('<div class="col-sm-2 text-right text-muted">'),
+				$item_col3 = $('<div class="col-sm-3">'),
+				$item_title = $('<h4 class="list-group-item-heading">').text(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP]),
+				$item_processed = $('<p class="text-muted" title="' + i18n[lang].messages.upload.summary.processed + '">').html('<span class="fa fa-cogs"></span> ' + processed + " " + processed_text),
+				$item_validated = $('<p class="text-success" title="' + i18n[lang].messages.upload.summary.validated + '">').html('<span class="fa fa-fw fa-check-circle-o"></span> ' + validated + " " + validated_text),
+				$item_rejected = $('<p class="text-danger" title="' + i18n[lang].messages.upload.summary.rejected + '">').html('<span class="fa fa-fw fa-times-circle"></span> ' + rejected + " " + rejected_text),
+				$item_skipped = $('<p class="text-warning" title="' + i18n[lang].messages.upload.summary.skipped + '">').html('<span class="fa fa-fw fa-exclamation-circle"></span> ' + skipped + " " + skipped_text),
+				$item_records = $('<p class="total" title="' + i18n[lang].messages.upload.summary.records + '">').html('<span class="fa fa-fw fa-list-alt"></span> ' + records + " " + records_text),
+				$item_status = $('<small>'),
+				$item_time_data = $('<small>').html('<span title="Start date"><span class="fa fa-clock-o"></span> ' + $.epoch2locale(ssec) + "</span><br />");
+				// return false;
 
-			// Behaviours
-			if($("#transactions").hasClass("in")) {
-				// $("#content").scrollTo("100%", 300);
-			}
-		});
+				if($.obj_len(transaction[kTAG_TRANSACTION_END]) > 0) {
+					$item_time_data.append('<span title="End date"><span class="fa fa-clock-o"></span> ' + esec.toLocaleString() + '</span>');
+				}
+				// $item_description = $('<p class="list-group-item-text text-muted">').text(transaction[kTAG_TRANSACTION_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_INFO]),
+				var $item_progress_container = $('<div class="progress">'),
+				$item_progress_bar = $('<div style="width: ' + current_progress + '%;" aria-valuemax="100" aria-valuemin="0" aria-valuenow="' + current_progress + '" role="progressbar" class="progress-bar ' + progressbar_style + '">').text(current_progress + "%");
+				$item_col1.append('<span class="fa ' + current_status_icon + ' ' + icon_size + '"></span>');
+				$item_col1.find("span").addClass("");
+				// Contents
+				$item_col2.append($item_title);//.append($item_description);
+				if($.obj_len(transaction[kTAG_COUNTER_PROCESSED])) {
+					$item_status.append($item_processed);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_VALIDATED])) {
+					$item_status.append($item_validated);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_REJECTED])) {
+					$item_status.append($item_rejected);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_SKIPPED])) {
+					$item_status.append($item_skipped);
+				}
+				if($.obj_len(transaction[kTAG_COUNTER_RECORDS])) {
+					$item_status.append('<hr />').append($item_records);
+				}
+				$item_col2a.append($item_status);
+				$item_col2b.append($item_time_data);
+				// Progress bar
+				$item_progress_container.append($item_progress_bar);
+				$item_col3.append($item_progress_container);
+				$item_row.append($item_col1);
+				$item_row.append($item_col2);
+				$item_row.append($item_col2a);
+				$item_row.append($item_col2b);
+				$item_row.append($item_col3);
+				$item_row_container.append($item_row);
+				$item.html($item_row_container.html());
+				$("#detail_list_group").append($item);
+
+				// Behaviours
+				if($("#transactions").hasClass("in")) {
+					$("#content").scrollTo("100%", 300);
+				}
+			});
+		} else {
+			$("#details_row").html('<h1 unselectable="on"><span class="fa fa-fw fa-times text-danger"></span>Not enought data to display</h1>');
+			return false;
+		}
 
 		// Cycle
 		if(progress < 100 && status !== "danger") {
@@ -1292,7 +1309,7 @@ $.init_upload = function() {
 		if($("#contents .top_content_label").length > 0) {
 			$("#contents .top_content_label").remove();
 		}
-		if(status[kAPI_SESSION_RUNNING]) {
+		if(status !== null && status[kAPI_SESSION_RUNNING]) {
 			$.log_activity({
 				action: "Displaying upload status with session id: " + status[kAPI_SESSION_ID],
 				icon: "fa-eye-slash"
@@ -1303,7 +1320,7 @@ $.init_upload = function() {
 		} else {
 			var session_id = "";
 			// Add previous upload session
-			if(status[kAPI_SESSION_ID] !== undefined && status[kAPI_SESSION_ID] !== null && status[kAPI_SESSION_ID] !== "") {
+			if(status !== null && status[kAPI_SESSION_ID] !== undefined && status[kAPI_SESSION_ID] !== null && status[kAPI_SESSION_ID] !== "") {
 				session_id = status[kAPI_SESSION_ID];
 				$("#contents").add_previous_upload_session(status[kAPI_SESSION_ID]);
 			}
@@ -1336,10 +1353,17 @@ $.init_upload = function() {
 					});
 				},
 				addedfile: function() {
-					$.log_activity({
-						action: "Displaying last upload with session id: " + status[kAPI_SESSION_ID],
-						icon: "fa-eye-slash"
-					});
+					if(status !== null) {
+						$.log_activity({
+							action: "Displaying last upload with session id: " + status[kAPI_SESSION_ID],
+							icon: "fa-eye-slash"
+						});
+					} else {
+						$.log_activity({
+							action: "Uploading first file",
+							icon: "fa-eye-slash"
+						});
+					}
 					$("#upload").added_file();
 				},
 				uploadprogress: function(file, progress) {

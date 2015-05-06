@@ -548,15 +548,19 @@ $.left_panel = function(subject, width, callback) {
 
 /**
  * Add right buttons on the breadcrumb
+ * @param bool 				shown_directly				The summary is showned directly?
  */
-$.breadcrumb_right_buttons = function() {
-	if($.storage_exists("pgrdg_cache.search.criteria")) {
+$.breadcrumb_right_buttons = function(shown_directly) {
+	if(shown_directly === undefined || shown_directly === null || shown_directly === "") {
+		shown_directly = false;
+	}
+	if($.storage_exists("pgrdg_cache.search.criteria") || shown_directly) {
 		if($("#breadcrumb").length > 0) {
 			if($("#breadcrumb .breadcrumb li.no-divider.pull-right").length === 0) {
 				var li_no_divider = $('<li class="no-divider pull-right">'),
 				btn_group = $('<div class="btn-group">'),
 				//a_show_history = $('<a class="btn btn-xs btn-default-grey" href="javascript: void(0);" onclick="$.show_storage_data(\'search.criteria\');" title="Manage search history"><span class="fa fa-fw fa-list text-center"></span></a>'),
-				a_reset_history = $('<a class="btn btn-xs btn-default-grey text-danger" href="javascript: void(0);" onclick="$.clear_history();" title="Reset all search history"><span class="fa fa-fw fa-times text-center text-danger"></span>Reset all searches</a>');
+				a_reset_history = $('<a class="btn btn-xs btn-default-grey text-danger" href="javascript: void(0);" onclick="$.clear_history();" title="' + i18n[lang].messages.reset_all_search_history + '"><span class="fa fa-fw fa-times text-center text-danger"></span>' + i18n[lang].interface.btns.reset_all_searches + '</a>');
 
 				//a_show_history.appendTo(btn_group);
 				a_reset_history.appendTo(li_no_divider);
@@ -568,7 +572,7 @@ $.breadcrumb_right_buttons = function() {
 			if((current_path == "Search" && $.obj_len(query) > 0) && current_path !== "Advanced_search") {
 				var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
 				breadcrumb_ol = $('<ol class="breadcrumb">'),
-				breadcrumb_li = $('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">Active form</span></a></li>');
+				breadcrumb_li = $('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">' + i18n[lang].interface.btns.active_form + '</span></a></li>');
 
 				breadcrumb_li.appendTo(breadcrumb_ol);
 				breadcrumb_ol.appendTo(breadcrumb_div);

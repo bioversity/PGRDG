@@ -145,6 +145,7 @@ var i18n = {
                         },
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
                         "removed_item": "Removed {X}",
+                        "reset_all_search_history": "Reset all search history",
                         "row_data": {
                                 "page": "Page",
                                 "current_page": "Current page",
@@ -217,6 +218,7 @@ var i18n = {
                 "interface": {
                         "btns": {
                                 "activate": "Activate",
+                                "active_form": "AcActive formtivate",
                                 "add": "Add",
                                 "add_menu": "Add menu",
                                 "add_page": "Add page",
@@ -254,6 +256,7 @@ var i18n = {
                                 "remove_page": "Remove this page",
                                 "remove_selection": "Remove selection",
                                 "reset_all": "Reset all",
+                                "reset_all_searches": "Reset all searches",
                                 "publish": "Publish",
                                 "save": "Save",
                                 "search_in_shape": "Search in shape...",

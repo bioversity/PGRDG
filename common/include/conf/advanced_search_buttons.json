@@ -3,267 +3,300 @@
 		"Crop_wild_relative": {
 			"name": "Crop Wild Relatives",
 			"icon": "common/media/img/uploads/cwr.svg",
-			"refines": {
-				"Crop_wild_relative_checklists": {
-					"name": "Crop wild relative checklists",
-					"options": [
-						"National (4)"
-					]
-				},
-				"Crop_wild_relative_checklist_code": {
-					"name": "Crop wild relative checklist code",
-					"options": [
-						"Crop wild relative codes"
-					]
-				},
-				"Type_of_checklist": {
-					"name": "Type of checklist (7599)",
-					"options": [
-						"Complete Crop wild relative checklist",
-						"Annotated Crop wild relative checklist",
-						"Priority Crop wild relative checklist"
-					]
-				},
-				"Taxonomy": {
-					"name": "Taxonomy",
-					"options": [
-						"Genus",
-						"Species",
-						"Scientific name"
-					]
-				}
-			}
-		},
-		"Landrace": {
-			"name": "Landrace",
-			"icon": "common/media/img/uploads/landrace.svg",
-			"refines": {}
-		},
-		"Breeding": {
-			"name": "Breeding",
-			"icon": "common/media/img/uploads/breeding.svg",
-			"refines": {}
-		},
-		"Crops": {
-			"name": "Crops",
-			"icon": "common/media/img/uploads/crops.svg",
-			"refines": {}
-		},
-		"Organizations": {
-			"name": "Organizations",
-			"icon": "common/media/img/uploads/organizations.svg",
-			"refines": {}
-		},
-		"Forest": {
-			"name": "Forest",
-			"icon": "common/media/img/uploads/forest.svg",
-			"refines": {}
-		},
-		"Checklists": {
-			"name": "Checklists",
-			"icon": "common/media/img/uploads/checking1.svg",
-			"refines": {
-				"Crop wild relative_checklists": {
-					"name": "Crop wild relative checklists",
-					"options": [
-						"National",
-						"European"
-					]
-				},
-				"National": {
-					"name": "National (4)",
-					"options": [
-						"Country"
-					]
-				},
-				"Regional": {
-					"name": "Regional",
-					"options": [
-						"Region"
-					]
-				},
-				"Complete_Crop_wild_relative_checklist": {
-					"name": "Complete Crop wild relative checklist",
-					"options": [
-						"Site unit",
-						"Genus",
-						"Species",
-						"Edition number (date)"
-					]
-				},
-				"Annotated_Crop_wild_relative_checklist": {
-					"name": "Annotated Crop wild relative checklist",
-					"options": [
-						"Threats",
-						"Genepool",
-						"Crop",
-						"Crop group",
-						"List criteria for Prioritization"
-					]
-				},
-				"Priority_Crop_wild_relative_checklist": {
-					"name": "Priority Crop wild relative checklist",
-					"options": [
-						"Genepool",
-						"Crop",
-						"Crop group",
-						"List criteria for Prioritization"
-					]
-				},
-				"Taxonomy": {
-					"name": "Taxonomy",
-					"options": [
-						"Genus",
-						"Species",
-						"Scientific name"
-					]
-				}
-			}
-		},
-		"Inventories": {
-			"name": "Inventories",
-			"icon": "",
-			"refines": {
-				"Crop_wild_relative": {
-					"name": "Crop wild relative",
-					"options": [
-						"National",
-						"European"
-					]
-				},
-				"National": {
-					"name": "National (4)",
-					"options": [
-						"Country"
-					]
-				},
-				"Regional": {
-					"name": "Regional",
-					"options": [
-						"Region"
-					]
-				},
-				"Inventory identifier": {
-					"name": "Inventory identifier",
-					"options": [
-						"Site unit",
-						"Inventory code",
-						"Species",
-						"Version or date"
-					]
-				},
-				"Taxon": {
-					"name": "Taxon",
-					"options": [
-						"Designation",
-						"Priority level",
-						"Relation to crop",
-						"Occurance status",
-						"List criteria for Prioritization"
-					]
-				},
-				"Taxonomy": {
-					"name": "Taxonomy",
-					"options": [
-						"Genus",
-						"Species",
-						"Scientific name"
-					]
-				},
-				"Uses": {
-					"name": "Uses",
-					"options": [
-						"Animal food",
-						"Environmantal uses",
-						"Fuels",
-						"Food additives",
-						"Weeds",
-						"Vertebrates",
-						"Social uses",
-						"Other uses"
-					]
-				}
-			}
+			"links": [{
+				"name": "National Inventories",
+				"link": "National_Inventories"
+			},
+			{
+				"name": "Conservation Strategies",
+				"link": "Conservation_Strategies"
+			},
+			{
+				"name": "Biological status of accession",
+				"childs": [{
+					"name": "Natural",
+					"criteria": {
+						"mcpd:SAMPSTAT": {
+							"input-type": "input-enum",
+							"term": ["mcpd:SAMPSTAT:110"]
+						}
+					}
+				}, {
+					"name": "Semi-natural/wild",
+					"criteria": {
+						"mcpd:SAMPSTAT": {
+							"input-type": "input-enum",
+							"term": ["mcpd:SAMPSTAT:120"]
+						}
+					}
+				}, {
+					"name": "Semi-natural/sown",
+					"criteria": {
+						"mcpd:SAMPSTAT": {
+							"input-type": "input-enum",
+							"term": ["mcpd:SAMPSTAT:130"]
+						}
+					}
+				}]
+			}]
 		},
 		"Samples": {
 			"name": "Samples",
 			"icon": "common/media/img/uploads/samples.svg",
-			"refines": {}
+			"links": [{
+				"name": "Status",
+				"childs": [{
+					"name": "MLS Status",
+					"criteria": {
+						"mcpd:MLSSTAT": {
+							"input-type": "input-enum",
+							"term": ["mcpd:MLSSTAT:1"]
+						}
+					}
+				}, {
+					"name": "Availability",
+					"criteria": {
+						"mcpd:AVAILABLE": {
+							"input-type": "input-enum",
+							"term": ["mcpd:AVAILABLE:1"]
+						}
+					}
+				}]
+			}, {
+				"name": "Source",
+				"childs": [{
+					"name": "Biological status of accession",
+					"criteria": {
+						"mcpd:SAMPSTAT": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}]
 		},
-		"Collecting_missions": {
-			"name": "Collecting missions (sites)",
+		"Crops": {
+			"name": "Crops",
+			"icon": "common/media/img/uploads/crops.svg",
+			"links": [{
+				"name": "Taxon distribution",
+				"childs": [{
+					"name": "Occurrence Status",
+					"criteria": {
+						":taxon:occurrence-status": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}, {
+				"name": "Taxon policy",
+				"childs": [{
+					"name": "Annex 1 group",
+					"criteria": {
+						":taxon:annex-1": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}, {
+				"name": "Taxon groups",
+				"childs": [{
+					"name": "Crop group",
+					"criteria": {
+						":taxon:crop:group": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				},{
+					"name": "Gene Pool",
+					"criteria": {
+						":taxon:genepool": {
+							"input-type": "input-string",
+							"operator": ["$CX", "$i"],
+							"pattern": ""
+						}
+					}
+				}]
+			}, {
+				"name": "Taxon distribution",
+				"childs": [{
+					"name": "Occurrence status (Native)",
+					"criteria": {
+						":taxon:occurrence-status": {
+							"input-type": "input-enum",
+							"term": [":taxon:occurrence-status:100"]
+						}
+					}
+				},{
+					"name": "Occurrence status (Non native)",
+					"criteria": {
+						":taxon:occurrence-status": {
+							"input-type": "input-enum",
+							"term": [":taxon:occurrence-status:400"]
+						}
+					}
+				}]
+			}]
+		},
+		"Landrace": {
+			"name": "Landrace",
+			"icon": "common/media/img/uploads/landrace.svg",
+			"links": [
+			{
+				"name": "Conservation Strategies",
+				"link": "Conservation_Strategies"
+			}]
+		},
+		"Breeding": {
+			"name": "Breeding",
+			"icon": "common/media/img/uploads/breeding.svg",
+			"links": [{
+				"name": "QTL",
+				"childs": [{
+					"name": "QTL trait names",
+					"criteria": {
+						"qtl:TRAITNAME": {
+							"input-type": "input-string",
+							"operator": ["$CX", "$i"],
+							"pattern": ""
+						}
+					}
+				}]
+			}]
+		},
+		"Forest": {
+			"name": "Forest",
+			"icon": "common/media/img/uploads/forest.svg",
+			"links": [{
+				"name": "Forest gene conservation unit",
+				"childs": []
+			}]
+		},
+		"Organizations": {
+			"name": "Organizations",
+			"icon": "common/media/img/uploads/organizations.svg",
+			"links": []
+		},
+		"Checklists": {
+			"name": "Checklists",
+			"icon": "common/media/img/uploads/checking1.svg",
+			"links": []
+		},
+		"Collecting Missions": {
+			"name": "Collecting Missions",
 			"icon": "common/media/img/uploads/cm.svg",
-			"refines": {
-				"Crop_wild_relative": {
-					"name": "Crop wild relative",
-					"options": [
-						"National",
-						"European"
-					]
-				},
-				"National": {
-					"name": "National (4)",
-					"options": [
-						"Country"
-					]
-				},
-				"Regional": {
-					"name": "Regional",
-					"options": [
-						"Region"
-					]
-				},
-				"Inventory identifier": {
-					"name": "Inventory identifier",
-					"options": [
-						"Site unit",
-						"Inventory code",
-						"Species",
-						"Version or date"
-					]
-				},
-				"Taxon": {
-					"name": "Taxon",
-					"options": [
-						"Designation",
-						"Priority level",
-						"Relation to crop",
-						"Occurance status",
-						"List criteria for Prioritization"
-					]
-				},
-				"Taxonomy": {
-					"name": "Taxonomy",
-					"options": [
-						"Genus",
-						"Species",
-						"Scientific name"
-					]
-				},
-				"Uses": {
-					"name": "Uses",
-					"options": [
-						"Animal food",
-						"Environmantal uses",
-						"Fuels",
-						"Food additives",
-						"Weeds",
-						"Vertebrates",
-						"Social uses",
-						"Other uses"
-					]
-				}
-			}
+			"links": [{
+				"name": "Collecting Missions",
+				"childs": [{
+					"name": "Collecting mission start date",
+					"criteria": {
+						":mission:collecting:start": {
+							"input-type": "input-range",
+							"max": null,
+							"min": null,
+							"operator": ["$IRG"]
+						}
+					}
+				}, {
+					"name": "Collecting mission end date",
+					"criteria": {
+						":mission:collecting:end": {
+							"input-type": "input-range",
+							"max": null,
+							"min": null,
+							"operator": ["$IRG"]
+						}
+					}
+				}]
+			}, {
+				"name": "Location",
+				"childs": [{
+					"name": "Country",
+					"criteria": {
+						":location:country": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}, {
+				"name": "Taxon groups",
+				"childs": [{
+					"name": "Crop group",
+					"criteria": {
+						":taxon:crop:group": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}]
 		},
 		"Analysis": {
 			"name": "Analysis",
 			"icon": "common/media/img/uploads/analysis.svg",
-			"refines": {}
-		},
-		"Maps": {
-			"name": "Maps",
-			"icon": "",
-			"refines": {}
+			"links": [{
+				"name": "Stratification",
+				"childs": [{
+					"name": "Harmonised world soil type",
+					"criteria": {
+						"hwsd": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}, {
+					"name": "Climatic zone",
+					"criteria": {
+						"gens:clim": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}, {
+					"name": "Environmental zone",
+					"criteria": {
+						"gens:zone": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}, {
+					"name": "Global land cover type",
+					"criteria": {
+						"globcov": {
+							"input-type": "input-enum",
+							"term": []
+						}
+					}
+				}]
+			}, {
+				"name": "Bioclimatic variables",
+				"childs": [{
+					"name": "Annual Mean Temperature",
+					"criteria": {
+						":environment:bio:01": {
+							"input-type": "input-range",
+							"max": null,
+							"min": null,
+							"operator": ["$IRG"]
+						}
+					}
+				}, {
+					"name": "Annual Precipitation",
+					"criteria": {
+						":environment:bio:12": {
+							"input-type": "input-range",
+							"max": null,
+							"min": null,
+							"operator": ["$IRG"]
+						}
+					}
+				}]
+			}]
 		}
 	}
 }

@@ -1377,7 +1377,7 @@ div[unselectable].fc-view {
 .icon_box h1[unselectable] {
 	text-align: center;
 }
-#content > .admin_content {
+#content > .admin_content:not(#upload) {
  	padding-bottom: 3em;
 }
 #loader_bg {
