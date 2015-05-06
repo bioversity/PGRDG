@@ -6,3 +6,4 @@ blog
 backup*
 *.bkp
 PGRDG
+common/include/conf/interface/site.js
