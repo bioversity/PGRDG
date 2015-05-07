@@ -53,7 +53,7 @@ $.require_password = function(options, callback) {
 						var o = {
 							current_attempt: opt.current_attempt,
 							status: "wrong_password"
-						}
+						};
 						$.require_password(o, callback);
 					}
 				}
@@ -309,7 +309,7 @@ $.get_current_user_id = function() {
 		user_id = storage.get("pgrdg_user_cache.user_data.current.id");
 	} else {
 		$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, mdata) {
-			if(i == 0) {
+			if(i === 0) {
 				user_id = $.get_user_id(mdata);
 				storage.set("pgrdg_user_cache.user_data.current.id", user_id);
 			}
@@ -415,7 +415,7 @@ $.get_user_img_src = function(user_data) { return "./common/media/img/admin/" + 
 * @param  object		user_data 		The user data object
 * @return object 				        The user roles
 */
-$.get_user_roles = function(user_data) { return user_data[kTAG_ROLES]; }
+$.get_user_roles = function(user_data) { return user_data[kTAG_ROLES]; };
 
 /**
  * Extract all user permissions and list in verbose mode from a given user data object
