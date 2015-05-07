@@ -123,7 +123,7 @@ $.get_filename = function(path) {
 	var filename = path.split("/").pop(),
 	extension = filename.split(".").pop().toLowerCase();
 	return $.trim($.clean_file_name(filename.replace(extension, ""))) + "." + extension;
-}
+};
 /**
  * Force the download prompt
  * @param  string 			file             			The location path of the file to force download
@@ -764,7 +764,7 @@ $.build_interface = function(session_id) {
 					"class": "btn btn-danger",
 					"href": "javascript:void(0);",
 					"onclick": "$.view_last_upload_errors('" + session_id + "');"
-				}).html('View error details <span class="fa fa-times"></span>')
+				}).html(i18n[lang].interface.btns.view_error_details + ' <span class="fa fa-times"></span>');
 				$btn_group.append($btn_download).append($btn_errors);
 				$panel_footer.append($btn_group).append($clearfix);
 				$("#details_row").append($panel_footer);
@@ -819,7 +819,7 @@ $.view_last_upload_errors = function(session_id) {
 	}
 	// Get all transactions status
 	var params = {};
-	params[kTAG_TRANSACTION_STATUS] = null;
+	params[kTAG_TRANSACTION_STATUS] = "@null@";
 	$.group_transaction({
 		session_id: session_id,
 		params: params
@@ -920,7 +920,7 @@ $.view_last_upload_errors = function(session_id) {
 					*/
 					var wpr = {};
 					wpr[kTAG_TRANSACTION_STATUS] = status;
-					wpr[kTAG_TRANSACTION_COLLECTION] = null;
+					wpr[kTAG_TRANSACTION_COLLECTION] = "@null@";
 					$.group_transaction({
 						session_id: session_id,
 						params: wpr
@@ -933,8 +933,8 @@ $.view_last_upload_errors = function(session_id) {
 							var cid = $.makeid(),
 							apr = {};
 							apr[kTAG_TRANSACTION_STATUS] = status;
-							apr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
-							apr[kTAG_TRANSACTION_ALIAS] = null;
+							apr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+							apr[kTAG_TRANSACTION_ALIAS] = "@null@";
 							$ul.nest_collapsible({
 								id: cid,
 								k: k,
@@ -947,7 +947,7 @@ $.view_last_upload_errors = function(session_id) {
 									session_id: opt.session_id,
 									params: opt.params
 								}, function(ress) {
-									if($.obj_len(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU]) == 0) {
+									if($.obj_len(ress[kAPI_PARAM_RESPONSE_FRMT_DOCU]) === 0) {
 										$("#" + cid).removeClass("empty").html('<i class="text-muted">' + i18n[lang].messages.no_data + '</i>');
 									} else {
 										$('<h4 id="' + cid + '_title">').text(ress[kAPI_PARAM_RESPONSE_FRMT_NAME]).insertBefore($("#" + cid));
@@ -963,9 +963,9 @@ $.view_last_upload_errors = function(session_id) {
 												var ccid = $.makeid(),
 												alpr = {};
 												alpr[kTAG_TRANSACTION_STATUS] = status;
-												alpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
-												alpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-												alpr[kTAG_TRANSACTION_VALUE] = null;
+												alpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+												alpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+												alpr[kTAG_TRANSACTION_VALUE] = "@null@";
 												$("#" + cid).nest_collapsible({
 													id: ccid,
 													k: kk,
@@ -994,10 +994,10 @@ $.view_last_upload_errors = function(session_id) {
 																	var cccid = $.makeid(),
 																	alvpr = {};
 																	alvpr[kTAG_TRANSACTION_STATUS] = status;
-																	alvpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																	alvpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																	alvpr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																	alvpr[kTAG_TRANSACTION_MESSAGE] = null;
+																	alvpr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																	alvpr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																	alvpr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																	alvpr[kTAG_TRANSACTION_MESSAGE] = "@null@";
 																	$("#" + ccid).nest_collapsible({
 																		id: cccid,
 																		k: kkk,
@@ -1026,11 +1026,11 @@ $.view_last_upload_errors = function(session_id) {
 																						var ccccid = $.makeid(),
 																						alempr = {};
 																						alempr[kTAG_TRANSACTION_STATUS] = status;
-																						alempr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																						alempr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																						alempr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																						alempr[kTAG_TRANSACTION_MESSAGE] = vvvv[kAPI_PARAM_RESPONSE_FRMT_DISP];
-																						alempr[kTAG_TRANSACTION_RECORD] = null;
+																						alempr[kTAG_TRANSACTION_COLLECTION] = v[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																						alempr[kTAG_TRANSACTION_ALIAS] = vv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																						alempr[kTAG_TRANSACTION_VALUE] = vvv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																						alempr[kTAG_TRANSACTION_MESSAGE] = vvvv[kAPI_PARAM_RESPONSE_FRMT_VALUE];
+																						alempr[kTAG_TRANSACTION_RECORD] = "@null@";
 																						$("#" + cccid).nest_collapsible({
 																							id: ccccid,
 																							k: kkkk,

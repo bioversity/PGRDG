@@ -294,7 +294,7 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                                        kAPI_PARAM_FILE_PATH => "/tmp/CWR_Checklist_Template.test.large.xlsx"
+                                        kAPI_PARAM_FILE_PATH => "/tmp/test_checklist.small.xlsx"
                                         // Uncomment for production version
                                         // kAPI_PARAM_FILE_PATH => $data[kAPI_PARAM_FILE_PATH]
                                 );
@@ -302,7 +302,7 @@ class Service_exchange {
                         case "upload_group_transaction":
                                 // Fix uncompatible javascript null value
                                 foreach($data[kAPI_PARAM_GROUP_TRANS] as $k => $v) {
-                                        if($v == "null" || $v == "") {
+                                        if($v == "@null@") {
                                                 $data[kAPI_PARAM_GROUP_TRANS][$k] = null;
                                         }
                                 }
@@ -319,7 +319,6 @@ class Service_exchange {
                         		kAPI_PAGING_SKIP => 0,
                         		kAPI_PAGING_LIMIT => 100
                                 );
-                                break;
                                 break;
                         case "upload_session_status":
                                 $querystring = array(
@@ -351,10 +350,10 @@ class Service_exchange {
                 $encoded = $this->encrypt_RSA($params);
                 $url = $this->site_config["service"]["url"] . $this->site_config["service"]["script"] . "?" . http_build_query($querystring) . "&" . kAPI_REQUEST_PARAMETERS . "=" . urlencode($encoded);
                 // if($action == "get_user") {
-                //         header("Content-type: text/plain");
-                //         print_r($url);
-                //         print_r($encoded);
-                //         exit();
+                        // header("Content-type: text/plain");
+                        // print_r($params);
+                        // print_r($url);
+                        // exit();
                 // }
                 return $this->receive_from_service($this->frontend->browse($url));
         }

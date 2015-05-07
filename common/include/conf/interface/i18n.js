@@ -275,6 +275,7 @@ var i18n = {
                                 "undo": "Undo",
                                 "view_data": "View data",
                                 "view_map": "View map",
+                                "view_error_": "View error details",
                                 "view_status": "View progress status",
                                 "view_errors_summary": "View errors summary",
                                 "view_statistics": "View statistics"
