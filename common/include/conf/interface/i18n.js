@@ -22,6 +22,10 @@ var i18n = {
                                 "title": "Are you sure to remove this invitation?",
                                 "message": "This user will not be able to accept his invitation."
                         },
+                        "delete_menu": {
+                                "title": "Are you sure to remove the menu {X}?",
+                                "message": "This menu item will be removed definitively."
+                        },
                         "disable_item": "Disable this item",
                         "drop_file_here": "Drop file here to upload",
                         "enable_item": "Enable this item",

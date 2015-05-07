@@ -1,7 +1,7 @@
 <?php
 function get_menu($menu, $i18nl, $is_submenu = false) {
         foreach($menu as $k => $v) {
-                if($k !== "User") {
+                if($k !== "User" && $k !== "Sign in" && $k !== "Sign out") {
                         $title = ((!isset($v["attributes"]["title"]) || trim($v["attributes"]["title"]) == "") ? '<i class="text-muted">No title for this entry</i>' : $v["attributes"]["title"]);
                         $link = ($v["attributes"]["href"] !== "./") ? str_replace(array("./", "_"), array("", " "), $v["attributes"]["href"]) : $_SERVER["HTTP_HOST"];
                         $full_link = (strpos($v["attributes"]["href"], "javascript:") !== false) ? $link : '<a target="_blank" href="' . $link .'">' . $link . '</a>';
@@ -38,7 +38,10 @@ function get_menu($menu, $i18nl, $is_submenu = false) {
                                                                                 <span class="fa fa-fw fa-edit"></span>
                                                                         </button>
                                                                         <button class="btn btn-sm btn-default-white" onclick="$(this).hide_menu();" title="<?php print $i18nl["interface"]["btns"]["hide"]; ?>" data-toggle="tooltip" data-placement="top">
-                                                                                <span class="fa fa-fw fa-eye-slash"></span>
+                                                                                <span class="fa fa-fw fa-eye-slash text-warning"></span>
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-default-white" onclick="$(this).remove_menu('<?php print $k; ?>');" title="<?php print $i18nl["interface"]["btns"]["remove"]; ?>" data-toggle="tooltip" data-placement="top">
+                                                                                <span class="fa fa-fw fa-times text-danger"></span>
                                                                         </button>
                                                                 </div>
                                                         </h4>

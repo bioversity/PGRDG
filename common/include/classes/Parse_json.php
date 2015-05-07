@@ -77,8 +77,6 @@ class Parse_json {
 			$the_array = $menu[$menu_position][$num];
 		}
 		$is_current = false;
-		// print_r($the_array);
-		// exit();
 		if($page->current == str_replace(array("./", "/"), "", $the_array["attributes"]["href"])) {
 			$is_current = true;
 		} else {

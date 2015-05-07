@@ -135,9 +135,9 @@
                                 }
                         }
                 },
-                "map_toolbox": [
-                        {
-                                "Show_hide_menu": {
+                "map_toolbox": {
+                        "menu": {
+                                "Show hide menu": {
                                         "content": {
                                                 "icon": "ion-navicon",
                                                 "text": ""
@@ -163,9 +163,7 @@
                                                 "id": "show_hide_breadcrumb_btn",
                                                 "title": "Show or hide breadcrumb (ALT+B)"
                                         }
-                                }
-                        },
-                        {
+                                },
                                 "Find_location": {
                                         "content": {
                                                 "icon": "ion-search",
@@ -218,9 +216,7 @@
                                                 "id": "lock_view_btn",
                                                 "title": "Lock/unlock this view (ALT+L)"
                                         }
-                                }
-                        },
-                        {
+                                },
                                 "Help": {
                                         "content": {
                                                 "icon": "ion-help",
@@ -235,7 +231,7 @@
                                         }
                                 }
                         }
-                ],
+                },
                 "tools": [
                         {
                                 "Draw_polygon": {
