@@ -1,6 +1,6 @@
 var config = {
         "service": {
-                "url": "http://mauricio.grinfo.private/",
+                "url": "http://gateway.grinfo.private/",
                 "script": "Service.php",
                 "proxy": "API/?type=service&proxy=",
                 "definitions_dir": "/Service/Library/definitions",

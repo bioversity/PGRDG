@@ -957,7 +957,7 @@ $.fn.select_static_form = function(back) {
 /**
  * Create the static form tree and append to the left panel
  */
-$.generate_static_form = function(tag, storage_id) {
+$.generate_static_form = function(tag, storage_id, callback) {
 	var kAPI = {};
 	kAPI.storage_group = "pgrdg_cache.search.criteria.forms";
 	// objp.loaderType = $panel.find("a.pull-left, a.pull-right");
@@ -1072,6 +1072,9 @@ $.generate_static_form = function(tag, storage_id) {
 							$(".save_btn").removeClass("disabled");
 						}
 						$.activate_form_btns();
+						if($.type(callback) == "function") {
+							callback.call(this);
+						}
 					}
 				}
 			}
@@ -4473,37 +4476,42 @@ $.add_multiselect = function(options, callback) {
  * Execute a search and show the summary with a given criteria
  * @param  object 			criteria 		The criteria with whom do the search
  */
-$.show_summary_directly = function(criteria) {
-	var kAPI = {};
-	kAPI.storage_group = "pgrdg_cache.summary";
-	kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
-	kAPI.parameters = {};
-	kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = $.parseJSON(criteria);
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
-	kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE_DISP;
-	kAPI.colour = true;
-	$.ask_to_service(kAPI, function(res) {
-		if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
-			$.activate_panel("summary", {res: res});
-			$("section.container").css("padding-top", "45px");
-			$.breadcrumb_right_buttons(true);
-		} else {
-			if($("#apprise.no-results:visible").length === 0) {
-				apprise(i18n[lang].messages.search.no_search_results.message, {
-					"class": "no-results",
-					"title": i18n[lang].messages.search.no_search_results.title,
-					"icon": "warning"
-				});
+$.show_summary_directly = function(search) {
+	var criteria = $.parseJSON(search);
+	if($.type(criteria) == "string") {
+		$.generate_static_form(criteria, null, function() {
+			$.toggle_form_item($("#" + $.md5(criteria)), criteria);
+		});
+	} else {
+		var kAPI = {};
+		kAPI.storage_group = "pgrdg_cache.summary";
+		kAPI[kAPI_REQUEST_OPERATION] = kAPI_OP_MATCH_UNITS;
+		kAPI.parameters = {};
+		kAPI.parameters[kAPI_REQUEST_LANGUAGE] = lang;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS] = {};
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT] = 300;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_LOG_REQUEST] = true;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] = criteria;
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_GROUP] = [];
+		kAPI.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_SHAPE_OFFSET] = kTAG_GEO_SHAPE_DISP;
+		kAPI.colour = true;
+		$.ask_to_service(kAPI, function(res) {
+			if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
+				$.activate_panel("summary", {res: res});
+				$("#breadcrumb").css("display", "block");
+				$("section.container").css("padding-top", "55px");
+				$.breadcrumb_right_buttons(true);
+			} else {
+				if($("#apprise.no-results:visible").length === 0) {
+					apprise(i18n[lang].messages.search.no_search_results.message, {
+						"class": "no-results",
+						"title": i18n[lang].messages.search.no_search_results.title,
+						"icon": "warning"
+					});
+				}
 			}
-		}
-	});
-	// $.ask_to_service($.parseJSON(search), function(res) {
-	// 	console.log("YEAH!", res);
-	// });
+		});
+	}
 };
 
 $.build_big_buttons_menu = function() {

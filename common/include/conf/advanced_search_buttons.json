@@ -104,12 +104,7 @@
 				"name": "Taxon groups",
 				"childs": [{
 					"name": "Crop group",
-					"criteria": {
-						":taxon:crop:group": {
-							"input-type": "input-enum",
-							"term": []
-						}
-					}
+					"criteria": ":taxon:crop:group"
 				},{
 					"name": "Gene Pool",
 					"criteria": {
@@ -172,13 +167,22 @@
 			"icon": "common/media/img/uploads/forest.svg",
 			"links": [{
 				"name": "Forest gene conservation unit",
-				"childs": []
+				"childs": [{
+					"name": "Type and function of the unit",
+					"criteria": "fcu:unit:type"
+				}]
 			}]
 		},
 		"Organizations": {
 			"name": "Organizations",
 			"icon": "common/media/img/uploads/organizations.svg",
-			"links": []
+			"links": [{
+				"name": "Location enumerations",
+				"childs": [{
+					"name": "Country",
+					"criteria": ":location:country"
+				}]
+			}]
 		},
 		"Checklists": {
 			"name": "Checklists",
@@ -295,6 +299,36 @@
 							"operator": ["$IRG"]
 						}
 					}
+				}]
+			}, {
+				"name": "Environment",
+				"childs": [{
+					"name": "Environment mean elevation",
+					"criteria": ":environment:elevation-mean"
+				}]
+			}, {
+				"name": "Stratification",
+				"childs": [{
+					"name": "Climatic zone",
+					"criteria": "gens:clim"
+				}, {
+					"name": "Environmental zone",
+					"criteria": "gens:zone"
+				}, {
+					"name": "Global land cover type",
+					"criteria": "globcov"
+				}, {
+					"name": "Harmonised world soil type",
+					"criteria": "hwsd"
+				}]
+			}, {
+				"name": "Bioclimatic variables",
+				"childs": [{
+					"name": "Annual Mean Temperature",
+					"criteria": ":environment:bio:01"
+				}, {
+					"name": "Temperature Annual Range",
+					"criteria": ":environment:bio:07"
 				}]
 			}]
 		}
