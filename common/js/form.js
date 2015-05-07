@@ -1105,87 +1105,86 @@ $.get_storage_selected_forms = function() {
 $.activate_form_btns = function() {
 	var offsets = [];
 	if($("#accordion > div.panel-default").length > 0) {
+// MOVE THIS FUNCTION TO DOCUMENT.READY()
 		// Fires when user clicks on "Save" button
 		$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
 			$(this).on("click", function() {
-				var active_forms = {};
-				//form_data.history = storage.get("pgrdg_cache.search.criteria.forms");
-				$.each($("#accordion > div.panel-default"), function(k, v) {
-					var af_obj = {}, rt = {};
-					frm_keys = $(this).attr("id");
-					if($(this).find("div.panel-success:not(.disabled)").length > 0) {
-						$.each($(this).find("div.panel-success:not(.disabled)"), function(i, vv) {
-							af_obj = $(this).find("form").serializeObject();
-							if(af_obj[kAPI_PARAM_OFFSETS].indexOf(",") == -1) {
-								offsets.push(af_obj[kAPI_PARAM_OFFSETS]);
-							} else {
-								offsets = af_obj[kAPI_PARAM_OFFSETS].split(",");
-							}
-							if(af_obj[kAPI_PARAM_OFFSETS] == af_obj.default_offsets_input) {
-								offsets = [];
-							}
-							switch(af_obj["input-type"]) {
-								case kAPI_PARAM_INPUT_ENUM:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									if(offsets.length > 0) {
-										rt[kAPI_PARAM_OFFSETS] = offsets;
-									}
-									rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_RANGE:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									if(offsets.length > 0) {
-										rt[kAPI_PARAM_OFFSETS] = offsets;
-									}
-									rt[kAPI_PARAM_RANGE_MIN] = parseInt(af_obj.from);
-									rt[kAPI_PARAM_RANGE_MAX] = parseInt(af_obj.to);
-									rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_STRING:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									if(offsets.length > 0) {
-										rt[kAPI_PARAM_OFFSETS] = offsets;
-									}
-									rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
-									rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
-									active_forms[af_obj.tags] = rt;
-									break;
-								case kAPI_PARAM_INPUT_SHAPE: break;
-								case kAPI_PARAM_INPUT_DEFAULT:
-									rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
-									if(offsets.length > 0) {
-										rt[kAPI_PARAM_OFFSETS] = offsets;
-									}
-									switch(af_obj[kTAG_TYPE]) {
-										case kTYPE_BOOLEAN:
-											rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
-											break;
-										default:
-											break;
-									}
-									active_forms[af_obj.tags] = rt;
-									break;
-							}
-							storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
-								request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
-								key: $(this).attr("id"),
-								forms: $(this).find("form").serializeObject(),
-								active_forms: active_forms
-							});
-							$.breadcrumb_right_buttons();
-						});
-					} else {
+				var active_forms = {},
+				af_obj = {},
+				rt = {};
+				frm_keys = $(this).attr("id");
+				if($("#accordion > div.panel-default").find("div.panel-success:not(.disabled)").length > 0) {
+					$.each($("#accordion").find("div.panel-success:not(.disabled)"), function(i, vv) {
+						af_obj = $(this).find("form").serializeObject();
+						if(af_obj[kAPI_PARAM_OFFSETS].indexOf(",") == -1) {
+							offsets.push(af_obj[kAPI_PARAM_OFFSETS]);
+						} else {
+							offsets = af_obj[kAPI_PARAM_OFFSETS].split(",");
+						}
+						if(af_obj[kAPI_PARAM_OFFSETS] == af_obj.default_offsets_input) {
+							offsets = [];
+						}
+						switch(af_obj["input-type"]) {
+							case kAPI_PARAM_INPUT_ENUM:
+								rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+								if(offsets.length > 0) {
+									rt[kAPI_PARAM_OFFSETS] = offsets;
+								}
+								rt[kAPI_RESULT_ENUM_TERM] = af_obj.term.split(",");
+								active_forms[af_obj.tags] = rt;
+								break;
+							case kAPI_PARAM_INPUT_RANGE:
+								rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+								if(offsets.length > 0) {
+									rt[kAPI_PARAM_OFFSETS] = offsets;
+								}
+								rt[kAPI_PARAM_RANGE_MIN] = parseInt(af_obj.from);
+								rt[kAPI_PARAM_RANGE_MAX] = parseInt(af_obj.to);
+								rt[kAPI_PARAM_OPERATOR] = [af_obj.operator];
+								active_forms[af_obj.tags] = rt;
+								break;
+							case kAPI_PARAM_INPUT_STRING:
+								rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+								if(offsets.length > 0) {
+									rt[kAPI_PARAM_OFFSETS] = offsets;
+								}
+								rt[kAPI_PARAM_PATTERN] = af_obj.stringselect;
+								rt[kAPI_PARAM_OPERATOR] = [af_obj.operator, af_obj.case_sensitive];
+								active_forms[af_obj.tags] = rt;
+								break;
+							case kAPI_PARAM_INPUT_SHAPE: break;
+							case kAPI_PARAM_INPUT_DEFAULT:
+								rt[kAPI_PARAM_INPUT_TYPE] = af_obj[kAPI_PARAM_INPUT_TYPE];
+								if(offsets.length > 0) {
+									rt[kAPI_PARAM_OFFSETS] = offsets;
+								}
+								switch(af_obj[kTAG_TYPE]) {
+									case kTYPE_BOOLEAN:
+										rt[kAPI_PARAM_PATTERN] = (af_obj.boolean !== undefined && af_obj.boolean == "on") ? true : false;
+										break;
+									default:
+										break;
+								}
+								active_forms[af_obj.tags] = rt;
+								break;
+						}
 						storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
-							request: {}, //storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+							request: storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
 							key: $(this).attr("id"),
-							forms: {},
+							forms: $(this).find("form").serializeObject(),
 							active_forms: active_forms
 						});
 						$.breadcrumb_right_buttons();
-					}
-				});
+					});
+				} else {
+					storage.set("pgrdg_cache.search.criteria.selected_forms." + frm_keys, {
+						request: {}, //storage.get("pgrdg_cache.search.criteria.forms." + frm_keys),
+						key: $(this).attr("id"),
+						forms: {},
+						active_forms: active_forms
+					});
+					$.breadcrumb_right_buttons();
+				}
 				$("#goto_results_btn, #goto_map_btn").hide();
 				$.remove_storage("pgrdg_cache.summary");
 				$.remove_storage("pgrdg_cache.results");
