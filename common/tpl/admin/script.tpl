@@ -16,7 +16,6 @@
 
 <script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/i18n.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/site.js"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/API/?local=conf%2Frole_definitions.json"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&type=string&condensed=true"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&type=string&condensed=true"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
