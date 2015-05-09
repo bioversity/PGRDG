@@ -1,56 +1,135 @@
 {
 	"map": {
-		"default_map_layer": "Satellite",
+		"default": {
+			"coordinates": {
+				"lon": 12,
+				"lat": 55,
+				"bounding_box": [-31, 30, 65, 72]
+			},
+			"zoom": {
+				"default_zoom": 4,
+				"min_zoom": 3,
+				"max_zoom": 15
+			}
+		},
 		"layers": {
-			"_comment": "",
-			"Google Physical": {
-				"_comment": "Here you are defining the <a> tag in the map toolbox menu",
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "Physical"
-				},
-				"attributes": {
-					"class": "btn change_map_btn Google_Physical",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('Google Physical', $(this));",
-					"title": "Set Google physical layer"
-				}
+			"defaultLayer": {
+				"name": "Satellite",
+				"layer": "Esri.WorldImagery",
+				"min_zoom": 3,
+				"max_zoom": 18
 			},
-			"Google Streets": {
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "Street"
-				},
-				"attributes": {
-					"class": "btn change_map_btn Google_Streets",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('Google Streets', $(this));",
-					"title": "Set Google street layer"
-				}
+			"baseLayers": {
+				"unlabelled": [
+					{
+						"name": "Satellite",
+						"layer": "Esri.WorldImagery",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": -1
+
+					},
+					{
+						"name": "Terrain",
+						"layer": "Esri.WorldTerrain",
+						"min_zoom": 3,
+						"max_zoom": 8,
+						"zindex": 1
+					},
+					{
+						"name": "Physical",
+						"layer": "Esri.WorldPhysical",
+						"min_zoom": 3,
+						"max_zoom": 8,
+						"zindex": 1
+					}
+				],
+				"labelled": [
+					{
+						"name": "Cycle",
+						"layer": "Thunderforest.OpenCycleMap",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Outdoors",
+						"layer": "Thunderforest.Outdoors",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Streets",
+						"layer": "OpenStreetMap.HOT",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					},
+					{
+						"name": "Streets (black & white)",
+						"layer": "OpenStreetMap.BlackAndWhite",
+						"min_zoom": 3,
+						"max_zoom": 18,
+						"zindex": 1
+					}
+				]
 			},
-			"Google Hybrid": {
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "Hybrid"
-				},
-				"attributes": {
-					"class": "btn change_map_btn Google_Hybrid",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('Google Hybrid', $(this));",
-					"title": "Set Google hybrid layer"
-				}
-			},
-			"Google Satellite": {
-				"content": {
-					"icon": "fa-circle-o",
-					"text": "Satellite"
-				},
-				"attributes": {
-					"class": "btn change_map_btn Google_Satellite",
-					"href": "javascript: void(0);",
-					"onclick": "$.change_map_layer('Google Satellite', $(this));",
-					"title": "Set Google satellite layer"
-				}
+			"overlayLayers": {
+				"labels": [
+					{
+						"name": "Boundaries",
+						"layer": "OpenMapSurfer.AdminBounds",
+						"zindex": 110
+					},
+					{
+						"name": "Roads",
+						"layer": "Acetate.roads",
+						"zindex": 120
+					},
+					{
+						"name": "Labels",
+						"layer": "Acetate.labels",
+						"zindex": 130
+					}
+				],
+				"overlays": [
+					{
+						"name": "Clouds",
+						"layer": "OpenWeatherMap.CloudsClassic",
+						"zindex": 360
+					},
+					{
+						"name": "Precipitation",
+						"layer": "OpenWeatherMap.PrecipitationClassic",
+						"zindex": 370
+					},
+					{
+						"name": "Pressure",
+						"layer": "OpenWeatherMap.Pressure",
+						"zindex": 340
+					},
+					{
+						"name": "Pressure (contour)",
+						"layer": "OpenWeatherMap.PressureContour",
+						"zindex": 390
+					},
+					{
+						"name": "Wind",
+						"layer": "OpenWeatherMap.Wind",
+						"zindex": 350
+					},
+					{
+						"name": "Temperature",
+						"layer": "OpenWeatherMap.Temperature",
+						"zindex": 360
+					},
+					{
+						"name": "Snow",
+						"layer": "OpenWeatherMap.Snow",
+						"zindex": 400
+					}
+				]
 			}
 		}
 	}
