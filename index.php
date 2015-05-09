@@ -60,7 +60,7 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 if(!defined("LOGGED")) {
 	define("LOGGED", $logged);
 }
-$global_menu = new Parse_json(CONF_DIR . "__menu.json");
+$global_menu = new Parse_json(CONF_DIR . "menu.json");
 if(LOGGED) {
 	$admin_menu = new Parse_json(CONF_DIR . "menu_admin.php");
 	// print_r($admin_menu);

@@ -178,7 +178,7 @@ if(isset($_GET["getPublicKey"])) {
 			// require_once(CLASSES_DIR . "Service_exchange.php");
 			header("Content-type: text/plain");
 
-			$fp = fopen(CONF_DIR . "__menu.json", "w");
+			$fp = fopen(CONF_DIR . "menu.json", "w");
 			fwrite($fp, stripslashes(json_encode($output)));
 			fclose($fp);
 
