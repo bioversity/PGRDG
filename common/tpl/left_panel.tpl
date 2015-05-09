@@ -24,7 +24,6 @@
 		<hr />
 		<div id="static_forms_list" style="padding: 0 15px;">
 			<div id="static_forms_loader"><span class="fa fa-refresh fa-spin"></span> Loading...</span></div>
-			<?php /*require_once("common/tpl/predefined_search.tpl");*/ ?>
 		</div>
 	</div>
 </div>

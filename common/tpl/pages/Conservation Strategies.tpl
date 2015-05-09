@@ -1,6 +1,6 @@
 <h1><?php print $page->title; ?></h1>
 <?php
-$super_root = "common/media/pdf/Conservation_Strategies";
+$super_root = MEDIA_DIR . "pdf/Conservation_Strategies";
 $super_root_files = array_diff(scandir($super_root), array("..", "."));
 $files = array_diff(scandir($super_root), array("..", "."));
 ?>
@@ -73,7 +73,7 @@ $files = array_diff(scandir($super_root), array("..", "."));
 																		} else {
 																			$title = str_replace(array("_", ".pdf"), array(" ", ""), $subfile);
 																		}
-																		print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $subdir) . '/' . $subfile) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile)) . '</a></li>';
+																		print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace(MEDIA_DIR, "", $subdir) . '/' . $subfile) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile)) . '</a></li>';
 																	}
 																}
 															}
@@ -95,7 +95,7 @@ $files = array_diff(scandir($super_root), array("..", "."));
 																			} else {
 																				$title = str_replace(".pdf", "", $subfile_old);
 																			}
-																			print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $subdir_old) . '/' . $subfile_old) . '" title="Click to download" class="text-muted">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile_old)) . '</a></li>';
+																			print '<li><span class="fa-li fa fa-file-pdf-o fa-fw text-warning"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace(MEDIA_DIR, "", $subdir_old) . '/' . $subfile_old) . '" title="Click to download" class="text-muted">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $subfile_old)) . '</a></li>';
 																		}
 																	}
 																}
@@ -121,7 +121,7 @@ $files = array_diff(scandir($super_root), array("..", "."));
 														} else {
 															$title = str_replace(array("_", ".pdf"), array(" ", ""), $file);
 														}
-														print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace("common/media/", "", $sub_local) . '/' . $file) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $file)) . '</a></li>';
+														print '<li class="list-group-item"><span class="fa-li fa fa-file-pdf-o fa-fw text-danger"></span><a target="_blank" href="/API/?view=' . base64_encode(str_replace(MEDIA_DIR, "", $sub_local) . '/' . $file) . '" title="Click to download" class="text-warning">' . ((trim($title) !== "") ? $title : str_replace("_", " ", $file)) . '</a></li>';
 														?>
 													</ul>
 													<br />

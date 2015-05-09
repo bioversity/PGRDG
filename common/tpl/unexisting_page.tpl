@@ -4,8 +4,7 @@
                         <span class="fa fa-times fa-5x text-danger"></span>
                 </div>
                 <div class="col-xs-11 row">
-                        <h1>The page you are looking for is still not existing</h1>
-                        <p class="help-block lead">You may need to create it before</p>
+                        <h1><?php print $i18n[$lang]->messages->errors->page_do_not_exists; ?></h1>
                 </div>
         </div>
 </div>

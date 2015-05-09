@@ -2,7 +2,7 @@
         <div id="logo-group">
                 <span id="logo">
                         <a href="/">
-                                <img src="<?php print $domain; ?>/common/media/svg/bioversity-logo_small_horizontal.svg" alt="SmartAdmin">
+                                <img src="<?php print local2host(MEDIA_DIR); ?>svg/bioversity-logo_small_horizontal.svg" alt="SmartAdmin">
                         </a>
                 </span>
 
@@ -111,7 +111,7 @@
                 <!-- <ul id="mobile-profile-img" class="header-dropdown-list hidden-xs padding-5">
                         <li class="">
                                 <a href="#" class="dropdown-toggle no-margin userdropdown" data-toggle="dropdown">
-                                        <img src="<?php print $domain; ?>/common/media/img/admin/avatars/sunny.png" alt="John Doe" class="online" />
+                                        <img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>avatars/sunny.png" alt="John Doe" class="online" />
                                 </a>
                                 <ul class="dropdown-menu pull-right">
                                         <li>
@@ -191,37 +191,37 @@
                 <!-- multiple lang dropdown : find all flags in the flags page -->
                 <!-- <ul class="header-dropdown-list hidden-xs">
                         <li>
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-gb" alt="England"> <span> EN</span> <i class="fa fa-angle-down"></i> </a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-gb" alt="England"> <span> EN</span> <i class="fa fa-angle-down"></i> </a>
                                 <ul class="dropdown-menu pull-right">
                                         <li class="active">
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-gb" alt="England"> English (EN)</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-gb" alt="England"> English (EN)</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-fr" alt="France"> Français</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-fr" alt="France"> Français</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-es" alt="Spanish"> Español</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-es" alt="Spanish"> Español</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-de" alt="German"> Deutsch</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-de" alt="German"> Deutsch</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-jp" alt="Japan"> 日本語</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-jp" alt="Japan"> 日本語</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-cn" alt="China"> 中文</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-cn" alt="China"> 中文</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-it" alt="Italy"> Italiano</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-it" alt="Italy"> Italiano</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-pt" alt="Portugal"> Portugal</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-pt" alt="Portugal"> Portugal</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-ru" alt="Russia"> Русский язык</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-ru" alt="Russia"> Русский язык</a>
                                         </li>
                                         <li>
-                                                <a href="javascript:void(0);"><img src="<?php print $domain; ?>/common/media/img/admin/blank.gif" class="flag flag-kr" alt="Korea"> 한국어</a>
+                                                <a href="javascript:void(0);"><img src="<?php //print local2host(ADMIN_IMAGES_DIR); ?>blank.gif" class="flag flag-kr" alt="Korea"> 한국어</a>
                                         </li>
 
                                 </ul>

@@ -6,7 +6,7 @@
         </div>
         <div>
                 <div class="content">
-                        <?php require_once("common/tpl/pages/search_main.tpl"); ?>
+                        <?php require_once(TEMPLATE_PAGES_DIR . "search_main.tpl"); ?>
                 </div>
         </div>
 </div>

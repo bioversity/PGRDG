@@ -3,7 +3,7 @@
 	<small class="help-block">for the conservation and use of crop wild relative and landrace traits</small>
 </h1>
 <?php
-$dir = "common/media/img/home";
+$dir = IMAGES_DIR . "home";
 $images = array_diff(scandir($dir), array("..", "."));
 $h = -1;
 $i = -1;
@@ -33,5 +33,5 @@ $i = -1;
 	</div>
 </div>
 <?php
-print optimize(Markdown(file_get_contents("common/md/" . str_replace("_", " ", (($page->current == "Home") ? "home" : $page->current)) . ".md")));
+print optimize(Markdown(file_get_contents(MARKDOWN_DIR . str_replace("_", " ", (($page->current == "Home") ? "home" : $page->current)) . ".md")));
 ?>

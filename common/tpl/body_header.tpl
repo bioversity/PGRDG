@@ -14,7 +14,7 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 		<div class="top">
 			<div id="logo"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 				<a href="/">
-					<img alt="Bioversity logo" src="<?php print '' . $domain . '/common/media/svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || strtolower($page->current) == "activation" || $page->has_error) ? "_white" : ""); ?>.svg" />
+					<img alt="Bioversity logo" src="<?php print '' . local2host(MEDIA_DIR) . 'svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || strtolower($page->current) == "activation" || $page->has_error) ? "_white" : ""); ?>.svg" />
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>
@@ -41,7 +41,7 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 		</nav>
 	</div>
 </header>
-<?php require_once("common/tpl/modals/markers.modal.tpl"); ?>
-<?php require_once("common/tpl/modals/map_toolbox_help.modal.tpl"); ?>
-<?php require_once("common/tpl/modals/summary_ordering.modal.tpl"); ?>
-<?php require_once("common/tpl/modals/storage_data.modal.tpl"); ?>
+<?php require_once(TEMPLATE_MODALS_DIR . "markers.modal.tpl"); ?>
+<?php require_once(TEMPLATE_MODALS_DIR . "map_toolbox_help.modal.tpl"); ?>
+<?php require_once(TEMPLATE_MODALS_DIR . "summary_ordering.modal.tpl"); ?>
+<?php require_once(TEMPLATE_MODALS_DIR . "storage_data.modal.tpl"); ?>

@@ -8,11 +8,11 @@
                         <a href="/Profile#<?php print $user[kTAG_IDENTIFIER][kAPI_PARAM_RESPONSE_FRMT_DISP]; ?>" title="Manage profile" style="width: 100%;">
                                 <?php
                                 if(!isset($user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_NAME])) {
-                                        $path = "/common/media/img/admin/user_rand_images/";
+                                        $path = local2host(ADMIN_IMAGES_DIR) . "user_rand_images/";
                                 } else {
-                                        $path = "/common/media/img/admin/user_images/";
+                                        $path = local2host(ADMIN_IMAGES_DIR) . "user_images/";
                                 }
-                                        print '<img src="' . $domain . $path . $user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] . '" alt="me" class="online" />';
+                                        print '<img src="' . $path . $user[kTAG_ENTITY_ICON][kAPI_PARAM_RESPONSE_FRMT_DISP] . '" alt="me" class="online" />';
                                 ?>
                                 <span>
                                         <?php print $user[kTAG_NAME][kAPI_PARAM_RESPONSE_FRMT_DISP]; ?>

@@ -51,14 +51,14 @@ if(empty($_REQUEST) && empty($_POST)) {
 						<base href="./">
 						<meta http-equiv="X-UA-Compatible" content="IE=edge">
 						<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
-						<link href="<?php print $domain; ?>/common/css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
-						<link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/Entypo/entypo.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/ionicons-1.4.1/css/ionicons.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/PICOL-font/css/picol.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
-						<link href="<?php print $domain; ?>/common/css/main.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+						<link href="<?php print $domain . CSS_DIR; ?>font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>Entypo/entypo.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>ionicons-1.4.1/css/ionicons.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>PICOL-font/css/picol.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
+						<link href="<?php print $domain . CSS_DIR; ?>main.css" rel="stylesheet" type="text/css" media="screen" />
 						<!-- #GOOGLE FONT -->
 					        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
 					</head>
@@ -168,12 +168,12 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "upload_group_transaction_worksheets":
 					case "upload_session_status":
 					case "upload_user_status":
-						require_once(INCLUDE_DIR . "funcs/_ajax/_decrypt.php");
+						require_once(AJAX_DIR . "_decrypt.php");
 						break;
 				}
 				break;
 			case "view":
-				$api->force_view(SYSTEM_ROOT . "common/media/" . base64_decode($_REQUEST["view"]));
+				$api->force_view(MEDIA_DIR . base64_decode($_REQUEST["view"]));
 				break;
 		}
 	}

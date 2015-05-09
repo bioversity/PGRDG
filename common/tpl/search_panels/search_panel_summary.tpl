@@ -44,7 +44,7 @@
                         <span></span>
                 </h1>
         </div>
-        <!-- <iframe id="chart" src="./common/tpl/pages/graph_temp_data/flare.html"></iframe> -->
+        <!-- <iframe id="chart" src="<?php local2host(TEMPLATE_PAGES_DIR); ?>graph_temp_data/flare.html"></iframe> -->
         <!-- <div id="chart" class="left panel_content-body container-fluid"></div> -->
         <div id="summary-body" class="left panel_content-body container-fluid">
                 <div class="content-body"></div>

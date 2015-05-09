@@ -1,90 +1,90 @@
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.min.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery.min.js"></script>
 <!-- Jquery UI -->
-<link rel="stylesheet" href="<?php print $domain; ?>/common/js/plugins/jquery-ui-1.11.2.custom/jquery-ui.min.css" type="text/css" />
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.easing.1.3.js"></script>
+<link rel="stylesheet" href="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery-ui-1.11.2.custom/jquery-ui.min.css" type="text/css" />
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery.easing.1.3.js"></script>
 
 <!-- jquery.cookie & storage -->
-<script src="<?php print $domain; ?>/common/js/plugins/jquery-cookie/jquery.cookie.js"></script>
-<script src="<?php print $domain; ?>/common/js/plugins/jquery-storage/jquery.storageapi.js"></script>
+<script src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery-cookie/jquery.cookie.js"></script>
+<script src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery-storage/jquery.storageapi.js"></script>
 <!-- Jcryption, MD5 & SHA1 -->
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.jcryption.3.0.js"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery-md5/jquery.md5.js"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.sha1.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery.jcryption.3.0.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery-md5/jquery.md5.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery.sha1.js"></script>
 <!-- Purl (A JavaScript URL parser) -->
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/purl/purl.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>purl/purl.js"></script>
 
-<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/i18n.js"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/common/include/conf/interface/site.js"></script>
+<script type="text/javascript" src="<?php print local2host(INTERFACE_CONF_DIR); ?>i18n.js"></script>
+<script type="text/javascript" src="<?php print local2host(INTERFACE_CONF_DIR); ?>site.js"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&type=string&condensed=true"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&type=string&condensed=true"></script>
 <script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
-<script type="text/javascript" src="<?php print $domain; ?>/common/js/params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
 
 
         <!-- FitText.js -->
-        <script type="text/javascript" src="<?php print $domain; ?>/common/js/plugins/jquery.fittext.js"></script>
+        <script type="text/javascript" src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>jquery.fittext.js"></script>
 
 
 <!-- IMPORTANT: APP CONFIG -->
-<script src="<?php print $domain; ?>/common/js/admin/app.config.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>app.config.js"></script>
 <!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/jquery-touch/jquery.ui.touch-punch.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>jquery-touch/jquery.ui.touch-punch.min.js"></script>
 <!-- BOOTSTRAP JS -->
-<script src="<?php print $domain; ?>/common/js/admin/bootstrap/bootstrap.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>bootstrap/bootstrap.min.js"></script>
 <!-- CUSTOM NOTIFICATION -->
-<script src="<?php print $domain; ?>/common/js/admin/notification/SmartNotification.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>notification/SmartNotification.js"></script>
 <!-- JARVIS WIDGETS -->
-<script src="<?php print $domain; ?>/common/js/admin/smartwidgets/jarvis.widget.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>smartwidgets/jarvis.widget.min.js"></script>
 <!-- EASY PIE CHARTS -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>easy-pie-chart/jquery.easy-pie-chart.min.js"></script>
 <!-- SPARKLINES -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/sparkline/jquery.sparkline.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>sparkline/jquery.sparkline.min.js"></script>
 <!-- JQUERY VALIDATE -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/jquery-validate/jquery.validate.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>jquery-validate/jquery.validate.min.js"></script>
 <!-- JQUERY MASKED INPUT -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/masked-input/jquery.maskedinput.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>masked-input/jquery.maskedinput.min.js"></script>
 <!-- JQUERY SELECT2 INPUT -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/select2/select2.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>select2/select2.min.js"></script>
 <!-- JQUERY UI + Bootstrap Slider -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/bootstrap-slider/bootstrap-slider.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>bootstrap-slider/bootstrap-slider.min.js"></script>
 <!-- browser msie issue fix -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/msie-fix/jquery.mb.browser.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>msie-fix/jquery.mb.browser.min.js"></script>
 <!-- FastClick: For mobile devices: you can disable this in app.js -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/fastclick/fastclick.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>fastclick/fastclick.min.js"></script>
 
 <!--[if IE 8]>
 <h1>Your browser is out of date, please update your browser by going to www.microsoft.com/download</h1>
 <![endif]-->
 
 <!-- Demo purpose only -->
-<!-- // <script src="<?php print $domain; ?>/common/js/admin/demo.js"></script> -->
+<!-- // <script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>demo.js"></script> -->
 
 <!-- MAIN APP JS FILE -->
-<script src="<?php print $domain; ?>/common/js/admin/app.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>app.js"></script>
 
 <!-- ENHANCEMENT PLUGINS : NOT A REQUIREMENT -->
 <!-- Voice command : plugin -->
-<!-- // <script src="<?php print $domain; ?>/common/js/admin/speech/voicecommand.min.js"></script> -->
+<!-- // <script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>speech/voicecommand.min.js"></script> -->
 
 <!-- SmartChat UI : plugin -->
-<script src="<?php print $domain; ?>/common/js/admin/smart-chat-ui/smart.chat.ui.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/smart-chat-ui/smart.chat.manager.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>smart-chat-ui/smart.chat.ui.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>smart-chat-ui/smart.chat.manager.min.js"></script>
 <!-- PAGE RELATED PLUGIN(S) -->
 
 <!-- Flot Chart Plugin: Flot Engine, Flot Resizer, Flot Tooltip -->
-<!-- // <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.cust.min.js"></script>
-// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.resize.min.js"></script>
-// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.time.min.js"></script>
-// <script src="<?php print $domain; ?>/common/js/admin/plugin/flot/jquery.flot.tooltip.min.js"></script> -->
+<!-- // <script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>flot/jquery.flot.cust.min.js"></script>
+// <script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>flot/jquery.flot.resize.min.js"></script>
+// <script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>flot/jquery.flot.time.min.js"></script>
+// <script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>flot/jquery.flot.tooltip.min.js"></script> -->
 
 <!-- Vector Maps Plugin: Vectormap engine, Vectormap language -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/vectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/plugin/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>vectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>vectormap/jquery-jvectormap-world-mill-en.js"></script>
 
 <!-- Full Calendar -->
-<script src="<?php print $domain; ?>/common/js/admin/plugin/moment/moment.min.js"></script>
-<script src="<?php print $domain; ?>/common/js/admin/plugin/fullcalendar/jquery.fullcalendar.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>moment/moment.min.js"></script>
+<script src="<?php print local2host(ADMIN_JAVASCRIPT_PLUGINS_DIR); ?>fullcalendar/jquery.fullcalendar.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {

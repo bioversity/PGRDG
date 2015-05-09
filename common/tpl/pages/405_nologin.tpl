@@ -1,7 +1,7 @@
 <?php
 http_response_code(405);
 ?>
-<?php include("common/tpl/body_header.tpl"); ?>
+<?php include(TEMPLATE_DIR . "body_header.tpl"); ?>
 <div class="e405">
         <h1><span>405</span><small class="help-block"><?php print $i18n[$lang]["messages"]["errors"]["405"]; ?></small></h1>
         <p><?php print $i18n[$lang]["messages"]["errors"]["you_cannot_login"]; ?></p>

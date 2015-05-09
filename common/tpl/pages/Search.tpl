@@ -27,10 +27,10 @@ if(strtolower($page->current) == "map" || (strtolower($page->current) == "search
                                 </div>
                         </form>
                         <?php
-                        require_once("common/tpl/search_panels/search_panel_summary.tpl");
-                        require_once("common/tpl/search_panels/search_panel_result.tpl");
-                        require_once("common/tpl/search_panels/search_panel_statistics.tpl");
-                        require_once("common/tpl/search_panels/search_panel_map.tpl");
+                        require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_summary.tpl");
+                        require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_result.tpl");
+                        require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_statistics.tpl");
+                        require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_map.tpl");
                         ?>
                         <h1 id="se_loader" unselectable="on"><span class="fa fa-gear fa-spin"></span> <?php print $i18n[$lang]["messages"]["search"]["performing_search"]; ?></h1>
                 </div>
@@ -53,7 +53,7 @@ if(strtolower($page->current) == "map" || (strtolower($page->current) == "search
                         </div>
                 </form>
                 <div id="statistics" class="help-block">
-                        <big class="pull-left"><a href="<?php print $domain; ?>/Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?>&nbsp;<small><span class="fa fa-angle-right text-muted"></span></small></a></big>
+                        <big class="pull-left"><a href="<?php print HOST; ?>Advanced_search<?php /* print (isset($_GET["q"]) && trim($_GET["q"]) !== "") ? "?q=" . $_GET["q"] : "";*/ ?>"><?php print $i18n[$lang]["interface"]["btns"]["advanced_search"]; ?>&nbsp;<small><span class="fa fa-angle-right text-muted"></span></small></a></big>
                         <a href="javascript:void(0);" id="search_tips" class="text-muted pull-right"><span class="fa fa-keyboard-o"></span><?php print $i18n[$lang]["interface"]["btns"]["search_tips"]; ?></a>
                         <br />
                         <br />

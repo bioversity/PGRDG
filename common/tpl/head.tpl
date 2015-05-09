@@ -13,14 +13,14 @@
         ?>
 </title>
 
-<link rel="shortcut icon" href="<?php print $domain; ?>/common/media/img/favicon.ico" type="image/x-icon; charset=binary">
+<link rel="shortcut icon" href="<?php print local2host(IMAGES_DIR); ?>favicon.ico" type="image/x-icon; charset=binary">
 
-<link href="<?php print $domain; ?>/common/css/bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
-<link href="<?php print $domain; ?>/common/css/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="<?php print $domain; ?>/common/css/Entypo/entypo.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="<?php print $domain; ?>/common/css/ionicons-1.4.1/css/ionicons.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="<?php print $domain; ?>/common/css/PICOL-font/css/picol.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="<?php print $domain; ?>/common/css/mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php print local2host(CSS_DIR); ?>bootstrap/bootstrap.css" rel="stylesheet" type="text/css" media="screen">
+<link href="<?php print local2host(CSS_DIR); ?>font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php print local2host(CSS_DIR); ?>Entypo/entypo.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php print local2host(CSS_DIR); ?>ionicons-1.4.1/css/ionicons.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php print local2host(CSS_DIR); ?>PICOL-font/css/picol.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="<?php print local2host(CSS_DIR); ?>mapglyphs/mapglyphs.css" rel="stylesheet" type="text/css" media="screen" />
 
 <?php
 if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
@@ -29,18 +29,18 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         <!-- <link rel="stylesheet" type="text/css" media="screen" href="css/demo.min.css"> -->
 
         <!-- FAVICONS -->
-        <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
-        <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="<?php local2host(IMAGES_DIR); ?>favicon/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="<?php local2host(IMAGES_DIR); ?>favicon/favicon.ico" type="image/x-icon">
 
-        <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/admin/smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/admin/main.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/admin/smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/admin/smartadmin-rtl.min.css" rel="stylesheet" type="text/css" media="screen" />
-        <!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php //print $domain; ?>/common/css/admin/bioversity.css"> -->
+        <link href="<?php print local2host(CSS_DIR); ?>animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>main.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-rtl.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php //print local2host(ADMIN_CSS_DIR); ?>bioversity.css"> -->
 
-        <link rel="stylesheet" type="text/css" media="screen" href="<?php print $domain; ?>/common/css/admin/demo<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="<?php print local2host(ADMIN_CSS_DIR); ?>demo<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css">
 
         <!-- #GOOGLE FONT -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -48,20 +48,20 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         if($page->is_backend) {
                 ?>
         	<!-- Markitup Editor -->
-                <link href="<?php print $domain; ?>/common/js/plugins/markitup/skins/simple/style.css" rel="stylesheet" type="text/css" media="screen" />
-                <link href="<?php print $domain; ?>/common/js/plugins/markitup/sets/markdown_font-awesome/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <link href="<?php print local2host(JAVASCRIPT__PLUGINS_DIR); ?>markitup/skins/simple/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <link href="<?php print local2host(JAVASCRIPT__PLUGINS_DIR); ?>markitup/sets/markdown_font-awesome/style.css" rel="stylesheet" type="text/css" media="screen" />
                 <?php
         }
 } else {
         ?>
-        <link rel="stylesheet" type="text/css" media="all"  href="<?php print $domain; ?>/common/css/bioversity<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" />
-        <link rel="stylesheet" type="text/css" media="print"  href="<?php print $domain; ?>/common/css/bioversity.merged.css" />
+        <link rel="stylesheet" type="text/css" media="all"  href="<?php print local2host(CSS_DIR); ?>bioversity<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" />
+        <link rel="stylesheet" type="text/css" media="print"  href="<?php print local2host(CSS_DIR); ?>bioversity.merged.css" />
 
-        <link href="<?php print $domain; ?>/common/css/animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/pgrdg-map-tools/pgrdg-map-tools<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print $domain; ?>/common/css/main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>pgrdg-map-tools/pgrdg-map-tools<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
 
-        <link href="<?php print $domain; ?>/common/css/print<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
+        <link href="<?php print local2host(CSS_DIR); ?>print<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
         <?php
 }
 ?>

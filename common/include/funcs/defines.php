@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * HOST
+ */
+if(!defined("HOST")) { define("HOST", (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"] . "/"); }
+
+/**
  * Root
  */
 if(!defined("SYSTEM_ROOT")) { define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . "/"); }
@@ -47,6 +52,10 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
                  * root:common/include/funcs/
                  */
                 if(!defined("FUNCS_DIR")) { define("FUNCS_DIR", INCLUDE_DIR . "funcs/"); }
+                        /**
+                         * root:common/include/funcs/_ajax
+                         */
+                        if(!defined("AJAX_DIR")) { define("AJAX_DIR", FUNCS_DIR . "_ajax/"); }
 
                 /**
                  * root:common/include/lib/
@@ -63,6 +72,11 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
                  */
                 if(!defined("ADMIN_JAVASCRIPT_DIR")) { define("ADMIN_JAVASCRIPT_DIR", JAVASCRIPT_DIR . "admin/"); }
 
+                /**
+                 * root:common/js/plugins/
+                 */
+                if(!defined("JAVASCRIPT_PLUGINS_DIR")) { define("JAVASCRIPT_PLUGINS_DIR", JAVASCRIPT_DIR . "plugins/"); }
+
         /**
          * root:common/md/
          */
@@ -77,11 +91,11 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
                  */
                 if(!defined("IMAGES_DIR")) { define("IMAGES_DIR", MEDIA_DIR . "img/"); }
                         /**
-                         * root:common/media/img/
+                         * root:common/media/img/admin/
                          */
                         if(!defined("ADMIN_IMAGES_DIR")) { define("ADMIN_IMAGES_DIR", IMAGES_DIR . "admin/"); }
                                 /**
-                                 * root:common/media/img/
+                                 * root:common/media/img/admin/user_images/
                                  */
                                 if(!defined("ADMIN_IMAGES")) { define("ADMIN_IMAGES", ADMIN_IMAGES_DIR . "user_images/"); }
 
@@ -90,11 +104,49 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
          */
         if(!defined("TEMPLATE_DIR")) { define("TEMPLATE_DIR", COMMON_DIR . "tpl/"); }
 
+                /**
+                 * root:common/tpl/admin/
+                 */
+                if(!defined("ADMIN_TEMPLATE_DIR")) { define("ADMIN_TEMPLATE_DIR", TEMPLATE_DIR . "admin/"); }
 
-        /**
-         * root:common/tpl/admin/
-         */
-        if(!defined("ADMIN_TEMPLATE_DIR")) { define("ADMIN_TEMPLATE_DIR", TEMPLATE_DIR . "admin/"); }
+                /**
+                 * root:common/tpl/modals/
+                 */
+                if(!defined("TEMPLATE_MODALS_DIR")) { define("TEMPLATE_MODALS_DIR", TEMPLATE_DIR . "modals/"); }
 
+                /**
+                 * root:common/tpl/pages/
+                 */
+                if(!defined("TEMPLATE_PAGES_DIR")) { define("TEMPLATE_PAGES_DIR", TEMPLATE_DIR . "pages/"); }
+
+                /**
+                 * root:common/tpl/search_panels/
+                 */
+                if(!defined("TEMPLATE_SEARCH_PANEL_DIR")) { define("TEMPLATE_SEARCH_PANEL_DIR", TEMPLATE_DIR . "search_panels/"); }
+
+/**
+ * A simple bool variable to determine logged users status.
+ * Peace of mind :)
+ * @var bool                    $logged                 The current user is logged in?
+ */
 $logged = false;
+
+/* =============================================================================
+        USEFUL FUNCTIONS
+============================================================================= */
+
+/**
+ * Convert a local defined path to remote url path
+ * @param  string               $defines                The definition path to convert
+ * @return string                                       The definition path converted to remote url path
+ */
+function local2host($defines) { return str_replace(SYSTEM_ROOT, HOST, $defines); }
+
+/**
+ * Convert a defined remote url path to local path
+ * @param  string               $defines                The remote url path to convert
+ * @return string                                       The remote url path converted to local
+ */
+function host2local($defines) { return str_replace(HOST, SYSTEM_ROOT, $defines); }
+
 ?>

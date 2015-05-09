@@ -1,9 +1,9 @@
 <?php
-require_once("common/tpl/admin/body_header.tpl");
-require_once("common/tpl/admin/left_panel.tpl");
-require_once("common/tpl/admin/content.tpl");
-require_once("common/tpl/admin/footer.tpl");
-require_once("common/tpl/admin/shortcut.tpl");
+require_once(ADMIN_TEMPLATE_DIR . "body_header.tpl");
+require_once(ADMIN_TEMPLATE_DIR . "left_panel.tpl");
+require_once(ADMIN_TEMPLATE_DIR . "content.tpl");
+require_once(ADMIN_TEMPLATE_DIR . "footer.tpl");
+require_once(ADMIN_TEMPLATE_DIR . "shortcut.tpl");
 switch($page->current) {
         case "Home":
         case "Profile":
@@ -12,10 +12,10 @@ switch($page->current) {
         case "Menu":
         case "Pages":
         case "Upload":
-                require_once("common/tpl/script.tpl");
+                require_once(TEMPLATE_DIR . "script.tpl");
                 break;
         default:
-                require_once("common/tpl/admin/script.tpl");
+                require_once(ADMIN_TEMPLATE_DIR . "script.tpl");
                 break;
 }
 ?>

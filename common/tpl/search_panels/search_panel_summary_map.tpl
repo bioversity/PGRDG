@@ -68,7 +68,7 @@
                                         <span></span>
                                 </h1>
                         </div>
-                        <!-- <iframe id="chart" src="./common/tpl/pages/graph_temp_data/flare.html"></iframe> -->
+                        <!-- <iframe id="chart" src="<?php local2host(TEMPLATE_PAGES_DIR); ?>graph_temp_data/flare.html"></iframe> -->
                         <!-- <div id="chart" class="left panel_content-body container-fluid"></div> -->
                         <div id="summary-body" class="left panel_content-body container-fluid">
                                 <div class="content-body"></div>
@@ -79,6 +79,6 @@
 </div>
 <hr />
 <?php
-// require_once("common/tpl/search_panels/search_panel_statistics.tpl");
-require_once("common/tpl/search_panels/search_panel_result.tpl");
+// require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_statistics.tpl");
+require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_result.tpl");
 ?>

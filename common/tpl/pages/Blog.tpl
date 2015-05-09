@@ -1,10 +1,10 @@
 <?php
-require_once("common/include/funcs/cut_text_block.php");
+require_once(FUNCS_DIR . "cut_text_block.php");
 
-$dir = "common/md/blog";
+$dir = MARKDOWN_DIR . "blog";
 $ignored = array(".", "..");
 
-$blog_config = json_decode(file_get_contents("common/include/conf/blog.json"), 1);
+$blog_config = json_decode(file_get_contents(CONF_DIR . "blog.json"), 1);
 
 
 if(!isset($_GET["s"]) || trim($_GET["s"]) === "") {

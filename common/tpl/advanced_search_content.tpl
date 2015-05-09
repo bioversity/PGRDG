@@ -10,12 +10,12 @@
 <div id="contents">
 	<?php
 	// IMPORTANT: Do not change the following structure: everyting will not work!
-	require_once("common/tpl/search_panels/search_panel_form.tpl");
-	require_once("common/tpl/search_panels/search_panel_summary.tpl");
-	require_once("common/tpl/search_panels/search_panel_result.tpl");
-	require_once("common/tpl/search_panels/search_panel_statistics.tpl");
-	require_once("common/tpl/search_panels/search_panel_map.tpl");
-	require_once("common/tpl/search_panels/search_panel_start.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_form.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_summary.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_result.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_statistics.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_map.tpl");
+	require_once(TEMPLATE_SEARCH_PANEL_DIR . "search_panel_start.tpl");
 	?>
 	<div id="loader_bg" class="panel_content" style="display: block">
 		<h1 unselectable="on"><span class="fa fa-gear fa-spin"></span> Searching...</h1>

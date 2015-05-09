@@ -37,7 +37,7 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 	 * Assign a random image if there's no assigned
 	 */
 	if(!isset($user[kTAG_ENTITY_ICON])) {
-		$user_images = array_diff(scandir(IMAGES_DIR . "admin/user_rand_images"), array("..", "."));
+		$user_images = array_diff(scandir(ADMIN_IMAGES_DIR . "user_rand_images"), array("..", "."));
 		$img_c = 0;
 		foreach($user_images as $img_file) {
 			$img_c++;
@@ -83,9 +83,6 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 if($page->current == "Home") {
 	$page->is_backend = true;
 }
-
-$domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
-
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
@@ -96,34 +93,34 @@ $domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] !=
 		<?php
 		if(strtolower($page->current) == "signin") {
 			if($interface["site"]["allow_signin"]) {
-				include(TEMPLATE_DIR . "pages/Signin.tpl");
+				include(TEMPLATE_PAGES_DIR . "Signin.tpl");
 				include(TEMPLATE_DIR . "script.tpl");
 				include(TEMPLATE_DIR . "loader.tpl");
 			} else {
-				include(TEMPLATE_DIR . "pages/405_nologin.tpl");
+				include(TEMPLATE_PAGES_DIR . "405_nologin.tpl");
 				include(TEMPLATE_DIR . "loader.tpl");
 				include(TEMPLATE_DIR . "script.tpl");
 			}
 		} else if(strtolower($page->current) == "signout") {
 			include(TEMPLATE_DIR . "script.tpl");
-			include(TEMPLATE_DIR . "pages/Signout.tpl");
+			include(TEMPLATE_PAGES_DIR . "Signout.tpl");
 			include(TEMPLATE_DIR . "loader.tpl");
 		} else if(strtolower($page->current) == "activation") {
 			include(TEMPLATE_DIR . "script.tpl");
-			include(TEMPLATE_DIR . "pages/Activation.tpl");
+			include(TEMPLATE_PAGES_DIR . "Activation.tpl");
 			include(TEMPLATE_DIR . "loader.tpl");
 		} else {
 			if(!$page->exists) {
-				include(TEMPLATE_DIR . "pages/404.tpl");
+				include(TEMPLATE_PAGES_DIR . "404.tpl");
 			} else {
 				if($page->need_login && !LOGGED) {
-					include(TEMPLATE_DIR . "pages/405.tpl");
+					include(TEMPLATE_PAGES_DIR . "405.tpl");
 					include(TEMPLATE_DIR . "loader.tpl");
 					include(TEMPLATE_DIR . "script.tpl");
 				} else {
 					include(TEMPLATE_DIR . "loader.tpl");
 					if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
-						include(TEMPLATE_DIR . "admin/index.tpl");
+						include(ADMIN_TEMPLATE_DIR . "index.tpl");
 					} else {
 						?>
 						<?php include(TEMPLATE_DIR . "body_header.tpl"); ?>

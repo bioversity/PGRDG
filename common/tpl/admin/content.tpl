@@ -36,7 +36,7 @@
 
         <!-- #MAIN CONTENT -->
         <?php
-        require_once("common/tpl/content.tpl")
+        require_once(TEMPLATE_DIR . "content.tpl")
         ?>
         <!-- END #MAIN CONTENT -->
 </div>

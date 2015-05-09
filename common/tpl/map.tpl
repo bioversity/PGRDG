@@ -1,5 +1,5 @@
-<?php require_once("common/tpl/map_toolbox.tpl"); ?>
+<?php require_once(TEMPLATE_DIR . "map_toolbox.tpl"); ?>
 
 <div id="map_hidden_elements" style="display: none;"></div>
 <div id="pgrdg_map"></div>
-<script src="common/js/polyfills.js"></script>
+<script src="<?php print JAVASCRIPT_DIR; ?>polyfills.js"></script>

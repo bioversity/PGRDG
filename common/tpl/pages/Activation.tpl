@@ -1,6 +1,6 @@
 <?php
 
-include("common/tpl/body_header.tpl");
+include(TEMPLATE_DIR . "body_header.tpl");
 ?>
 <span id="f" style="display: none;"><?php print trim($_GET["f"]); ?></span>
 <div class="signin">

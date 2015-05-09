@@ -1,17 +1,13 @@
 <?php
+//header("Content-type: text/plain");
 // Note: this script is a comment stripped version.
 // If you want to study, you can find a commented version in `common/js/jCryption/php/jcryption.php`
 
 if(!defined("SYSTEM_ROOT")) {
 	define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
 }
-if(!defined("INCLUDE_DIR")) {
-	define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
-if(!defined("CLASSES_DIR")) {
-	define("CLASSES_DIR", INCLUDE_DIR . "classes/");
-}
-//header("Content-type: text/plain");
+require_once(SYSTEM_ROOT . "common/include/funcs/defines.php");
+
 session_start();
 
 $descriptorspec = array(
@@ -21,11 +17,11 @@ $descriptorspec = array(
 
 if(isset($_GET["getPublicKey"])) {
 	$arrOutput = array(
-		"publickey" => file_get_contents($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_pub.pem")
+		"publickey" => file_get_contents(CONF_DIR . ".rsa_keys/rsa_2048_pub.pem")
 	);
 	print json_encode($arrOutput);
 } elseif (isset($_GET["handshake"])) {
-	$cmd = sprintf("openssl rsautl -decrypt -inkey " . escapeshellarg($_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . "common/include/conf/.rsa_keys/rsa_2048_priv.pem"));
+	$cmd = sprintf("openssl rsautl -decrypt -inkey " . escapeshellarg(CONF_DIR . ".rsa_keys/rsa_2048_priv.pem"));
 	$process = proc_open($cmd, $descriptorspec, $pipes);
 	if (is_resource($process)) {
 		 fwrite($pipes[0], base64_decode($_POST["key"]));
@@ -110,12 +106,6 @@ if(isset($_GET["getPublicKey"])) {
 			$se = new Service_exchange();
 			$login = $se->send_to_service($output, "get_user");
 			$ud = json_decode($login, 1);
-			// foreach($ud as $k => $v){
-			// 	$user_data = $v;
-			// }
-			// header("Content-type: text/plain");
-			// print_r($user_data);
-			// exit();
 			print json_encode($ud);
 			break;
 		case "invite_user":
@@ -134,15 +124,8 @@ if(isset($_GET["getPublicKey"])) {
 		case "login":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
-			// print_r($output);
-			// exit();
 			$login = $se->send_to_service(array($output["username"], $output["password"]), $type);
 			$user_data = json_decode($login, 1);
-			// setcookie("l", md5("7C4D3533C21C608B39E8EAB256B4AFB771FA534A"), time()+10800, "/");
-			// $_SESSION["user"] = $ud;
-			// header("Content-type: text/plain");
-			// print_r($user_data);
-			// exit();
 			if($user_data[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok" && $user_data[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > 0) {
 				foreach($user_data[kAPI_RESPONSE_RESULTS] as $uid => $ud) {
 					$fingerprint = $ud[kTAG_ENTITY_PGP_FINGERPRINT][kAPI_PARAM_RESPONSE_FRMT_DISP];
@@ -173,9 +156,6 @@ if(isset($_GET["getPublicKey"])) {
 			print "ok";
 			break;
 		case "save_menu":
-			// print_r($output);
-			// exit();
-			// require_once(CLASSES_DIR . "Service_exchange.php");
 			header("Content-type: text/plain");
 
 			$fp = fopen(CONF_DIR . "menu.json", "w");
@@ -231,10 +211,6 @@ if(isset($_GET["getPublicKey"])) {
 		case "upload_session_status":
 		case "upload_user_status":
 			require_once(CLASSES_DIR . "Service_exchange.php");
-			// header("Content-type: text/plain");
-			// print_r($output);
-			// exit();
-			// print_r($output);
 			$se = new Service_exchange();
 			$action = $type;
 			print $se->send_to_service($output, $action);

@@ -1,5 +1,5 @@
 <?php
-include("common/tpl/body_header.tpl");
+include(TEMPLATE_DIR . "body_header.tpl");
 
 if(!LOGGED) {
         ?>
@@ -11,7 +11,7 @@ if(!LOGGED) {
 
                 <hr />
                 <?php
-                include("common/tpl/login_form.tpl");
+                include(TEMPLATE_DIR . "login_form.tpl");
                 ?>
         </div>
         <?php
