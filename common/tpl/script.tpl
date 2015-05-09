@@ -81,8 +81,8 @@ if($page->is_backend) {
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=api&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=tags&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print $domain; ?>/API/?definitions=types&type=string&condensed=true"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
-	<script type="text/javascript" src="<?php print $domain; ?>/common/js/shortcuts<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/params<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
+	<script type="text/javascript" src="<?php print $domain; ?>/common/js/shortcuts<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 	<script type="text/javascript">
 	function load_firebug() {
 		var fileref;

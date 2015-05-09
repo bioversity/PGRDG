@@ -2,15 +2,7 @@
 header("Content-type: application/json");
 
 
-if(!defined("SYSTEM_ROOT")) {
-        define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR);
-}
-if(!defined("INCLUDE_DIR")) {
-        define("INCLUDE_DIR", SYSTEM_ROOT . "common/include/");
-}
-if(!defined("CONF_DIR")) {
-        define("CONF_DIR", INCLUDE_DIR . "conf/interface/");
-}
+require_once("../defines.php");
 $pages_json = json_decode(file_get_contents(CONF_DIR . "pages.json"));
 
 function iterate_pages_list($pages_obj) {
@@ -29,5 +21,4 @@ function iterate_pages_list($pages_obj) {
         return $arr;
 }
 print json_encode(iterate_pages_list($pages_json->pages));
-// print_r(iterate_pages_list($pages_json->pages));
 ?>

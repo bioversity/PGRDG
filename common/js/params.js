@@ -498,7 +498,7 @@ $.get_all_pages_config = function(callback) {
                 }
         } else {
                 $.cryptAjax({
-                        url: "common/include/conf/interface/pages.json",
+                        url: "common/include/conf/pages.json",
                         dataType: "json",
                         success: function(response) {
                                 storage.set("pgrdg_cache.local", response);
@@ -547,7 +547,7 @@ $.get_page_config = function(callback) {
                 // });
         } else {
                 $.cryptAjax({
-                        url: "common/include/conf/interface/pages.json",
+                        url: "common/include/conf/pages.json",
                         dataType: "json",
                         success: function(response) {
                                 $.iterate_pages_config(response, function(conf) {

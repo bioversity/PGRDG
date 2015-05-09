@@ -36,7 +36,7 @@ class Parse_json {
                                 throw new exception("Passed file do not exists");
                         }
                 }
-		// if($config == INTERFACE_CONF_DIR . "pages.json") {
+		// if($config == CONF_DIR . "pages.json") {
                 // 	print_r($this->json_conf);
 		// }
 	}
@@ -69,7 +69,7 @@ class Parse_json {
          * @return string                                                       The builded html menu
          */
         private function build_menu($menu, $menu_position, $num = null, $strip_btn_class = true) {
-		$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+		$pages_config = new Parse_json(CONF_DIR . "pages.json");
 		$page = $pages_config->parse_page_config("pages");
 		if($num === null || $num === 0) {
 			$the_array = $menu[$menu_position];
@@ -380,7 +380,7 @@ class Parse_json {
 
 }
 
-// require_once("/var/www/pgrdg/common/include/funcs/defines.php");
+// require_once(FUNCS_DIR . "defines.php");
 //
 // header("Content-type: text/plain");
 // if(isset($_GET["m"]) && $_GET["m"] == "admin") {
@@ -390,7 +390,7 @@ class Parse_json {
 //         $site_config = new Parse_json();
 //         $site_config->menu("top", "lvl1 nav navbar-nav navbar-right");
 // }
-// $pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+// $pages_config = new Parse_json(CONF_DIR . "pages.json");
 // $page = $pages_config->parse_page_config("pages");
 // print_r($page);
 ?>

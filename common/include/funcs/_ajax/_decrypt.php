@@ -187,10 +187,10 @@ if(isset($_GET["getPublicKey"])) {
 		case "remove_page":
 			header("Content-type: text/plain");
 
-			chmod(CONF_DIR . "interface/pages.json", 0777);
-			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
+			chmod(CONF_DIR . "pages.json", 0777);
+			$fp = fopen(CONF_DIR . "pages.json", "w");
 			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($output["data"])))) {
-				if(unlink(SYSTEM_ROOT . "common/md/" . $output["title"] . ".md")) {
+				if(unlink(MARKDOWN_DIR . $output["title"] . ".md")) {
 					print "ok";
 				}
 			}
@@ -199,19 +199,19 @@ if(isset($_GET["getPublicKey"])) {
 			break;
 		case "save_page_data":
 			require_once(CLASSES_DIR . "Parse_json.php");
-			$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+			$pages_config = new Parse_json(CONF_DIR . "pages.json");
 			foreach($output["data"] as $k => $v) {
 				$pages_config->json_conf["pages"][$k] = $v;
 			}
 
 			header("Content-type: text/plain");
 
-			chmod(CONF_DIR . "interface/pages.json", 0777);
-			$fp = fopen(CONF_DIR . "interface/pages.json", "w");
+			chmod(CONF_DIR . "pages.json", 0777);
+			$fp = fopen(CONF_DIR . "pages.json", "w");
 			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)))) {
-				$fc = fopen(SYSTEM_ROOT . "common/md/" . $output["content"]["title"] . ".md", "w");
+				$fc = fopen(MARKDOWN_DIR . $output["content"]["title"] . ".md", "w");
 				if(fwrite($fc, $output["content"]["content"])) {
-					chmod(SYSTEM_ROOT . "common/md/" . $output["content"]["title"] . ".md", 0777);
+					chmod(MARKDOWN_DIR . $output["content"]["title"] . ".md", 0777);
 					print "ok";
 				}
 				fclose($fc);

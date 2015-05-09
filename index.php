@@ -67,7 +67,7 @@ if(LOGGED) {
 	// exit();
 }
 $map_config = new Parse_json(CONF_DIR . "map.json");
-$pages_config = new Parse_json(INTERFACE_CONF_DIR . "pages.json");
+$pages_config = new Parse_json(CONF_DIR . "pages.json");
 $i18n_config = new Parse_json(INTERFACE_CONF_DIR . "i18n.js");
 $interface_config = new Parse_json(INTERFACE_CONF_DIR . "site.js");
 $i18n = $i18n_config->parse_js_config("i18n");
