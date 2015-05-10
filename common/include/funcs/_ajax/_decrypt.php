@@ -155,14 +155,25 @@ if(isset($_GET["getPublicKey"])) {
 			unset($_COOKIE["m"]);
 			print "ok";
 			break;
+		case "save_config":
+			header("Content-type: text/plain");
+			$new_config = "var config = " . stripslashes(str_replace(array('"true"', '"false"', '"'), array("true", "false", '\"'), json_encode($output["new_config"])) . ";");
+
+			$fp = fopen(INTERFACE_CONF_DIR . "site.js", "w");
+			if(fwrite($fp, $new_config)) {
+				print "ok";
+			}
+			fclose($fp);
+			break;
 		case "save_menu":
 			header("Content-type: text/plain");
 
 			$fp = fopen(CONF_DIR . "menu.json", "w");
-			fwrite($fp, stripslashes(json_encode($output)));
+			if(fwrite($fp, stripslashes(json_encode($output)))) {
+				print "ok";
+			}
 			fclose($fp);
 
-			print "ok";
 			break;
 		case "remove_page":
 			header("Content-type: text/plain");
@@ -208,6 +219,7 @@ if(isset($_GET["getPublicKey"])) {
 		case "upload_group_columns_by_worksheet":
 		case "upload_group_transaction_by_worksheet":
 		case "upload_group_transaction_worksheets":
+		case "upload_publish_data":
 		case "upload_session_status":
 		case "upload_user_status":
 			require_once(CLASSES_DIR . "Service_exchange.php");

@@ -156,6 +156,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "logout":
 					case "remove_page":
 					case "save_menu":
+					case "save_config":
 					case "save_page_data":
 					case "save_user_data":
 					case "save_user_image":
@@ -166,6 +167,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					case "upload_group_columns_by_worksheet":
 					case "upload_group_transaction_by_worksheet":
 					case "upload_group_transaction_worksheets":
+					case "upload_publish_data":
 					case "upload_session_status":
 					case "upload_user_status":
 						require_once(AJAX_DIR . "_decrypt.php");

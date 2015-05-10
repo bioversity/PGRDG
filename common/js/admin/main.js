@@ -207,6 +207,22 @@ $.get_managed_users = function(user_id, callback) {
 	}
 };
 
+/**
+ * Update the config with the given new config object
+ * @param  object 		new_config 		The new config file to set
+ */
+$.update_config = function(new_config) {
+	if($.type(new_config) == "object" && $.obj_len(new_config) > 0) {
+		$.ask_cyphered_to_service({
+			data: {"new_config": new_config},
+			dataType: "text",
+			type: "save_config",
+			force_renew: true
+		}, function(response) {
+			// console.log(response);
+		});
+	}
+};
 
 /*=======================================================================================
 *	INPUT TOOLS
@@ -1918,6 +1934,7 @@ $(document).ready(function() {
 		$.set_breadcrumb();
 	}).trigger("hashchange");
 	$.update_last_activity();
+
 
 	// $("img[data-url]").each(function() {
 	// 	$.ajax({

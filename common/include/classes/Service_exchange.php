@@ -294,7 +294,7 @@ class Service_exchange {
                                         kAPI_PARAM_LOG_REQUEST => true,
                                         kAPI_PARAM_LOG_TRACE => true,
                                         kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER],
-                                        kAPI_PARAM_FILE_PATH => "/tmp/CWR_Checklist_Template.test.xlsx"
+                                        kAPI_PARAM_FILE_PATH => "/tmp/test_checklist.small.xlsx"
                                         // Uncomment for production version
                                         // kAPI_PARAM_FILE_PATH => $data[kAPI_PARAM_FILE_PATH]
                                 );
@@ -335,6 +335,17 @@ class Service_exchange {
                         case "upload_user_status":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_USER_SESSION,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                                        kAPI_REQUEST_USER => $data[kAPI_REQUEST_USER]
+                                );
+                                break;
+                        case "upload_publish_data":
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_UPDATE_TEMPLATE,
                                         kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
                                 );
                                 $params = array(

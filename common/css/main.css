@@ -3728,6 +3728,9 @@ div.user_data dl.roles dd {
 	top: 108px;
 	width: 100%;
 }
+#finished_upload {
+	margin-bottom: 4em;
+}
 
 #detail_list_group .progress, #detail_list_group .list-group-item-heading {
 	margin: 10px 0;

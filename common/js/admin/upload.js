@@ -233,7 +233,6 @@ $.get_session_status = function(session_data, callback) {
 			if (typeof callback == "function") {
 				callback.call(this, response);
 			}
-			// callback.call(response);
 		});
 	} else {
 		if(callback !== undefined && callback !== null && callback !== "") {
@@ -355,6 +354,45 @@ $.inform_upload_was_done = function(file_path, callback) {
 };
 
 /**
+ * Publish uploaded data to the publick database
+ */
+$.publish_data = function() {
+	$.require_password(function() {
+		storage.remove("pgrdg_user_cache.user_data.current.last_upload_session_id");
+
+		$("#upload .back_btn").text(i18n[lang].messages.data_publishing);
+		$("#detail_list_group").html("");
+		$("#dl_left").html("");
+		$("#dl_right").html("");
+		$("#progress_container > #progress_bar").switchClass("progress-bar-success", "progress-bar-info")
+							     .addClass("progress-bar-striped active")
+							     .attr({
+								"style": "width: 0%;",
+								"aria-valuenow": 0
+							}).text("0%");
+		$("#finished_upload").remove();
+
+		var data = {};
+		data[kAPI_REQUEST_USER] = $.get_current_user_id();
+		$.ask_cyphered_to_service({
+			data: data,
+			type: "upload_publish_data",
+			force_renew: true
+		}, function(response) {
+			$.build_interface(response[kAPI_SESSION_ID], true);
+
+			var new_config = config;
+			new_config.site.timestamp = new Date().getTime();
+			$.update_config(new_config);
+			$.log_activity({
+				action: "Published data for the upload session id: " + status[kAPI_SESSION_ID],
+				icon: "fa-certificate"
+			});
+		});
+	});
+};
+
+/**
  * Check transaction status and display result
  * @param  object   	           	options  				An object with query options
  */
@@ -414,14 +452,14 @@ $.fn.nest_collapsible = function(options, callback) {
 		$("#" + opt.id).prev("h4").toggleClass("hidden");
 		$("#" + opt.id).collapse("toggle");
 		$li.find("span.fa-li:first").toggleClass("fa-caret-right fa-caret-down");
-		if($("#" + opt.id).find("li").length == 0) {
+		if($("#" + opt.id).find("li").length === 0) {
 			if(typeof callback == "function") {
 				callback.call(this, opt);
 			}
 		}
 	}).html($.highlight(opt.v[kAPI_PARAM_RESPONSE_FRMT_DOCU][opt.k][kAPI_PARAM_RESPONSE_FRMT_DISP]) + ' <sup class="' + opt.string_class + '"><b>' + opt.v[kAPI_PARAM_RESPONSE_FRMT_DOCU][opt.k][kAPI_PARAM_RESPONSE_COUNT] + '</b></sup>').tooltip({placement: "right"});
 
-	var $uul = $('<ul id="' + opt.id +'" class="collapse fa-ul empty" aria-expanded="false">'),
+	var $uul = $('<ul id="' + opt.id +'" class="collapse fa-ul empty" aria-expanded="false">');
 	$li = $('<li>').html('<span class="fa fa-li fa-caret-right"></span>').append($a_nest).append($uul);
 	$item.append($li);
 };
@@ -437,6 +475,11 @@ $.fn.collapse_details = function() {
 	}
 };
 
+/**
+ * Cycle the given upload status session and build a list of progressbar rows
+ * @param  object 			session  				The upload session object
+ * @param  int 				subgroup 				The level of current row
+ */
 $.fn.add_session_progress_row = function(session, subgroup) {
 	/**
 	 * Display a human readable date
@@ -644,8 +687,12 @@ $.fn.add_session_progress_row = function(session, subgroup) {
 /**
  * Build main upload progress bars
  * @param  string 			session_id 				The id of the current session
+ * @param  bool 			publish_data 				The interface is for the final bublish data?
  */
-$.build_interface = function(session_id) {
+$.build_interface = function(session_id, publish_data) {
+	if(publish_data === undefined || publish_data === null || publish_data === "") {
+		publish_data = false;
+	}
 	var status = "",
 	status_icon = "",
 	status_string = "",
@@ -805,19 +852,25 @@ $.build_interface = function(session_id) {
 				}).html(i18n[lang].interface.btns.update + ' <span class="fa fa-upload"></span>'),
 				$btn_publish = $('<a>').attr({
 					"class": "btn btn-success",
+					"disabled": "disabled",
 					"href": "javascript:void(0)",
+					"id": "publish_btn"
+				}).on("click", function() {
+					$.publish_data();
 				}).html(i18n[lang].interface.btns.publish + '<sup>' + $.get_validated(session) + '</sup> <span class="fa fa-chevron-right"></span>'),
 				$update_form = $('<form action="" class="dropzone hidden" id="dropzone"></form>');
 
 				// Append buttons to the bottom of page
-				$btn_group.append($btn_download);
-				if($.has_rejected(session) || $.has_skipped(session)) {
+				if(!publish_data) {
+					$btn_group.append($btn_download);
+					if($.has_validated(session)) {
+						$btn_publish.attr("disabled", false);
+					}
 					$btn_group.append($btn_update);
-					$btn_publish.attr("disabled", "disabled");
+					$btn_group.append($btn_publish);
+					$clearfix.append($btn_group).append($update_form);
+					$("#upload").append($clearfix);
 				}
-				$btn_group.append($btn_publish);
-				$clearfix.append($btn_group).append($update_form);
-				$("#upload").append($clearfix).append("<br /><br />");
 
 				$("#finished_upload form").update_btn(session_id);
 			} else {
@@ -1314,37 +1367,40 @@ $.fn.add_previous_upload_session = function(session_id) {
 			status_string = session[kTAG_SESSION_STATUS][kAPI_PARAM_RESPONSE_FRMT_DISP][kAPI_PARAM_RESPONSE_FRMT_DISP];
 			status = "danger";
 		}
+		if(session[kTAG_FILE] !== undefined) {
+			$last_session_data.html('<span class="fa fa-file-excel-o fa-1_5x fa-fw text-success"></span>' + file_path.split("/").pop());
+			$last_session_data.tooltip();
+			$last_session_data_progress.attr({
+				"aria-valuenow": $.get_progress(session),
+				"style": "width: " + (($.get_progress(session) === 0) ? $.get_progress(session) : 100) + "%;"
+			}).html($.get_progress(session) + "%");
 
-		$last_session_data.html('<span class="fa fa-file-excel-o fa-1_5x fa-fw text-success"></span>' + file_path.split("/").pop());
-		$last_session_data.tooltip();
-		$last_session_data_progress.attr({
-			"aria-valuenow": $.get_progress(session),
-			"style": "width: " + (($.get_progress(session) === 0) ? $.get_progress(session) : 100) + "%;"
-		}).html($.get_progress(session) + "%");
+			$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 93%;");
+			$last_session_data_col2.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
+				$last_session_data_progress.removeClass("active").removeClass("progress-bar-striped");
+				$last_session_data_progress.removeClass("progress-bar-warning").addClass(session_status_class);
+				if(session[kTAG_FILE] !== undefined) {
+					$errors_btn.append($.get_processed(session) + " " + $.get_processed_name(session) + '<span class="fa fa-angle-right fa-fw"></span> ')
+						   .append($.get_validated(session) + " " + $.get_validated_name(session) + ' - ')
+						   .append('<b>' + $.get_skipped(session) + " " + $.get_skipped_name(session) + '</b> - ')
+						   .append('<u><b>' + $.get_rejected(session) + " " + $.get_rejected_name(session) + '</b></u>');
+				} else {
+					$errors_btn.html(i18n[lang].messages.no_progress_for_this_session);
+				}
+				$errors_btn.tooltip();
+				$last_session_data_progress.html($errors_btn);
 
-		$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 93%;");
-		$last_session_data_col2.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
-			$last_session_data_progress.removeClass("active").removeClass("progress-bar-striped");
-			$last_session_data_progress.removeClass("progress-bar-warning").addClass(session_status_class);
-			if(session[kTAG_FILE] !== undefined) {
-				$errors_btn.append($.get_processed(session) + " " + $.get_processed_name(session) + '<span class="fa fa-angle-right fa-fw"></span> ')
-					   .append($.get_validated(session) + " " + $.get_validated_name(session) + ' - ')
-					   .append('<b>' + $.get_skipped(session) + " " + $.get_skipped_name(session) + '</b> - ')
-					   .append('<u><b>' + $.get_rejected(session) + " " + $.get_rejected_name(session) + '</b></u>');
-			} else {
-				$errors_btn.html(i18n[lang].messages.no_progress_for_this_session);
-			}
-			$errors_btn.tooltip();
-			$last_session_data_progress.html($errors_btn);
+	                $last_session_data_btn_group.append($link_update)
+	                                            .append($link_delete)
+						    .append($link_download)
+						    .append($link_download_template)
+						    .append($link_download_dropdown);
 
-                $last_session_data_btn_group.append($link_update)
-                                            .append($link_delete)
-					    .append($link_download)
-					    .append($link_download_template)
-					    .append($link_download_dropdown);
-
-		$last_session_data_col1.html("").append($last_session_data).append($last_session_data_btn_group).append($update_form);
-		$("#last_session_menu form").update_btn(session_id);
+			$last_session_data_col1.html("").append($last_session_data).append($last_session_data_btn_group).append($update_form);
+			$("#last_session_menu form").update_btn(session_id);
+		} else {
+			$("#contents > .top_content_label").remove();
+		}
 	});
 
 	// Populate the upload interface

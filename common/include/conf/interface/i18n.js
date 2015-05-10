@@ -18,6 +18,7 @@ var i18n = {
                                 "title": "Saved",
                                 "message": "Data saved successfully"
                         },
+                        "data_publishing": "Data publishing",
                         "delete_invitation": {
                                 "title": "Are you sure to remove this invitation?",
                                 "message": "This user will not be able to accept his invitation."

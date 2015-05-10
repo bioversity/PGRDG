@@ -351,7 +351,7 @@ $.ask_cyphered_to_service = function(options, callback) {
 			success: function(response) {
 				if(opt.dataType == "json") {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
-						if(!$.storage_exists(st)) {
+						if(!$.storage_exists(st) && !opt.force_renew) {
 							storage.set(st, response[kAPI_RESPONSE_RESULTS]);
 						}
 						if(response[kAPI_RESPONSE_RESULTS] === undefined) {
