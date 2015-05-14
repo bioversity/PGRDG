@@ -83,13 +83,16 @@ if(isset($_COOKIE["lang"]) && trim($_COOKIE["lang"]) !== "") {
 if($page->current == "Home") {
 	$page->is_backend = true;
 }
+if(!isset($page->class)) {
+	$page->class = array();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 	<head>
 		<?php include(TEMPLATE_DIR . "head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"]) ? "e405" : implode($page->class, " ")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"]) ? "e405" : ((isset($page->class)) ? implode($page->class, " ") : "")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		if(strtolower($page->current) == "signin") {
 			if($interface["site"]["allow_signin"]) {

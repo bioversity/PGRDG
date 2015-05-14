@@ -1167,7 +1167,7 @@ $.fn.execute_search = function(offsets) {
 			});
 			$.breadcrumb_right_buttons();
 		}
-		$("#goto_results_btn, #goto_map_btn").hide();
+		$("#goto_results_btn, #goto_map_btn").addClass("hidden");
 		$.remove_storage("pgrdg_cache.summary");
 		$.remove_storage("pgrdg_cache.results");
 		$.remove_storage("pgrdg_cache.map");
@@ -1631,7 +1631,7 @@ $.exec_autocomplete = function(type) {
 				}
 				$("#forms-body .panel").tooltip();
 				$("#forms-head .btn-group a.save_btn, #forms-footer .btn-group a.save_btn").fadeIn(300, function() {
-					$("#goto_results_btn, #goto_map_btn").hide();
+					$("#goto_results_btn, #goto_map_btn").addClass("hidden");
 					$.remove_storage("pgrdg_cache.summary");
 					$.remove_storage("pgrdg_cache.results");
 					$.remove_storage("pgrdg_cache.map");
@@ -1755,7 +1755,7 @@ $.execTraitAutocomplete = function(kAPI, callback) {
 							});
 						});
 
-						$("#goto_results_btn, #goto_map_btn").hide();
+						$("#goto_results_btn, #goto_map_btn").addClass("hidden");
 						$.remove_storage("pgrdg_cache.summary");
 						$.remove_storage("pgrdg_cache.results");
 						$.remove_storage("pgrdg_cache.map");
@@ -2140,7 +2140,7 @@ $.remove_search = function(search) {
 				$.breadcrumb_right_buttons();
 			}
 			if($this.closest(".panel").hasClass("select_map_area_search")) {
-				console.log("ok");
+				// console.log("ok");
 				$.remove_storage("pgrdg_cache.search.criteria.select_map_area", "");
 				$.breadcrumb_right_buttons();
 			}
@@ -2280,16 +2280,16 @@ $.search_fulltext = function(text) {
 $.reset_breadcrumb = function() {
 	$("#breadcrumb").fadeOut(300, function() {
 		$.each($(this).find("ol li"), function(i,v) {
-			$(this).hide();
+			$(this).addClass("hidden");
 		});
 	});
 };
 
-/**
- * Remove single breadcrumb link
- */
+
 $.remove_breadcrumb = function(item) {
-	$("#goto_" + item.toLowerCase() + "_btn").css({"display": "none"});
+	if(!$("#goto_" + item.toLowerCase() + "_btn").hasClass("hidden")) {
+		$("#goto_" + item.toLowerCase() + "_btn").addClass("hidden");
+	}
 };
 
 /**
@@ -2339,11 +2339,12 @@ $.reset_contents = function(content, storage_also) {
 */
 $.activate_panel = function(type, options, callback) {
 	options = $.extend({
+		source: "",
 		res: "",
 		id: "",
 		label: ""
 	}, options);
-	$.manage_url($.ucfirst(type));
+	$.manage_url({hash: $.ucfirst(type), source: options.source});
 
 	if(type !== "map") {
 		if(type == "summary") {
@@ -2354,6 +2355,9 @@ $.activate_panel = function(type, options, callback) {
 			}
 		} else {
 			$("#" + type + "-head h1.content-title").html(i18n[lang].interface.btns.search + " " + type.toLowerCase());
+			if(type == "results") {
+				$('<p class="lead text-muted">').text(i18n[lang].messages.for_detailed_info_click).insertAfter($("#" + type + "-head h1.content-title"));
+			}
 		}
 
 		$("#" + type + "-body .content-body").html("");
@@ -2659,7 +2663,7 @@ $.show_statistics = function(statistic_id, storage_id, domain, grouped_data) {
 * @param  {bool} with_grouping
 */
 $.show_summary = function(active_forms, with_grouping, callback) {
-	console.info(active_forms, with_grouping);
+	// console.info(active_forms, with_grouping);
 	if(with_grouping === undefined || with_grouping === null || with_grouping === "") {
 		with_grouping = true;
 	}
@@ -3694,8 +3698,8 @@ $.show_data_on_map = function(id, domain, shp, grouped_data) {
 				});
 			}
 			uobj_id = $.md5(summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA] + domain);
-			console.log("Not working... you must generate an MD5(CRITERIA + DOMAIN)... See map.js on line 2665");
-			console.log(summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA], uobj_id);
+			// console.log("Not working... you must generate an MD5(CRITERIA + DOMAIN)... See map.js on line 2665");
+			// console.log(summaries_data.query.obj[kAPI_REQUEST_PARAMETERS][kAPI_PARAM_CRITERIA], uobj_id);
 		});
 		if($.obj_len(grouped_data) > 0) {
 			grouped_data = $.parseJSON($.rawurldecode(grouped_data));
@@ -4181,7 +4185,7 @@ $.add_chosen = function(options, content) {
 	if(content === undefined || content === "") {
 		content = [{text: "Test", value: "ok"}, {text: "Test", value: "jkhsdgf"}]; // <----------------------------------- Waiting right data from Milko's Service...
 	} else {
-		console.log("Chosen: ", content);
+		// console.log("Chosen: ", content);
 	}
 	options = $.extend({
 		id: $.makeid(),
@@ -4497,7 +4501,7 @@ $.show_summary_directly = function(search) {
 		kAPI.colour = true;
 		$.ask_to_service(kAPI, function(res) {
 			if($.obj_len(res[kAPI_RESPONSE_RESULTS]) > 0 || res[kAPI_RESPONSE_RESULTS].length > 0) {
-				$.activate_panel("summary", {res: res});
+				$.activate_panel("summary", {res: res, source: "main"});
 				$("#breadcrumb").css("display", "block");
 				$("section.container").css("padding-top", "55px");
 				$.breadcrumb_right_buttons(true);
@@ -4626,6 +4630,16 @@ $.build_big_buttons_menu = function() {
 };*/
 
 $(document).ready(function() {
+	window.onhashchange = function() {
+		if(document.location.hash == "#Map") {
+			$("html, body, #logo").addClass("map");
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo_small_white.svg");
+		} else {
+			$("html, body, #logo").removeClass("map");
+			$("#logo img").attr("src", "common/media/svg/bioversity-logo_small.svg");
+		}
+	};
+
 	if(current_path == "Search") {
 		$(window).resize(function () {
 			// Resize the forms when window is resized

@@ -3137,6 +3137,9 @@ a.list-group-item.related {
 	top: 100px;
 	width: 100%
 }
+#main.admin #contents.profile > .top_content_label + #content {
+	top: 121px;
+}
 .top_content_label {
 	background-color: #3d3d3d;
 	box-shadow: 0 10px 10px #333 inset;
@@ -3262,6 +3265,7 @@ a.list-group-item.related {
 
 #personal_data {
 	margin-top: 5px;
+	position: static;
 }
 #personal_data h3 {
 	color: #666;
@@ -3510,7 +3514,7 @@ div.user_data dl.roles dd {
 }
 #invite_container fieldset + fieldset,
 #user_data_container fieldset + fieldset {
-	margin-top: 5em;
+	margin-top: 4em;
 }
 .btns-group {
 	margin-top: 5em;
@@ -3853,4 +3857,8 @@ div.user_data dl.roles dd {
 }
 .timeline .timeline_item .well h2 + small {
 	color: #999;
+}
+
+#activation_content {
+	margin-top: 60px;
 }

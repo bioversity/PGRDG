@@ -13,6 +13,7 @@ var i18n = {
                         "contacts": "Contacts",
                         "content_not_exists": "The content of the page \"{X}\" seems does not exist.",
                         "content_managed_by_script": "The content of the page \"{X}\" is managed by a script. Anyhow you can add unmanaged contents in the form below.",
+                        "create_new_password": "Create a new password",
                         "created_users": "Created users",
                         "data_saved": {
                                 "title": "Saved",
@@ -47,6 +48,7 @@ var i18n = {
                                 "return_btn_disabled": "Return button disabled",
                                 "item_disabled": "This item is disabled"
                         },
+                        "for_detailed_info_click": "For detailed info click on each line",
                         "generating_invite_form": "Creating the invite form...",
                         "grouping": {
                                 "are_you_sure_to_remove": "Are you sure to remove all defined group filters?",
@@ -120,6 +122,8 @@ var i18n = {
                         "move_this_menu_out": "Move this menu out of its parent",
                         "move_this_menu_down": "Move this menu down",
                         "move_this_menu_up": "Move this menu up",
+                        "new_password": "New password",
+                        "repeat_new_password": "Repeat new password",
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
                         "no_data": "No data to display",
@@ -149,6 +153,7 @@ var i18n = {
                                 "message": "There was an error when removing the page, please contact the administrator or try again later"
                         },
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
+                        "return_to_panel": "Return to {X} panel",
                         "removed_item": "Removed {X}",
                         "reset_all_search_history": "Reset all search history",
                         "row_data": {
@@ -199,6 +204,10 @@ var i18n = {
                         },
                         "template_upload": "Template upload",
                         "text_has_produced_zero_results": "Entered text has produced 0 results",
+                        "the_user_already_exists": {
+                                "title": "The user already exists",
+                                "message": "The user already exists and seems to managed by someone else.<br />Try with another e-mail address"
+                        },
                         "this_user_will_be_able_to": "This user will be able to:",
                         "undo_user_profile": {
                                 "title": "Are you sure to cancel all editings?",
@@ -214,6 +223,33 @@ var i18n = {
                                         "total": "Total %"
                                 }
                         },
+                        "user_invited": {
+                                "title": "User invited",
+                                "message": "The user {X} was succesfully invited. A mail for activation was sent to him"
+                        },
+                        "user_roles": {
+                                "login": {
+                                        "text": "Login (user active)",
+                                        "description": "The ability to login",
+                                        "data_content": "If this field is set to off, the user will be unable to login"
+                                },
+                                "invite": {
+                                        "text": "Invite users",
+                                        "description": "The ability to compile a user profile and send an invitation"
+                                },
+                                "upload": {
+                                        "text": "Upload data",
+                                        "description": "The ability to upload data templates"
+                                },
+                                "edit_contents": {
+                                        "text": "Edit contents",
+                                        "description": "The ability to edit portal menu and pages"
+                                },
+                                "manage_users": {
+                                        "text": "Manage users",
+                                        "description": "The ability to manage all users"
+                                }
+                        },
                         "user_permissions": "User permissions",
                         "you_can": "You can",
                         "you": "You",
@@ -223,7 +259,7 @@ var i18n = {
                 "interface": {
                         "btns": {
                                 "activate": "Activate",
-                                "active_form": "AcActive formtivate",
+                                "active_form": "Activevate form",
                                 "add": "Add",
                                 "add_menu": "Add menu",
                                 "add_page": "Add page",
@@ -282,10 +318,13 @@ var i18n = {
                                 "view_statistics": "View statistics"
                         },
                         "forms": {
-                                "label_menu_text": "Text",
+                                "email_address": "E-mail address",
+                                "full_name": "Full name",
+                                "label_menu_icon": "Icon",
                                 "label_menu_link": "Link",
+                                "label_menu_text": "Text",
                                 "label_menu_title": "Title",
-                                "label_menu_icon": "Icon"
+                                "work_title": "Work title"
                         },
                         "map_selection": "Map selection",
                         "zoom_in": "Zoom in",

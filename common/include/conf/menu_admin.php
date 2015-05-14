@@ -41,18 +41,18 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
                 "id" => "manage_users_menu"
         );
         $m->menu->admin->Manage_user->childs = new stdClass();
-        if($user[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_VALUE] > 0) {
-                $m->menu->admin->Manage_user->childs->All_users = new stdClass();
-                $m->menu->admin->Manage_user->childs->All_users->content = array(
-                        "icon" => "fa fa-fw ionicons ion-ios7-people",
-                        "text" => "All users"
-                );
-                $m->menu->admin->Manage_user->childs->All_users->attributes = array(
-                        "href" => "./Users",
-                        "title" => "See all users",
-                        "class" => "btn btn-link"
-                );
-        }
+        // if($user[kTAG_MANAGED_COUNT][kAPI_PARAM_RESPONSE_FRMT_VALUE] > 0) {
+        //         $m->menu->admin->Manage_user->childs->All_users = new stdClass();
+        //         $m->menu->admin->Manage_user->childs->All_users->content = array(
+        //                 "icon" => "fa fa-fw ionicons ion-ios7-people",
+        //                 "text" => "All users"
+        //         );
+        //         $m->menu->admin->Manage_user->childs->All_users->attributes = array(
+        //                 "href" => "./Users",
+        //                 "title" => "See all users",
+        //                 "class" => "btn btn-link"
+        //         );
+        // }
 
         $m->menu->admin->Manage_user->childs->Invite_user = new stdClass();
         $m->menu->admin->Manage_user->childs->Invite_user->content = array(

@@ -327,6 +327,7 @@ $.ask_cyphered_to_service = function(options, callback) {
 		storage_group: "pgrdg_user_cache.user_data",
 		data: {},
 		type: "",
+		timeout: 120000,
 		dataType: "json",
 		force_renew: false
 	}, options);
@@ -338,17 +339,19 @@ $.ask_cyphered_to_service = function(options, callback) {
 
 		callback(resp_obj);
 	} else {
+		var success, error;
 		$.cryptAjax({
 			url: "API/",
 			dataType: opt.dataType,
 			crossDomain: true,
 			type: "POST",
-			timeout: 100000,
+			timeout: opt.timeout,
 			data: {
 				jCryption: $.jCryption.encrypt(jQuery.param(opt.data), password),
 				type: opt.type
 			},
 			success: function(response) {
+				response.responseType = "success";
 				if(opt.dataType == "json") {
 					if($.obj_len(response) > 0 && response[kAPI_RESPONSE_STATUS][kAPI_STATUS_STATE] == "ok") {
 						if(!$.storage_exists(st) && !opt.force_renew) {
@@ -364,9 +367,8 @@ $.ask_cyphered_to_service = function(options, callback) {
 					callback(response);
 				}
 			},
-			error: function(response) {
-				console.info(opt);
-				console.log(response);
+			error: function(x, response) {
+				callback(response);
 			}
 		});
 	}
@@ -576,8 +578,12 @@ $.breadcrumb_right_buttons = function(shown_directly) {
 			if((current_path == "Search" && $.obj_len(query) > 0) && current_path !== "Advanced_search") {
 				var breadcrumb_div = $('<div id="breadcrumb" style="position: relative; top: 0; display: block;"></div>'),
 				breadcrumb_ol = $('<ol class="breadcrumb">'),
-				breadcrumb_li = $('<li id="goto_forms_btn"><a href="./Advanced_search#Forms"><span class="text-muted fa fa-tasks"></span><span class="txt">' + i18n[lang].interface.btns.active_form + '</span></a></li>');
+				breadcrumb_first_a = $('<a>').attr({
+					"href": (shown_directly) ? "./Advanced_search#Main" : "./Advanced_search#Forms"
+				}).html('<span class="text-muted fa fa-tasks"></span><span class="txt">' + i18n[lang].interface.btns.active_form + '</span>'),
+				breadcrumb_li = $('<li id="goto_forms_btn"></li>');
 
+				breadcrumb_li.append(breadcrumb_first_a);
 				breadcrumb_li.appendTo(breadcrumb_ol);
 				breadcrumb_ol.appendTo(breadcrumb_div);
 				$("section.container").prepend(breadcrumb_div);
@@ -595,30 +601,33 @@ $.resize_forms_mask = function() { $.each($(".panel-mask"), function(i, d) { $(t
 * Manage hash part of querystring
 * @param  {string} hash The hash to manage
 */
-$.manage_url = function(hash) {
+$.manage_url = function(h) {
+	var hash, source;
+	if($.type(h) == "object") {
+		hash = h.hash;
+		source = h.source;
+	} else {
+		hash = h;
+		source = "";
+	}
 	$.left_panel_behaviour = function(hash) {
 		switch(hash) {
 			case "Forms":
+			case "Main":
+			case "Summary":
+			case "Stats":
 				//$.remove_storage("pgrdg_cache.interface.left_panel");
 				$("header.main, section.container, #left_panel").removeClass("map");
 				$.left_panel("open");
-				break;
-			case "Summary":
-				$("header.main, section.container, #left_panel").removeClass("map");
-				$.left_panel("open");
-				break;
-			case "Stats":
-				$("header.main, section.container, #left_panel").removeClass("map");
-				$.left_panel("open");
-				break;
-			case "Results":
-				$("header.main, section.container, #left_panel").removeClass("map");
-				$.left_panel("close");
 				break;
 			case "Map":
 				if(!$("header").hasClass("map")) {
 					$("header.main, section.container, #left_panel").addClass("map");
 				}
+				$.left_panel("close");
+				break;
+			case "Results":
+				$("header.main, section.container, #left_panel").removeClass("map");
 				$.left_panel("close");
 				break;
 			default:
@@ -642,38 +651,52 @@ $.manage_url = function(hash) {
 	if(hash.length > 0) {
 		document.location.hash = hash;
 		if($("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").css("display") == "none") {
-			$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").fadeIn(300);
+			console.log(source);
+			if(source !== null && source !== undefined && source !== "") {
+				$("ol.breadcrumb li").addClass("hidden");
+				$("#breadcrumb #goto_" + source.toLowerCase() + "_btn").removeClass("hidden");
+			} else {
+				$("#breadcrumb #goto_" + hash.toLowerCase() + "_btn").removeClass("hidden");
+			}
 		}
 		// Show the content in page
-		//$("#" + hash.toLowerCase()).fadeIn(300);
+		$("#" + hash.toLowerCase()).removeClass("hidden");
 		if(current_path == "Search" || current_path == "Map") {
 			switch(document.location.hash) {
 				case "Summary":
-					$("#results").hide();
-					$("#map").hide();
-					$("#pgrdg_map").hide();
+					$("#results").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#pgrdg_map").addClass("hidden");
 					break;
 				case "Results":
-					$("#summary").hide();
-					$("#map").hide();
-					$("#pgrdg_map").hide();
+					$("#summary").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#pgrdg_map").addClass("hidden");
 					break;
+				case "Main":
+					$("#forms").addClass("hidden");
+					$("#results").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#summary").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#pgrdg_map").addClass("hidden");
 				case "Stats":
-					$("#results").hide();
-					$("#map").hide();
-					$("#summary").hide();
-					$("#map").hide();
-					$("#pgrdg_map").hide();
+					$("#results").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#summary").addClass("hidden");
+					$("#map").addClass("hidden");
+					$("#pgrdg_map").addClass("hidden");
 					break;
 				case "Map":
-					$("#results").hide();
-					$("#summary").hide();
+					$("#results").addClass("hidden");
+					$("#summary").addClass("hidden");
 					break;
 			}
 		} else {
 			// Remove all other pages if user returns to the forms page
 			switch(hash.toLowerCase()) {
 				case "forms":
+				case "main":
 					$.remove_breadcrumb("summary");
 					$.reset_contents("summary", true);
 					$.remove_breadcrumb("results");
@@ -690,14 +713,19 @@ $.manage_url = function(hash) {
 			}
 		}
 		$.each($("#breadcrumb .breadcrumb li:visible:not(:last-child)"), function(i, v) {
-			var $this = $(v);
-			var item_id = $this.attr("id"),
-			ttext = item_id.replace("goto_", "").replace("_btn", "");
+			var $this = $(v),
+			item_id = $this.attr("id"),
+			ttext = item_id.replace("goto_", "").replace("_btn", ""),
+			item_text = ((source !== null && source !== undefined && source !== "") ? $.ucfirst(source) : $.ucfirst(ttext));
 
 			if(hash.length > 0) {
 				if($.trim($("#" + item_id).text()) !== hash) {
-					var blink_title = "Return to " + ttext + " panel";
-					$(this).find("span.txt").html('<a href="javascript:void(0);" onclick="$.manage_url(\'' + $.ucfirst(ttext) + '\');" title="' + blink_title + '">' + $.ucfirst(ttext) + '</a>').closest("li").removeClass("active");
+					$a_bread = $('<a>').attr({
+						"href": "javascript:void(0);",
+						"onclick": "$.manage_url('" + item_text + "');",
+						"title": i18n[lang].messages.return_to_panel.replace("{X}", ttext)
+					}).html(item_text);
+					$(this).find("span.txt").html($a_bread).closest("li").removeClass("active");
 				} else {
 					$(this).find("span.txt").text(hash).closest("li").addClass("active");
 				}
@@ -706,7 +734,6 @@ $.manage_url = function(hash) {
 			}
 
 		});
-
 		$.left_panel_behaviour(hash);
 		if(hash == "Map") {
 			$("#map_toolbox").delay(600).animate({"right": "0"}, 300);
@@ -721,8 +748,9 @@ $.manage_url = function(hash) {
 							$(this).hide();
 						}
 					});
-					if($("#contents #" + hash.toLowerCase() + " h1").html().length > 0) {
-						$("#contents #" + hash.toLowerCase()).fadeIn(300);
+					var g = (hash.toLowerCase() == "main") ? "start" : hash;
+					if($("#contents #" + g.toLowerCase() + " h1").html().length > 0) {
+						$("#contents #" + g.toLowerCase()).fadeIn(300);
 					}
 				}
 			} else if(current_path == "Search" || current_path == "Map"){
@@ -1462,7 +1490,6 @@ $.get_definitions = function(definition) {
 				type: "json",
 			},
 			success: function(response) {
-				console.info(response);
 				if($.obj_len(response) > 0) {
 					if(!$.storage_exists("pgrdg_cache.local.definitions." + definition)) {
 						storage.set(definition, response);

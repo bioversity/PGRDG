@@ -1,3 +1,6 @@
+/*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Invite users functions
 *
@@ -10,35 +13,124 @@
 * Generate the invite form
 */
 $.generate_invite_form = function() {
+	/**
+	 * Check if the inserted email address is valid
+	 * @return bool
+	 */
+	$.fn.check_valid_email = function() {
+		var $field = $(this),
+		$form_group = $field.closest(".form-group"),
+		$checker = $form_group.find("p.checker"),
+		$checker_icon = $checker.find("span.fa"),
+		email_address = $field.val(),
+		regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+		if($.trim(email_address).length > 5) {
+			$checker_icon.addClass("fa-refresh fa-spin text-muted");
+			$form_group.removeClass("has-error");
+			$checker.removeClass("hidden");
+			if(regex.test(email_address)) {
+				$checker_icon.removeClass("fa-times text-danger");
+				$checker_icon.removeClass("fa-refresh fa-spin text-muted").addClass("fa-check text-success");
+				$form_group.addClass("has-success");
+				$("#invite_btn").removeClass("disabled");
+			} else {
+				$checker_icon.removeClass("fa-refresh fa-spin text-muted").addClass("fa-times text-danger");
+				$form_group.addClass("has-error");
+				$("#invite_btn").addClass("disabled");
+			}
+		} else {
+			$checker_icon.removeClass("fa-refresh fa-spin text-muted").addClass("fa-times text-danger");
+			$form_group.addClass("has-error");
+			$("#invite_btn").addClass("disabled");
+		}
+
+	};
+	/**
+	 * Check if an input field is empty
+	 * @return bool
+	 */
+	$.fn.check_empty = function() {
+		var $field = $(this),
+		$form_group = $field.closest(".form-group"),
+		$checker = $form_group.find("p.checker"),
+		$checker_icon = $checker.find("span.fa"),
+		field_value = $field.val();
+
+		$checker_icon.addClass("fa-refresh fa-spin text-muted");
+		$form_group.removeClass("has-error");
+		$checker.removeClass("hidden");
+		if($.trim(field_value).length > 0) {
+			$checker_icon.removeClass("fa-times text-danger");
+			$checker_icon.removeClass("fa-refresh fa-spin text-muted").addClass("fa-check text-success");
+			$form_group.addClass("has-success");
+			// $("#invite_btn").removeClass("disabled");
+		} else {
+			$checker_icon.removeClass("fa-refresh fa-spin text-muted").addClass("fa-times text-danger");
+			$form_group.addClass("has-error");
+			// $("#invite_btn").addClass("disabled");
+		}
+		$.check_all_empty();
+	};
+
+	$.check_all_empty = function() {
+		var regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+		empty = [];
+		$.each($("#user_personal_data input"), function() {
+			if($.trim($(this).val()).length > 0) {
+				if($(this).attr("id") == "new_user_mail_address") {
+					if($.trim($(this).val()).length > 5 && regex.test($(this).val())) {
+						empty.push(false);
+					} else {
+						empty.push(true);
+					}
+				} else {
+					empty.push(false);
+				}
+			} else {
+				empty.push(true);
+			}
+		});
+		if($.inArray(true, empty) !== -1) {
+			$("#invite_btn").addClass("disabled");
+		} else {
+			$("#invite_btn").removeClass("disabled");
+		}
+	};
+
 	var $invite_div = ($("#invite_user").length > 0) ? $("#invite_user") : $('<div id="invite_user">'),
 	$super_row = $('<div class="row">'),
 	$btn_row = $('<div class="col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2">'),
 	$send_btn = $('<a>').attr({
 		"href": "javascript:void(0);",
+		"id": "invite_btn",
 		"onclick": "$.invite_user();",
-		"class": "btn btn-default pull-right"
-	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-share"></span>'),
+		"class": "btn btn-default pull-right disabled"
+	}).html(i18n[lang].interface.btns.invite + ' <span class="fa fa-angle-right"></span>'),
 	$invite_container = $('<div id="invite_container">').addClass("col-xs-12 col-sm-5 col-lg-5 col-sm-offset-1 col-lg-offset-2 well form"),
-	$fieldset_pd = $('<fieldset>'),
+	$fieldset_pd = $('<fieldset id="user_personal_data">'),
 	$legend_pd = $('<legend>').text("User personal data"),
 	personal_data_form = [
 		{
-			"text": "Full name",
+			"text": i18n[lang].interface.forms.full_name,
 			"iput-type": "text",
 			"id": "new_user_full_name",
-			"placeholder": "Full name",
+			"placeholder": i18n[lang].interface.forms.full_name,
+			"check": "empty",
 			"separated": false
 		},{
-			"text": "Work title",
+			"text": i18n[lang].interface.forms.work_title,
 			"iput-type": "text",
 			"id": "new_user_work_title",
-			"placeholder": "Work title",
+			"placeholder": i18n[lang].interface.forms.work_title,
+			"check": "empty",
 			"separated": false
 		},{
-			"text": "E-mail address",
+			"text": i18n[lang].interface.forms.email_address,
 			"iput-type": "email",
 			"id": "new_user_mail_address",
-			"placeholder": "E-mail address",
+			"placeholder": i18n[lang].interface.forms.email_address,
+			"check": "email",
 			"separated": true
 		}
 	];
@@ -48,6 +140,9 @@ $.generate_invite_form = function() {
 		$row = $('<div class="row">'),
 		$label = $('<label>').addClass("control-label col-sm-3 control-label col-xs-12").attr("for", v.id).text(v.text),
 		$form_col = $('<div class="col-sm-9 col-xs-12 row">'),
+		$checker_col = $('<div class="col-xs-1">'),
+		$p_checker = $('<p class="checker form-control-static hidden">'),
+		$span_icon = $('<span class="fa fa-refresh fa-spin text-muted fa-1_5x">'),
 		$field = $('<input>').attr({
 			"type": v["iput-type"],
 			"name": v.id,
@@ -55,10 +150,27 @@ $.generate_invite_form = function() {
 			"placeholder": v.placeholder,
 			"value": ""
 		}).addClass("form-control");
+		if(v.check !== "") {
+			$field.on("keyup blur", function() {
+				if(v.check == "email") {
+					$(this).check_valid_email();
+				} else {
+					$(this).check_empty();
+				}
+			});
+		}
 
+		$p_checker.append($span_icon);
+		$checker_col.append($p_checker);
+		if(v.check !== "") {
+			$form_col.removeClass("col-sm-9 col-xs-12").addClass("col-sm-8 col-xs-11");
+		}
 		$form_col.append($field);
 		$row.append($label);
 		$row.append($form_col);
+		if(v.check !== "") {
+			$row.append($checker_col);
+		}
 		$form_group.append($row);
 		if(v.separated) {
 			$fieldset_pd.append("<br />");
@@ -74,7 +186,6 @@ $.generate_invite_form = function() {
 	$super_row.append($invite_container);
 	$super_row.append($btn_row);
 	$invite_div.html($super_row);
-	$invite_div.append("<br /><br />");
 
 	$.activate_roles_manager_box();
 	$("#loader").hide();
@@ -101,7 +212,6 @@ $.invite_user = function(user_id, callback) {
 		$("#new_user_mail_address").closest(".form-group").addClass("has-error");
 		$("#new_user_mail_address").focus();
 	} else {
-		$("#loader").show();
 		$("#new_user_full_name").closest(".form-group").removeClass("has-error");
 		$("#new_user_work_title").closest(".form-group").removeClass("has-error");
 		$("#new_user_mail_address").closest(".form-group").removeClass("has-error");
@@ -134,26 +244,40 @@ $.invite_user = function(user_id, callback) {
 		} else {
 			$.array_remove(k[kTAG_ROLES], kTYPE_ROLE_USERS);
 		}
-		if($("#role-login").is(":checked")) {
-			k[kTAG_ROLES].push(kTYPE_ROLE_LOGIN);
-		} else {
-			k[kTAG_ROLES] = [];
-		}
-		$.ask_cyphered_to_service({
-			storage_group: "pgrdg_user_cache.user_data.invitations",
-			data: k,
-			type: "invite_user"
-		}, function(response) {
-			console.warn(response);
-			if(typeof callback == "function") {
-				$.each(response, function(id, ud) {
-					// Log
-					$.log_activity("Invited an user with id: " + $.get_user_id(ud));
-				// 	storage.set("pgrdg_user_cache.user_data.all." + $.get_user_id(ud), ud);
-				// 	callback.call(this, ud);
-				});
-			}
-			$("#loader").hide();
+		k[kTAG_ROLES].push(kTYPE_ROLE_LOGIN);
+
+		$.require_password(function() {
+			$("#loader").show();
+			$.ask_cyphered_to_service({
+				storage_group: "pgrdg_user_cache.user_data.invitations",
+				data: k,
+				dataType: "text",
+				timeout: 15000,
+				type: "invite_user"
+			}, function(response) {
+				$("#loader").hide();
+				if(response == "The user already exists") {
+					apprise(i18n[lang].messages.the_user_already_exists.message, {
+						title: i18n[lang].messages.the_user_already_exists.title,
+						titleClass: "text-danger",
+						icon: "fa-times"
+					}, function(r) {
+						$("#new_user_mail_address").focus();
+					});
+					return false;
+				}
+			});
+
+			// Log
+			$.log_activity("Invited the user " + $("#new_user_full_name").val());
+			apprise(i18n[lang].messages.user_invited.message.replace("{X}", $("#new_user_full_name").val()), {
+				title: i18n[lang].messages.user_invited.title,
+				icon: "success"
+			}, function(r) {
+				if(r) {
+					document.location.reload();
+				}
+			});
 		});
 	}
 };

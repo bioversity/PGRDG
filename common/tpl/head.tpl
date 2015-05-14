@@ -48,8 +48,8 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
         if($page->is_backend) {
                 ?>
         	<!-- Markitup Editor -->
-                <link href="<?php print local2host(JAVASCRIPT__PLUGINS_DIR); ?>markitup/skins/simple/style.css" rel="stylesheet" type="text/css" media="screen" />
-                <link href="<?php print local2host(JAVASCRIPT__PLUGINS_DIR); ?>markitup/sets/markdown_font-awesome/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <link href="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>markitup/skins/simple/style.css" rel="stylesheet" type="text/css" media="screen" />
+                <link href="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>markitup/sets/markdown_font-awesome/style.css" rel="stylesheet" type="text/css" media="screen" />
                 <?php
         }
 } else {

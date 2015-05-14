@@ -115,7 +115,6 @@ if(isset($_GET["getPublicKey"])) {
 			$se = new Service_exchange();
 			$pgp = new PGP($output);
 			$key_data = $pgp->generate_key();
-
 			$output[kTAG_ENTITY_PGP_FINGERPRINT] = $key_data["fingerprint"][0];
 			$output[kTAG_ENTITY_PGP_KEY] = $key_data["public_key"];
 			$action = "invite_user";

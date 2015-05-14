@@ -348,11 +348,14 @@ class PGP {
                                                 return true;
                                         }
                                 } else {
-                                        $this->log(self::E, "This user already exist, please try another e-mail address");
-                                        return false;
+                                        print "no";
+                                        // $this->log(self::E, "This user already exist, please try another e-mail address");
+                                        print "The user already exists";
                                 }
                         } else {
-                                return false;
+                                // $this->log(self::E, "This user already exist, please try another e-mail address");
+                                print "The user already exists";
+                                exit();
                         }
                 }
         }
@@ -574,7 +577,8 @@ class PGP {
                 if(!isset($this->user_data["comment"]) || empty($this->user_data["comment"])) {
                         $this->log(self::I, "The user '" . $this->user_data[kTAG_ENTITY_EMAIL] . "' has no comment for its key", false);
                 }
-
+                // print_r($this->user_data);
+                // exit();
                 if($this->check_user_path(true)) {
                         if(!isset($this->user_data["passphrase"]) || empty($this->user_data["passphrase"])){
                                 $this->user_data["passphrase"] = $this->generate_default_passphrase();

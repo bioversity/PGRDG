@@ -1,10 +1,11 @@
 <div id="breadcrumb">
 	<ol class="breadcrumb">
-		<li id="goto_forms_btn"><span class="text-muted fa fa-tasks"></span> <span class="txt">Forms</span></li>
-		<li id="goto_summary_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
-		<li id="goto_results_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>
-		<li id="goto_stats_btn" style="display: none;"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Statistics</span></li>
-		<li id="goto_map_btn" style="display: none;"><span class="text-muted ionicons ion-map"></span> <span class="txt">Map<span></li>
+		<li id="goto_main_btn"><span class="text-muted fa fa-calendar-o"></span> <span class="txt">Main</span></li>
+		<li id="goto_forms_btn" class="hidden"><span class="text-muted fa fa-tasks"></span> <span class="txt">Forms</span></li>
+		<li id="goto_summary_btn" class="hidden"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Summary</span></li>
+		<li id="goto_results_btn" class="hidden"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Results</span></li>
+		<li id="goto_stats_btn" class="hidden"><span class="text-muted fa fa-list-alt"></span> <span class="txt">Statistics</span></li>
+		<li id="goto_map_btn" class="hidden"><span class="text-muted ionicons ion-map"></span> <span class="txt">Map<span></li>
 	</ol>
 </div>
 <div id="contents">

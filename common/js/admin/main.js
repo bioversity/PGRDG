@@ -138,7 +138,7 @@ $.get_user = function(user_id, force_renew, callback) {
 				"manager_id": $.get_manager_id()
 			},
 			type: "get_user",
-			force_renew: force
+			force_renew: true
 		}, function(response) {
 			if(typeof callback == "function") {
 				$.each(response, function(id, ud) {
@@ -302,7 +302,7 @@ $.get_user_data = function(user_id) {
 			if($.type(v) == "object") {
 				return v;
 			}
-		})
+		});
 	}
 };
 
@@ -483,7 +483,7 @@ $.load_profile = function() {
 				}
 			});
 		} else {
-			var user_id = ($hash[0].length > 0 ? $hash[0] : "");
+			var user_id = ($hash[0].length > 0 ? $hash[0] : $hash);
 			$("#personal_data").load_user_data(user_id);
 			if($("#managed_scroller_title").length > 0) {
 				$("#managed_scroller_title").show();
@@ -540,6 +540,7 @@ $.fn.generate_manager_profile = function(manager_data) {
 	if($("#managers").length === 0) {
 		$item.prepend($managers_box);
 	}
+	console.log(manager_data);
 };
 
 /**
@@ -613,7 +614,9 @@ $.fn.generate_profile = function(user_data) {
 			// Managed user profile
 			if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 				$.each(storage.get("pgrdg_user_cache.user_data.current"), function(mid, manager_data) {
-					$("#contents").generate_manager_profile(manager_data);
+					if($.type(manager_data) == "object") {
+						$("#contents").generate_manager_profile(manager_data);
+					}
 				});
 			}
 		} else {
@@ -728,14 +731,17 @@ $.fn.generate_profile = function(user_data) {
 */
 $.fn.load_user_data = function(user_id) {
 	var $item = $(this);
+	if($.type(user_id) == "array") {
+		user_id = user_id[0];
+	}
 	if(user_id === undefined || user_id === null || user_id === "") {
 		if($.storage_exists("pgrdg_user_cache.user_data.current")) {
 			window.location.hash = $.get_manager_id();
 			$item.generate_profile(storage.get("pgrdg_user_cache.user_data.current." + $.get_manager_id()));
 		}
 	} else {
-		$.get_user(user_id, false, function(ud){
-			$item.generate_profile(ud);
+		$.get_user(user_id, false, function(user_data){
+			$item.generate_profile(user_data);
 		});
 	}
 };
@@ -956,46 +962,46 @@ $.fn.roles_manager_box = function(user_id, user_roles) {
 	$ul = $('<ul>').addClass("list-group roles"),
 	roles = [
 		{
-			"text": "Active",
+			"text": i18n[lang].messages.user_roles.login.text,
 			"icon": "fa-lock",
-			"description": "The ability to login.",
+			"description": i18n[lang].messages.user_roles.login.description,
 			"id": "role-login",
 			"value": kTYPE_ROLE_LOGIN,
 			"data-type": kTYPE_ROLE_LOGIN,
 			"checked": ($.inArray(kTYPE_ROLE_LOGIN, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
 			"danger": true,
-			"data-content": "If this field is set to off, the user will be unable to login"
+			"data-content": i18n[lang].messages.user_roles.login.data_content
 		},{
-			"text": "Invite users",
+			"text": i18n[lang].messages.user_roles.invite.text,
 			"icon": "fa-user-plus",
-			"description": "The ability to compile a user profile and send an invitation.",
+			"description": i18n[lang].messages.user_roles.invite.description,
 			"id": "role-invite",
 			"value": kTYPE_ROLE_INVITE,
 			"data-type": kTYPE_ROLE_INVITE,
 			"checked": ($.inArray(kTYPE_ROLE_INVITE, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
 			"danger": false
 		},{
-			"text": "Upload data",
+			"text": i18n[lang].messages.user_roles.upload.text,
 			"icon": "fa-upload",
-			"description": "The ability to upload data templates.",
+			"description": i18n[lang].messages.user_roles.upload.description,
 			"id": "role-upload",
 			"value": kTYPE_ROLE_UPLOAD,
 			"data-type": kTYPE_ROLE_UPLOAD,
 			"checked": ($.inArray(kTYPE_ROLE_UPLOAD, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
 			"danger": false
 		},{
-			"text": "Edit pages",
+			"text": i18n[lang].messages.user_roles.edit_contents.text,
 			"icon": "fa-file-text-o",
-			"description": "The ability to login.",
+			"description": i18n[lang].messages.user_roles.edit_contents.description,
 			"id": "role-edit",
 			"value": kTYPE_ROLE_EDIT,
 			"data-type": kTYPE_ROLE_EDIT,
 			"checked": ($.inArray(kTYPE_ROLE_EDIT, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
 			"danger": false
 		},{
-			"text": "Manage users",
+			"text": i18n[lang].messages.user_roles.manage_users.text,
 			"icon": "fa-group",
-			"description": "The ability to login.",
+			"description": i18n[lang].messages.user_roles.manage_users.description,
 			"id": "manage-users",
 			"value": kTYPE_ROLE_USERS,
 			"checked": ($.inArray(kTYPE_ROLE_USERS, user_roles[kAPI_PARAM_RESPONSE_FRMT_VALUE]) > -1) ? "checked" : "",
@@ -1763,7 +1769,7 @@ $.save_user_data = function(user_id) {
 					apprise(i18n[lang].messages.errors.theres_an_error.message, {
 						title: i18n[lang].messages.errors.theres_an_error.title,
 						icon: "fa-times",
-						titleClass: "text-danger",
+						titleClass: "text-danger"
 					});
 				}
 			});
