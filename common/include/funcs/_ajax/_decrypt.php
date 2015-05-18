@@ -89,7 +89,7 @@ if(isset($_GET["getPublicKey"])) {
 		case "activate_user":
 			require_once(CLASSES_DIR . "Service_exchange.php");
 			$se = new Service_exchange();
-			print $se->send_to_service(trim(base64_decode($output["fingerprint"])), "activate_user");
+			print $se->send_to_service(trim(rawurldecode(base64_decode($output["fingerprint"]))), $type);
 			break;
 		case "ask_service":
 			require_once("ask_service.php");
@@ -209,6 +209,7 @@ if(isset($_GET["getPublicKey"])) {
 			fclose($fp);
 			exit();
 			break;
+		case "create_user":
 		case "save_user_data":
 		case "save_user_image":
 		case "upload_file":

@@ -12,6 +12,9 @@ if(isset($_COOKIE["l"]) && trim($_COOKIE["l"]) !== "") {
 } else {
         throw new exception("Expired session, cannot load admin menu");
 }
+// header("Content-type: text/plain");
+// print in_array(kTYPE_ROLE_EDIT, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]);
+// exit();
 if(!defined("LOGGED")) {
         define("LOGGED", $logged);
 }
@@ -28,7 +31,7 @@ $m->menu->admin->home->attributes = array(
         "title" => "Go to Main Page",
         "class" => "btn btn-link hidden"
 );
-if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]) || in_array(kTYPE_ROLE_USERS, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
+if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {// || in_array(kTYPE_ROLE_USERS, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
         $m->menu->admin->Manage_user = new stdClass();
         $m->menu->admin->Manage_user->content = array(
                         "icon" => "ionicons ion-person-stalker",
@@ -53,17 +56,18 @@ if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE]
         //                 "class" => "btn btn-link"
         //         );
         // }
-
-        $m->menu->admin->Manage_user->childs->Invite_user = new stdClass();
-        $m->menu->admin->Manage_user->childs->Invite_user->content = array(
-                "icon" => "ionicons ion-person-add",
-                "text" => "Invite new"
-        );
-        $m->menu->admin->Manage_user->childs->Invite_user->attributes = array(
-                "href" => "./Invite",
-                "title" => "Invite an user",
-                "class" => "btn btn-link btn-default"
-        );
+        if(in_array(kTYPE_ROLE_INVITE, $user[kTAG_ROLES][kAPI_PARAM_RESPONSE_FRMT_VALUE])) {
+                $m->menu->admin->Manage_user->childs->Invite_user = new stdClass();
+                $m->menu->admin->Manage_user->childs->Invite_user->content = array(
+                        "icon" => "ionicons ion-person-add",
+                        "text" => "Invite new"
+                );
+                $m->menu->admin->Manage_user->childs->Invite_user->attributes = array(
+                        "href" => "./Invite",
+                        "title" => "Invite an user",
+                        "class" => "btn btn-link btn-default"
+                );
+        }
 }
 
 $m->menu->admin->Your_data = new stdClass();
@@ -157,7 +161,8 @@ $m->menu->admin->Logout->attributes = array(
         "class" => "btn btn-link text-warning"
 );
 
-// header("Content-type: text/plain");
 print json_encode($m);
-
+// header("Content-type: text/plain");
+// print_r($user[kTAG_ROLES]);
+// exit();
 ?>

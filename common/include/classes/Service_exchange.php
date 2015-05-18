@@ -177,6 +177,19 @@ class Service_exchange {
                                         kAPI_PARAM_ID => $data
                                 );
                                 break;
+                        case "create_user":
+                                // Perform request
+                                $querystring = array(
+                                        kAPI_REQUEST_OPERATION => kAPI_OP_ADD_USER,
+                                        kAPI_REQUEST_LANGUAGE => $this->site_config["site"]["default_language"]
+                                );
+                                $params = array(
+                                        kAPI_PARAM_LOG_REQUEST => true,
+                                        kAPI_PARAM_LOG_TRACE => true,
+                        		kAPI_PARAM_DATA => kAPI_RESULT_ENUM_DATA_FORMAT,
+                        		kAPI_PARAM_OBJECT => $data
+                                );
+                                break;
                         case "get_managed_users":
                                 $querystring = array(
                                         kAPI_REQUEST_OPERATION => kAPI_OP_GET_MANAGED,

@@ -1,3 +1,6 @@
+/*jshint scripturl:true*/
+/*jshint -W030 */
+
 /**
 * Defined global variables
 *
@@ -11,117 +14,119 @@
 *======================================================================================*/
 
 /**
-* PHP ported
+* Convert all applicable characters to HTML entities
+*
+* This function is a porting of php's htmlentities()
+*
+* @param  string        str             The html string to encode
+* @return string                        The string encoded
 */
-        /**
-        * Convert all applicable characters to HTML entities
-        *
-        * This function is a porting of php's htmlentities()
-        *
-        * @param  string        str             The html string to encode
-        * @return string                        The string encoded
-        */
-        $.html_encode = function(str){ return $("<div/>").text(str).html(); };
+$.html_encode = function(str){ return $("<div/>").text(str).html(); };
 
-        /**
-        * Convert all HTML entities to their applicable characters
-        *
-        * This function is a porting of php's html_entity_decode()
-        *
-        * @param  string 	str             The htmlentity string to decode
-        * @return string                        The string decoded
-        */
-        $.html_decode = function(str){ return $("<div/>").html(str).text(); };
+/**
+* Convert all HTML entities to their applicable characters
+*
+* This function is a porting of php's html_entity_decode()
+*
+* @param  string 	str             The htmlentity string to decode
+* @return string                        The string decoded
+*/
+$.html_decode = function(str){ return $("<div/>").html(str).text(); };
 
-        /**
-        * URL-encode according to RFC 3986
-        *
-        * This function is a porting of php's rawurlencode()
-        *
-        * @param  string        str      	The string to encode
-        * @return string                        The string encoded
-        */
-        $.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
+/**
+* URL-encode according to RFC 3986
+*
+* This function is a porting of php's rawurlencode()
+*
+* @param  string        str      	The string to encode
+* @return string                        The string encoded
+*/
+$.rawurlencode = function(str) { str = (str+'').toString(); return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A'); };
 
-        /**
-        * Decode URL-encoded strings
-        *
-        * This function is a porting of php's rawurldecode()
-        *
-        * @param  string        str             The string to decode
-        * @return string                        The string decoded
-        */
-        $.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
+/**
+* Decode URL-encoded strings
+*
+* This function is a porting of php's rawurldecode()
+*
+* @param  string        str             The string to decode
+* @return string                        The string decoded
+*/
+$.rawurldecode = function(str) { return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function () { return '%25'; })); };
 
-        /**
-        * Encodes data with MIME base64
-        *
-        * This function is a porting of php's base64_encode()
-        *
-        * @param  string 	str           The string to encode
-        * @return string                      The string encoded
-        */
-        $.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
+/**
+* Encodes data with MIME base64
+*
+* This function is a porting of php's base64_encode()
+*
+* @param  string 	str           The string to encode
+* @return string                      The string encoded
+*/
+$.utf8_to_b64 = function(str) { return window.btoa(unescape(encodeURIComponent(str))); };
 
-        /**
-        * Decodes data encoded with MIME base64
-        *
-        * This function is a porting of php's base64_decode()
-        *
-        * @param  string 	str           The string to decode
-        * @return string                      The string decoded
-        */
-        $.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
+/**
+* Decodes data encoded with MIME base64
+*
+* This function is a porting of php's base64_decode()
+*
+* @param  string 	str           The string to decode
+* @return string                      The string decoded
+*/
+$.b64_to_utf8 = function(str) { return decodeURIComponent(escape(window.atob(str))); };
 
-        /**
-        * Make a string's first character uppercase
-        *
-        * This function is a porting of php's ucfirst()
-        *
-        * @param  string      str               The string to manipulate
-        * @return string                        Ucase converted string
-        */
-        $.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
+/**
+* Make a string's first character uppercase
+*
+* This function is a porting of php's ucfirst()
+*
+* @param  string      str               The string to manipulate
+* @return string                        Ucase converted string
+*/
+$.ucfirst = function(str) { str += ""; var f = str.charAt(0).toUpperCase(); return f + str.substr(1); };
 
-        /**
-         * Repeat a string for 'n' times
-         *
-         * @param  string     string            The string to repeat
-         * @param  number     n                 The number of times to repeat
-         * @return string                       Repeated string
-         */
-        $.str_repeat = function(string, n) { return new Array(parseInt(num) + 1).join(string); };
+/**
+ * Repeat a string for 'n' times
+ *
+ * @param  string     string            The string to repeat
+ * @param  number     n                 The number of times to repeat
+ * @return string                       Repeated string
+ */
+$.str_repeat = function(string, n) { return new Array(parseInt(num) + 1).join(string); };
 
-        /**
-         * Removes duplicate values from an array
-         *
-         * @param  array      array             The array to parse
-         * @return array                        The filtered array
-         */
-        $.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); }); };
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * @param int 		min			The minimum number
+ * @param int 		max			The maximum number
+ */
+$.rand_int = function(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
 
-        /**
-         * Clean an array from empty fields
-         * @param  array      array             The array to clean
-         * @return array                        The cleaned array
-         */
-        $.array_clean = function(array) { return array.filter(function(v){ return v !== ""; }); };
+/**
+ * Removes duplicate values from an array
+ *
+ * @param  array      array             The array to parse
+ * @return array                        The filtered array
+ */
+$.array_unique = function(array){ return array.filter(function(el, index, arr) { return index == arr.indexOf(el); }); };
 
-        /**
-         * Remove an item from an array
-         * @param  array      array             The target array
-         * @param  string     item              The item to remove
-         * @return array                        The array without the provided item
-         */
-        $.array_remove = function(array, item) { y = $.grep(array, function(value) { return value != item; }); return y; };
+/**
+ * Clean an array from empty fields
+ * @param  array      array             The array to clean
+ * @return array                        The cleaned array
+ */
+$.array_clean = function(array) { return array.filter(function(v){ return v !== ""; }); };
 
+/**
+ * Remove an item from an array
+ * @param  array      array             The target array
+ * @param  string     item              The item to remove
+ * @return array                        The array without the provided item
+ */
+$.array_remove = function(array, item) { y = $.grep(array, function(value) { return value != item; }); return y; };
 
 /**
 * Return if browser has cookie allowed
 * @return {bool}   Browser cookie permission
 */
 $.browser_cookie_status = function() { var cookieEnabled = (navigator.cookieEnabled) ? true : false; if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) { document.cookie = "testcookie"; cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false; } return (cookieEnabled); };
-
 
 /**
 * Generates a random id
@@ -174,7 +179,6 @@ $.now = function() { var d = new Date(); return d.getFullYear() + "/" + (((d.get
  * @return      string                          Converted date
  */
 $.epoch2locale = function(date) { return date.toLocaleString("en", {"day": "numeric", "month": "numeric", "year": "numeric", "hour": "numeric", "minute": "numeric"}); };
-
 
 /**
  * An utility function to find all URLs - FTP, HTTP(S) and Email - in a text string
@@ -372,7 +376,7 @@ $.parse_params = function(query) {
         },
         params = {},
         e;
-        while(e = re.exec(query)) {
+        while(e === re.exec(query)) {
                 var k = decode(e[1]),
                 v = decode(e[2]);
                 if (k.substring(k.length - 2) === '[]') {
@@ -578,7 +582,7 @@ url = $.url().attr(),
 $hash = $.url().fsegment(),
 url_paths = url.path.split("/"),
 query = $.parse_params(url.query),
-current_path = (url_paths[url_paths.length - 1] == "") ? "Profile" : url_paths[url_paths.length - 1],
+current_path = (url_paths[url_paths.length - 1] === "") ? "Profile" : url_paths[url_paths.length - 1],
 parent_path = url_paths[url_paths.length - 2],
 is_error_page = $("body").attr("data-error");
 

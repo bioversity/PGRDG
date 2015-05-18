@@ -149,6 +149,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 				switch(trim($gv)) {
 					case "activate_user":
 					case "ask_service":
+					case "create_user":
 					case "get_managed_users":
 					case "get_user":
 					case "invite_user":

@@ -680,6 +680,7 @@ $.manage_url = function(h) {
 					$("#summary").addClass("hidden");
 					$("#map").addClass("hidden");
 					$("#pgrdg_map").addClass("hidden");
+					break;
 				case "Stats":
 					$("#results").addClass("hidden");
 					$("#map").addClass("hidden");
@@ -1077,6 +1078,7 @@ $.logout = function(){
 					icon: "fa-sign-out"
 				});
 				storage.remove("pgrdg_user_cache.user_data");
+				storage.remove("pgrdg_user_cache.user_activity");
 				$.removeCookie("l");
 				$.removeCookie("lv");
 				$.removeCookie("m");
@@ -1366,6 +1368,156 @@ $.get_authority = function(domain, callback){
 	});
 };
 
+/*=======================================================================================
+*	USER ACTIVATION
+*======================================================================================*/
+
+/**
+ * Check valid input data in user activation_page
+ */
+$.fn.check_activation_form_valid = function() {
+        var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+        if(!regex.test($("#np1").val()) || !regex.test($("#np2").val())) {
+                $(this).closest(".input-group").addClass("has-error");
+                $(this).tooltip({
+                        title: i18n[lang].messages.errors.invalid_password,
+                        placement: "left"
+                }).tooltip("show");
+        } else {
+                if($("#np1").val() === $("#np2").val()) {
+                        if($.trim($("#fname").val()).length > 0 && $.trim($("#lname").val()).length > 0) {
+                                $("#fname, #lname").closest(".form-group").removeClass("has-error");
+                                $("#np1, #np2").closest(".input-group").removeClass("has-error");
+                                $("#save_btn").removeClass("disabled");
+                                $("#fname, #lname, #np1, #np2").tooltip("destroy");
+                        } else {
+                                if($.trim($("#fname").val()).length === 0) {
+                                        $("#fname").closest(".form-group").addClass("has-error");
+                                        $("#fname").tooltip({
+                                                title: i18n[lang].messages.errors.this_fiels_is_required,
+                                                placement: "right"
+                                        }).tooltip("show");
+                                }
+                                if($.trim($("#lname").val()).length === 0) {
+                                        $("#lname").closest(".form-group").addClass("has-error");
+                                        $("#lname").tooltip({
+                                                title: i18n[lang].messages.errors.this_fiels_is_required,
+                                                placement: "right"
+                                        }).tooltip("show");
+                                }
+                                $("#np1, #np2").tooltip("destroy");
+                                $("#save_btn").addClass("disabled");
+                        }
+                } else {
+                        $("#np1, #np2").tooltip({
+                                title: i18n[lang].messages.errors.passwords_do_not_match,
+                                placement: "left"
+                        }).tooltip("show");
+                        $("#np1, #np2").closest(".input-group").addClass("has-error");
+                        $("#save_btn").addClass("disabled");
+                }
+        }
+};
+
+/**
+ * Create the user
+ * @param  object 		user_obj 		The user object provided by activate_user response
+ */
+$.create_user = function(user_obj) {
+        var form_data = $("#user_password").serializeObject(),data = {};
+        $.each(user_obj, function(k, v) {
+                v[kTAG_ENTITY_FNAME] = form_data.fname;
+                v[kTAG_ENTITY_LNAME] = form_data.lname;
+                v[kTAG_CONN_CODE] = form_data.um;
+                v[kTAG_CONN_PASS] = $.sha1(form_data.np2);
+                data = v;
+        });
+        $("#loader").show();
+
+        $.ask_cyphered_to_service({
+                data: data,
+                type: "create_user",
+                force_renew: true
+        }, function(response) {
+                if($.obj_len(response) > 0 && response[kAPI_STATUS_STATE] == "ok") {
+                        window.location.href = "./Signin";
+                }
+        });
+};
+
+/**
+ * Build the user creation form
+ * @param  object 		response 		The response of activate_user query
+ */
+$.build_create_user_form = function(response) {
+	var user_obj = response[kAPI_RESPONSE_RESULTS][kAPI_PARAM_COLLECTION_USER],
+	user_name_data, user_id, user_mail, name, last_name;
+	$.each(user_obj, function(k, v) {
+		user_name_data = v[kTAG_NAME].split(" ");
+		user_id = k;
+		user_mail = v[kTAG_ENTITY_EMAIL][0][kTAG_TEXT];
+		last_name = user_name_data[(user_name_data.length - 1)];
+		name = $.trim(user_name_data.join(" ").replace(last_name, ""));
+	});
+	$("#loader").hide();
+
+	$("div.signin h1 > span").text(i18n[lang].messages.new_password).fitText(0.8);
+	$("div.signin h1 > small").text(i18n[lang].messages.create_new_password);
+
+	var $br = $('<br />'),
+	$br1 = $('<br />'),
+	$hr = $('<br />'),
+	$hr1 = $('<hr />'),
+	$footer = $('<div class="text-right">'),
+	$save_btn = $('<button>').attr({
+		"class": "btn btn-default-white disabled",
+		"id": "save_btn"
+	}).click(function() {
+		$.create_user(user_obj);
+	}).html(i18n[lang].interface.btns.save + ' <span class="fa fa-angle-right"></span>'),
+	$form = $('<form id="user_password">'),
+	$input_group1 = $('<div class="input-group">'),
+	$input_group2 = $('<div class="input-group">'),
+	$form_group_fname = $('<div class="form-group required">'),
+	$form_group_lname = $('<div class="form-group required">'),
+	$form_group1 = $('<div class="form-group required">'),
+	$form_group2 = $('<div class="form-group required">'),
+	$label_fname = $('<label class="control-label" for="fname">').text(i18n[lang].messages.name),
+	$label_lname = $('<label class="control-label" for="lname">').text(i18n[lang].messages.last_name),
+	$label1 = $('<label class="control-label" for="np1">').text(i18n[lang].messages.new_password),
+	$label2 = $('<label class="control-label" for="np2">').text(i18n[lang].messages.repeat_new_password),
+	$input_fname = $('<input type="text" name="fname" id="fname" class="form-control" required="required" value="' + name + '">'),
+	$input_lname = $('<input type="text" name="lname" id="lname" class="form-control" required="required" value="' + last_name + '">'),
+	$input0 = $('<input type="hidden" name="uid" value="' + user_id + '">'),
+	$input01 = $('<input type="hidden" name="um" value="' + user_mail + '">'),
+	$input1 = $('<input type="password" name="np1" id="np1" class="form-control" required="required" size="32" value="qwerty123A">'),
+	$input2 = $('<input type="password" name="np2" id="np2" class="form-control" required="required" size="32" value="qwerty123A">'),
+	$addon1 = $('<span class="input-group-addon">'),
+	$lock1 = $('<span class="fa fa-lock text-muted">'),
+	$addon2 = $('<span class="input-group-addon">'),
+	$lock2 = $('<span class="fa fa-lock text-muted">');
+
+	$addon1.append($lock1);
+	$addon2.append($lock2);
+	$input_group1.append($input0).append($input01).append($input1).append($addon1);
+	$input_group2.append($input2).append($addon2);
+	$form_group_fname.append($label_fname).append($input_fname);
+	$form_group_lname.append($label_lname).append($input_lname);
+	$form_group1.append($label1).append($input_group1);
+	$form_group2.append($label2).append($input_group2);
+	$form.append($form_group_fname).append($br);
+	$form.append($form_group_lname).append($br1);
+	$form.append($form_group1).append($hr);
+	$form.append($form_group2);
+	$footer.append($save_btn);
+	$("#activation_content").html("");
+	$("#activation_content").append($form).append($hr1).append($footer);
+
+	$("#fname, #lname, #np1, #np2").on("keyup blur", function() {
+		$(this).check_activation_form_valid();
+	});
+	$(this).check_activation_form_valid();
+};
 
 /*=======================================================================================
 *	OTHER FUNCTIONS
@@ -1578,6 +1730,24 @@ $(document).ready(function() {
 				li_dev.append(sub_ul_dev);
 				$("header #nav.navbar.right .navbar-collapse > ul").append(li_dev);
 			}
+		}
+		if(current_path == "Activation") {
+			var f = "fingerprint=" + $.rawurlencode($("#f").text());
+		        $("#loader").show();
+		        $.cryptAjax({
+		                url: "./API/",
+		                dataType: "json",
+		                crossDomain: true,
+		                type: (!config.site.developer_mode) ? "POST" : "GET",
+		                timeout: 30000,
+		                data: {
+		                        jCryption: $.jCryption.encrypt(f, password),
+		                        type: "activate_user"
+		                },
+		                success: function(response) {
+		                        $.build_create_user_form(response);
+		                }
+		        });
 		}
 		// $.check_logged_user();
 		if(current_path == "Profile") {

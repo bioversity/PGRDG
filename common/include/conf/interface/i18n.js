@@ -36,12 +36,15 @@ var i18n = {
                         "errors": {
                                 "404": "Page not found",
                                 "405": "Not allowed",
+                                "invalid_password": "Invalid password",
                                 "page_do_not_exists": "We're sorry but the page you are looking for do not exists in this Server",
                                 "page_requires_login": "This page requires that you're logged in",
+                                "passwords_do_not_match": "passwords do not match",
                                 "theres_an_error": {
                                         "title": "Oops... something gone wrong",
                                         "message": "There's an error in your request.<br />Please try again later or contact the administrator."
                                 },
+                                "this_fiels_is_required": "This field is required",
                                 "you_cannot_login": "Login function is temporary disabled.<br />Please, try again later"
                         },
                         "forms": {
@@ -70,6 +73,7 @@ var i18n = {
                         "invited_users": "Invited users",
                         "item_added": "{X} added",
                         "item_removed": "{X} removed",
+                        "last_name": "Last name",
                         "last_upload": "Last upload",
                         "loading_details": "Loading details",
                         "loading_form": "<i>Loading form...</i>",
@@ -123,6 +127,7 @@ var i18n = {
                         "move_this_menu_down": "Move this menu down",
                         "move_this_menu_up": "Move this menu up",
                         "new_password": "New password",
+                        "name": "Name",
                         "repeat_new_password": "Repeat new password",
                         "no_active_users_yet": "There's no active users, yet",
                         "no_created_users": "No users created",
@@ -228,6 +233,9 @@ var i18n = {
                                 "message": "The user {X} was succesfully invited. A mail for activation was sent to him"
                         },
                         "user_roles": {
+                                "roles": "Roles",
+                                "effect_on_the_next_login": "Warning, changes on user roles will take complete effect on the next login",
+                                "no_roles": "Sorry but you have no allocated roles at this moment.<br />Contact your manager for become a member of its staff",
                                 "login": {
                                         "text": "Login (user active)",
                                         "description": "The ability to login",

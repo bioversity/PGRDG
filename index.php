@@ -3,6 +3,7 @@
 // session_start();
 // print_r($_SESSION["user"]);
 // exit();
+
 /**
  * Load all definitions
  */
@@ -18,6 +19,7 @@ $frontend->get_definitions("types", false, "obj");
 
 require_once(FUNCS_DIR . "nl2.php");
 require_once(FUNCS_DIR . "readmore.php");
+require_once(FUNCS_DIR . "has_permissions.php");
 require_once(LIB_DIR . "php-markdown-extra-extended/markdown.php");
 require_once(FUNCS_DIR . "optimize_markdown.php");
 require_once(CLASSES_DIR . "Parse_json.php");
@@ -86,55 +88,69 @@ if($page->current == "Home") {
 if(!isset($page->class)) {
 	$page->class = array();
 }
+if(isset($user)) {
+	$page->has_permissions = has_permissions($user, $page);
+} else {
+	$page->has_permissions = false;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 	<head>
 		<?php include(TEMPLATE_DIR . "head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"]) ? "e405" : ((isset($page->class)) ? implode($page->class, " ") : "")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"] || !$page->has_permissions) ? "e405" : ((isset($page->class)) ? implode($page->class, " ") : "")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
-		if(strtolower($page->current) == "signin") {
-			if($interface["site"]["allow_signin"]) {
-				include(TEMPLATE_PAGES_DIR . "Signin.tpl");
-				include(TEMPLATE_DIR . "script.tpl");
-				include(TEMPLATE_DIR . "loader.tpl");
-			} else {
-				include(TEMPLATE_PAGES_DIR . "405_nologin.tpl");
-				include(TEMPLATE_DIR . "loader.tpl");
-				include(TEMPLATE_DIR . "script.tpl");
-			}
-		} else if(strtolower($page->current) == "signout") {
-			include(TEMPLATE_DIR . "script.tpl");
-			include(TEMPLATE_PAGES_DIR . "Signout.tpl");
-			include(TEMPLATE_DIR . "loader.tpl");
-		} else if(strtolower($page->current) == "activation") {
-			include(TEMPLATE_DIR . "script.tpl");
-			include(TEMPLATE_PAGES_DIR . "Activation.tpl");
-			include(TEMPLATE_DIR . "loader.tpl");
-		} else {
-			if(!$page->exists) {
-				include(TEMPLATE_PAGES_DIR . "404.tpl");
-			} else {
-				if($page->need_login && !LOGGED) {
-					include(TEMPLATE_PAGES_DIR . "405.tpl");
+		switch(strtolower($page->current)) {
+			case "signin":
+				if($interface["site"]["allow_signin"]) {
+					include(TEMPLATE_PAGES_DIR . "Signin.tpl");
+					include(TEMPLATE_DIR . "script.tpl");
+					include(TEMPLATE_DIR . "loader.tpl");
+				} else {
+					include(TEMPLATE_PAGES_DIR . "405_nologin.tpl");
 					include(TEMPLATE_DIR . "loader.tpl");
 					include(TEMPLATE_DIR . "script.tpl");
+				}
+				break;
+			case "signout":
+				include(TEMPLATE_DIR . "script.tpl");
+				include(TEMPLATE_PAGES_DIR . "Signout.tpl");
+				include(TEMPLATE_DIR . "loader.tpl");
+				break;
+			case "activation":
+				include(TEMPLATE_DIR . "script.tpl");
+				include(TEMPLATE_PAGES_DIR . "Activation.tpl");
+				include(TEMPLATE_DIR . "loader.tpl");
+				break;
+			default:
+				if(!$page->exists) {
+					include(TEMPLATE_PAGES_DIR . "404.tpl");
 				} else {
-					include(TEMPLATE_DIR . "loader.tpl");
-					if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
-						include(ADMIN_TEMPLATE_DIR . "index.tpl");
+					if($page->need_login && !LOGGED) {
+						include(TEMPLATE_PAGES_DIR . "405.tpl");
+						include(TEMPLATE_DIR . "loader.tpl");
+						include(TEMPLATE_DIR . "script.tpl");
 					} else {
-						?>
-						<?php include(TEMPLATE_DIR . "body_header.tpl"); ?>
+						include(TEMPLATE_DIR . "loader.tpl");
+						if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login) {
+							if($page->has_permissions) {
+								include(ADMIN_TEMPLATE_DIR . "index.tpl");
+							} else {
+								include(TEMPLATE_PAGES_DIR . "405_nologin.tpl");
+							}
+						} else {
+							?>
+							<?php include(TEMPLATE_DIR . "body_header.tpl"); ?>
 
-						<?php include(INCLUDE_DIR . "get_contents.php"); ?>
+							<?php include(INCLUDE_DIR . "get_contents.php"); ?>
 
-						<?php include(TEMPLATE_DIR . "script.tpl"); ?>
-						<?php
+							<?php include(TEMPLATE_DIR . "script.tpl"); ?>
+							<?php
+						}
 					}
 				}
-			}
+				break;
 		}
 		?>
 	</body>
