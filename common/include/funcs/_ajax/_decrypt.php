@@ -199,12 +199,16 @@ if(isset($_GET["getPublicKey"])) {
 			chmod(CONF_DIR . "pages.json", 0777);
 			$fp = fopen(CONF_DIR . "pages.json", "w");
 			if(fwrite($fp, str_replace(array('"true"', '"false"'), array("true", "false"), json_encode($pages_config->json_conf)))) {
-				$fc = fopen(MARKDOWN_DIR . $output["content"]["title"] . ".md", "w");
-				if(fwrite($fc, $output["content"]["content"])) {
-					chmod(MARKDOWN_DIR . $output["content"]["title"] . ".md", 0777);
-					print "ok";
-				}
-				fclose($fc);
+				if(strlen(trim($output["content"]["content"])) > 0) {
+                                        $fc = fopen(MARKDOWN_DIR . $output["content"]["title"] . ".md", "w");
+                                        if(fwrite($fc, $output["content"]["content"])) {
+                                                chmod(MARKDOWN_DIR . $output["content"]["title"] . ".md", 0777);
+                                                print "ok";
+                                        }
+                                        fclose($fc);
+                                } else {
+                                        print "ok";
+                                }
 			}
 			fclose($fp);
 			exit();
