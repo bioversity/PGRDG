@@ -33,9 +33,9 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login && $page->h
         <link rel="icon" href="<?php local2host(IMAGES_DIR); ?>favicon/favicon.ico" type="image/x-icon">
 
         <link href="<?php print local2host(CSS_DIR); ?>animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print local2host(CSS_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-production-plugins.min.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>main.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(ADMIN_CSS_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-skins.min.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print local2host(ADMIN_CSS_DIR); ?>smartadmin-rtl.min.css" rel="stylesheet" type="text/css" media="screen" />
         <!-- <link rel="stylesheet" type="text/css" media="screen" href="<?php //print local2host(ADMIN_CSS_DIR); ?>bioversity.css"> -->
@@ -59,7 +59,7 @@ if(LOGGED && $page->current == "Home" || LOGGED && $page->need_login && $page->h
 
         <link href="<?php print local2host(CSS_DIR); ?>animations<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
         <link href="<?php print local2host(CSS_DIR); ?>pgrdg-map-tools/pgrdg-map-tools<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css" rel="stylesheet" type="text/css" media="screen" />
-        <link href="<?php print local2host(CSS_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
+        <link href="<?php print local2host(CSS_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" type="text/css" media="screen" />
 
         <link href="<?php print local2host(CSS_DIR); ?>print<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.css?<?php print mt_rand(); ?>" rel="stylesheet" media="print" />
         <?php

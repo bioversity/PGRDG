@@ -419,12 +419,16 @@ $.fn.get_user_work_position = function(user_data, show_authority) {
 */
 $.get_user_email = function(user_data) { return user_data[kTAG_ENTITY_EMAIL][kAPI_PARAM_RESPONSE_FRMT_DISP][0][kAPI_PARAM_RESPONSE_FRMT_DISP]; };
 
+/**
+ * Extract the user image path of the current user
+ * @return string 					The user image path
+ */
 $.get_current_user_img = function() {
 	var img_path = "./common/media/img/admin/",
 	user_img,
 	img = {};
 	if($.storage_exists("pgrdg_user_cache.user_data.current." + $.get_current_user_id() + "." + kTAG_ENTITY_ICON)) {
-		user_img = storage.get("pgrdg_user_cache.user_data.current." + $.get_current_user_id() + "." + kTAG_ENTITY_ICON + "." + kAPI_PARAM_RESPONSE_FRMT_DISP);
+		user_img = img_path + "user_images/" + storage.get("pgrdg_user_cache.user_data.current." + $.get_current_user_id() + "." + kTAG_ENTITY_ICON + "." + kAPI_PARAM_RESPONSE_FRMT_DISP);
 	} else {
 		user_img = img_path + "user_rand_images/" + $.rand_int(0, 38) + ".jpg";
 		img[kAPI_PARAM_RESPONSE_FRMT_DISP] = user_img;
