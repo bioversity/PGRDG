@@ -25,7 +25,7 @@ $i = -1;
 			$i++;
 			?>
 			<div class="item<?php print ($i == 0) ? " active" : ""; ?>">
-				<img alt="<?php print str_replace("_", " ", $src); ?>" src="<?php print $dir . "/" . $src; ?>" />
+				<img alt="<?php print str_replace("_", " ", $src); ?>" src="<?php print local2host($dir) . "/" . $src; ?>" />
 			</div>
 			<?php
 		}

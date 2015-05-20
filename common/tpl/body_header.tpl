@@ -1,5 +1,5 @@
 <?php
-if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !LOGGED || !$page->has_permissions) {
+if(strtolower($page->current) == "map" || !$page->exists || $page->need_login && !LOGGED || $page->need_login && !$page->has_permissions) {
 	$page_class = "map";
 } else {
 	if(isset($page->class) && count($page->class) > 1) {
@@ -14,7 +14,7 @@ if(strtolower($page->current) == "map" || !$page->exists || $page->need_login &&
 		<div class="top">
 			<div id="logo"<?php print (strtolower($page->current) == "map") ? ' class="map"' : ""; ?>>
 				<a href="/">
-					<img alt="Bioversity logo" src="<?php print '' . local2host(MEDIA_DIR) . 'svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || strtolower($page->current) == "activation" || $page->has_error || !$page->has_permissions) ? "_white" : ""); ?>.svg" />
+					<img alt="Bioversity logo" src="<?php print '' . local2host(MEDIA_DIR) . 'svg/bioversity-logo_small' . ((strtolower($page->current) == "map" || strtolower($page->current) == "activation" || $page->has_error || $page->need_login && !$page->has_permissions) ? "_white" : ""); ?>.svg" />
 				</a>
 				<p class="tagline">Bioversity International: research for development in agricultural and forest biodiversity</p>
 			</div>

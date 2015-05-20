@@ -99,7 +99,7 @@ if(isset($user)) {
 	<head>
 		<?php include(TEMPLATE_DIR . "head.tpl"); ?>
 	</head>
-	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"] || !$page->has_permissions) ? "e405" : ((isset($page->class)) ? implode($page->class, " ") : "")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
+	<body <?php print ((count($page->class) > 0 || LOGGED) ? 'class="' . ((LOGGED) ? "fixed-header fixed-page-footer " : "") . ((!$interface["site"]["allow_signin"] || $page->need_login && !$page->has_permissions) ? "e405" : ((isset($page->class)) ? implode($page->class, " ") : "")) . '"' : "") . ' data-error="' . (($page->has_error) ? "true" : "false") . '"'; ?>>
 		<?php
 		switch(strtolower($page->current)) {
 			case "signin":
