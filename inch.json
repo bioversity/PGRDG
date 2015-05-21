@@ -1,8 +1,7 @@
 {
   "files": {
     "included": [
-      "common/js/*.js",
-      "common/js/**/*.js"
+      "common/js/*.js"
     ],
     "excluded": [
       "common/js/plugins/*",
