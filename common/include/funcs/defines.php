@@ -7,7 +7,7 @@ if(!defined("HOST")) { define("HOST", (isset($_SERVER["HTTPS"]) && $_SERVER["HTT
 /**
  * Root
  */
-if(!defined("SYSTEM_ROOT")) { define("SYSTEM_ROOT", $_SERVER["DOCUMENT_ROOT"] . "/"); }
+if(!defined("SYSTEM_ROOT")) { define("SYSTEM_ROOT", (isset($_SERVER["DOCUMENT_ROOT"]) ? $_SERVER["DOCUMENT_ROOT"] : dirname(__FILE__)) . "/"); }
 
 /**
  * root:common/
