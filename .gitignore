@@ -8,4 +8,3 @@ backup*
 PGRDG
 common/include/conf/interface/site.js
 .travis*
-inch.json
