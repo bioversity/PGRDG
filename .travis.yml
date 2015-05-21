@@ -6,6 +6,9 @@ php:
 
 script: php index.php
 
+before_install:
+  - php /home/travis/.phpenv/versions/5.3.26/bin/composer.phar self-update
+
 install:
   - sudo apt-get install php5-curl
   - sudo apt-get install php5-json
