@@ -1,4 +1,4 @@
-<img align="right" src="https://travis-ci.org/bioversity/PGRDG.svg?branch=master" />
+<img align="right" src="!https://travis-ci.org/bioversity/PGRDG.svg?branch=master!:https://travis-ci.org/bioversity/PGRDG" />
 
 <img align="center" alt="PGRDG - Plant Genetic Resource Diversity Gateway" src="common/media/img/github wiki/theme.jpg" />
 
