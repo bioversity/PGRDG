@@ -1,9 +1,8 @@
 <?php
-
 /**
  * HOST
  */
-if(!defined("HOST")) { define("HOST", (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"] . "/"); }
+if(!defined("HOST")) { define("HOST", (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . ((!isset($_SERVER["SERVER_NAME"])) ? php_uname("n") : $_SERVER["SERVER_NAME"]) . "/"); }
 
 /**
  * Root
