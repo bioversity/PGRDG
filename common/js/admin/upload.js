@@ -656,12 +656,14 @@ $.fn.add_session_progress_row = function(session, subgroup) {
 		// Append sub-transactions logs
 		if(transaction[kTAG_TRANSACTION_LOG] !== undefined && $.obj_len(transaction[kTAG_TRANSACTION_LOG]) > 0) {
 			$.each(transaction[kTAG_TRANSACTION_LOG][kAPI_PARAM_RESPONSE_FRMT_DOCU], function(kl, kv) {
-				var docu = kv[kAPI_PARAM_RESPONSE_FRMT_DOCU];
+				var docu = kv[kAPI_PARAM_RESPONSE_FRMT_DOCU],
+				alias_title = ((docu[kTAG_TRANSACTION_ALIAS] !== undefined) ? docu[kTAG_TRANSACTION_ALIAS][kAPI_PARAM_RESPONSE_FRMT_INFO] : ""),
+				alias_text = ((docu[kTAG_TRANSACTION_ALIAS] !== undefined) ? docu[kTAG_TRANSACTION_ALIAS][kAPI_PARAM_RESPONSE_FRMT_DISP] : "");
 				$list_subgroup = $('<div class="list-group subgroup_log">'),
 				$list_subgroup_item = $('<div class="list-group-item">'),
 				$h4 = $('<h4 class="list-group-item-heading">'),
 				$icon_info = $('<span class="fa fa-info-circle fa-fw fa-1_5x text-muted pull-left"></span>'),
-				$alias = $('<span class="text-info" title="' + docu[kTAG_TRANSACTION_ALIAS][kAPI_PARAM_RESPONSE_FRMT_INFO] + '">').text(docu[kTAG_TRANSACTION_ALIAS][kAPI_PARAM_RESPONSE_FRMT_DISP] + ": "),
+				$alias = $('<span class="text-info" title="' + alias_title + '">').text(alias_text + ": "),
 				$message = $('<span>').text(docu[kTAG_TRANSACTION_MESSAGE][kAPI_PARAM_RESPONSE_FRMT_DISP]),
 				$p = $('<small class="help-block">').html("[error: " + docu[kTAG_ERROR_CODE][kAPI_PARAM_RESPONSE_FRMT_DISP] + "] <i>" + docu[kTAG_ERROR_TYPE][kAPI_PARAM_RESPONSE_FRMT_DISP] + '</i>');
 
@@ -878,7 +880,8 @@ $.build_interface = function(session_id, publish_data) {
 				$clearfixx = $('<div class="clearfix">'),
 				$btn_groupp = $('<div class="btn-group pull-right">'),
 				$btn_downloadd = $('<a>').attr({
-					"class": "btn btn-default-white"
+					"class": "btn btn-default-white disabled"
+					// "onclick": $.download_last_uploaded_file(session[kTAG_FILE][0])
 				}).html('Download the file <span class="fa fa-download"></span>');
 
 				// Append buttons to the bottom of page
@@ -1452,6 +1455,7 @@ $.init_upload = function() {
 			* Generate upload interface
 			*/
 			storage.remove("pgrdg_user_cache.user_data.undefined");
+			storage.remove("pgrdg_user_cache.user_data.current.last_upload_session_id");
 
 			// Generate upload form
 			var $div = $('<div>'),

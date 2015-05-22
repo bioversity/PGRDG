@@ -80,8 +80,8 @@ if($page->is_backend) {
 	<script type="text/javascript" src="<?php print HOST; ?>/API/?definitions=api&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print HOST; ?>/API/?definitions=tags&type=string&condensed=true"></script>
 	<script type="text/javascript" src="<?php print HOST; ?>/API/?definitions=types&type=string&condensed=true"></script>
-	<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>params<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
-	<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>shortcuts<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+	<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>params<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
+	<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>shortcuts<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 	<script type="text/javascript">
 	function load_firebug() {
 		var fileref;
@@ -109,26 +109,26 @@ if($page->is_backend) {
 	if(LOGGED) {
 		?>
 
-		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
-		<script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
+		<script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<?php
 		switch($page->address) {
 			case "Menu":
-				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>menu<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script><?php
+				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>menu<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 			case "Invite":
-				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>invite<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script><?php
+				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>invite<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 			case "Pages":
-				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>pages<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script><?php
+				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>pages<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 			case "Upload":
-				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>upload<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script><?php
+				?><script type="text/javascript" src="<?php print local2host(ADMIN_JAVASCRIPT_DIR); ?>upload<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script><?php
 				break;
 		}
 	} else {
 		?>
-		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>main<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>main<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<?php
 	}
 	if(strtolower($page->current) == "map" || strtolower($page->current) == "search" || strtolower($page->current) == "advanced_search") {
@@ -188,8 +188,8 @@ if($page->is_backend) {
 				<script src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Edit.js"></script>
 				<script src="<?php print local2host(JAVASCRIPT_PLUGINS_DIR); ?>leaflet/plugins/Leaflet.draw/src/edit/handler/EditToolbar.Delete.js"></script>
 
-		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>form<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
-		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>map<?php print ((!$interface["site"]["developer_mode"]) ? ".min" : ""); ?>.js"></script>
+		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>form<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
+		<script type="text/javascript" src="<?php print local2host(JAVASCRIPT_DIR); ?>map<?php /*print ((!$interface["site"]["developer_mode"]) ? ".min" : "");*/ ?>.js"></script>
 		<!--script type="text/javascript" src="<?php //print local2host(JAVASCRIPT_DIR); ?>charts.js"></script-->
 		<?php
 	}
