@@ -209,7 +209,7 @@
 /**
  * Blink the text in Advanced search page home
  */
-@-webkit-keyframes rotate {
+@-webkit-keyframes blinker {
         from {
                 margin-left: 2.5px;
                 margin-right: -2.5px;
@@ -221,7 +221,7 @@
                 color: #da680b;
         }
 }
-@-moz-keyframes rotate {
+@-moz-keyframes blinker {
         from {
                 margin-left: 2.5px;
                 margin-right: -2.5px;
@@ -233,7 +233,7 @@
                 color: #da680b;
         }
 }
-@-o-keyframes rotate {
+@-o-keyframes blinker {
         from {
                 margin-left: 2.5px;
                 margin-right: -2.5px;
@@ -259,23 +259,43 @@
 }
 
 /**
- * Rotate an element
+ * Rotate an element (clockwise)
  */
-@-webkit-keyframes rotate {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
+@-webkit-keyframes rotateClockwise {
+        0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
 }
-@-moz-keyframes rotate {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
+@-moz-keyframes rotateClockwise {
+        0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(360deg); }
 }
-@-o-keyframes rotate {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
+@-o-keyframes rotateClockwise {
+        0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(360deg); }
 }
-@keyframes rotate {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
+@keyframes rotateClockwise {
+        0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(360deg); }
+}
+
+/**
+ * Rotate an element (anti-clockwise)
+ */
+@-webkit-keyframes rotateAClockwise {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(-360deg); }
+}
+@-moz-keyframes rotateAClockwise {
+        0% { -moz-transform: rotate(0deg); }
+        100% { -moz-transform: rotate(-360deg); }
+}
+@-o-keyframes rotateAClockwise {
+        0% { -moz-transform: rotate(0deg); }
+        100% { -moz-transform: rotate(-360deg); }
+}
+@keyframes rotateAClockwise {
+        0% { -moz-transform: rotate(0deg); }
+        100% { -moz-transform: rotate(-360deg); }
 }
 
 /**

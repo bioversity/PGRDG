@@ -547,7 +547,7 @@ a.big_btn:hover .icons_list {
 #loader.visible {
 	display: block;
 }
-#loader div {
+#loader div:not(.circle) {
 	background-color: rgba(0, 255, 120, 0.5);
 	border-radius: 4px;
 	box-shadow: 0 0 15px 1px rgba(0, 255, 120, 0.9);
@@ -563,7 +563,7 @@ a.big_btn:hover .icons_list {
 	-o-animation: moveRight 3s infinite;
 	animation: moveRight 3s infinite;
 }
-#loader.system div {
+#loader.system div:not(.circle) {
 	height: 2px;
 	left: 0%;
 	background-color: rgba(230, 255, 0, 0.5);
@@ -574,7 +574,7 @@ a.big_btn:hover .icons_list {
 	-o-animation: moveAround 3s infinite;
 	animation: moveAround 3s infinite;
 }
-#loader div + div {
+#loader div:not(.circle) + div:not(.circle) {
 	left: 40%;
 
 	-webkit-animation: moveLeft 3s infinite;
@@ -582,7 +582,7 @@ a.big_btn:hover .icons_list {
 	-o-animation: moveLeft 3s infinite;
 	animation: moveLeft 3s infinite;
 }
-#loader.system div + div {
+#loader.system div:not(.circle) + div:not(.circle) {
 	height: 5px;
 	left: 99.9%;
 	top: 99.9%;
@@ -594,11 +594,11 @@ a.big_btn:hover .icons_list {
 	-o-animation: moveAround2 3s infinite;
 	animation: moveAround2 3s infinite;
 }
-#loader.system > div + div + div,
-#loader.system > div + div + div + div {
+#loader.system > div:not(.circle) + div:not(.circle) + div:not(.circle),
+#loader.system > div:not(.circle) + div:not(.circle) + div:not(.circle) + div:not(.circle) {
 	display: none;
 }
-#loader > div + div + div {
+#loader div.circle.right {
 	background-color: transparent;
 	border-color: rgba(255, 255, 255, 0.6) transparent transparent;
 	border-radius: 50%;
@@ -613,12 +613,12 @@ a.big_btn:hover .icons_list {
 	top: 50%;
 	width: 50px;
 
-	-webkit-animation: rotate 1.8s linear 0s infinite !important;
-	-moz-animation: rotate 1.8s linear 0s infinite !important;
-	-o-animation: rotate 1.8s linear 0s infinite !important;
-	animation: rotate 1.8s linear 0s infinite !important;
+	-webkit-animation: rotateClockwise 1.2s linear infinite;
+	-moz-animation: rotateClockwise 1.2s linear infinite;
+	-o-animation: rotateClockwise 1.2s linear infinite;
+	animation: rotateClockwise 1.2s linear infinite;
 }
-#loader > div + div + div + div {
+#loader div.circle.left {
 	background-color: transparent;
 	border-color: transparent transparent rgba(255, 255, 255, 0.6);
 	border-radius: 50%;
@@ -633,10 +633,10 @@ a.big_btn:hover .icons_list {
 	top: 50%;
 	width: 44px;
 
-	-webkit-animation: rotate 1.2s linear 0s infinite !important;
-	-moz-animation: rotate 1.2s linear 0s infinite !important;
-	-o-animation: rotate 1.2s linear 0s infinite !important;
-	animation: rotate 1.2s linear 0s infinite !important;
+	-webkit-animation: rotateAClockwise 0.9s linear infinite;
+	-moz-animation: rotateAClockwise 0.9s linear infinite;
+	-o-animation: rotateAClockwise 0.9s linear infinite;
+	animation: rotateAClockwise 0.9s linear infinite;
 }
 
 
