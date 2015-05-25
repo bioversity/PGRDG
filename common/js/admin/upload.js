@@ -181,7 +181,8 @@ $.fn.update_btn = function(session_id) {
 		success: function(file, status){
 			var extension = file.name.split(".").pop().toLowerCase(),
 			filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-			file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+			// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+			file_path = "/tmp/" + filename;
 
 			$.set_progress_bar("pending");
 			$.inform_upload_was_done(file_path, function(session_id) {
@@ -273,6 +274,12 @@ $.fn.added_file = function() {
 		"onclick": "$.init_upload();",
 		"class": "back_btn text-default",
 		"title": i18n[lang].interface.btns.back_to_main_upload
+	}).tooltip({placement: "bottom"}).text(i18n[lang].messages.template_upload),
+	$a_back2 = $('<a>').attr({
+		"href": "javascript:void(0);",
+		"onclick": "$.init_upload();",
+		"class": "back_btn text-default",
+		"title": i18n[lang].interface.btns.back_to_main_upload
 	}).tooltip({placement: "bottom"}).text(i18n[lang].messages.template_upload);
 	$info_row = $('<div class="row">'),
 	$left_col = $('<div class="col-xs-6 col-sm-7 col-md-6 col-lg-10">'),
@@ -283,7 +290,7 @@ $.fn.added_file = function() {
 	$dl_right = $('<dl id="dl_right" class="dl-horizontal">'),
 	// Creating progress bar
 	$progress_supercontainer = $('<div id="progress_supercontainer">'),
-	$progrtess_container_title = $('<h2>').text(i18n[lang].messages.template_upload),
+	$progress_container_title = $('<h2>').append($a_back),
 	$progress_container = $('<div id="progress_container" class="progress">'),
 	$progress_bar = $('<div>').attr({
 		"style": "width: 100%;",
@@ -309,7 +316,7 @@ $.fn.added_file = function() {
 	$detail_link_col.append('<span class="fa fa-fw fa-caret-down"></span> ').append($detail_link);
 	// Progress bar
 	$progress_container.append($progress_bar);
-	$progress_supercontainer.append($progrtess_container_title);
+	$progress_supercontainer.append($progress_container_title);
 	$progress_supercontainer.append($progress_container);
 	$left_col.append($dl_left);
 	$righ_col.append($dl_right);
@@ -324,7 +331,7 @@ $.fn.added_file = function() {
 	$details_row.append($detail_col);
 
 	$item.html("");
-	$h1.append($a_back);
+	$h1.append($a_back2);
 	$item.append($h1).append($info_row).append($progress_supercontainer).append($details_row);
 	$(".top_content_label").remove();
 	$("#contents").removeClass("upload");
@@ -1432,9 +1439,9 @@ $.init_upload = function() {
 		if(!$("#contents").hasClass("upload")) {
 			$("#contents").addClass("upload");
 		}
-		if($("#contents .top_content_label").length > 0) {
-			$("#contents .top_content_label").remove();
-		}
+		// if($("#contents .top_content_label").length > 0) {
+		// 	$("#contents .top_content_label").remove();
+		// }
 		if(status !== null && status[kAPI_SESSION_RUNNING]) {
 			$.log_activity({
 				action: "Displaying upload status with session id: " + status[kAPI_SESSION_ID],
@@ -1499,7 +1506,8 @@ $.init_upload = function() {
 				success: function(file, status){
 					var extension = file.name.split(".").pop().toLowerCase(),
 					filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-					file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+					// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+					file_path = "/tmp/" + filename;
 
 					$.set_progress_bar("pending");
 					$.inform_upload_was_done(file_path, function(session_id) {
