@@ -181,11 +181,11 @@ $.fn.update_btn = function(session_id) {
 		success: function(file, status){
 			var extension = file.name.split(".").pop().toLowerCase(),
 			filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-			// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
-			file_path = "/tmp/" + filename;
+			file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+			// file_path = "/tmp/" + filename;
 
 			$.set_progress_bar("pending");
-			$.inform_upload_was_done(file_path, function(session_id) {
+			$.inform_upload_was_done(filename, function(session_id) {
 				$.build_interface(session_id);
 			});
 		}
@@ -342,10 +342,10 @@ $.fn.added_file = function() {
  * Inform the Service the upload was done
  * @param  string			file_path 				The full path of the file
  */
-$.inform_upload_was_done = function(file_path, callback) {
+$.inform_upload_was_done = function(filename, callback) {
 	var data = {};
 	data[kAPI_REQUEST_USER] = $.get_current_user_id(),
-	data[kAPI_PARAM_FILE_PATH] = file_path;
+	data[kAPI_PARAM_FILE_PATH] = "/tmp/" + filename;
 	$.ask_cyphered_to_service({
 		data: data,
 		type: "upload_file",
@@ -1506,11 +1506,11 @@ $.init_upload = function() {
 				success: function(file, status){
 					var extension = file.name.split(".").pop().toLowerCase(),
 					filename = $.trim($.clean_file_name(file.name.replace(extension, ""))) + "." + extension,
-					// file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
-					file_path = "/tmp/" + filename;
+					file_path = "/var/www/pgrdg/" + config.service.path.gpg + $.get_current_user_id() + "/uploads/" + filename;
+					// file_path = "/tmp/" + filename;
 
 					$.set_progress_bar("pending");
-					$.inform_upload_was_done(file_path, function(session_id) {
+					$.inform_upload_was_done(filename, function(session_id) {
 						$.build_interface(session_id);
 					});
 				}

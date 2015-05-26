@@ -107,13 +107,14 @@ if(empty($_REQUEST) && empty($_POST)) {
 						}
 					}
 					$temp_file = $_FILES["file"]["tmp_name"];
-					// $target_path = $user_dir . "/uploads";
-					$target_path = "/tmp";
+					$target_path = $user_dir . "/uploads";
+					$tmp_file = "/tmp/" . $gv;
 					$target_file =  $target_path . "/" . $gv;
 					if(!move_uploaded_file($temp_file, $target_file)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
 						chmod($target_file, 0777);
+						copy($target_file, $tmp_file);
 					}
 
 					$api->set_content_type("text");
