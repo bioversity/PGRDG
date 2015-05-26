@@ -113,6 +113,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 					if(!move_uploaded_file($temp_file, $target_file)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
+						chmod($target_path, 0777);
 						chmod($target_file, 0777);
 						copy($target_file, $tmp_file);
 					}
@@ -135,6 +136,7 @@ if(empty($_REQUEST) && empty($_POST)) {
 						throw new exception("Can't move the file to " . $target_path);
 					} else {
 						// Permissions
+						chmod($target_path, 0777);
 						chmod($target_file, 0777);
 						// Resize the uploaded image
 						$image = new SimpleImage();

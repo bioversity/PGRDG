@@ -1263,7 +1263,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"class": "btn btn-transparent btn-orange",
                 "title": i18n[lang].interface.btns.update,
 		"id": "update_btn"
-	}).html(i18n[lang].interface.btns.update + ' <span class="fa fa-upload fa-fw"></span>'),
+	}).html('<span class="hidden-sm">' + i18n[lang].interface.btns.update + ' </span><span class="fa fa-upload fa-fw"></span>'),
 	/**
 	 * #top_content_label delete btn
 	 */
@@ -1271,16 +1271,17 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"href": "javascript:void(0);",
 		"class": "btn btn-transparent btn-default-white disabled",
                 "title": i18n[lang].interface.btns.delete
-	}).html(i18n[lang].interface.btns.delete + ' <span class="fa fa-trash-o fa-fw"></span>');
+	}).html('<span class="hidden-sm">' + i18n[lang].interface.btns.delete + ' </span><span class="fa fa-trash-o fa-fw"></span>'),
 
 	/**
 	 * #top_content_label download btn
 	 */
 	$link_download = $('<a>').attr({
+		"id": "link_download",
 		"href": "javascript:void(0);",
 		"class": "btn btn-transparent btn-default-white",
                 "title": i18n[lang].interface.btns.download
-	}).html('<span class="fa fa-download fa-fw"></span> ' + i18n[lang].interface.btns.download),
+	}).html('<span class="fa fa-download fa-fw"></span><span class="hidden-sm"> ' + i18n[lang].interface.btns.download) + '</span>',
 	/**
 	 * #top_content_label download templates btn
 	 */
@@ -1289,7 +1290,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		"class": "btn btn-transparent btn-default dropdown-toggle",
 		"data-toggle": "dropdown",
                 "title": i18n[lang].interface.btns.download_template
-	}).html('<span class="fa fa-download"></span> ' + i18n[lang].interface.btns.download_template + ' <span class="fa fa-caret-down"></span>'),
+	}).html('<span class="fa fa-download"></span> <span class="hidden-sm">' + i18n[lang].interface.btns.download_template + ' <span class="fa fa-caret-down"></span>'),
 	$link_download_dropdown = $('<ul class="dropdown-menu pull-right">'),
 	$li_checklist = $('<li>'),
 	$li_inventory = $('<li>'),
@@ -1319,7 +1320,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 		current_status_class = "",
 		session = response[kAPI_SESSION],
 		file_path = (session[kTAG_FILE] !== undefined) ? session[kTAG_FILE][0].filename[kAPI_PARAM_RESPONSE_FRMT_VALUE] : i18n[lang].messages.no_file_uploaded;
-		$link_download.on("click", function() {
+		$("#link_download").on("click", function() {
 			$.download_last_uploaded_file(session[kTAG_FILE][0]);
 		});
 
@@ -1385,7 +1386,7 @@ $.fn.add_previous_upload_session = function(session_id) {
 				"style": "width: " + (($.get_progress(session) === 0) ? $.get_progress(session) : 100) + "%;"
 			}).html($.get_progress(session) + "%");
 
-			$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 93%;");
+			$last_session_data_progress_container.addClass("pull-left").attr("style", "width: 90%;");
 			$last_session_data_col2.append(' <span class="fa ' + status_icon + " " + status_string_class + ' fa-1_5x pull-right"></span>');
 				$last_session_data_progress.removeClass("active").removeClass("progress-bar-striped");
 				$last_session_data_progress.removeClass("progress-bar-warning").addClass(session_status_class);

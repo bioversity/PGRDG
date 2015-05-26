@@ -614,7 +614,7 @@ class PGP {
                                 // Clean unused files
                                 @unlink($this->user_path . DIRECTORY_SEPARATOR . ".key.conf");
                                 @unlink($this->user_path . DIRECTORY_SEPARATOR . "pubring.gpg~");
-                                chmod($this->user_path, 0600);
+                                chmod($this->user_path, 0777);
 
                                 // Return all user data
                                 return $this->repo;
@@ -646,7 +646,7 @@ class PGP {
                 }
                 if($must_identify) {
                         $identify = $this->identify($this->user_data[kTAG_ENTITY_EMAIL]);
-                        if(!@chmod($this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"], 0600)) {
+                        if(!@chmod($this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"], 0777)) {
                                 $this->log(self::E, "Cannot change permission to dir '" . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"] . "', seems do not exists");
                         }
                         if(!@exec("rm -rf " . $this->gpg_path . DIRECTORY_SEPARATOR . $identify["fingerprint"])) {
