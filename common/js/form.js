@@ -3752,10 +3752,10 @@ $.show_data_on_map = function(id, domain, shp, grouped_data) {
 			});
 			if(res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED] > objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]) {
 				var alert_title = i18n[lang].messages.map_limit_display.title;
-					alert_title.replace("{N}", objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
-					alert_title.replace("{TOT}", res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]);
+				alert_title = alert_title.replace("{N}", objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
+				alert_title = alert_title.replace("{TOT}", res[kAPI_RESPONSE_PAGING][kAPI_PAGING_AFFECTED]);
 				var alert_message = i18n[lang].messages.map_limit_display.message;
-					alert_message.replace(/\{X\}/g, objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
+				alert_message = alert_message.replace(/\{X\}/g, objp.parameters[kAPI_REQUEST_PARAMETERS][kAPI_PAGING_LIMIT]);
 				setTimeout(function() {
 					apprise(alert_message, {
 						class: "only_1k",

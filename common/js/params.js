@@ -337,8 +337,8 @@ $.right_date = function(date) {
                         i = "0" + i;
                 }
                 return i;
-        }
-        $.datepicker.regional[lang]
+        };
+        $.datepicker.regional[lang];
 
         // Is year
         if(date.length == 4) {
@@ -353,7 +353,7 @@ $.right_date = function(date) {
                 time = $.addZero(dd.getHours()) + ":" + $.addZero(dd.getMinutes()) + ":" + $.addZero(dd.getSeconds());
                 return $.datepicker.formatDate("MM dd, yy", new Date(date)) + " " +  time;
         }
-}
+};
 
 /**
  * Clean the file name for upload purposes
@@ -376,7 +376,7 @@ $.parse_params = function(query) {
         },
         params = {},
         e;
-        while(e === re.exec(query)) {
+        while(e = re.exec(query)) {
                 var k = decode(e[1]),
                 v = decode(e[2]);
                 if (k.substring(k.length - 2) === '[]') {

@@ -1492,6 +1492,8 @@ $.build_create_user_form = function(response) {
 	$input01 = $('<input type="hidden" name="um" value="' + user_mail + '">'),
 	$input1 = $('<input type="password" name="np1" id="np1" class="form-control" required="required" size="32" value="qwerty123A">'),
 	$input2 = $('<input type="password" name="np2" id="np2" class="form-control" required="required" size="32" value="qwerty123A">'),
+	$p1 = $('<small class="help-block">').text(i18n[lang].messages.password_info),
+	$p2 = $('<small class="help-block">').text(i18n[lang].messages.password_info),
 	$addon1 = $('<span class="input-group-addon">'),
 	$lock1 = $('<span class="fa fa-lock text-muted">'),
 	$addon2 = $('<span class="input-group-addon">'),
@@ -1503,8 +1505,8 @@ $.build_create_user_form = function(response) {
 	$input_group2.append($input2).append($addon2);
 	$form_group_fname.append($label_fname).append($input_fname);
 	$form_group_lname.append($label_lname).append($input_lname);
-	$form_group1.append($label1).append($input_group1);
-	$form_group2.append($label2).append($input_group2);
+	$form_group1.append($label1).append($input_group1).append($p1);
+	$form_group2.append($label2).append($input_group2).append($p2);
 	$form.append($form_group_fname).append($br);
 	$form.append($form_group_lname).append($br1);
 	$form.append($form_group1).append($hr);
@@ -1515,8 +1517,7 @@ $.build_create_user_form = function(response) {
 
 	$("#fname, #lname, #np1, #np2").on("keyup blur", function() {
 		$(this).check_activation_form_valid();
-	});
-	$(this).check_activation_form_valid();
+	}).check_activation_form_valid();
 };
 
 /*=======================================================================================

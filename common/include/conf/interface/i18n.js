@@ -157,6 +157,7 @@ var i18n = {
                                 "title": "Page not removed",
                                 "message": "There was an error when removing the page, please contact the administrator or try again later"
                         },
+                        "password_info": "The password must be at least 8 chars and must contain both uppercase and numbers",
                         "photo_author_caption": "Image courtesy of <a target=\"_blank\" href=\"{URL}\">{NAME}</a>",
                         "return_to_panel": "Return to {X} panel",
                         "removed_item": "Removed {X}",
@@ -230,7 +231,7 @@ var i18n = {
                         },
                         "user_invited": {
                                 "title": "User invited",
-                                "message": "The user {X} was succesfully invited. A mail for activation was sent to him"
+                                "message": "The user {X} was succesfully invited and a mail for activation was sent"
                         },
                         "user_roles": {
                                 "roles": "Roles",

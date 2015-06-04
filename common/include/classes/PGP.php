@@ -345,7 +345,13 @@ class PGP {
                                                 return false;
                                         } else {
                                                 chmod($this->user_path, 0777);
-                                                return true;
+                                                if(!mkdir($this->user_path . "/uploads")){
+                                                        $this->log(self::E, "Cannot create the upload directory of the new user " . $this->user_path . "/uploads");
+                                                        return false;
+                                                } else {
+                                                        chmod($this->user_path . "/uploads", 0777);
+                                                        return true;
+                                                }
                                         }
                                 } else {
                                         print "no";
