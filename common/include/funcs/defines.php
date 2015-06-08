@@ -124,6 +124,11 @@ if(!defined("COMMON_DIR")) { define("COMMON_DIR", SYSTEM_ROOT . "common/"); }
                 if(!defined("TEMPLATE_SEARCH_PANEL_DIR")) { define("TEMPLATE_SEARCH_PANEL_DIR", TEMPLATE_DIR . "search_panels/"); }
 
 /**
+ * The main domain
+ */
+$domain = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] && $_SERVER["HTTPS"] != "off") ? "https" : "http" . "://" . $_SERVER["SERVER_NAME"];
+
+/**
  * A simple bool variable to determine logged users status.
  * Peace of mind :)
  * @var bool                    $logged                 The current user is logged in?
